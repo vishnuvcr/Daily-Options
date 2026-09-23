@@ -42,39 +42,35 @@ def extract(path: Path, out: Path, wing_steps: int = 3) -> dict:
     ).filter((pl.col("_min")>=start_ns)&(pl.col("_min")<=end_ns)).drop("_min")
 
     eligible=df.filter(pl.col("expiry")>=pl.col("date"))
-
-    # Find CE/PE overlap first, then choose the nearest expiry among valid overlaps.
     q=eligible.filter(pl.col("close")>0)
-    ce=q.filter(pl.col("option_type")=="CE").group_by(["date","expiry","strike"]).agg(
+
+    # Strike selection deliberately ignores expiry. The final strategy engine
+    # chooses the nearest valid expiry after strike selection. This avoids
+    # losing days where one expiry side is sparse while another expiry provides
+    # the same strike/side overlap.
+    ce=q.filter(pl.col("option_type")=="CE").group_by(["date","strike"]).agg(
         pl.col("close").mean().alias("CE")
     )
-    pe=q.filter(pl.col("option_type")=="PE").group_by(["date","expiry","strike"]).agg(
+    pe=q.filter(pl.col("option_type")=="PE").group_by(["date","strike"]).agg(
         pl.col("close").mean().alias("PE")
     )
-    px=ce.join(pe,on=["date","expiry","strike"],how="inner").with_columns(
+    px=ce.join(pe,on=["date","strike"],how="inner").with_columns(
         (pl.col("CE")-pl.col("PE")).abs().alias("gap")
     )
     if px.height==0:
-        raise RuntimeError("source-wide CE/PE overlap is empty after time-window filtering")
-
+        raise RuntimeError("source-wide CE/PE date-strike overlap is empty")
     chosen=(
-        px.sort(["date","expiry","gap"])
+        px.sort(["date","gap"])
         .group_by("date",maintain_order=True)
         .first()
-        .select(["date","expiry","strike"])
+        .select(["date","strike"])
         .rename({"strike":"atm"})
-    )
-
-    near=eligible.join(
-        chosen.select(["date","expiry"]),
-        on=["date","expiry"],
-        how="inner",
     )
 
     keys=[]
     for row in chosen.iter_rows(named=True):
         d=row["date"]; a=float(row["atm"])
-        strikes=near.filter(pl.col("date")==d).select("strike").unique().sort("strike")["strike"].to_list()
+        strikes=eligible.filter(pl.col("date")==d).select("strike").unique().sort("strike")["strike"].to_list()
         if not strikes:
             continue
         pos=min(range(len(strikes)),key=lambda i:abs(float(strikes[i])-a))
@@ -86,7 +82,7 @@ def extract(path: Path, out: Path, wing_steps: int = 3) -> dict:
         raise RuntimeError("no compact strike keys were generated")
 
     keep=pl.DataFrame(keys,schema={"date":pl.Date,"strike":pl.Float64}).unique()
-    compact=near.join(keep,on=["date","strike"],how="inner").select(
+    compact=eligible.join(keep,on=["date","strike"],how="inner").select(
         ["date","timestamp","expiry","strike","option_type","high","low","close"]
     ).sort(["date","timestamp","strike","option_type"])
 
