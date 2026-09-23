@@ -252,38 +252,72 @@ def expand_filters(trades: pd.DataFrame) -> pd.DataFrame:
     return x.loc[mask].copy()
 
 
-def metric_table(x: pd.DataFrame, dates: pd.DatetimeIndex) -> pd.DataFrame:
-    if x.empty:
-        return pd.DataFrame()
-    group_cols = [
-        "entry_min","stop_mult","target_decay","hold_minutes",
-        "gap_max","r15_max","iv_rv_min",
-    ]
-    daily = (
-        x.groupby(group_cols + ["trade_date"], as_index=False)["net_pnl"].sum()
+GROUP_COLS = [
+    "entry_min","stop_mult","target_decay","hold_minutes",
+    "gap_max","r15_max","iv_rv_min",
+]
+
+
+def aggregate_candidates(daily: pd.DataFrame, calendar_days: int) -> pd.DataFrame:
+    if daily.empty:
+        return pd.DataFrame(columns=GROUP_COLS + [
+            "mean_day_net","positive_day_rate","profit_factor","total_net","trade_days"
+        ])
+    g = daily.groupby(GROUP_COLS, dropna=False)["net_pnl"].agg(
+        total_net="sum",
+        positive_net=lambda s: s[s > 0].sum(),
+        negative_net=lambda s: -s[s < 0].sum(),
+        trade_days=lambda s: int((s != 0).sum()),
+        positive_days=lambda s: int((s > 0).sum()),
+    ).reset_index()
+    g["mean_day_net"] = g["total_net"] / max(1, calendar_days)
+    g["positive_day_rate"] = g["positive_days"] / max(1, calendar_days)
+    g["profit_factor"] = np.where(
+        g["negative_net"] > 0,
+        g["positive_net"] / g["negative_net"],
+        999.0,
     )
-    base = pd.DataFrame({"trade_date": dates})
-    rows = []
-    for keys, g in daily.groupby(group_cols):
-        s = base.merge(g[["trade_date","net_pnl"]], on="trade_date", how="left").fillna({"net_pnl":0.0})
-        pnl = s.net_pnl
-        wins = pnl[pnl > 0].sum()
-        losses = -pnl[pnl < 0].sum()
-        eq = pnl.cumsum()
-        dd = eq - eq.cummax()
-        rows.append(
-            {
-                **dict(zip(group_cols, keys)),
-                "mean_day_net": float(pnl.mean()),
-                "median_day_net": float(pnl.median()),
-                "positive_day_rate": float((pnl > 0).mean()),
-                "profit_factor": float(wins / losses) if losses > 0 else 999.0,
-                "total_net": float(pnl.sum()),
-                "max_drawdown": float(dd.min()),
-                "trade_days": int((pnl != 0).sum()),
-            }
-        )
-    return pd.DataFrame(rows)
+    return g
+
+
+def row_mask(frame: pd.DataFrame, choice: pd.Series | dict, keys: list[str]) -> np.ndarray:
+    mask = np.ones(len(frame), dtype=bool)
+    for k in keys:
+        value = choice[k]
+        if pd.isna(value):
+            mask &= frame[k].isna().to_numpy()
+        else:
+            mask &= (frame[k].to_numpy() == value)
+    return mask
+
+
+def detailed_metrics(daily: pd.DataFrame, dates: pd.DatetimeIndex, choice: pd.Series | dict) -> dict:
+    if daily.empty:
+        return {
+            "mean_day_net": np.nan,
+            "median_day_net": np.nan,
+            "positive_day_rate": np.nan,
+            "profit_factor": np.nan,
+            "total_net": 0.0,
+            "max_drawdown": 0.0,
+            "trade_days": 0,
+        }
+    chosen = daily.loc[row_mask(daily, choice, GROUP_COLS), ["trade_date","net_pnl"]]
+    s = chosen.groupby("trade_date")["net_pnl"].sum().reindex(dates, fill_value=0.0)
+    pnl = s.to_numpy(dtype=float)
+    wins = pnl[pnl > 0].sum()
+    losses = -pnl[pnl < 0].sum()
+    eq = np.cumsum(pnl)
+    dd = eq - np.maximum.accumulate(eq)
+    return {
+        "mean_day_net": float(s.mean()),
+        "median_day_net": float(s.median()),
+        "positive_day_rate": float((s > 0).mean()),
+        "profit_factor": float(wins / losses) if losses > 0 else 999.0,
+        "total_net": float(s.sum()),
+        "max_drawdown": float(dd.min()) if len(dd) else 0.0,
+        "trade_days": int((s != 0).sum()),
+    }
 
 
 def main(data: Path, out: Path) -> None:
@@ -291,23 +325,30 @@ def main(data: Path, out: Path) -> None:
     print(f"PHASE4_OBSERVATIONS={len(obs)}")
     trades = build_trade_table(obs)
     print(f"PHASE4_CORE_TRADE_ROWS={len(trades)}")
-    # This is deliberately limited to 8 regime filters; all core stop/target/hold combinations
-    # are computed once and reused across walk-forward windows.
     if trades.empty:
         out.mkdir(parents=True, exist_ok=True)
         summary = {
             "observations": int(len(obs)),
             "core_trade_rows": 0,
             "gate": "NO_VALID_TRADE_PATH",
-            "reason": "No ATM call+put paired path survived the entry/holding-period construction.",
+            "reason": "No call+put paired path survived the entry/holding-period construction.",
         }
-        (out / "phase4_walk_forward_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+        (out / "phase4_walk_forward_summary.json").write_text(
+            json.dumps(summary, indent=2), encoding="utf-8"
+        )
         print(json.dumps(summary, indent=2))
         return
 
     expanded = expand_filters(trades)
     print(f"PHASE4_EXPANDED_ROWS={len(expanded)}")
 
+    # Aggregate the entire expanded table once. Window scoring then only filters this
+    # compact daily table; it does not rerun large group-bys for every split.
+    daily_all = (
+        expanded.groupby(["expiry_type"] + GROUP_COLS + ["trade_date"], dropna=False)["net_pnl"]
+        .sum()
+        .reset_index()
+    )
     dates_all = pd.DatetimeIndex(sorted(obs.trade_date.unique()))
     windows = expanding_windows(
         dates_all,
@@ -320,7 +361,7 @@ def main(data: Path, out: Path) -> None:
 
     rows = []
     for widx, w in enumerate(windows):
-        for expiry in ("WEEK","MONTH"):
+        for expiry in ("WEEK", "MONTH"):
             cal = calendars[expiry]
             train_dates = cal[(cal >= w.train_start) & (cal <= w.train_end)]
             val_dates = cal[(cal >= w.validation_start) & (cal <= w.validation_end)]
@@ -328,86 +369,64 @@ def main(data: Path, out: Path) -> None:
             if len(test_dates) < 20:
                 continue
 
-            train_x = expanded[(expanded.expiry_type == expiry) & (expanded.trade_date.isin(train_dates))]
-            val_x = expanded[(expanded.expiry_type == expiry) & (expanded.trade_date.isin(val_dates))]
-            test_x = expanded[(expanded.expiry_type == expiry) & (expanded.trade_date.isin(test_dates))]
+            train_daily = daily_all[
+                (daily_all["expiry_type"] == expiry)
+                & daily_all["trade_date"].isin(train_dates)
+            ]
+            val_daily = daily_all[
+                (daily_all["expiry_type"] == expiry)
+                & daily_all["trade_date"].isin(val_dates)
+            ]
+            test_daily = daily_all[
+                (daily_all["expiry_type"] == expiry)
+                & daily_all["trade_date"].isin(test_dates)
+            ]
 
-            train_metrics = metric_table(train_x, train_dates)
-            val_metrics = metric_table(val_x, val_dates)
-            eligible = val_metrics[(val_metrics.trade_days >= 20) & (val_metrics.mean_day_net > 0)]
+            val_stats = aggregate_candidates(val_daily, len(val_dates))
+            eligible = val_stats[
+                (val_stats["trade_days"] >= 20)
+                & (val_stats["mean_day_net"] > 0)
+            ]
             if eligible.empty:
                 rows.append({"window": widx, "expiry": expiry, "selected": False})
                 continue
+
             choice = eligible.sort_values(
                 ["mean_day_net","profit_factor","positive_day_rate"],
                 ascending=[False,False,False],
             ).iloc[0]
 
-            key_cols = [
-                "entry_min","stop_mult","target_decay","hold_minutes",
-                "gap_max","r15_max","iv_rv_min",
-            ]
-            mask = np.ones(len(test_x), dtype=bool)
-            for k in key_cols:
-                if pd.isna(choice[k]):
-                    mask &= test_x[k].isna().to_numpy()
-                else:
-                    mask &= (test_x[k].to_numpy() == choice[k])
-            test_choice = test_x.loc[mask]
-            test_metrics = metric_table(test_choice, test_dates)
-            if test_metrics.empty:
-                rows.append({"window": widx, "expiry": expiry, "selected": False})
-                continue
-            m = test_metrics.iloc[0].to_dict()
+            train_m = detailed_metrics(train_daily, train_dates, choice)
+            val_m = detailed_metrics(val_daily, val_dates, choice)
+            test_m = detailed_metrics(test_daily, test_dates, choice)
+            test_series = test_daily.loc[
+                row_mask(test_daily, choice, GROUP_COLS),
+                ["trade_date","net_pnl"],
+            ].groupby("trade_date")["net_pnl"].sum().reindex(
+                test_dates, fill_value=0.0
+            )
             boot = block_bootstrap_mean(
-                pd.DataFrame({"net": test_choice.groupby("trade_date")["net_pnl"].sum()})
-                .reindex(test_dates, fill_value=0.0)["net"].values,
+                test_series.values,
                 block_size=5,
                 iterations=2000,
                 seed=42 + widx,
             )
-            train_choice = train_metrics.copy()
-            train_mask = np.ones(len(train_choice), dtype=bool)
-            for k in key_cols:
-                if pd.isna(choice[k]):
-                    train_mask &= train_choice[k].isna().to_numpy()
-                else:
-                    train_mask &= (train_choice[k].to_numpy() == choice[k])
-            tr = train_choice.loc[train_mask]
-            vr = val_metrics.loc[
-                (
-                    (val_metrics.entry_min == choice.entry_min)
-                    & (val_metrics.stop_mult == choice.stop_mult)
-                    & (val_metrics.target_decay == choice.target_decay)
-                    & (val_metrics.hold_minutes == choice.hold_minutes)
-                    & (
-                        (val_metrics.gap_max == choice.gap_max)
-                        | (val_metrics.gap_max.isna() & pd.isna(choice.gap_max))
-                    )
-                    & (
-                        (val_metrics.r15_max == choice.r15_max)
-                        | (val_metrics.r15_max.isna() & pd.isna(choice.r15_max))
-                    )
-                    & (
-                        (val_metrics.iv_rv_min == choice.iv_rv_min)
-                    )
-                )
-            ]
+
             rows.append(
                 {
                     "window": widx,
                     "expiry": expiry,
                     "selected": True,
-                    **{f"param_{k}": choice[k] for k in key_cols},
-                    "train_mean": float(tr.iloc[0].mean_day_net) if not tr.empty else None,
-                    "validation_mean": float(vr.iloc[0].mean_day_net) if not vr.empty else None,
-                    "test_mean": float(m["mean_day_net"]),
-                    "test_median": float(m["median_day_net"]),
-                    "test_positive_day_rate": float(m["positive_day_rate"]),
-                    "test_pf": float(m["profit_factor"]),
-                    "test_total_net": float(m["total_net"]),
-                    "test_max_drawdown": float(m["max_drawdown"]),
-                    "test_trade_days": int(m["trade_days"]),
+                    **{f"param_{k}": choice[k] for k in GROUP_COLS},
+                    "train_mean": float(train_m["mean_day_net"]),
+                    "validation_mean": float(val_m["mean_day_net"]),
+                    "test_mean": float(test_m["mean_day_net"]),
+                    "test_median": float(test_m["median_day_net"]),
+                    "test_positive_day_rate": float(test_m["positive_day_rate"]),
+                    "test_pf": float(test_m["profit_factor"]),
+                    "test_total_net": float(test_m["total_net"]),
+                    "test_max_drawdown": float(test_m["max_drawdown"]),
+                    "test_trade_days": int(test_m["trade_days"]),
                     "bootstrap_lower_95": float(boot["lower_95"]),
                     "bootstrap_upper_95": float(boot["upper_95"]),
                 }
@@ -417,12 +436,20 @@ def main(data: Path, out: Path) -> None:
     out.mkdir(parents=True, exist_ok=True)
     results.to_csv(out / "phase4_walk_forward_results.csv", index=False)
 
-    selected = results[results["selected"] == True] if (not results.empty and "selected" in results.columns) else pd.DataFrame()
+    selected = (
+        results[results["selected"] == True]
+        if (not results.empty and "selected" in results.columns)
+        else pd.DataFrame()
+    )
     summary = {
         "observations": int(len(obs)),
+        "core_trade_rows": int(len(trades)),
+        "expanded_trade_rows": int(len(expanded)),
         "core_variants": int(len(ENTRY_MINUTES)*len(STOP_MULTS)*len(TARGET_DECAYS)*len(HOLDS)),
         "regime_filter_variants": int(len(FILTERS)),
-        "total_parameter_variants": int(len(ENTRY_MINUTES)*len(STOP_MULTS)*len(TARGET_DECAYS)*len(HOLDS)*len(FILTERS)),
+        "total_parameter_variants": int(
+            len(ENTRY_MINUTES)*len(STOP_MULTS)*len(TARGET_DECAYS)*len(HOLDS)*len(FILTERS)
+        ),
         "walk_forward_windows": int(len(windows)),
         "selected_tests": int(len(selected)),
         "positive_test_windows": int((selected.test_mean > 0).sum()) if not selected.empty else 0,
@@ -440,7 +467,9 @@ def main(data: Path, out: Path) -> None:
             else "FAIL_PRELIMINARY"
         ),
     }
-    (out / "phase4_walk_forward_summary.json").write_text(json.dumps(summary, indent=2, default=str), encoding="utf-8")
+    (out / "phase4_walk_forward_summary.json").write_text(
+        json.dumps(summary, indent=2, default=str), encoding="utf-8"
+    )
     print(json.dumps(summary, indent=2, default=str))
 
 
