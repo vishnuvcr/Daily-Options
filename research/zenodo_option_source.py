@@ -53,24 +53,28 @@ def parse_expiry_date(path: Path) -> date | None:
     for name, month_num in month_names.items():
         m = re.search(rf"(?i)\b{re.escape(name)}[\s_-]*(20\d{{2}})\b", text)
         if m:
-            return date(int(m.group(1)), month_num, 1)  # converted to expiry below
+            year = int(m.group(1))
+            cal = calendar.monthcalendar(year, month_num)
+            thursdays = [w[calendar.THURSDAY] for w in cal if w[calendar.THURSDAY]]
+            return date(year, month_num, thursdays[-1])
 
     # Month-only path with year carried by the outer "NiftyOptions YYYY.zip".
     year_match = re.search(r"(?i)NiftyOptions\s*(20\d{2})", text)
     if year_match:
         for name, month_num in month_names.items():
             if re.search(rf"(?i)\b{re.escape(name)}\b", text):
-                return date(int(year_match.group(1)), month_num, 1)
+                year = int(year_match.group(1))
+                cal = calendar.monthcalendar(year, month_num)
+                thursdays = [w[calendar.THURSDAY] for w in cal if w[calendar.THURSDAY]]
+                return date(year, month_num, thursdays[-1])
 
     return None
 
 def expiry_type(expiry: date) -> str:
-    # Files without an explicit expiry-day are represented by the
-    # expiry month; classify its last Thursday as the monthly contract.
     cal = calendar.monthcalendar(expiry.year, expiry.month)
     thursdays = [w[calendar.THURSDAY] for w in cal if w[calendar.THURSDAY]]
     last_thu = date(expiry.year, expiry.month, thursdays[-1])
-    return "MONTH" if expiry.day == 1 or expiry == last_thu else "WEEK"
+    return "MONTH" if expiry == last_thu else "WEEK"
 
 def parse_strike_type(path: Path) -> tuple[float | None, str | None]:
     name = path.name.upper().strip()
