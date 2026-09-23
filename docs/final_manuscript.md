@@ -151,3 +151,159 @@ The research design reduced selection bias by fixing each family before looking 
 
 Where bootstrap intervals were calculated, they remained below zero for the important failed walk-forward families. This reduces the plausibility that the negative mean arose only from one or two extreme observations.
 
+## 8. Market-context coverage and data gaps
+
+The research plan called for broader market context where applicable. The exploratory program covered volatility regime, option IV/OI/volume structure, futures/spot price discovery, opening-range behavior and the literature surrounding institutional flows and global market transmission.
+
+The following areas remain data-limited rather than disproven:
+- timestamped FII/FPI and DII information at intraday resolution;
+- reliable historical India VIX observations aligned with the option tape;
+- synchronized NSE/BSE top-of-book and depth;
+- overnight global index futures, crude oil, USD/INR and other cross-market factors;
+- timestamped news/event data;
+- fully audited corporate-action and contract-master histories;
+- a licensed primary-index feed and historical executable quotes.
+
+The appropriate inference is therefore **data-limited negative evidence**. The research does not establish that every possible intraday inefficiency is absent.
+
+## 9. Strengths
+
+1. Predefined stop rules prevented endless post-result grid expansion.
+2. Information barriers and next-minute execution rules were explicit.
+3. Nested train/validation/embargo/test walk-forward was used for the main promotion decisions.
+4. Brokerage, statutory/exchange charges and slippage were modeled.
+5. Full-partition data audits identified field-quality problems before strategy use.
+6. Research branches, workflow definitions, errors and decisions are retained in the repository.
+7. Predictive diagnostics were kept separate from option P&L where appropriate.
+
+## 10. Limitations
+
+1. Public option archives are close/bar based rather than full executable bid/ask/depth histories.
+2. Some source volume fields were anomalous and were quarantined rather than force-used.
+3. Several analyses relied on an option-dataset spot field rather than a licensed primary-index tape.
+4. Historical weekly/monthly contract definitions, lot-size changes and corporate actions require detailed reference data.
+5. Some public sources have limited historical regime coverage.
+6. The project did not enter paper-shadow trading because no candidate met the preceding promotion gate.
+7. Synchronized NSE/BSE cross-venue research could not be completed with the available public quote data.
+8. Negative performance of a bounded family is not evidence against every untested strategy family.
+
+## 11. Conclusion
+
+The completed bounded research program did not identify a validated daily intraday NSE options strategy meeting the Rs 1,000 net/lot/day objective.
+
+The most important scientific finding is that several ideas which looked plausible in preliminary testing did not survive realistic costs and leakage-safe walk-forward validation. The ATM short-straddle near-miss is the clearest example: preliminary profitability reversed under nested testing.
+
+The research should stop parameter mining on the present public close-based datasets. The next useful advance is higher-fidelity evidence about execution, liquidity and synchronized information.
+
+No live-trading recommendation is made from this research.
+
+## 12. Future research
+
+### 12.1 Data-first re-entry
+
+A new research phase should begin only after an independent data-quality gate passes for:
+- synchronized NIFTY spot and futures;
+- historical option bid/ask;
+- market depth where available;
+- exact expiry/strike/lot/contract identifiers;
+- corporate-action adjustments;
+- India VIX history;
+- timestamped FII/FPI and DII information;
+- synchronized NSE and BSE quotes;
+- global overnight futures, crude, USD/INR and major indices;
+- timestamped news/events.
+
+### 12.2 Execution-first methodology
+
+Before another strategy grid:
+1. reconstruct fills from historical bid/ask;
+2. model spread, latency and market impact;
+3. use the user's actual Paytm Money tariff;
+4. freeze one strategy specification;
+5. paper/shadow test it before any live deployment.
+
+### 12.3 Candidate future hypothesis families
+
+Only after independent data validation, the next bounded families could examine:
+- cross-venue price discovery;
+- futures/options lead-lag with executable quotes;
+- volatility-surface dynamics;
+- event-driven intraday regime changes;
+- global-to-India information transmission;
+- flow/positioning variables with valid timestamps.
+
+Any new candidate must again pass an untouched out-of-sample gate. A new parameter combination should not be treated as a new scientific family unless its information source and economic mechanism are materially distinct.
+
+## 13. Reproducibility
+
+Repository: `vishnuvcr/Daily-Options`
+
+Final synthesis branch: `phase-7-manuscript`
+
+Terminal exploratory branch: `phase-3i-opening-false-break-reversion`
+
+Core records:
+- `docs/research_plan.md`
+- `docs/research_status.md`
+- `docs/error_log.md`
+- `docs/conversation_log.md`
+- `docs/phase3i_results.md`
+- `docs/phase3i_hypothesis.md`
+- `config/cost_model_2026.yaml`
+
+The repository is the canonical audit trail. Numerical results affected by documented defects were excluded from promotion.
+
+## 14. References
+
+1. NSE India — securities transaction tax and derivatives charge updates.
+2. NSE India — India VIX methodology and derivatives documentation.
+3. NSE India — FII/FPI and DII trading activity reports.
+4. NSE India — derivatives corporate-action adjustment documentation.
+5. Zenodo — Nifty spot and futures/options one-minute data, 2017-2020, DOI 10.5281/zenodo.10899828.
+6. Published research on NIFTY futures/spot price discovery and intraday causality.
+7. Published research on NIFTY implied-versus-realized variance and volatility risk premia.
+8. Published research on opening-market price discovery and intraday reversal/serial correlation.
+9. Paytm Money public brokerage and F&O FAQ materials; actual account tariff should be verified before paper/live execution.
+
+## Appendix A — Canonical final-phase summary
+
+| Metric | Base friction | Stress friction |
+|---|---:|---:|
+| Pre-registered variants | 144 | 144 |
+| Positive variants | 0 | 0 |
+| Best mean calendar-day net/lot/day | -854.06 | -886.27 |
+| Walk-forward test windows | 14 | 14 |
+| Positive test windows | 0 | 0 |
+| Mean test-window net/lot | -1,626.99 | -1,686.99 |
+| Approx. bootstrap 95% CI | [-1,697.91, -1,553.48] | [-1,757.91, -1,613.48] |
+
+## Appendix B — Representative engineering corrections
+
+The research log records high-impact corrections including:
+- dependency installation and module invocation in CI;
+- full-partition data auditing;
+- timestamp and session normalization;
+- executable common-strike selection;
+- forward rather than backward confirmation;
+- walk-forward date normalization;
+- indexed path simulation;
+- cache-key reuse;
+- prevention of trade-path/variant deduplication errors.
+
+A strategy statistic from a run affected by a material correctness defect was never accepted as evidence.
+
+## Appendix C — Promotion decision rule
+
+A family is promoted only when:
+1. the information barrier is satisfied;
+2. the data-quality gate passes;
+3. net out-of-sample expectancy is positive;
+4. at least one untouched test window reaches Rs 1,000/lot/day;
+5. stress costs remain informative; and
+6. no post-hoc expansion was used to obtain the result.
+
+Otherwise, the family is retired and the reason is recorded.
+
+## Appendix D — Final research position
+
+The project has reached the planned stopping point for the current public-data exploratory program. The next meaningful advance requires better execution and synchronized market data, not a larger search over the same close-based feature space.
