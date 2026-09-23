@@ -183,45 +183,114 @@ def backtest_day(ds, do, cfg, cm):
     }
 
 
-def evaluate(spot,opt,configs):
-    cm=OptionCostModel()
+def build_trade_bases(spot, opt, configs):
+    cm = OptionCostModel()
     spot_days={d:ds for d,ds in spot.groupby(spot.timestamp.dt.date)}
     opt_days={d:do for d,do in opt.groupby(opt.timestamp.dt.date)}
-    rows=[]; trades=[]
-    all_days=len(spot_days)
+    bases=[]
+    keys=sorted({(cfg.family,cfg.entry_start,cfg.vol_mult,cfg.rsi_lo,cfg.rsi_hi) for cfg in configs})
 
-    for cfg in configs:
-        cfg_trades=[]
-        for d,ds in spot_days.items():
-            do=opt_days.get(d)
-            if do is None:
-                continue
-            t=backtest_day(ds,do,cfg,cm)
-            if t is not None:
-                cfg_trades.append(t)
-        if len(cfg_trades) < max(60,int(0.45*all_days)):
+    for d,ds in spot_days.items():
+        dsf=features(ds)
+        do=opt_days.get(d)
+        if do is None:
             continue
-        df=pd.DataFrame(cfg_trades)
-        daily=df.groupby("date").net_pnl.sum()
-        all_daily=pd.Series(0.0,index=sorted(spot_days.keys()))
-        all_daily.loc[daily.index]=daily
+        for family,entry_start,vol_mult,rsi_lo,rsi_hi in keys:
+            cfg=Config(family,entry_start,entry_start+75,0.20,0.40,60,vol_mult,rsi_lo,rsi_hi)
+            sig=signal_at(dsf,cfg,d)
+            if sig is None:
+                continue
+            st,typ=sig
+            srow=ds[ds.timestamp>=st]
+            if srow.empty:
+                continue
+            spot_px=float(srow.iloc[0].close)
+            q=do[(do.option_type==typ)&(do.timestamp>=st+pd.Timedelta(minutes=1))&(do.timestamp<=st+pd.Timedelta(minutes=4))&(do.close>0)].copy()
+            if q.empty:
+                continue
+            strike=float(min(q.strike.dropna().unique(),key=lambda s:abs(s-spot_px)))
+            q=q[q.strike==strike].sort_values("timestamp")
+            if q.empty:
+                continue
+            entry=float(q.iloc[0].close); et=q.iloc[0].timestamp
+            path=do[(do.option_type==typ)&(do.strike==strike)&(do.timestamp>et)&(do.timestamp<=et+pd.Timedelta(minutes=90))].sort_values("timestamp")
+            if path.empty:
+                continue
+            lot=nifty_lot_size(d)
+            bases.append({
+                "date":d,"family":family,"entry_start":entry_start,"vol_mult":vol_mult,
+                "rsi_lo":rsi_lo,"rsi_hi":rsi_hi,"entry_time":et,"option_type":typ,
+                "strike":strike,"entry":entry,"lot":lot,"path":path,
+            })
+    return bases, len(spot_days)
+
+
+def precompute_outcomes(bases, configs, cm):
+    out={}
+    unique_risk=sorted({(cfg.stop,cfg.target,cfg.hold) for cfg in configs})
+    for i,b in enumerate(bases):
+        path=b["path"]
+        for stop,target,hold in unique_risk:
+            p=path[path.timestamp<=b["entry_time"]+pd.Timedelta(minutes=hold)]
+            stop_px=b["entry"]*(1-stop)
+            tgt_px=b["entry"]*(1+target)
+            exit_px=None; reason="time"
+            if not p.empty:
+                for _,r in p.iterrows():
+                    hit_s=float(r.low)<=stop_px
+                    hit_t=float(r.high)>=tgt_px
+                    if hit_s and hit_t:
+                        exit_px=stop_px; reason="stop_first"; break
+                    if hit_s:
+                        exit_px=stop_px; reason="stop"; break
+                    if hit_t:
+                        exit_px=tgt_px; reason="target"; break
+                if exit_px is None:
+                    exit_px=float(p.iloc[-1].close)
+            if exit_px is not None:
+                out[(i,stop,target,hold)]=(
+                    float(cm.net_pnl(b["entry"],exit_px,1,b["lot"])),
+                    float(exit_px),reason
+                )
+    return out
+
+
+def evaluate_bases(bases, all_days, configs, outcomes):
+    results=[]
+    for cfg in configs:
+        daily={}
+        trades=0
+        for i,b in enumerate(bases):
+            if (b["family"],b["entry_start"],b["vol_mult"],b["rsi_lo"],b["rsi_hi"]) != (
+                cfg.family,cfg.entry_start,cfg.vol_mult,cfg.rsi_lo,cfg.rsi_hi
+            ):
+                continue
+            key=(i,cfg.stop,cfg.target,cfg.hold)
+            if key not in outcomes:
+                continue
+            net,exit_px,reason=outcomes[key]
+            daily[b["date"]]=daily.get(b["date"],0.0)+net
+            trades+=1
+        if trades < max(60,int(0.45*all_days)):
+            continue
+        all_daily=pd.Series(0.0,index=pd.Index(sorted({b["date"] for b in bases})))
+        if daily:
+            for d,v in daily.items(): all_daily.loc[d]=v
         eq=all_daily.cumsum(); dd=eq-eq.cummax()
-        wins=df.loc[df.net_pnl>0,"net_pnl"].sum(); losses=-df.loc[df.net_pnl<0,"net_pnl"].sum()
-        rows.append({
+        wins=all_daily[all_daily>0].sum(); losses=-all_daily[all_daily<0].sum()
+        results.append({
             "family":cfg.family,"entry_start":cfg.entry_start,"entry_end":cfg.entry_end,
             "stop":cfg.stop,"target":cfg.target,"hold":cfg.hold,"vol_mult":cfg.vol_mult,
-            "rsi_lo":cfg.rsi_lo,"rsi_hi":cfg.rsi_hi,"trades":len(df),
-            "coverage":len(df)/all_days,"mean_day_net":float(all_daily.mean()),
+            "rsi_lo":cfg.rsi_lo,"rsi_hi":cfg.rsi_hi,"trades":trades,
+            "coverage":trades/all_days,"mean_day_net":float(all_daily.mean()),
             "median_day_net":float(all_daily.median()),"p10_day_net":float(all_daily.quantile(0.10)),
-            "positive_day_rate":float((all_daily>0).mean()),"win_rate_trade":float((df.net_pnl>0).mean()),
+            "positive_day_rate":float((all_daily>0).mean()),"win_rate_trade":float((all_daily.loc[all_daily!=0]>0).mean()) if (all_daily!=0).any() else 0.0,
             "profit_factor":float(wins/losses) if losses else 999.0,"max_drawdown":float(dd.min())
         })
-        trades.extend(cfg_trades)
-
-    board=pd.DataFrame(rows)
+    board=pd.DataFrame(results)
     if not board.empty:
         board=board.sort_values(["mean_day_net","positive_day_rate","profit_factor"],ascending=[False,False,False])
-    return board,pd.DataFrame(trades)
+    return board
 
 
 def main(data,out):
@@ -233,23 +302,21 @@ def main(data,out):
                 for target in (0.30,0.40,0.50,0.60):
                     for hold in (30,60,90):
                         for vol_mult in (1.0,1.2,1.5):
-                            if family=="trend":
-                                rsi_lo,rsi_hi=55,70
-                            else:
-                                rsi_lo,rsi_hi=30,70
+                            rsi_lo,rsi_hi=(55,70) if family=="trend" else (30,70)
                             configs.append(Config(
                                 family,entry_start,entry_start+75,stop,target,hold,
                                 vol_mult,rsi_lo,rsi_hi
                             ))
-
-    board,trades=evaluate(spot,opt,configs)
+    cm=OptionCostModel()
+    bases,all_days=build_trade_bases(spot,opt,configs)
+    outcomes=precompute_outcomes(bases,configs,cm)
+    board=evaluate_bases(bases,all_days,configs,outcomes)
     out.mkdir(parents=True,exist_ok=True)
     board.head(250).to_csv(out/"regime_adaptive_leaderboard.csv",index=False)
-    if not trades.empty:
-        trades.to_csv(out/"regime_adaptive_trades.csv",index=False)
     qualified=board[board.mean_day_net>=1000] if not board.empty else pd.DataFrame()
     summary={
         "calendar_days":int(spot.timestamp.dt.date.nunique()),
+        "trade_bases":len(bases),
         "variants_tested":len(configs),
         "target_daily_net_inr":1000.0,
         "target_qualified_count":int(len(qualified)),
