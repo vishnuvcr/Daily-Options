@@ -4,7 +4,7 @@ Research program for discovering and validating an intraday NSE options strategy
 
 ## Current status — 2026-09-24
 
-Phase 4 nested walk-forward validation is complete. The prior intraday ATM short-straddle near-miss failed the preliminary promotion gate and is retired as a lead family.
+Phase 4 and Phase 3G have now both failed their stated promotion gates and are retired. Phase 3H is the next bounded hypothesis.
 
 | Phase | Branch | Status |
 |---|---|---|
@@ -14,29 +14,23 @@ Phase 4 nested walk-forward validation is complete. The prior intraday ATM short
 | 3 | phase-3-options-structure | PARTIAL — lead families retired |
 | 3F | phase-3f-option-microstructure | COMPLETE — lead families retired |
 | 4 | phase-4-walk-forward-selection-v2 | COMPLETE — FAIL_PRELIMINARY |
-| 3G | phase-3g-oi-confirmed-breakout | NEXT |
+| 3G | phase-3g-oi-confirmed-breakout | COMPLETE — FAIL_PRELIMINARY; RETIRED |
+| 3H | phase-3h-option-lead-lag | NEXT |
 | 5 | phase-5-robustness | BLOCKED until a candidate passes validation |
 | 6 | phase-6-paper-shadow | PLANNED |
 | 7 | phase-7-manuscript | PLANNED |
 
-## Phase 4 result
+## Phase 3G result
 
-- Run 35912159508 completed successfully.
-- 7,331 observations, 432 total parameter variants, 14 walk-forward windows.
-- 22 selected test windows: 8 positive, 14 non-positive.
-- Mean selected test-window net: Rs -64.23 per lot.
-- Median selected test-window net: Rs -43.69 per lot.
-- Zero selected test windows cleared the Rs 1,000/day target.
-- No selected-test bootstrap 95% lower bound was positive across the run.
+- Corrected run 35916973751 completed after the walk-forward date bug was fixed.
+- 128 pre-registered variants: 0 positive on all-calendar-day mean net at 0.20-point slippage; best Rs -61.11/lot/day.
+- At 0.40-point stress slippage, 0/128 were positive; best Rs -79.55/lot/day.
+- Corrected walk-forward: 13 test windows; 1 positive at base friction and 0 positive at stress friction; mean test-window net Rs -192.79 and Rs -252.79 respectively.
+- Decision: retire Phase 3G without enlarging the grid.
 
 ## Next research direction
 
-The next bounded hypothesis is Phase 3G: dynamic intraday price-structure breaks as the primary event, with option OI repositioning used only as post-break confirmation, then executed with a defined-risk debit spread.
-
-A recent 2026 NIFTY event-study reports that OI repositioning is associated with structural breaks but did not retain a robust advance-prediction edge out of sample. That supports using OI as confirmation of an already-underway break rather than as a standalone forecasting trigger.
-
-Latest external source:
-https://papers.ssrn.com/sol3/Delivery.cfm/7394780.pdf?abstractid=7394780&mirid=1
+Phase 3H tests derivative price-discovery / option-lead-lag: whether short-horizon ATM call/put price changes contain incremental information about the next 1-5 minute NIFTY spot move, with any tradable edge expressed via defined-risk debit spreads.
 
 ## Cost baseline
 
@@ -48,9 +42,8 @@ Research default remains Rs 20 per executed order, 0.15% option-sale STT from 20
 - docs/research_status.md
 - docs/error_log.md
 - docs/conversation_log.md
+- docs/phase3g_results.md
 - docs/phase4_walk_forward_results.md
-- reports/phase4_walk_forward_summary.json
-- reports/phase4_walk_forward_results.csv
 - config/cost_model_2026.yaml
 - research/
 - .github/workflows/
