@@ -25,6 +25,11 @@ jobs:
       - name: Run unit tests
         run: pytest -q
 
+      - uses: actions/cache@v4
+        with:
+          path: data/cache/hf_nifty_options
+          key: phase3g-artist23-45e0a04-v1
+
       - name: Run Phase 3G bounded research
         run: bash scripts/run_phase3g_ci.sh
 
