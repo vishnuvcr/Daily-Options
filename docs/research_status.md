@@ -240,3 +240,10 @@ Phase 3G — COMPLETE; FAIL_PRELIMINARY; RETIRED.
 - Forward spot diagnostics showed no stable directional hit-rate edge; observed 1-minute hit rates ranged about 46.8%–56.1%.
 - Decision: retire Phase 3H. No parameter expansion is permitted.
 - Next bounded direction: regime-conditioned underlying-price behavior (intraday dislocation/mean-reversion or opening-range regime) expressed through defined-risk spreads.
+
+### 2026-09-24 — Step 3I.1 Final exploratory family initialized
+- Created branch phase-3i-opening-false-break-reversion.
+- Pre-registered 144 opening-range false-break/re-entry variants: 5/15/30-minute opening range, 0.05%/0.10% break excursion, 0.02%/0.05% re-entry confirmation, WEEK/MONTH expiry, 1/2-strike spread width, and 15/30/60-minute hold.
+- Implemented one-pass base/stress evaluation using the same pinned multi-year dataset and cost model.
+- Added regression tests and manual GitHub Actions workflow.
+- Status: CI numerical result pending.
