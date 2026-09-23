@@ -30,3 +30,12 @@
 - Current CI run being monitored: GitHub Actions run 35918302989 on branch `phase-3h-option-lead-lag`.
 - At this continuation checkpoint, unit tests and pinned-data acquisition have completed; the base/stress lead-lag tournament is executing. No numerical Phase 3H statistic is accepted until the run and artifact outputs complete.
 - The project research log records user-visible decisions and evidence only; private hidden chain-of-thought is not stored.
+
+
+## 2026-09-24 — Phase 3H final result
+- User authorized autonomous continuation.
+- Corrected Phase 3H run 35918302989 completed successfully after the pre-result E0043 path-variant correction and E0044 cache correction.
+- All 108 variants were negative at base and stress slippage.
+- Corrected WFA had 16 negative test windows out of 16 at both friction levels.
+- Decision: retire option-price lead-lag as a lead family; do not widen thresholds or add ad hoc filters.
+- Next bounded research direction: underlying-price regime-conditioned mean reversion/opening-range behavior with defined-risk spreads.
