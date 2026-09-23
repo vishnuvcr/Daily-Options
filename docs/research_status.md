@@ -68,6 +68,18 @@ Status: candidate sources only; independent validation pending Phase 1.
 - Phase 3 CI was changed to manual-only so documentation commits do not cancel benchmark runs.
 - Result: pending the next manual Phase 3 execution; the existing completed short-straddle result remains the current quantitative lead.
 
+
+### 2026-09-23 — Step 3.3 Focused straddle grid result
+- Optimized grid reused precomputed trade outcomes across 420 base configurations and 1,200 filter variants.
+- Zero configurations reached the Rs 1,000/day target.
+- Best filtered configuration: entry at 10:15, 1.8x premium stop, 45% decay target, 180-minute hold, gap <=0.5%, first-15-minute range <=0.5%, VRP >=0.
+- Result: 153 trades, 62.7% calendar-day coverage, mean net Rs 233.06/day, median daily P&L Rs 0, 10th-percentile daily P&L Rs -1,513.44, positive-day rate 42.5%, max drawdown Rs -19,407.76/lot, profit factor 1.60.
+- Decision: retire naked intraday straddle as lead family. It does not meet the target and its calendar-day hit rate/drawdown profile is not aligned with the user's consistency objective.
+
+### 2026-09-23 — Cost/accounting correction
+- Verified current NSE contract information is updated 2026-09-10 and NSE's Oct 3, 2025 circular revised NIFTY from 75 to 65; earlier 2025-2026 backtests that used a fixed 65 lot are therefore provisional until rerun with the date-aware contract resolver. citeturn328174search13turn328174search0
+- Verified Paytm Money's current F&O FAQ states Rs 10 brokerage per unique executed F&O order; the research default remains a conservative Rs 20/order until the user's exact account tariff is known. citeturn809296search0
+
 ## Current blockers
 - Historical bid/ask/depth data may require licensed or broker-authenticated sources.
 - Some public datasets have close/market-price bars without executable quotes.
