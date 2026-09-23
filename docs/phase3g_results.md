@@ -5,12 +5,12 @@
 - Partitions audited/used: 84 parquet files.
 - Raw rows audited: 33,963,731.
 - Phase 3G grid: 128 pre-registered variants.
-- Fast2 GitHub Actions run: 35916600082.
-- Accepted artifact: 10775362997.
-- Accepted raw path artifact: 79,888 executable candidate trade paths.
+- Initial fast2 run: 35916600082; artifact: 10775362997.
+- Corrected fast2 walk-forward run: 35916973751; commit: b499770d36fe06c15b1b3244a8b162cbd43deb22; artifact: 10775388676.
+- Accepted raw path artifact contains 79,888 executable candidate trade paths.
 
 ## Temporal validity
-The accepted fast2 artifact uses forward OI confirmation: OI change is measured after the price-structure break and entry occurs only after the confirmation window plus one minute. Earlier runs that used backward-looking OI change are excluded.
+The accepted Phase 3G artifacts use forward OI confirmation: OI change is measured after the price-structure break and entry occurs only after the confirmation window plus one minute. Earlier runs that used backward-looking OI change are excluded.
 
 ## Preliminary leaderboard
 
@@ -33,7 +33,7 @@ The accepted fast2 artifact uses forward OI confirmation: OI change is measured 
 ## Corrected walk-forward evaluation
 The first artifact's reusable WFA function returned zero windows because it compared Python date objects against timestamp-valued trade_date rows. The function was corrected in commit b499770d36fe06c15b1b3244a8b162cbd43deb22.
 
-The WFA was independently recomputed from the immutable accepted path artifact using the repository cost model and the same selection rule:
+The corrected WFA used the immutable path artifact and the same pre-registered selection rule:
 - Training window: 180 trading days.
 - Validation window: 60 trading days.
 - Embargo: 5 trading days.
@@ -56,27 +56,28 @@ The WFA was independently recomputed from the immutable accepted path artifact u
 - Target-qualified test windows: 0/13.
 - Mean test-window net: -Rs 252.79/lot.
 - Median test-window net: -Rs 251.13/lot.
-- Bootstrap 95% interval for the mean test-window net: approximately [-Rs 326.40, -Rs 179.16].
+- Bootstrap 95% interval for the mean test-window net: approximately [-Rs 328.12, -Rs 177.72].
 
 ## Decision
-Phase 3G FAIL_PRELIMINARY and retire as a lead family.
+Phase 3G is FAIL_PRELIMINARY and is retired as a lead family.
 
-The result is negative across the bounded grid, degrades under worse slippage, and remains negative under leakage-safe walk-forward selection.
+The result is negative across the full bounded grid, worsens under doubled slippage, and stays negative under leakage-safe walk-forward selection. Because the complete pre-registered family failed before the robustness phase, no additional parameter sweep is permitted.
 
 ## Strengths
 - Large multi-year option-chain source.
 - 128 variants pre-registered before testing.
-- Explicit information barrier for OI.
-- Date-aware lot sizes.
+- Explicit post-break information barrier for OI.
+- Date-aware NIFTY lot sizes.
 - Brokerage, statutory charges and per-leg slippage included.
 - Stress test doubles slippage.
 - Walk-forward validation uses train/validation/embargo/test separation.
+- Corrected WFA was rerun independently from the immutable path artifact rather than trusting the first empty WFA table.
 
 ## Limitations
 - Public data are closing-price based rather than full executable bid/ask/depth.
 - Volume was quarantined because of source anomalies and was not used.
-- Corrected WFA statistics were independently recomputed from the immutable accepted artifact after the bookkeeping defect; the corrected CI rerun was still in progress when this report was written.
-- This result applies to this specific family and data source.
+- The lead-lag hypothesis is tested on this public data source only; the result is not a statement about all NSE option microstructure.
+- No live/paper execution is implied by the historical result.
 
 ## Next bounded hypothesis
-Test derivative price-discovery / option-lead-lag: whether short-horizon ATM call/put price changes contain incremental information about the next 1-5 minute spot move, then express only statistically significant signals through defined-risk spreads.
+Test derivative price-discovery / option-lead-lag: whether short-horizon ATM call/put price changes contain incremental information about the next 1-5 minute NIFTY spot move, then express only pre-registered directional signals through defined-risk spreads.
