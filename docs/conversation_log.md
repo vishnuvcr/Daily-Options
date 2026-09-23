@@ -21,3 +21,12 @@
 - No strategy result from that slow run was accepted.
 - Decision: replace the nested pandas execution path with an indexed cached engine while preserving the 108-variant pre-registration, cost model, information barrier and WFA rules.
 - Latest run: 35918302989, currently in progress after the corrected engine commit; dependency installation is still underway and no numerical result is yet accepted.
+
+## 2026-09-24 — Research continuation from linked chat
+
+- User requested continuation of the Daily-Options research from the prior linked conversation.
+- Repository audit confirmed Phase 4 and Phase 3G are complete and retired; Phase 3H is the current bounded experiment.
+- Current accepted research direction: short-horizon ATM option-price pressure versus subsequent NIFTY spot movement, with defined-risk debit spreads and realistic costs.
+- Current CI run being monitored: GitHub Actions run 35918302989 on branch `phase-3h-option-lead-lag`.
+- At this continuation checkpoint, unit tests and pinned-data acquisition have completed; the base/stress lead-lag tournament is executing. No numerical Phase 3H statistic is accepted until the run and artifact outputs complete.
+- The project research log records user-visible decisions and evidence only; private hidden chain-of-thought is not stored.
