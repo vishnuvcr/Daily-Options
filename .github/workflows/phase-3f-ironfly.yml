@@ -1,0 +1,68 @@
+name: Phase 3F - Iron Fly Volatility Regime
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - phase-3f-option-microstructure
+  push:
+    branches:
+      - phase-3f-ironfly-volatility
+    paths:
+      - "research/phase3f_ironfly_tournament.py"
+      - "research/phase3f_option_microstructure.py"
+      - "research/cost_model.py"
+      - "tests/test_cost_model.py"
+      - ".github/workflows/phase-3f-ironfly.yml"
+
+concurrency:
+  group: phase3f-ironfly-volatility
+  cancel-in-progress: true
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install research dependencies
+        run: |
+          pip install pandas pyarrow huggingface_hub pytest duckdb
+
+      - name: Unit tests
+        run: pytest -q
+
+      - uses: actions/cache@v4
+        with:
+          path: data/cache/hf_nifty_options
+          key: phase3f-artist23-45e0a04-v2
+
+      - name: Acquire or reuse pinned IV/OI dataset
+        run: |
+          mkdir -p data/cache/hf_nifty_options
+          if ! find data/cache/hf_nifty_options -type f -name '*.parquet' -print -quit | grep -q .; then
+            python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="artist-23/nifty-options-data", repo_type="dataset", revision="45e0a04", local_dir="data/cache/hf_nifty_options", allow_patterns=["NIFTY/**/*.parquet", "NIFTY/**"])'
+          fi
+          test -d data/cache/hf_nifty_options/NIFTY
+
+      - name: Audit source data
+        run: |
+          python -m research.phase3f_option_microstructure             --data data/cache/hf_nifty_options/NIFTY             --out reports/phase3f_data_audit.json
+
+      - name: Run iron-fly volatility regime screen
+        run: |
+          python -m research.phase3f_ironfly_tournament             --data data/cache/hf_nifty_options/NIFTY             --out reports
+
+      - name: Upload Phase 3F iron-fly reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase3f-ironfly-results
+          path: |
+            reports/
+            data/manifests/phase3f_artist23.json
