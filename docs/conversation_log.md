@@ -39,3 +39,10 @@
 - Corrected WFA had 16 negative test windows out of 16 at both friction levels.
 - Decision: retire option-price lead-lag as a lead family; do not widen thresholds or add ad hoc filters.
 - Next bounded research direction: underlying-price regime-conditioned mean reversion/opening-range behavior with defined-risk spreads.
+
+## 2026-09-24 — Phase 3I data gate result and predictive-gate correction
+
+- Phase 3I CI successfully loaded all four Zenodo years after fixing nested archive extraction, compact schema normalization, and headerless CSV detection.
+- Accepted data-gate output reports 991 common trading dates from 2017-01-02 through 2020-12-31, 99.733% timestamp overlap, and 99.193% common-day session completeness at the >=350-minute threshold.
+- The first 72-variant predictive diagnostic found a small cluster of apparently positive futures/spot lead-gap configurations, but that initial code gate did not enforce the pre-registered two-horizon and both-halves stability rule.
+- That first predictive result is explicitly provisional. The repository now enforces the declared stability rule, and only the corrected CI output can advance Phase 3I to option implementation.
