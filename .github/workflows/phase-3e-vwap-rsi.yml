@@ -26,8 +26,12 @@ jobs:
       - run: |
           mkdir -p data/cache reports
           test -s data/cache/nifty_1y_1min.xlsx || curl -L --fail --retry 3 -o data/cache/nifty_1y_1min.xlsx https://raw.githubusercontent.com/rajmaurya0904/bhav/main/sample_data/nifty_1y_1min.xlsx
-      - run: python -m research.vwap_rsi_momentum --data data/cache/nifty_1y_1min.xlsx --out reports
+      - name: Diagnose VWAP/RSI signal availability
+        run: python -m research.vwap_rsi_diagnostics --data data/cache/nifty_1y_1min.xlsx --out reports
+      - name: Run VWAP/RSI momentum tournament
+        run: python -m research.vwap_rsi_momentum --data data/cache/nifty_1y_1min.xlsx --out reports
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: phase-3e-vwap-rsi-results
           path: reports/
