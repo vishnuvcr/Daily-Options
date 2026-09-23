@@ -8,14 +8,17 @@ from research.phase3i_option_execution import (
     build_signal_events,
     signal_variant_key,
 )
+from research.zenodo_option_source import (
+    expiry_type,
+    parse_strike_type,
+)
 
 
-def test_option_grid_is_24_variants():
+def test_option_grid_is_bounded():
     assert len(SIGNAL_SPECS) == 2
     assert EXPIRIES == ("WEEK", "MONTH")
     assert WIDTH_STEPS == (1, 2)
     assert HOLDS == (5, 10, 15)
-    assert len(SIGNAL_SPECS) * len(EXPIRIES) * len(WIDTH_STEPS) * len(HOLDS) == 24
 
 
 def test_signal_variant_keys_are_stable():
@@ -35,3 +38,13 @@ def test_signal_builder_uses_first_event_per_day():
     fut["close"] = [100, 100.2, 100.4, 100.6]
     out = build_signal_events(spot, fut)
     assert out["trade_date"].nunique() <= 1
+
+
+def test_zenodo_expiry_classification():
+    assert expiry_type(pd.Timestamp("2019-12-26").date()) == "MONTH"
+    assert expiry_type(pd.Timestamp("2019-12-19").date()) == "WEEK"
+
+
+def test_zenodo_filename_strike_and_type():
+    assert parse_strike_type(pd.Path if False else __import__("pathlib").Path("Nifty11200CE.xlsx")) == (11200.0, "CALL")
+    assert parse_strike_type(__import__("pathlib").Path("Nifty11200PE.xlsx")) == (11200.0, "PUT")
