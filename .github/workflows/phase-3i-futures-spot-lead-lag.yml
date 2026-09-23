@@ -86,7 +86,7 @@ jobs:
           echo "717d15361af52d1d654b4909d998967e  data/cache/zenodo_nifty_options/source.zip" | md5sum -c -
           rm -rf data/cache/zenodo_nifty_options/extracted
           mkdir -p data/cache/zenodo_nifty_options/extracted
-          python -m research.prepare_zenodo_options             --archive data/cache/zenodo_nifty_options/source.zip             --signals reports/phase3i/phase3i_signals.csv             --out data/cache/zenodo_nifty_options/extracted
+          python -m research.prepare_zenodo_options             --archive data/cache/zenodo_nifty_options/source.zip             --futures data/cache/zenodo_nifty_spot_futures/extracted             --out data/cache/zenodo_nifty_options/extracted
           find data/cache/zenodo_nifty_options/extracted -type f \( -name '*.csv' -o -name '*.xlsx' -o -name '*.xls' \) | wc -l
 
       - name: Run Phase 3I option implementation - base
