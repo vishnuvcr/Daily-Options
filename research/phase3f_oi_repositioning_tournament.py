@@ -212,6 +212,12 @@ def evaluate(events: pd.DataFrame, raw: pd.DataFrame, features: pd.DataFrame, ou
 
     all_rows = []
     cm = OptionCostModel()
+    call = q[q.option_type=="CALL"].rename(
+        columns={"datetime":"exit_time","strike_price":"_strike","close":"close"}
+    )
+    put = q[q.option_type=="PUT"].rename(
+        columns={"datetime":"exit_time","strike_price":"_strike","close":"close"}
+    )
     for width in WIDTHS:
         e = events.copy()
         if width == 1:
