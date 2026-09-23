@@ -8,6 +8,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import polars as pl
+import pyarrow as pa
+import pyarrow.compute as pc
+import pyarrow.parquet as pq
 
 from research.contracts import nifty_lot_size
 from research.cost_model import OptionCostModel
@@ -24,12 +27,18 @@ class Core:
 
 def load(path: Path) -> pl.DataFrame:
     cols=["date","timestamp","expiry","strike","option_type","high","low","close"]
-    df=pl.read_parquet(path,columns=cols)
+    table=pq.read_table(path,columns=cols)
+    ts_idx=table.schema.get_field_index("timestamp")
+    ts_type=table.schema.field("timestamp").type
+    if pa.types.is_timestamp(ts_type) and ts_type.tz:
+        naive=pc.cast(table["timestamp"],pa.timestamp("us"))
+        table=table.set_column(ts_idx,"timestamp",naive)
+    df=pl.from_arrow(table)
     return (
         df.with_columns([
             pl.col("date").cast(pl.Date),
             pl.col("timestamp").cast(pl.Datetime("us")),
-            pl.col("expiry").str.strptime(pl.Date,"%Y-%m-%d",strict=False),
+            pl.col("expiry").cast(pl.Date),
             pl.col("strike").cast(pl.Float64),
             pl.col("option_type").cast(pl.String).str.to_uppercase(),
             pl.col("high").cast(pl.Float64),
