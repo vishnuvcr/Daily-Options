@@ -39,3 +39,8 @@
 - Corrected WFA had 16 negative test windows out of 16 at both friction levels.
 - Decision: retire option-price lead-lag as a lead family; do not widen thresholds or add ad hoc filters.
 - Next bounded research direction: underlying-price regime-conditioned mean reversion/opening-range behavior with defined-risk spreads.
+
+## 2026-09-24 — Phase 3I initialization
+- Phase 3H was retired after a negative 108-variant WFA.
+- Per the project stop rule, Phase 3I is the last bounded exploratory family under the current public dataset.
+- Hypothesis: opening-range false breaks that re-enter the range may exhibit short-horizon mean reversion; test via defined-risk debit spreads.
