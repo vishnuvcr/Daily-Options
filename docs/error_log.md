@@ -31,3 +31,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0018 | 2026-09-24 | 3F | First tournament implementation used repeated pandas filtering inside nested parameter loops and was computationally inefficient; the run was cancelled before producing a result | Excessive runtime and wasted CI time | Replaced with vectorized joins and one-trade-per-day construction; rerun completed successfully | CLOSED |
+
+
+| E0022 | 2026-09-24 | 3F-skew | New four-leg cost-model unit test used an incorrect manual gross-P&L sign formula; the implementation returned the correct signed cash-flow result | CI unit test failed and blocked data acquisition; no strategy result was produced | Corrected the test's gross-P&L calculation to match the explicit long/short leg signs | CLOSED |
