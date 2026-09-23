@@ -8,3 +8,9 @@
 - Corrected WFA: 13 test windows; base 1 positive, stress 0 positive; mean test-window net Rs -192.79 base and Rs -252.79 stress.
 - Decision: retire the bounded dynamic-break + post-break-OI family without expanding its grid.
 - Next bounded hypothesis: option-lead-lag / derivative price-discovery.
+
+## 2026-09-24 — Phase 3H initialization
+- Phase 3G was retired after corrected leakage-safe WFA failure.
+- User authorized continuation.
+- New bounded hypothesis: short-horizon ATM call-minus-put price pressure may lead the next 1–5 minute NIFTY spot move.
+- Pre-registered 108 variants; no post-hoc expansion planned.
