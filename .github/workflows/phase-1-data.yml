@@ -2,16 +2,9 @@ name: Phase 1 - Data Foundation
 
 on:
   workflow_dispatch:
-    inputs:
-      source:
-        description: "Dataset source to validate"
-        required: false
-        default: "manifest-only"
-        type: choice
-        options:
-          - manifest-only
-          - zenodo
-          - huggingface
+  push:
+    branches:
+      - phase-3g-oi-confirmed-breakout
 
 jobs:
   audit:
@@ -24,26 +17,20 @@ jobs:
           python-version: "3.12"
 
       - name: Install research dependencies
-        run: pip install pandas pyarrow openpyxl pytest pyyaml
+        run: pip install pandas pyarrow openpyxl pytest pyyaml duckdb huggingface_hub
 
       - name: Create research directories
         run: mkdir -p data/raw data/cache reports
 
-      - name: Validate manifest
-        run: python - <<'PY'
-import pathlib, yaml
-data = yaml.safe_load(pathlib.Path("data/sources.yaml").read_text())
-assert "sources" in data and data["sources"]
-print(f"validated {len(data['sources'])} sources")
-PY
-
       - name: Run unit tests
         run: pytest -q
 
-      - name: Upload audit scaffold
+      - name: Run Phase 3G bounded research
+        run: bash scripts/run_phase3g_ci.sh
+
+      - name: Upload Phase 3G reports
         uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: phase-1-audit-scaffold
-          path: |
-            data/
-            reports/
+          name: phase3g-bridge-results
+          path: reports/
