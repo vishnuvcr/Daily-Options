@@ -43,6 +43,19 @@ Status: candidate sources only; independent validation pending Phase 1.
 - Backtest stage stopped on E0006 before numerical results were produced.
 - Correction committed so the next push reruns the tournament.
 
+### 2026-09-23 — Step 2.2 Phase 2 baseline result
+- Dataset: public one-year NIFTY 1-minute sample, 244 trading days.
+- Variants tested: 12 directional option-buying configurations.
+- Best variant: EMA family without VWAP/volume filters.
+- Trades: 242.
+- Win rate: 43.39%.
+- Mean net on active trade days: Rs -307.42 per lot.
+- Mean net across all trading days: Rs -304.90 per lot/day.
+- Profit factor: 0.690.
+- Total net: Rs -74,396.28 across the sample.
+- Promotion gate: FAIL.
+- Inference: simple single-leg directional option buying is rejected as the lead family under this cost/execution model; Phase 3 will test defined-risk option structures and regime-conditioned volatility signals.
+
 ## Current blockers
 - Historical bid/ask/depth data may require licensed or broker-authenticated sources.
 - Some public datasets have close/market-price bars without executable quotes.
