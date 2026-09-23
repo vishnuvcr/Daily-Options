@@ -17,7 +17,7 @@ def test_loss_trade_remains_loss():
 
 def test_four_leg_defined_structure_cost_model():
     cm = OptionCostModel()
-    gross = ((55-50) + (20-10) - (25-15) - (20-10)) * 65
+    gross = ((55 - 10 - 20 + 10) - (50 - 20 - 25 + 15)) * 65
     net = cm.four_leg_defined_net_pnl(
         50, 20, 25, 15,
         55, 10, 20, 10,
