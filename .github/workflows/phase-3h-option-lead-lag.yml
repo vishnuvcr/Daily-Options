@@ -7,6 +7,7 @@ on:
       - phase-3h-option-lead-lag
     paths:
       - "research/phase3h_option_lead_lag.py"
+      - "research/phase3h_fast_engine.py"
       - "docs/phase3h_hypothesis.md"
       - "tests/test_phase3h_option_lead_lag.py"
       - "research/cost_model.py"
@@ -52,9 +53,9 @@ jobs:
 
       - name: Base and stress lead-lag tournament
         run: |
-          python -m research.phase3h_option_lead_lag             --data data/cache/hf_nifty_options/NIFTY             --out reports/phase3h-base             --slippage 0.20
+          python -m research.phase3h_fast_engine             --data data/cache/hf_nifty_options/NIFTY             --out reports/phase3h-base             --slippage 0.20
 
-          python -m research.phase3h_option_lead_lag             --data data/cache/hf_nifty_options/NIFTY             --out reports/phase3h-stress             --slippage 0.40
+          python -m research.phase3h_fast_engine             --data data/cache/hf_nifty_options/NIFTY             --out reports/phase3h-stress             --slippage 0.40
 
       - name: Upload Phase 3H reports
         uses: actions/upload-artifact@v4
