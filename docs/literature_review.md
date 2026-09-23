@@ -32,3 +32,15 @@ Source: https://www.researchgate.net/publication/411779323_Harvesting_the_Volati
 ## Research implication
 
 The evidence base is mixed. It supports testing VRP/order-flow conditioning, but recent realistic-friction work also shows that apparently attractive short-volatility premia can disappear after tail losses and execution costs. That is why this project requires both positive net OOS performance and adverse-cost/robustness stress tests.
+
+
+## Phase 3H lead-lag literature
+
+4. Ren, Cai, Li, Xiong & Chen (2023), *A Multi-market Comparison of the Intraday Lead–Lag Relations Among Stock Index-Based Spot, Futures and Options*. The study uses one-minute data and reports intraday derivative price leadership over the underlying in the sampled markets, while also documenting reversals under strong index moves. This motivates testing the lead-lag relation directly rather than assuming it is constant.
+Source: https://ideas.repec.org/a/kap/compec/v62y2023i1d10.1007_s10614-022-10268-0.html
+
+5. Kang, Lee & Lee (2006), *An Empirical Investigation of the Lead-Lag Relations of Returns and Volatilities among the KOSPI200 Spot, Futures and Options Markets and their Explanations*. The paper reports short-horizon options/futures leadership over spot and examines explanations including transaction-cost effects. It is a different market, so it is used only as methodological motivation.
+Source: https://ideas.repec.org/a/sae/emffin/v5y2006i3p235-261.html
+
+6. Sundararajan & Balasubramanian (2023), *Intraday price discovery and volatility transmission between the dual-listed stock index futures and spot markets – new evidence from India*. Using high-frequency Indian Nifty data, the study finds asymmetric price-discovery contributions across derivative and spot venues. It supports testing information transmission empirically rather than treating derivative leadership as universal.
+Source: https://www.sciencedirect.com/science/article/pii/S1746880923000554
