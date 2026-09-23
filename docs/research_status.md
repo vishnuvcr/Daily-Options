@@ -173,3 +173,11 @@ Add source download adapters and immutable cache manifests, run the first manual
 - Root cause: call and put quotes in the public data can occur at different timestamps inside the allowed entry window, so requiring an exact common timestamp was too restrictive.
 - Correction applied: choose the common strike nearest spot using the available call/put quotes within the 2-minute entry window; use the later quote timestamp as the signal/entry anchor, then hold that absolute strike through the path.
 - A rerun is now executing with this correction. No Phase 4 numerical conclusion is accepted until it produces an actual observation/trade table.
+
+
+### 2026-09-24 — Step 4.3 Phase 4 entry-clock bug fixed
+- Diagnostics from run 35911325373 showed PHASE4_OBSERVATIONS=0 after the common-strike and timestamp corrections.
+- Code audit found a separate time-construction bug: the configured 30/45/60-minute offsets were being added to midnight rather than the 09:15 IST market open.
+- This was an execution-mapping bug, not a market result.
+- Correction committed: entry clock is now explicitly 09:15 IST plus the configured offset (09:45, 10:00, 10:15).
+- New rerun is executing; no Phase 4 conclusion is accepted yet.
