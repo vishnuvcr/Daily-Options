@@ -35,3 +35,10 @@ This log records requirements, research decisions, evidence and outcomes. It int
 - User issued "Ok proceed" to continue the research without stopping mid-phase.
 - Action taken: hardened Phase 3F so the complete IV/OI-capable source tree is audited before any trading optimization.
 - Decision: do not use the dataset's volume field until the observed schema anomaly is quantified and independently reconciled. This prevents another round of parameter tuning on an unvalidated input.
+
+
+## 2026-09-24 — Phase 3F result and next hypothesis
+- The user’s "Ok proceed" instruction was treated as authorization to continue through the defined research phases without waiting between experiments.
+- The multi-year directional IV/OI/volume imbalance screen failed the promotion gate; zero of 972 variants reached Rs 1,000/day and the best configuration was negative after costs.
+- Decision: stop tuning the failed directional family and move immediately to a defined-risk short-volatility/iron-fly regime hypothesis using IV/RV, trend magnitude and chain-balance filters.
+- The directional result and full data-audit summary are committed under `reports/`.
