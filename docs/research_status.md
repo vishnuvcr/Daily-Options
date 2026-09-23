@@ -216,3 +216,9 @@ Phase 3G — COMPLETE; FAIL_PRELIMINARY; RETIRED.
 - Phase 3H initially used a phase-specific cache key.
 - Correction: switched to the pinned-data cache key shared across phases, with the Phase 3G cache as a restore source.
 - No strategy statistic was accepted from the pre-correction CI attempt.
+
+### 2026-09-24 — Step 3H.4 Execution-speed correction
+- The initial Phase 3H numerical engine remained in one long CI step without progress reporting after the pinned dataset was acquired.
+- No numerical statistic from that slow run is accepted.
+- Replaced the nested per-signal/per-path DataFrame scans with indexed per-session price maps and one-time setup simulation, then reattaching each simulated path to all matching variants.
+- CI will now rerun automatically on the corrected branch commit.
