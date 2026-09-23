@@ -42,3 +42,17 @@ class OptionCostModel:
         gst = self.gst_rate * (brokerage + exchange + sebi)
         slippage = 4.0 * slippage_points * multiplier
         return gross - (brokerage + exchange + sebi + stt + stamp + gst + slippage)
+
+    def short_straddle_net_pnl(self, call_entry: float, put_entry: float, call_exit: float, put_exit: float, lot_size: int, qty: int = 1, slippage_points: float = 0.20) -> float:
+        """Net P&L for short call + short put, opened then closed."""
+        multiplier = qty * lot_size
+        gross = ((call_entry - call_exit) + (put_entry - put_exit)) * multiplier
+        turnover = (call_entry + put_entry + call_exit + put_exit) * multiplier
+        brokerage = 4.0 * self.brokerage_per_order
+        exchange = turnover * self.exchange_rate
+        sebi = turnover * self.sebi_rate
+        stt = (call_entry + put_entry) * multiplier * self.stt_sell_rate
+        stamp = (call_exit + put_exit) * multiplier * self.stamp_buy_rate
+        gst = self.gst_rate * (brokerage + exchange + sebi)
+        slippage = 4.0 * slippage_points * multiplier
+        return gross - (brokerage + exchange + sebi + stt + stamp + gst + slippage)
