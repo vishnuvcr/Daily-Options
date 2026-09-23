@@ -1,0 +1,36 @@
+{
+  "run_id": 35918302989,
+  "head_sha": "64abd09e74e5a209b461f86efef4d41a91478681",
+  "artifact_id": 10775828210,
+  "artifact_sha256": "5478fa383b8d70a84944259e7ed4987414b684d4cf5c206b13861babf64c7c17",
+  "dataset_revision": "45e0a04",
+  "variants": 108,
+  "features": 438043,
+  "signals": 132078,
+  "entries": 132072,
+  "trades": 132072,
+  "base": {
+    "slippage_points": 0.2,
+    "all_variants_negative": true,
+    "best_mean_all_day_net": -181.83358237534543,
+    "walk_forward_windows": 16,
+    "positive_test_windows": 0,
+    "target_qualified_windows": 0,
+    "mean_test_window_net": -191.3907572509844,
+    "median_test_window_net": -183.43357929925006,
+    "bootstrap_95_ci_mean": [-214.98601853, -169.40463697]
+  },
+  "stress": {
+    "slippage_points": 0.4,
+    "all_variants_negative": true,
+    "best_mean_all_day_net": -241.8335823753455,
+    "walk_forward_windows": 16,
+    "positive_test_windows": 0,
+    "target_qualified_windows": 0,
+    "mean_test_window_net": -251.3907572509844,
+    "median_test_window_net": -243.43357929925003,
+    "bootstrap_95_ci_mean": [-274.98601853, -229.40463697]
+  },
+  "gate": "FAIL_PRELIMINARY",
+  "decision": "RETIRED"
+}
