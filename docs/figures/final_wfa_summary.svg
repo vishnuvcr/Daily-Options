@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="460" viewBox="0 0 900 460">
+<text x="40" y="35" font-size="22" font-family="Arial">Selected Test-Window Mean Net P&amp;L (Rs/lot)</text>
+<line x1="80" y1="220" x2="840" y2="220" stroke="#000" stroke-width="2"/>
+<text x="55" y="225" font-size="12" font-family="Arial">0</text>
+<rect x="150" y="242" width="110" height="28" fill="#777"/>
+<rect x="330" y="252" width="110" height="18" fill="#777"/>
+<rect x="510" y="250" width="110" height="20" fill="#777"/>
+<rect x="690" y="360" width="110" height="-90" fill="#777"/>
+<text x="145" y="295" font-size="14" font-family="Arial">Phase 4</text>
+<text x="315" y="295" font-size="14" font-family="Arial">Phase 3G</text>
+<text x="495" y="295" font-size="14" font-family="Arial">Phase 3H</text>
+<text x="675" y="295" font-size="14" font-family="Arial">Phase 3I</text>
+<text x="142" y="238" font-size="13" font-family="Arial">-64.23</text>
+<text x="315" y="248" font-size="13" font-family="Arial">-192.79</text>
+<text x="495" y="246" font-size="13" font-family="Arial">-191.39</text>
+<text x="670" y="356" font-size="13" font-family="Arial">-1626.99</text>
+<text x="40" y="410" font-size="13" font-family="Arial">Source: canonical repository walk-forward artifacts. More negative values indicate worse mean test-window net P&amp;L.</text>
+</svg>
