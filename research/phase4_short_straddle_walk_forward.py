@@ -388,7 +388,7 @@ def main(data: Path, out: Path) -> None:
     out.mkdir(parents=True, exist_ok=True)
     results.to_csv(out / "phase4_walk_forward_results.csv", index=False)
 
-    selected = results[results.selected == True] if not results.empty and "selected" in results.columns else pd.DataFrame()
+    selected = results[results["selected"] == True] if (not results.empty and "selected" in results.columns) else pd.DataFrame()
     summary = {
         "observations": int(len(obs)),
         "core_variants": int(len(ENTRY_MINUTES)*len(STOP_MULTS)*len(TARGET_DECAYS)*len(HOLDS)),
