@@ -25,6 +25,16 @@ def build_nested_index(archive: Path) -> list[tuple[str, str, ContractFile]]:
                 print("INNER_ARCHIVE", outer_member, "FILE_COUNT", len(members))
                 if members:
                     print("INNER_ARCHIVE_SAMPLE", members[:40])
+                for month_member in members[:3]:
+                    if month_member.lower().endswith(".zip"):
+                        try:
+                            month_raw = inner.read(month_member)
+                            with zipfile.ZipFile(io.BytesIO(month_raw)) as month_zip:
+                                month_files = [m for m in month_zip.namelist() if not m.endswith("/")]
+                                print("MONTH_ARCHIVE", month_member, "FILE_COUNT", len(month_files))
+                                print("MONTH_ARCHIVE_SAMPLE", month_files[:60])
+                        except Exception as exc:
+                            print("MONTH_ARCHIVE_ERROR", month_member, repr(exc))
                 for member in members:
                     lower = member.lower()
                     if not lower.endswith((".csv", ".xlsx", ".xls")):
