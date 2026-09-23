@@ -255,7 +255,8 @@ def run_tournament(root: Path, out: Path) -> dict:
 
     group_cols = ["expiry_type","width_steps","hold_minutes","oi_thr","vol_thr","ret_thr","iv_rv_min"]
     boards = []
-    calendar_days = int(trades_df["trade_date"].nunique())
+    calendar_days = int(features["trade_date"].nunique())
+    # Target-day metrics use all dates represented by valid feature rows, not only active trade days.
     for _, g in trades_df.groupby(group_cols, dropna=False):
         daily = g.groupby("trade_date")["net_pnl"].sum()
         wins = g.loc[g.net_pnl > 0, "net_pnl"].sum()
