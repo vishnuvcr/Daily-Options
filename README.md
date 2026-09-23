@@ -4,7 +4,7 @@ Research program for discovering and validating an intraday NSE options strategy
 
 ## Current status — 2026-09-24
 
-Phase 4 and Phase 3G have both failed their stated promotion gates and are retired. Phase 3H is the active bounded experiment.
+Phase 4, Phase 3G, and Phase 3H have now failed their stated promotion gates and are retired. The next bounded experiment will target underlying-price regime behavior rather than another option-microstructure permutation.
 
 | Phase | Branch | Status |
 |---|---|---|
@@ -43,6 +43,7 @@ Research default remains Rs 20 per executed order, 0.15% option-sale STT from 20
 - docs/error_log.md
 - docs/conversation_log.md
 - docs/phase3g_results.md
+- docs/phase3h_results.md
 - docs/phase4_walk_forward_results.md
 - config/cost_model_2026.yaml
 - research/
