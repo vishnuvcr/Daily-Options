@@ -35,7 +35,6 @@ def read_source(path: Path) -> pl.DataFrame:
 
 def extract(path: Path, out: Path, wing_steps: int = 3) -> dict:
     df=read_source(path)
-    # First research window: 09:15-13:15 IST for each trading day.
     start_ns=9*60+15
     end_ns=13*60+15
     df=df.with_columns(
@@ -43,45 +42,48 @@ def extract(path: Path, out: Path, wing_steps: int = 3) -> dict:
     ).filter((pl.col("_min")>=start_ns)&(pl.col("_min")<=end_ns)).drop("_min")
 
     eligible=df.filter(pl.col("expiry")>=pl.col("date"))
-    near=eligible.join(
-        eligible.group_by("date").agg(pl.col("expiry").min().alias("near_expiry")),
-        on="date",
-        how="inner",
-    ).filter(pl.col("expiry")==pl.col("near_expiry")).drop("near_expiry")
 
-    # Determine an ATM proxy independently for each day using 09:30 parity.
-    q=near.filter(
-        (pl.col("timestamp")>=pl.col("timestamp").dt.truncate("1d")+pl.duration(hours=9,minutes=15)) &
-        (pl.col("timestamp")<=pl.col("timestamp").dt.truncate("1d")+pl.duration(hours=10,minutes=15)) &
-        (pl.col("close")>0)
+    # Find CE/PE overlap first, then choose the nearest expiry among valid overlaps.
+    q=eligible.filter(pl.col("close")>0)
+    ce=q.filter(pl.col("option_type")=="CE").group_by(["date","expiry","strike"]).agg(
+        pl.col("close").mean().alias("CE")
     )
-    px=q.group_by(["date","strike"]).agg([
-        pl.when(pl.col("option_type")=="CE").then(pl.col("close")).drop_nulls().mean().alias("CE"),
-        pl.when(pl.col("option_type")=="PE").then(pl.col("close")).drop_nulls().mean().alias("PE"),
-    ]).drop_nulls(["CE","PE"]).with_columns(
+    pe=q.filter(pl.col("option_type")=="PE").group_by(["date","expiry","strike"]).agg(
+        pl.col("close").mean().alias("PE")
+    )
+    px=ce.join(pe,on=["date","expiry","strike"],how="inner").with_columns(
         (pl.col("CE")-pl.col("PE")).abs().alias("gap")
     )
     if px.height==0:
-        raise RuntimeError("source-wide CE/PE overlap is empty after nearest-expiry and time-window filters")
-    atm=(
-        px.sort(["date","gap"])
+        raise RuntimeError("source-wide CE/PE overlap is empty after time-window filtering")
+
+    chosen=(
+        px.sort(["date","expiry","gap"])
         .group_by("date",maintain_order=True)
         .first()
-        .select(["date","strike"])
+        .select(["date","expiry","strike"])
         .rename({"strike":"atm"})
     )
 
-    # Keep ATM plus +/- wing_steps available strikes for each day.
+    near=eligible.join(
+        chosen.select(["date","expiry"]),
+        on=["date","expiry"],
+        how="inner",
+    )
+
     keys=[]
-    for row in atm.iter_rows(named=True):
+    for row in chosen.iter_rows(named=True):
         d=row["date"]; a=float(row["atm"])
-        strikes=(near.filter(pl.col("date")==d).select("strike").unique().sort("strike")["strike"].to_list())
+        strikes=near.filter(pl.col("date")==d).select("strike").unique().sort("strike")["strike"].to_list()
         if not strikes:
             continue
         pos=min(range(len(strikes)),key=lambda i:abs(float(strikes[i])-a))
         lo=max(0,pos-wing_steps); hi=min(len(strikes)-1,pos+wing_steps)
         for s in strikes[lo:hi+1]:
             keys.append((d,float(s)))
+
+    if not keys:
+        raise RuntimeError("no compact strike keys were generated")
 
     keep=pl.DataFrame(keys,schema={"date":pl.Date,"strike":pl.Float64}).unique()
     compact=near.join(keep,on=["date","strike"],how="inner").select(
