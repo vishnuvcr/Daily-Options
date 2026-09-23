@@ -25,3 +25,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0015 | 2026-09-24 | 3F | First automatic data-audit run failed before download because the shell heredoc delimiter was indented inside the YAML block | Dataset acquisition never started; no data conclusions were made | Replaced the heredoc with a single-line Python invocation and kept the workflow unit-tested before acquisition | CLOSED |
 
 | E0016 | 2026-09-24 | CI | Legacy Phase 1 workflow still triggers on every branch push and is failing on this research branch, producing unrelated CI noise | Does not block Phase 3F directly but obscures phase-specific run status | Keep Phase 3F path-filtered; inspect and isolate legacy workflow triggers during CI cleanup before final merge | OPEN |
+
+
+| E0017 | 2026-09-24 | 3F | Tournament workflow executed a repository script directly, so `research` package imports failed with `ModuleNotFoundError` after the data audit had already passed | Strategy screen did not execute; no numerical strategy result was produced | Run the tournament as `python -m research.phase3f_microstructure_tournament`, matching the corrected Phase 2 import pattern | CLOSED |
