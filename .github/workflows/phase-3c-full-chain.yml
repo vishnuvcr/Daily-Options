@@ -5,6 +5,8 @@ concurrency:
   cancel-in-progress: true
 
 on:
+  push:
+    branches: [phase-3c-full-chain-validation]
   workflow_dispatch:
 
 jobs:
