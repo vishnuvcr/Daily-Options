@@ -14,4 +14,9 @@
 
 | E0008 | 2026-09-23 | 3 | Push-triggered Phase 3 workflow was repeatedly relaunched by research-log commits, canceling earlier benchmark runs | Wasted CI runs and made run provenance noisy | Changed Phase 3 to manual-only execution with workflow_dispatch; documentation commits no longer trigger the benchmark | CLOSED |
 
+| E0009 | 2026-09-23 | 3 | Fixed 65-lot assumption was invalid across the 2025-2026 sample because NIFTY lot size changed from 75 to 65 at the Dec 2025 transition | Earlier Rs/lot backtests are provisional | Added date-aware NIFTY lot-size resolver and flagged earlier figures for correction | OPEN |
+| E0010 | 2026-09-23 | 3 | Focused straddle grid repeatedly rescanned the same option path for hundreds of configurations | Excessive CI runtime and canceled run | Added precomputed outcome matrix so filters reuse simulated exits | CLOSED |
+| E0011 | 2026-09-23 | 3C | Full-chain workflow heredoc indentation caused a YAML-validity failure before job creation | Full-chain validation could not start | Replaced the multiline download script with a one-line Python command | CLOSED |
+| E0012 | 2026-09-23 | 3C | Polars rejected parquet timestamps containing timezone offset +05:30 | Iron-fly validation stopped before strategy execution | Read parquet with PyArrow, strip timezone metadata to naive microsecond timestamps, then construct Polars frame | CLOSED |
+
 Every subsequent error gets a new row. Fixes are never silently discarded.
