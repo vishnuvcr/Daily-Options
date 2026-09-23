@@ -120,12 +120,12 @@ def feature_query(root: Path) -> str:
         PARTITION BY trade_date, expiry_type ORDER BY datetime
         ROWS BETWEEN 14 PRECEDING AND CURRENT ROW
       ) * SQRT(252.0*375.0) * 100.0 AS rv15_pct,
-      pc_oi-LAG(pc_oi,3) OVER (
+      LEAD(pc_oi,3) OVER (
         PARTITION BY trade_date, expiry_type ORDER BY datetime
-      ) AS doi3,
-      pc_oi-LAG(pc_oi,5) OVER (
+      ) - pc_oi AS doi3,
+      LEAD(pc_oi,5) OVER (
         PARTITION BY trade_date, expiry_type ORDER BY datetime
-      ) AS doi5
+      ) - pc_oi AS doi5
     FROM d
     WHERE STRFTIME(datetime + INTERVAL '5 hours 30 minutes','%H:%M:%S')
           BETWEEN '09:30:00' AND '12:30:00'
@@ -175,7 +175,8 @@ def build_signals(features: pd.DataFrame, params: list[Variant]) -> pd.DataFrame
                 "trade_date": row.trade_date,
                 "expiry_type": row.expiry_type,
                 "signal_time": row.datetime,
-                "entry_time": row.datetime + pd.Timedelta(minutes=1),
+                "entry_time": row.datetime + pd.Timedelta(minutes=p.oi_window + 1),
+                "trade_id": int(len(rows)),
                 "spot": float(row.spot),
                 "direction": row.direction,
                 "variant": p.key(),
