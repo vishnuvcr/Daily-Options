@@ -1,81 +1,100 @@
-# Phase 3H Results — Short-Horizon ATM Option Lead-Lag
+# Phase 3H Results — Option Price Lead/Lag
 
 ## Canonical run
-- Branch: phase-3h-option-lead-lag.
-- GitHub Actions run: 35918302989.
-- Commit: 64abd09e74e5a209b461f86efef4d41a91478681.
-- Artifact: 10775828210.
-- Dataset: artist-23/nifty-options-data revision 45e0a04.
-- Feature rows: 438,043.
-- Signal rows: 132,078.
-- Executable entries/trades: 132,072.
-- Pre-registered variants: 108.
-- Volume was not used because the source volume field remains quarantined.
 
-## Base-cost result
-- Slippage: Rs 0.20 option-premium points per leg.
-- All 108 variants had negative mean calendar-day net.
-- Best mean calendar-day net: Rs -181.83/lot/day.
-- Best profit factor: 0.312.
-- Best trade win rate: 26.08%.
-- Best variant: WEEK expiry, 3-minute lookback, 3% pressure threshold, 2-strike width, 10-minute hold.
-- Corrected nested walk-forward: 16 test windows.
-- Positive test windows: 0/16.
-- Target-qualified test windows: 0/16.
-- Mean test-window net: Rs -191.39/lot.
-- Median test-window net: Rs -183.43/lot.
-- Mean positive-day rate across test windows: 17.71%.
-- 95% bootstrap interval for the mean test-window net: approximately [Rs -214.70, Rs -169.35].
+- Branch: `phase-3h-option-lead-lag`
+- GitHub Actions run: 35918302989
+- Head SHA: 64abd09e74e5a209b461f86efef4d41a91478681
+- Accepted artifact: 10775828210
+- Artifact SHA-256: 5478fa383b8d70a84944259e7ed4987414b684d4cf5c206b13861babf64c7c17
+- Data source: `artist-23/nifty-options-data`
+- Pinned revision: `45e0a04`
+- Pre-registered variants: 108
+- Feature rows: 438,043
+- Signals: 132,078
+- Executable entries: 132,072
+- Simulated trades: 132,072
+- Volume used: no
 
-## Stress-cost result
-- Slippage: Rs 0.40 option-premium points per leg.
+## Base friction — 0.20 option-premium points per leg
+
+- All 108 variants had negative mean calendar-day net P&L.
+- Best mean calendar-day net: **-Rs 181.83/lot/day**.
+- Best configuration: WEEK expiry, 3-minute option-pressure lookback, 3% pressure threshold, 2-strike width, 10-minute hold.
+- Best configuration: 1,223 trade-days, 21.50% positive days, 21.50% trade win rate, PF 0.254, max drawdown about -Rs 222,520/lot, total net about -Rs 222,382.
+- Highest profit factor observed in the grid: about 0.312; it was still negative in mean net P&L.
+- Target-qualified variants: 0/108.
+
+## Stress friction — 0.40 option-premium points per leg
+
 - All 108 variants remained negative.
-- Best mean calendar-day net: Rs -241.83/lot/day.
-- Best profit factor: 0.223.
-- Best trade win rate: 21.18%.
-- Corrected nested walk-forward: 16 test windows.
-- Positive test windows: 0/16.
-- Target-qualified test windows: 0/16.
-- Mean test-window net: Rs -251.39/lot.
-- Median test-window net: Rs -243.43/lot.
-- Mean positive-day rate across test windows: 13.65%.
-- 95% bootstrap interval for the mean test-window net: approximately [Rs -274.70, Rs -229.35].
+- Best mean calendar-day net: **-Rs 241.83/lot/day**.
+- The same WEEK/3-minute/3%/2-strike/10-minute configuration remained the top mean-net variant.
+- Best configuration positive-day rate: 16.84%; PF 0.172; max drawdown about -Rs 295,660/lot; total net about -Rs 295,762.
+- Target-qualified variants: 0/108.
 
-## Lead-lag diagnostic
-The signal-level diagnostic was deliberately separated from trading P&L. Conditional next-1/3/5-minute spot hit rates were only modestly directional rather than persistently strong:
-- Across all tested lookback/threshold combinations, forward 1-minute directional hit rates ranged about 46.8%–56.1%.
-- Forward 3-minute rates ranged about 48.7%–54.9%.
-- Forward 5-minute rates ranged about 47.97%–53.13%.
-- The strongest isolated 3-minute diagnostic was a 3-minute lookback / 1% threshold PUT signal with mean forward 3-minute spot move about -0.0106%, but its corresponding 3-minute directional hit rate was only about 52.2%.
-This diagnostic does not support treating the option-pressure signal as a stable forecasting edge.
+## Forward lead-lag diagnostic
+
+The feature-only diagnostic is economically weak and unstable:
+
+- 1-minute option-pressure signals produced roughly 48%–53% directional hit rates at the first 1–5 minute horizons, with mean forward spot returns close to zero.
+- 3-minute pressure showed some directional asymmetry in the raw diagnostic, but the sign and horizon were not stable across thresholds/directions.
+- 5-minute pressure remained mixed and close to zero.
+- The diagnostic therefore does not show a stable, execution-worthy option-to-spot lead that survives the option spread implementation.
+
+## Nested walk-forward
+
+The leakage-safe selection rule used 180 training days, 60 validation days, a 5-day embargo, 60 test days and a 60-day step. Parameters were selected only from training/validation.
+
+### Base friction
+
+- Test windows: 16
+- Positive test windows: **0/16**
+- Target-qualified test windows: **0/16**
+- Mean test-window net: **-Rs 191.39/lot**
+- Median test-window net: **-Rs 183.43/lot**
+- 20,000-resample bootstrap percentile 95% interval for the mean test-window net: **[-Rs 214.99, -Rs 169.40]**
+
+### Stress friction
+
+- Test windows: 16
+- Positive test windows: **0/16**
+- Target-qualified test windows: **0/16**
+- Mean test-window net: **-Rs 251.39/lot**
+- Median test-window net: **-Rs 243.43/lot**
+- 20,000-resample bootstrap percentile 95% interval: **[-Rs 274.99, -Rs 229.40]**
 
 ## Decision
-Phase 3H FAIL_PRELIMINARY and retired.
 
-No 108-variant expansion is permitted. The failure is present before robustness testing, remains negative after doubled slippage, and is negative in every untouched walk-forward test window.
+**Phase 3H FAIL_PRELIMINARY; retire the option-price lead/lag family.**
 
-## Engineering/provenance
-The initial implementation had two pre-result engineering defects:
-- E0043: identical executable setups were deduplicated without remapping path results to all parameter variants; fixed before accepted statistics.
-- E0044: a new phase-specific cache key would have forced redundant dataset download; fixed by reusing the repository pinned-data cache.
-No numerical result from pre-correction runs was accepted.
+The entire pre-registered family is negative after realistic costs, every walk-forward test window is negative, the bootstrap intervals exclude zero, and doubled slippage worsens the outcome. The Phase 3H stop rule therefore forbids parameter-grid expansion or post-hoc threshold tuning.
 
 ## Strengths
-- 108 variants were pre-registered before numerical evaluation.
-- All signal features used information available at or before signal time.
-- Entry was delayed to the next executable minute with a two-minute execution tolerance.
-- Defined-risk debit spreads limited payoff exposure.
-- Date-aware NIFTY lot size and project transaction-cost model were used.
-- Base and 2x-slippage runs were both executed.
-- Nested train/validation/embargo/test WFA prevented final-test parameter selection.
-- Predictive diagnostics were separated from execution P&L.
+
+- Multi-year, 84-parquet-partition public option dataset pinned to a reproducible revision.
+- 108-variant family pre-registered before the accepted run.
+- Signal construction uses only contemporaneous or lagged option prices; forward spot returns are diagnostic only.
+- Next-executable-minute entry with a two-minute execution budget.
+- Defined-risk debit spreads rather than naked option buying.
+- Date-aware NIFTY lot sizes and project cost model.
+- Base and doubled-slippage runs.
+- Nested train/validation/embargo/test walk-forward selection.
+- Bootstrap uncertainty reported on the selected test-window means.
 
 ## Limitations
-- The public data use closing prices rather than executable bid/ask/depth.
-- The ATM label is time-varying, so the common ATM call/put feature is not a fixed-strike market-maker quote series.
-- Historical option volume remains quarantined because of source anomalies.
-- The lead-lag test is specific to this data source and specification; it does not establish that no derivative lead-lag effect exists under every market-data representation.
-- No live or paper execution is implied.
 
-## Next research direction
-Move to a materially different regime-conditioned underlying-price family rather than another option-microstructure permutation. The next bounded candidate should use intraday price dislocation/mean-reversion or opening-range regime information, expressed with defined-risk spreads and the same cost-aware WFA gate.
+- Public option data are closing-price based rather than true bid/ask/depth.
+- ATM feature rows can be affected by sparse contract timestamps.
+- The phase establishes a negative result for this bounded option-pressure family; it does not prove that every derivative microstructure signal is uninformative.
+- No live/paper execution claim is made.
+
+## Research implication
+
+The failed Phase 3H result shifts the next bounded experiment away from option-to-spot price pressure and toward a more direct market-price discovery variable: **NIFTY futures versus NIFTY spot lead-lag**.
+
+Indian intraday studies using one-minute and five-minute data have repeatedly reported a meaningful role for NIFTY futures in price discovery, although the exact direction and strength vary by sample and method. This makes the futures-to-spot relationship testable rather than assumed.
+
+## Next bounded hypothesis
+
+Phase 3I should test whether short-horizon NIFTY-futures returns, basis changes and futures-versus-spot divergence contain incremental information about the next few minutes of NIFTY spot returns, then express only pre-registered signals through defined-risk option spreads. The data gate must first verify historical 1-minute futures coverage, contract rollover handling, timestamps, volume/OI fields and session completeness before any strategy optimization.
