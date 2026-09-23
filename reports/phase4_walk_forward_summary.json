@@ -1,0 +1,19 @@
+{
+  "run_id": 35912159508,
+  "commit": "05c2ce40d4bafbb07baa64298c46eb64439e5058",
+  "observations": 7331,
+  "core_trade_rows": 131958,
+  "expanded_trade_rows": 852750,
+  "core_variants": 54,
+  "regime_filter_variants": 8,
+  "total_parameter_variants": 432,
+  "walk_forward_windows": 14,
+  "selected_tests": 22,
+  "positive_test_windows": 8,
+  "target_qualified_test_windows": 0,
+  "mean_test_window_net": -64.22551906906989,
+  "median_test_window_net": -43.68746799801356,
+  "mean_test_positive_day_rate": 0.4765151515151515,
+  "all_bootstrap_lower_95_positive": false,
+  "gate": "FAIL_PRELIMINARY"
+}
