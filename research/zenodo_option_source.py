@@ -133,39 +133,48 @@ def discover_option_files(root: Path, index_path: Path | None = None) -> list[Co
 
 
 def read_contract_file(path: Path) -> pd.DataFrame:
-    if path.suffix.lower() == ".csv":
+    suffix = path.suffix.lower()
+    if suffix == ".txt":
+        df = pd.read_csv(
+            path,
+            header=None,
+            names=["symbol", "trade_date", "trade_time", "open", "high", "low", "close", "volume"],
+        )
+    elif suffix == ".csv":
         df = pd.read_csv(path)
-        if df.shape[1] < 5:
-            df = pd.read_csv(path, header=None)
     else:
         df = pd.read_excel(path)
 
     cols = {}
-    for c in df.columns:
-        key = re.sub(r"[^a-z0-9]", "", str(c).strip().lower())
-        cols[key] = c
+    for col in df.columns:
+        key = re.sub(r"[^a-z0-9]", "", str(col).strip().lower())
+        cols[key] = col
 
     def pick(*names: str):
-        for n in names:
-            if n in cols:
-                return cols[n]
+        for name in names:
+            if name in cols:
+                return cols[name]
         return None
 
     date_col = pick("tradedt", "tradedate", "date", "datetime", "timestamp")
     time_col = pick("tradetime", "time")
     close_col = pick("close", "ltp", "last")
-    type_col = pick("opttype", "optiontype", "type")
-    strike_col = pick("strikeprice", "strike")
+
     if date_col is None or close_col is None:
-        # Retry common headerless format used by this dataset.
-        if df.shape[1] >= 9:
-            df = pd.read_csv(path, header=None) if path.suffix.lower() == ".csv" else pd.read_excel(path, header=None)
-            df.columns = [
-                "option_type", "strike_price", "trade_date", "trade_time",
-                "open", "high", "low", "close", "volume",
-            ][: len(df.columns)]
+        if suffix == ".csv" and df.shape[1] >= 8:
+            df = pd.read_csv(
+                path,
+                header=None,
+                names=["symbol", "trade_date", "trade_time", "open", "high", "low", "close", "volume"],
+            )
             date_col, time_col, close_col = "trade_date", "trade_time", "close"
-            type_col, strike_col = "option_type", "strike_price"
+        elif suffix in {".xlsx", ".xls"} and df.shape[1] >= 8:
+            df = pd.read_excel(
+                path,
+                header=None,
+                names=["symbol", "trade_date", "trade_time", "open", "high", "low", "close", "volume"],
+            )
+            date_col, time_col, close_col = "trade_date", "trade_time", "close"
         else:
             raise ValueError(f"Unrecognized option schema: {path.name} / {list(df.columns)}")
 
@@ -181,12 +190,12 @@ def read_contract_file(path: Path) -> pd.DataFrame:
         "datetime_local": dt,
         "close": pd.to_numeric(df[close_col], errors="coerce"),
     })
-    if type_col is not None:
-        out["option_type"] = df[type_col].astype(str).str.upper().map({"CE": "CALL", "PE": "PUT"}).fillna(df[type_col].astype(str).str.upper())
-    if strike_col is not None:
-        out["strike"] = pd.to_numeric(df[strike_col], errors="coerce")
+    strike, typ = parse_strike_type(path)
+    out["option_type"] = typ
+    out["strike"] = strike
     out = out.loc[out["datetime_local"].notna() & out["close"].gt(0)].copy()
     out["datetime_local"] = pd.DatetimeIndex(out["datetime_local"])
     out["datetime_utc"] = out["datetime_local"] - pd.Timedelta(hours=5, minutes=30)
     out["trade_date"] = out["datetime_local"].dt.date
     return out
+
