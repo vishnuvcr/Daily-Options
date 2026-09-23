@@ -22,7 +22,8 @@ def signal(day):
     d=x.timestamp.dt.normalize().iloc[0]
     start=d+pd.Timedelta(hours=9,minutes=15); end=start+pd.Timedelta(minutes=15)
     x["typical"]=(x.high+x.low+x.close)/3
-    x["vwap"]=(x.typical*x.volume).cumsum()/x.volume.cumsum().replace(0,pd.NA)
+    den=x.volume.cumsum().astype(float).replace(0,float("nan"))
+    x["vwap"]=(x.typical*x.volume).cumsum()/den
     oh=x.loc[(x.timestamp>=start)&(x.timestamp<end),"high"].max()
     ol=x.loc[(x.timestamp>=start)&(x.timestamp<end),"low"].min()
     x=x[(x.timestamp>=end+pd.Timedelta(minutes=1))&(x.timestamp<=d+pd.Timedelta(hours=14,minutes=45))].copy()
