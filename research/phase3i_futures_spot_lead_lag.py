@@ -41,19 +41,25 @@ def diagnostic_grid() -> list[Variant]:
 
 
 def normalize_table(df: pd.DataFrame) -> pd.DataFrame:
-    cols = {str(c).strip().lower(): c for c in df.columns}
+    def key(name: object) -> str:
+        return re.sub(r"[^a-z0-9]", "", str(name).strip().lower())
 
-    date_col = next((cols[k] for k in ("trade date", "trade_date", "date") if k in cols), None)
-    time_col = next((cols[k] for k in ("trade time", "trade_time", "time") if k in cols), None)
+    cols = {key(c): c for c in df.columns}
+
+    date_col = next((cols[k] for k in ("tradedate", "date", "datetime", "timestamp") if k in cols), None)
+    time_col = next((cols[k] for k in ("tradetime", "time") if k in cols), None)
     close_col = next((cols[k] for k in ("close", "ltp", "last") if k in cols), None)
     if date_col is None or time_col is None or close_col is None:
         raise ValueError(f"Unable to identify date/time/close columns: {list(df.columns)}")
 
     out = df.copy()
-    out["datetime"] = pd.to_datetime(
-        out[date_col].astype(str).str.strip() + " " + out[time_col].astype(str).str.strip(),
-        errors="coerce",
-    )
+    if time_col is None and date_col is not None:
+        out["datetime"] = pd.to_datetime(out[date_col], errors="coerce")
+    else:
+        out["datetime"] = pd.to_datetime(
+            out[date_col].astype(str).str.strip() + " " + out[time_col].astype(str).str.strip(),
+            errors="coerce",
+        )
     for field in ("open", "high", "low", "close", "volume"):
         if field in cols:
             out[field] = pd.to_numeric(out[cols[field]], errors="coerce")
