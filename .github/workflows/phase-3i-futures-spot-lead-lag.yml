@@ -30,7 +30,7 @@ jobs:
 
       - name: Install research dependencies
         run: |
-          pip install pandas numpy openpyxl pytest pyarrow huggingface_hub duckdb
+          pip install pandas numpy openpyxl xlrd pytest pyarrow duckdb
 
       - name: Unit tests
         run: |
@@ -71,25 +71,34 @@ jobs:
       - uses: actions/cache@v4
         if: steps.predictive.outputs.gate == 'PASS'
         with:
-          path: data/cache/hf_nifty_options
-          key: nifty-options-artist23-45e0a04-v1
-          restore-keys: |
-            phase3g-artist23-45e0a04-v1
+          path: data/cache/zenodo_nifty_options
+          key: zenodo-10899828-nifty-options-v1
 
-      - name: Acquire or reuse pinned option dataset
+      - name: Acquire or reuse matching 2017-2020 option archive
         if: steps.predictive.outputs.gate == 'PASS'
         run: |
-          mkdir -p data/cache/hf_nifty_options
-          if ! find data/cache/hf_nifty_options -type f -name '*.parquet' -print -quit | grep -q .; then
-            python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="artist-23/nifty-options-data", repo_type="dataset", revision="45e0a04", local_dir="data/cache/hf_nifty_options", allow_patterns=["NIFTY/**/*.parquet", "NIFTY/**"])'
+          mkdir -p data/cache/zenodo_nifty_options
+          if [ ! -f data/cache/zenodo_nifty_options/source.zip ]; then
+            python -c 'import urllib.request; urllib.request.urlretrieve("https://zenodo.org/records/10899828/files/Nifty%20Options%20Data.zip?download=1","data/cache/zenodo_nifty_options/source.zip")'
           fi
-          test -d data/cache/hf_nifty_options/NIFTY
-          find data/cache/hf_nifty_options/NIFTY -type f -name '*.parquet' | wc -l
+          echo "717d15361af52d1d654b4909d998967e  data/cache/zenodo_nifty_options/source.zip" | md5sum -c -
+          if [ ! -f data/cache/zenodo_nifty_options/.READY ]; then
+            rm -rf data/cache/zenodo_nifty_options/extracted
+            mkdir -p data/cache/zenodo_nifty_options/extracted
+            unzip -q data/cache/zenodo_nifty_options/source.zip -d data/cache/zenodo_nifty_options/extracted
+            find data/cache/zenodo_nifty_options/extracted -type f -name '*.zip' -print0 | while IFS= read -r -d '' z; do
+              out="${z%.zip}"
+              mkdir -p "$out"
+              unzip -q "$z" -d "$out"
+            done
+            touch data/cache/zenodo_nifty_options/.READY
+          fi
+          find data/cache/zenodo_nifty_options/extracted -type f \( -name '*.csv' -o -name '*.xlsx' -o -name '*.xls' \) | wc -l
 
       - name: Run Phase 3I option implementation - base
         if: steps.predictive.outputs.gate == 'PASS'
         run: |
-          python -m research.phase3i_option_execution             --options data/cache/hf_nifty_options/NIFTY             --futures data/cache/zenodo_nifty_spot_futures/extracted             --out reports/phase3i-option-base             --slippage 0.20
+          python -m research.phase3i_option_execution             --options data/cache/zenodo_nifty_options/extracted             --futures data/cache/zenodo_nifty_spot_futures/extracted             --out reports/phase3i-option-base             --slippage 0.20
 
       - name: Run Phase 3I option implementation - stress
         if: steps.predictive.outputs.gate == 'PASS'
