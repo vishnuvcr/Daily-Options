@@ -101,10 +101,11 @@ def load_data(root: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
 
 def build_signals(features: pd.DataFrame) -> pd.DataFrame:
     rows = []
+    local_clock = (pd.to_datetime(features.datetime) + pd.Timedelta(hours=5, minutes=30)).dt.strftime("%H:%M:%S")
     for entry_time, shock, skew_min, hold in itertools.product(
         ENTRY_IST, SKEW_SHOCK_POINTS, ABS_SKEW_MIN, HOLDS
     ):
-        t = pd.to_datetime(features.datetime).dt.strftime("%H:%M:%S") == entry_time
+        t = local_clock == entry_time
         x = features.loc[
             t
             & (features.skew_chg15.abs() >= shock)
