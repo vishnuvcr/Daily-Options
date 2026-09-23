@@ -38,7 +38,9 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: data/cache/hf_nifty_options
-          key: phase3h-artist23-45e0a04-v1
+          key: nifty-options-artist23-45e0a04-v1
+          restore-keys: |
+            phase3g-artist23-45e0a04-v1
 
       - name: Acquire or reuse pinned dataset
         run: |
