@@ -48,3 +48,8 @@ def test_zenodo_expiry_classification():
 def test_zenodo_filename_strike_and_type():
     assert parse_strike_type(pd.Path if False else __import__("pathlib").Path("Nifty11200CE.xlsx")) == (11200.0, "CALL")
     assert parse_strike_type(__import__("pathlib").Path("Nifty11200PE.xlsx")) == (11200.0, "PUT")
+
+
+def test_variant_identity_excludes_trade_id():
+    from research.phase3i_option_execution import SIGNAL_SPECS
+    assert signal_variant_key(SIGNAL_SPECS[0]) != signal_variant_key(SIGNAL_SPECS[1])
