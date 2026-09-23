@@ -14,43 +14,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
       - name: Install dependencies
         run: pip install pandas numpy polars pyarrow pytest huggingface_hub
-
       - name: Unit tests
         run: pytest -q
-
       - name: Restore cached NIFTY parquet
         uses: actions/cache@v4
         with:
           path: data/cache/hf
           key: hf-nifty-options-2025-v1
-
       - name: Download NIFTY 2025 parquet when cache misses
         run: |
           mkdir -p data/cache/hf
-          python - <<'PY'
-from huggingface_hub import hf_hub_download
-from pathlib import Path
-dst = Path('data/cache/hf/NIFTY_2025.parquet')
-if not dst.exists():
-    p = hf_hub_download(
-        repo_id='rissin/nse-options-intraday',
-        filename='upstox_intraday/NIFTY/NIFTY_2025.parquet',
-        repo_type='dataset',
-    )
-    dst.write_bytes(Path(p).read_bytes())
-print(dst, dst.stat().st_size)
-PY
-
+          python -c "from pathlib import Path; from huggingface_hub import hf_hub_download; dst=Path('data/cache/hf/NIFTY_2025.parquet'); p=hf_hub_download(repo_id='rissin/nse-options-intraday', filename='upstox_intraday/NIFTY/NIFTY_2025.parquet', repo_type='dataset'); (dst.write_bytes(Path(p).read_bytes()) if not dst.exists() else None); print(dst, dst.stat().st_size)"
       - name: Run full-chain straddle tournament
         run: python -m research.fullchain_straddle --data data/cache/hf/NIFTY_2025.parquet --out reports
-
       - name: Upload full-chain results
         uses: actions/upload-artifact@v4
         with:
