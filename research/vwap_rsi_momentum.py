@@ -26,7 +26,6 @@ class Config:
 
 
 def add_features(day: pd.DataFrame) -> pd.DataFrame:
-    """Underlying features that do not rely on nonexistent spot-index volume."""
     x = day.sort_values("timestamp").copy()
     x["ema20"] = x.close.ewm(span=20, adjust=False).mean()
     x["ema50"] = x.close.ewm(span=50, adjust=False).mean()
@@ -53,7 +52,6 @@ def add_features(day: pd.DataFrame) -> pd.DataFrame:
 
 
 def add_option_features(day: pd.DataFrame) -> pd.DataFrame:
-    """VWAP and volume-ratio features on the traded option, not the spot index."""
     x = day.sort_values("timestamp").copy()
     x["trade_date"] = x.timestamp.dt.date
     x["volume"] = pd.to_numeric(x.volume, errors="coerce").fillna(0).clip(lower=0)
@@ -61,12 +59,11 @@ def add_option_features(day: pd.DataFrame) -> pd.DataFrame:
     typical = (x.open + x.high + x.low + x.close) / 4
     x["pv"] = typical * x.volume
 
-    keys = ["trade_date", "option_type", "strike"]
-    grouped = x.groupby(keys, sort=False)
+    group_keys = ["trade_date", "option_type", "strike"]
+    grouped = x.groupby(group_keys, sort=False)
     x["cum_volume"] = grouped["volume"].cumsum()
     x["cum_pv"] = grouped["pv"].cumsum()
     x["option_vwap"] = x.cum_pv / x.cum_volume.replace(0, np.nan)
-
     x["volume_ma20"] = grouped["volume"].transform(
         lambda s: s.rolling(20, min_periods=10).mean()
     )
@@ -74,48 +71,108 @@ def add_option_features(day: pd.DataFrame) -> pd.DataFrame:
     return x
 
 
-def _nearest_strike(strikes: list[float], spot_px: float) -> float | None:
-    if not strikes:
-        return None
-    return float(min(strikes, key=lambda s: abs(s - spot_px)))
+def _nearest_strikes(spot_prices: np.ndarray, strikes: np.ndarray) -> np.ndarray:
+    if len(strikes) == 1:
+        return np.full(len(spot_prices), strikes[0], dtype=float)
+    idx = np.searchsorted(strikes, spot_prices, side="left")
+    idx = np.clip(idx, 0, len(strikes) - 1)
+    left_idx = np.clip(idx - 1, 0, len(strikes) - 1)
+    right_idx = idx
+    left = strikes[left_idx]
+    right = strikes[right_idx]
+    choose_right = np.abs(right - spot_prices) < np.abs(spot_prices - left)
+    return np.where(choose_right, right, left).astype(float)
 
 
-def _signal_from_row(
-    row,
-    option_row,
-    required: int,
-    rsi_long: float,
-    rsi_short: float,
-    volume_ratio: float,
+def _merge_option_features(spot_features: pd.DataFrame, option_day: pd.DataFrame, option_type: str):
+    left = spot_features[
+        ["timestamp", "close", "ema20", "ema50", "rsi"]
+    ].copy()
+    strikes = np.asarray(
+        sorted(option_day.loc[option_day.option_type == option_type, "strike"].dropna().unique()),
+        dtype=float,
+    )
+    if len(strikes) == 0:
+        return left.iloc[0:0].copy()
+
+    left["strike"] = _nearest_strikes(left.close.to_numpy(dtype=float), strikes)
+    left = left.sort_values("timestamp")
+
+    right = option_day[
+        option_day.option_type == option_type
+    ][
+        ["timestamp", "strike", "close", "option_vwap", "vol_ratio"]
+    ].sort_values("timestamp")
+
+    merged = pd.merge_asof(
+        left,
+        right,
+        on="timestamp",
+        by="strike",
+        direction="backward",
+        allow_exact_matches=True,
+        suffixes=("_spot", "_option"),
+    )
+    return merged
+
+
+def _first_signal(
+    merged_ce: pd.DataFrame,
+    merged_pe: pd.DataFrame,
+    cfg: Config,
+    day,
 ):
-    """Four leakage-safe conditions:
-    1) spot RSI,
-    2) spot EMA trend,
-    3) traded-option price above its session VWAP,
-    4) traded-option volume ratio.
-    """
-    long_conditions = [
-        row.rsi > rsi_long,
-        row.ema20 > row.ema50,
-        option_row.close > option_row.option_vwap,
-        option_row.vol_ratio >= volume_ratio,
-    ]
-    short_conditions = [
-        row.rsi < rsi_short,
-        row.ema20 < row.ema50,
-        option_row.close > option_row.option_vwap,
-        option_row.vol_ratio >= volume_ratio,
-    ]
+    start = pd.Timestamp(day) + pd.Timedelta(minutes=cfg.entry_minute)
+    end = start + pd.Timedelta(minutes=45)
 
-    if sum(long_conditions) >= required:
-        return "CE"
-    if sum(short_conditions) >= required:
-        return "PE"
-    return None
+    candidates = []
+
+    for typ, merged in (("CE", merged_ce), ("PE", merged_pe)):
+        if merged.empty:
+            continue
+        z = merged[(merged.timestamp >= start) & (merged.timestamp <= end)].copy()
+        if z.empty:
+            continue
+        z = z.replace([np.inf, -np.inf], np.nan).dropna(
+            subset=["close_spot", "ema20", "ema50", "rsi", "close_option", "option_vwap", "vol_ratio"]
+        )
+        if z.empty:
+            continue
+
+        if typ == "CE":
+            conds = [
+                z.rsi > cfg.rsi_long,
+                z.ema20 > z.ema50,
+                z.close_option > z.option_vwap,
+                z.vol_ratio >= cfg.volume_ratio,
+            ]
+        else:
+            conds = [
+                z.rsi < cfg.rsi_short,
+                z.ema20 < z.ema50,
+                z.close_option > z.option_vwap,
+                z.vol_ratio >= cfg.volume_ratio,
+            ]
+
+        hits = sum(conds)
+        hits = z.loc[hits >= cfg.required_conditions]
+        if not hits.empty:
+            row = hits.iloc[0]
+            candidates.append(
+                (
+                    row.timestamp,
+                    typ,
+                    float(row.strike),
+                    float(row.close_option),
+                    float(row.option_vwap),
+                    float(row.vol_ratio),
+                )
+            )
+
+    return min(candidates, key=lambda r: r[0]) if candidates else None
 
 
 def build_bases(spot, opt, configs):
-    cm = OptionCostModel()
     spot_days = {d: ds for d, ds in spot.groupby(spot.timestamp.dt.date)}
     opt_days = {
         d: add_option_features(do)
@@ -134,6 +191,7 @@ def build_bases(spot, opt, configs):
             for cfg in configs
         }
     )
+
     bases = []
 
     for d, ds in spot_days.items():
@@ -142,72 +200,31 @@ def build_bases(spot, opt, configs):
             continue
 
         x = add_features(ds)
-        strikes_by_type = {
-            typ: sorted(do.loc[do.option_type == typ, "strike"].dropna().unique())
+        merged = {
+            typ: _merge_option_features(x, do, typ)
             for typ in ("CE", "PE")
         }
 
         for entry, req, rsi_long, rsi_short, vol_ratio in signal_keys:
-            start = pd.Timestamp(d) + pd.Timedelta(minutes=entry)
-            end = start + pd.Timedelta(minutes=45)
-            z = x[(x.timestamp >= start) & (x.timestamp <= end)].copy()
-            z = z.replace([np.inf, -np.inf], np.nan).dropna(
-                subset=["close", "ema20", "ema50", "rsi"]
+            cfg = Config(
+                entry_minute=entry,
+                required_conditions=req,
+                rsi_long=rsi_long,
+                rsi_short=rsi_short,
+                volume_ratio=vol_ratio,
+                stop=0.2,
+                target=0.4,
+                hold=60,
+                trailing=False,
             )
-
-            sig = None
-            for _, r in z.iterrows():
-                spot_px = float(r.close)
-
-                # Determine direction using only the underlying row, then test
-                # traded-option VWAP/volume using the latest option bar at or
-                # before the same timestamp (no future option information).
-                for typ in ("CE", "PE"):
-                    strike = _nearest_strike(strikes_by_type[typ], spot_px)
-                    if strike is None:
-                        continue
-
-                    pre = do[
-                        (do.option_type == typ)
-                        & (do.strike == strike)
-                        & (do.timestamp <= r.timestamp)
-                        & (do.close > 0)
-                    ].sort_values("timestamp").tail(1)
-                    if pre.empty:
-                        continue
-
-                    option_row = pre.iloc[0]
-                    if pd.isna(option_row.option_vwap) or pd.isna(option_row.vol_ratio):
-                        continue
-
-                    selected = _signal_from_row(
-                        r,
-                        option_row,
-                        req,
-                        rsi_long,
-                        rsi_short,
-                        vol_ratio,
-                    )
-                    if selected == typ:
-                        sig = (
-                            r.timestamp,
-                            typ,
-                            strike,
-                            float(option_row.close),
-                            float(option_row.option_vwap),
-                            float(option_row.vol_ratio),
-                        )
-                        break
-
-                if sig is not None:
-                    break
-
+            sig = _first_signal(merged["CE"], merged["PE"], cfg, d)
             if sig is None:
                 continue
 
             st, typ, strike, signal_option_px, signal_option_vwap, signal_vol_ratio = sig
 
-            # Execution is delayed by at least one complete option bar.
+            # Enforce a one-minute delay: the signal uses information through
+            # st, but execution starts with a later option bar.
             q = do[
                 (do.option_type == typ)
                 & (do.strike == strike)
@@ -259,10 +276,7 @@ def precompute_outcomes(bases, configs, cm):
     for i, b in enumerate(bases):
         path = b["path"]
         for stop, target, hold in risk_keys:
-            p = path[
-                path.timestamp
-                <= b["entry_time"] + pd.Timedelta(minutes=hold)
-            ]
+            p = path[path.timestamp <= b["entry_time"] + pd.Timedelta(minutes=hold)]
             if p.empty:
                 continue
 
@@ -271,12 +285,10 @@ def precompute_outcomes(bases, configs, cm):
             exit_px = None
 
             for _, r in p.iterrows():
-                hit_s = float(r.low) <= stop_px
-                hit_t = float(r.high) >= target_px
-                if hit_s:
+                if float(r.low) <= stop_px:
                     exit_px = stop_px
                     break
-                if hit_t:
+                if float(r.high) >= target_px:
                     exit_px = target_px
                     break
 
@@ -441,11 +453,7 @@ def run(data, out):
         out / "vwap_rsi_momentum_leaderboard.csv", index=False
     )
 
-    qualified = (
-        board[board.mean_day_net >= 1000]
-        if not board.empty
-        else pd.DataFrame()
-    )
+    qualified = board[board.mean_day_net >= 1000] if not board.empty else pd.DataFrame()
     summary = {
         "calendar_days": len(all_dates),
         "trade_bases": len(bases),
@@ -453,8 +461,8 @@ def run(data, out):
         "target_daily_net_inr": 1000.0,
         "target_qualified_count": int(len(qualified)),
         "best": board.iloc[0].to_dict() if not board.empty else None,
-        "feature_spec": "spot RSI + spot EMA trend + option-session-VWAP + option-volume-ratio",
-        "methodology_correction": "NIFTY spot volume is zero; option VWAP/volume are used only from bars available at or before signal time; execution begins at least one option minute later; daily means include zero-trade days.",
+        "feature_spec": "spot RSI + spot EMA trend + traded-option session-VWAP + traded-option volume-ratio",
+        "methodology_correction": "NIFTY spot index volume is not used; option VWAP/volume are computed from actual option candles available at or before signal time; entries are delayed by at least one option minute; daily metrics include zero-trade days.",
     }
     (out / "vwap_rsi_momentum_summary.json").write_text(
         json.dumps(summary, indent=2, default=str)
