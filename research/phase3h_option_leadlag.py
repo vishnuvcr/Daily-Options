@@ -24,7 +24,7 @@ def lead_query(root):
     WITH o AS (
       SELECT datetime, CAST(date AS DATE) trade_date, expiry_type, option_type,
              CAST(strike_price AS DOUBLE) strike_price, CAST(spot AS DOUBLE) spot,
-             CAST(close AS DOUBLE) close
+             CAST(close AS DOUBLE) close_px_px
       FROM read_parquet('{g}', union_by_name=true)
       WHERE close>0 AND strike_type='ATM'
     ),
@@ -35,8 +35,8 @@ def lead_query(root):
     p AS (
       SELECT datetime, trade_date, expiry_type, strike_price,
              MAX(spot) spot,
-             MAX(CASE WHEN option_type='CALL' THEN close END) call_px,
-             MAX(CASE WHEN option_type='PUT' THEN close END) put_px
+             MAX(CASE WHEN option_type='CALL' THEN close_px END) call_px,
+             MAX(CASE WHEN option_type='PUT' THEN close_px END) put_px
       FROM o GROUP BY ALL
     ),
     x AS (
@@ -81,7 +81,7 @@ def raw_query(root):
     g=(root/"**"/"*.parquet").as_posix()
     return f"""
     SELECT datetime, CAST(date AS DATE) trade_date, expiry_type, option_type,
-           CAST(strike_price AS DOUBLE) strike_price, CAST(close AS DOUBLE) close
+           CAST(strike_price AS DOUBLE) strike_price, CAST(close AS DOUBLE) close_px_px
     FROM read_parquet('{g}', union_by_name=true)
     WHERE close>0 AND STRFTIME(datetime + INTERVAL '5 hours 30 minutes','%H:%M:%S')
           BETWEEN '09:20:00' AND '14:45:00'
