@@ -253,3 +253,12 @@ Phase 3G — COMPLETE; FAIL_PRELIMINARY; RETIRED.
 - Added phase3i_fast_engine.py with precomputed false-break event candidates, indexed option pivots and vectorized forward diagnostics.
 - Updated CI to run the fast engine in one base/stress data pass.
 - No pre-optimization numerical result was accepted.
+
+### 2026-09-24 — Step 3I.3 Final Phase 3 exploratory result and closure
+- Accepted run 35919447949 completed successfully on commit 86b6b50860af90d4f64e7591e992dc5e8fffba87; artifact 10777830090.
+- 144 pre-registered opening-range false-break variants produced 118,860 executable trades from 404,235 spot feature rows.
+- Base slippage 0.20: 0/144 positive variants; best mean all-day net Rs -854.06/lot/day; best PF 0.0357; best win rate 20.05%; 14/14 WFA test windows negative; mean test-window net Rs -1,626.99.
+- Stress slippage 0.40: 0/144 positive variants; best mean all-day net Rs -886.27/lot/day; best PF 0.0312; 14/14 WFA test windows negative; mean test-window net Rs -1,686.99.
+- Event-level forward spot diagnostics produced correct-direction hit rates of approximately 48.8% (15m), 50.0% (30m), and 50.9% (60m).
+- Decision: retire Phase 3I. This is the final exploratory family under the current public dataset.
+- Phase 3/3F/3G/3H/3I therefore closes without a promotion candidate. The project moves to final synthesis and explicit data-gap assessment rather than further parameter mining.
