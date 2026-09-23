@@ -34,3 +34,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0020 | 2026-09-24 | 3F-oi | First fixed-strike OI repositioning run passed tests and data setup but the execution screen referenced call/put exit tables before defining them | Strategy results were not produced | Define the call/put exit quote tables once before the width/hold loop and rerun; no numerical result from the failed run is accepted | CLOSED |
+
+
+| E0021 | 2026-09-24 | 3F-oi | Fixed-strike OI screen first failed at execution because call/put exit quote tables were referenced before definition | No numerical result was produced by that run | Define reusable call/put exit quote tables before the evaluation loop; rerun completed successfully | CLOSED |
