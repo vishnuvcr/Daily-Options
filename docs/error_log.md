@@ -31,4 +31,4 @@
 | E0013 | 2026-09-24 | 3F | Phase 3E showed the one-year sample lacked usable spot-index volume and was too limited for IV/OI microstructure research | Repeating price-only feature tuning would add little information | Open a new phase using an IV/OI-capable multi-year dataset and require schema/liquidity validation | CLOSED |
 | E0022 | 2026-09-24 | 3F-skew | Four-leg cost-model unit test used an incorrect manual gross-P&L sign formula | CI unit test failed before data acquisition | Corrected the test to match the explicit signed cash-flow implementation | CLOSED |
 
-Every subsequent research or engineering error gets a new row. Fixes are never silently discarded.
+| E0036 | 2026-09-24 | 4 | Manual Phase 4 result-table transcription contained one floating-point typo | Repository table temporarily diverged from the CI artifact | Corrected the value against the downloaded artifact | CLOSED |\n\nEvery subsequent research or engineering error gets a new row. Fixes are never silently discarded.
