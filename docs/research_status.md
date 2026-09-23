@@ -119,3 +119,10 @@ Add source download adapters and immutable cache manifests, run the first manual
 - This avoids the earlier E0008 failure mode where documentation-only commits repeatedly relaunched long-running research jobs.
 - Workflow now pins the external dataset revision, caches the raw source on the runner, runs unit tests first, then audits the complete `NIFTY` tree and uploads the report.
 - Current status: audit run triggered by the research-code update; strategy optimization remains blocked until the data-quality gate is resolved.
+
+
+### 2026-09-24 — Step 3F.4 CI correction
+- The first path-filtered Phase 3F run executed all unit tests successfully (9/9) but stopped in the dataset acquisition step because the YAML shell heredoc delimiter was indented incorrectly.
+- No market-data audit was executed in that failed run, so no data result was accepted.
+- Correction applied: dataset acquisition now uses a single-line Python invocation pinned to revision `45e0a04`.
+- A new path-filtered run should execute automatically from the correction commit.
