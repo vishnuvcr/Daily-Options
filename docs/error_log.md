@@ -19,4 +19,6 @@
 | E0011 | 2026-09-23 | 3C | Full-chain workflow heredoc indentation caused a YAML-validity failure before job creation | Full-chain validation could not start | Replaced the multiline download script with a one-line Python command | CLOSED |
 | E0012 | 2026-09-23 | 3C | Polars rejected parquet timestamps containing timezone offset +05:30 | Iron-fly validation stopped before strategy execution | Read parquet with PyArrow, strip timezone metadata to naive microsecond timestamps, then construct Polars frame | CLOSED |
 
+| E0013 | 2026-09-23 | 3C | Full-chain iron-fly code rescanned the entire 34M-row parquet once per trading day | Validation runtime became unnecessarily long | Partitioned the parquet once by trading date and restricted each day to the 09:15-13:15 research window | CLOSED |
+
 Every subsequent error gets a new row. Fixes are never silently discarded.
