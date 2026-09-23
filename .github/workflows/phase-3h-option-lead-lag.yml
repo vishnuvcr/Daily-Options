@@ -13,6 +13,7 @@ on:
       - "research/contracts.py"
       - ".github/workflows/phase-3h-option-lead-lag.yml"
 
+# Manual workflow_dispatch is required for reruns; push trigger provides CI on the branch.
 concurrency:
   group: phase3h-option-lead-lag
   cancel-in-progress: true
