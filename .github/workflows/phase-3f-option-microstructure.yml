@@ -27,7 +27,7 @@ jobs:
 
       - name: Install research dependencies
         run: |
-          pip install pandas pyarrow huggingface_hub pytest
+          pip install pandas pyarrow huggingface_hub pytest duckdb
 
       - name: Unit tests
         run: pytest -q
@@ -49,6 +49,10 @@ jobs:
         run: |
           test -d data/cache/hf_nifty_options/NIFTY
           python research/phase3f_option_microstructure.py             --data data/cache/hf_nifty_options/NIFTY             --out reports/phase3f_data_audit.json
+
+      - name: Run IV/OI microstructure directional spread tournament
+        run: |
+          python research/phase3f_microstructure_tournament.py             --data data/cache/hf_nifty_options/NIFTY             --out reports
 
       - name: Upload audit report
         uses: actions/upload-artifact@v4
