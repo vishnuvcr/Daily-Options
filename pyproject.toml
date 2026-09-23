@@ -1,0 +1,13 @@
+[project]
+name = "daily-options-research"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+  "pandas>=2.2",
+  "pyarrow>=16",
+  "openpyxl>=3.1",
+  "pyyaml>=6.0"
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
