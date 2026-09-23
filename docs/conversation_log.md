@@ -50,3 +50,9 @@
 ## 2026-09-24 — Phase 3I option source correction
 - The first option execution was rejected because its option-data coverage did not overlap the signal sample.
 - The corrected stage uses the matching 2017-2020 Zenodo option archive.
+
+
+## 2026-09-24 — Phase 3I pre-run correction
+- Repository audit confirmed the strict predictive gate had passed with two pre-registered signal families.
+- Before accepting any option result, code review found two execution defects: source metadata used variables before assignment, and entry rows omitted the selected wing strike required by simulation.
+- Both defects are rejected from the numerical evidence set and are being corrected before the matching 2017–2020 option archive is executed.
