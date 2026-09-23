@@ -1,36 +1,41 @@
-name: Phase 3 - Options Structure
+name: Phase 3 - Focused Straddle Search
+
 concurrency:
-  group: phase3-structure-${{ github.ref }}
+  group: phase3-focused-${{ github.ref }}
   cancel-in-progress: true
 
 on:
+  push:
+    branches: [phase-3-options-structure]
   workflow_dispatch:
 
 jobs:
-  spread:
+  search:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: {python-version: "3.12"}
+        with:
+          python-version: '3.12'
       - name: Install dependencies
         run: pip install pandas openpyxl numpy pytest pyyaml
       - name: Unit tests
         run: pytest -q
-      - name: Download public one-year NIFTY sample
+      - name: Restore cached public sample
+        uses: actions/cache@v4
+        with:
+          path: data/cache/nifty_1y_1min.xlsx
+          key: nifty-1y-1min-jul2025-jun2026-v1
+      - name: Download public one-year NIFTY sample when cache misses
         run: |
           mkdir -p data/cache reports
-          curl -L --fail --retry 3 -o data/cache/nifty_1y_1min.xlsx https://raw.githubusercontent.com/rajmaurya0904/bhav/main/sample_data/nifty_1y_1min.xlsx
-      - name: Run vertical spread tournament
-        run: python -m research.spread_tournament --data data/cache/nifty_1y_1min.xlsx --out reports
-      - name: Run VRP regime filter tournament
-        run: python -m research.vrp_filter_tournament --data data/cache/nifty_1y_1min.xlsx --out reports
-      - name: Run short volatility tournament
-        run: python -m research.short_straddle_tournament --data data/cache/nifty_1y_1min.xlsx --out reports
-      - name: Run VRP-filtered short volatility tournament
-        run: python -m research.short_straddle_vrp_tournament --data data/cache/nifty_1y_1min.xlsx --out reports
-      - name: Upload results
+          test -s data/cache/nifty_1y_1min.xlsx || curl -L --fail --retry 3 -o data/cache/nifty_1y_1min.xlsx https://raw.githubusercontent.com/rajmaurya0904/bhav/main/sample_data/nifty_1y_1min.xlsx
+          ls -lh data/cache/nifty_1y_1min.xlsx
+      - name: Run focused high-win low-drawdown search
+        run: |
+          python -m research.short_straddle_grid --data data/cache/nifty_1y_1min.xlsx --out reports
+      - name: Upload focused search results
         uses: actions/upload-artifact@v4
         with:
-          name: phase-3-preliminary-spread-results
+          name: phase-3-focused-straddle-search
           path: reports/
