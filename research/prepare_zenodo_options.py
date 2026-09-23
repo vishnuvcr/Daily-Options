@@ -17,10 +17,15 @@ def build_nested_index(archive: Path) -> list[tuple[str, str, ContractFile]]:
     rows = []
     with zipfile.ZipFile(archive) as outer:
         nested_members = [x for x in outer.namelist() if x.lower().endswith(".zip")]
+        print("INNER_ARCHIVE_COUNT", len(nested_members))
         for outer_member in nested_members:
             raw = outer.read(outer_member)
             with zipfile.ZipFile(io.BytesIO(raw)) as inner:
-                for member in inner.namelist():
+                members = [m for m in inner.namelist() if not m.endswith("/")]
+                print("INNER_ARCHIVE", outer_member, "FILE_COUNT", len(members))
+                if members:
+                    print("INNER_ARCHIVE_SAMPLE", members[:40])
+                for member in members:
                     lower = member.lower()
                     if not lower.endswith((".csv", ".xlsx", ".xls")):
                         continue
