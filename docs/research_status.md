@@ -198,7 +198,17 @@ Status: candidate sources only; independent validation pending Phase 1.
 - Some public datasets have close/market-price bars without executable quotes.
 
 ## Current phase
-Phase 3G — COMPLETE; FAIL_PRELIMINARY; RETIRED.
+Phase 3H — COMPLETE; FAIL_PRELIMINARY; RETIRED.
+
+### 2026-09-24 — Step 3H.6 Accepted result and retirement
+- Corrected indexed-engine run 35918302989 completed successfully on commit 64abd09e74e5a209b461f86efef4d41a91478681; artifact 10775828210 is retained as the canonical execution output.
+- 108 pre-registered variants, 438,043 feature rows, 132,072 executable trades.
+- Base slippage 0.20: all variants negative; best mean all-calendar-day net Rs -181.83/lot/day.
+- Stress slippage 0.40: all variants negative; best mean all-calendar-day net Rs -241.83/lot/day.
+- Nested walk-forward: 16/16 test windows negative at both frictions. Base mean test-window net Rs -191.39; stress mean Rs -251.39.
+- Bootstrap 95% percentile intervals for the mean test-window net exclude zero at both frictions.
+- Decision: retire Phase 3H. No threshold expansion, sign reversal, extra filter or additional option-microstructure sweep is permitted within this family.
+- Next bounded experiment: Phase 3I, a cross-market/underlying price-discovery hypothesis based on NIFTY futures-versus-spot information, subject first to a historical futures data-quality gate.
 
 ### 2026-09-24 — Step 3H.1 Phase 3H initialized
 - Created branch phase-3h-option-lead-lag from the finalized Phase 3G branch.
