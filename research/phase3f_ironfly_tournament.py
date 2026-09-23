@@ -299,9 +299,12 @@ def path_legs(raw_index: pd.Series, row: pd.Series, exit_time: pd.Timestamp) -> 
 
 
 def stage2(sig: pd.DataFrame, board: pd.DataFrame, raw: pd.DataFrame, out: Path, calendar_days: dict) -> tuple[pd.DataFrame, dict]:
-    top = board.head(10).copy()
-    if top.empty or sig.empty:
+    if board.empty or sig.empty:
         return pd.DataFrame(), {"variants": 0}
+    stage1_gate = board[(board["mean_all_day_net"] > 0) & (board["profit_factor"] > 1)].head(10).copy()
+    if stage1_gate.empty:
+        return pd.DataFrame(), {"variants": 0, "skipped": "stage1_economic_gate_failed"}
+    top = stage1_gate
 
     sig_key = ["expiry_type","iv_rv_min","abs_ret_max","abs_oi_max","abs_vol_max"]
     candidate_rows = []
@@ -434,7 +437,7 @@ def main() -> None:
                               best2["mean_all_day_net"] if best2 else -1e18] if x is not None]
             ) >= 1000 else "FAIL_PRELIMINARY"
         ),
-        "cost_note": "Stage 2 uses exact entry quotes plus conservative four-leg slippage; exit statutory turnover is approximated from the observed iron-fly mark. A promoted candidate must be rerun with exact four-leg exit quotes.",
+        "cost_note": "Stage 1 uses exact four-leg entry and time-exit quotes. Stage 2 uses exact four-leg entry and exact four-leg exit quotes at the close of the trigger bar, with eight-order brokerage, statutory charges, GST and 0.20-point slippage per leg.",
     }
     (args.out / "phase3f_ironfly_summary.json").write_text(
         json.dumps(summary, indent=2, default=str),
