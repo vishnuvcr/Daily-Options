@@ -100,7 +100,7 @@ def load_observations(root: Path) -> tuple[pd.DataFrame, dict[str, pd.DatetimeIn
         r15 = float(base.r15.iloc[0]) if np.isfinite(base.r15.iloc[0]) else np.nan
 
         for entry_min in ENTRY_MINUTES:
-            entry_time = pd.Timestamp(d) + pd.Timedelta(minutes=15 + entry_min)
+            entry_time = pd.Timestamp(d) + pd.Timedelta(hours=9, minutes=15 + entry_min)
             q = od[(od.datetime >= entry_time) & (od.datetime <= entry_time + pd.Timedelta(minutes=2))]
             ce = q[q.option_type == "CALL"].dropna(subset=["strike_price","close"]).sort_values("datetime")
             pe = q[q.option_type == "PUT"].dropna(subset=["strike_price","close"]).sort_values("datetime")
