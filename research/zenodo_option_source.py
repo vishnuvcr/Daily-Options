@@ -3,7 +3,8 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
+import calendar
 from pathlib import Path
 
 import pandas as pd
@@ -30,45 +31,57 @@ class ContractFile:
 
 
 def parse_expiry_date(path: Path) -> date | None:
-    parts = list(path.parts)[::-1]
-    for part in parts:
-        cleaned = part.replace("_", "-").strip()
-        for fmt in DATE_PATTERNS:
+    text = " / ".join(path.parts)
+
+    # Prefer explicit expiry-day/range dates embedded in archive names.
+    explicit: list[date] = []
+    for m in re.finditer(r"(?<!\d)(\d{1,2})[-/]([A-Za-z]{3}|\d{1,2})[-/](\d{2,4})(?!\d)", text):
+        raw = m.group(0)
+        for fmt in ("%d-%m-%Y", "%d-%m-%y", "%d/%m/%Y", "%d/%m/%y", "%d-%b-%Y", "%d-%b-%y"):
             try:
-                return pd.to_datetime(cleaned, format=fmt, errors="raise").date()
-            except Exception:
+                explicit.append(datetime.strptime(raw, fmt).date())
+                break
+            except ValueError:
                 pass
-        m = re.search(r"(\d{1,2})[- ]([A-Za-z]{3})[- ](20\d{2})", part)
+    if explicit:
+        return max(explicit)
+
+    month_names = {m.lower(): i for i, m in enumerate(calendar.month_name) if m}
+    month_names.update({m.lower(): i for i, m in enumerate(calendar.month_abbr) if m})
+
+    # Month + year path, e.g. "December 2017.zip".
+    for name, month_num in month_names.items():
+        m = re.search(rf"(?i)\b{re.escape(name)}[\s_-]*(20\d{{2}})\b", text)
         if m:
-            try:
-                return pd.to_datetime(m.group(0), dayfirst=True).date()
-            except Exception:
-                pass
+            return date(int(m.group(1)), month_num, 1)  # converted to expiry below
+
+    # Month-only path with year carried by the outer "NiftyOptions YYYY.zip".
+    year_match = re.search(r"(?i)NiftyOptions\s*(20\d{2})", text)
+    if year_match:
+        for name, month_num in month_names.items():
+            if re.search(rf"(?i)\b{re.escape(name)}\b", text):
+                return date(int(year_match.group(1)), month_num, 1)
+
     return None
 
-
 def expiry_type(expiry: date) -> str:
-    ts = pd.Timestamp(expiry)
-    next_month = ts + pd.offsets.MonthBegin(1)
-    last_day = next_month - pd.Timedelta(days=1)
-    last_thu = last_day - pd.Timedelta(days=(last_day.weekday() - 3) % 7)
-    return "MONTH" if ts.date() == last_thu.date() else "WEEK"
-
+    # Files without an explicit expiry-day are represented by the
+    # expiry month; classify its last Thursday as the monthly contract.
+    cal = calendar.monthcalendar(expiry.year, expiry.month)
+    thursdays = [w[calendar.THURSDAY] for w in cal if w[calendar.THURSDAY]]
+    last_thu = date(expiry.year, expiry.month, thursdays[-1])
+    return "MONTH" if expiry.day == 1 or expiry == last_thu else "WEEK"
 
 def parse_strike_type(path: Path) -> tuple[float | None, str | None]:
-    name = path.name.upper()
-    typ = None
-    if re.search(r"(?:^|[^A-Z])CE(?:[^A-Z]|$)", name) or name.endswith("CE.CSV") or name.endswith("CE.XLSX") or name.endswith("CE.XLS"):
-        typ = "CALL"
-    if re.search(r"(?:^|[^A-Z])PE(?:[^A-Z]|$)", name) or name.endswith("PE.CSV") or name.endswith("PE.XLSX") or name.endswith("PE.XLS"):
-        typ = "PUT"
+    name = path.name.upper().strip()
+    m = re.search(r"^\s*(CE|PE)\s*([0-9]{3,6}(?:\.[0-9]+)?)", name)
+    if m:
+        return float(m.group(2)), ("CALL" if m.group(1) == "CE" else "PUT")
 
-    m = re.search(r"NIFTY\s*([0-9]+(?:\.[0-9]+)?)\s*(?:CE|PE)", name)
-    if m is None:
-        m = re.search(r"([0-9]{3,6}(?:\.[0-9]+)?)\s*(?:CE|PE)", name)
-    strike = float(m.group(1)) if m else None
-    return strike, typ
-
+    m = re.search(r"(?:NIFTY\s*)?([0-9]{3,6}(?:\.[0-9]+)?)\s*(CE|PE)", name)
+    if m:
+        return float(m.group(1)), ("CALL" if m.group(2) == "CE" else "PUT")
+    return None, None
 
 def discover_option_files(root: Path, index_path: Path | None = None) -> list[ContractFile]:
     if index_path and index_path.exists():
