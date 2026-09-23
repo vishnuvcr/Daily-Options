@@ -63,3 +63,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0033 | 2026-09-24 | 4 | Phase 4 entry clock was constructed as midnight + 45/60/75 minutes instead of 09:15 + 30/45/60 minutes, so every entry lookup missed the market session | WFA returned zero observations despite otherwise valid quote mapping | Corrected entry timestamp to 09:15 IST base plus the configured post-open offset | CLOSED |
+
+
+| E0034 | 2026-09-24 | 4 | The Phase 4 WFA engine scored every parameter by rebuilding daily series and group-by tables separately inside every train/validation/test window, creating excessive compute time | Research run appeared stalled even though the logic was progressing | Pre-aggregate daily P&L once for all candidates; window scoring now filters that compact table and only computes full drawdown/bootstrap metrics for the selected test candidate | CLOSED |
