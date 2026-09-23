@@ -17,7 +17,10 @@ def read_source(path: Path) -> pl.DataFrame:
     idx=table.schema.get_field_index("timestamp")
     ts=table.schema.field("timestamp").type
     if pa.types.is_timestamp(ts) and ts.tz:
-        table=table.set_column(idx,"timestamp",pc.cast(table["timestamp"],pa.timestamp("us")))
+        raw=pc.cast(table["timestamp"],pa.int64())
+        # Dataset timezone is +05:30; convert epoch to IST wall-clock before removing timezone metadata.
+        raw=pc.add(raw,pa.scalar(19800000000,pa.int64()))
+        table=table.set_column(idx,"timestamp",pc.cast(raw,pa.timestamp("us")))
     return pl.from_arrow(table).with_columns([
         pl.col("date").cast(pl.Date),
         pl.col("timestamp").cast(pl.Datetime("us")),
