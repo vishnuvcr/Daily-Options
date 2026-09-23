@@ -68,6 +68,8 @@ def audit(path: Path) -> dict:
     strike_types: set[str] = set()
     date_min = None
     date_max = None
+    negative_volume_examples: list[dict] = []
+    iv_over_300_examples: list[dict] = []
 
     scanner = dataset.scanner(columns=REQUIRED, batch_size=250_000)
     for batch in scanner.to_batches():
@@ -94,12 +96,28 @@ def audit(path: Path) -> dict:
         counters["volume_null"] += int(df["volume"].isna().sum())
         counters["spot_null"] += int(df["spot"].isna().sum())
 
-        counters["negative_volume"] += int((df["volume"] < 0).fillna(False).sum())
+        neg = df["volume"] < 0
+        iv_high = df["iv"] > 300
+        counters["negative_volume"] += int(neg.fillna(False).sum())
         counters["negative_oi"] += int((df["oi"] < 0).fillna(False).sum())
         counters["nonpositive_spot"] += int((df["spot"] <= 0).fillna(False).sum())
         counters["nonpositive_strike"] += int((df["strike_price"] <= 0).fillna(False).sum())
         counters["nonpositive_close"] += int((df["close"] <= 0).fillna(False).sum())
-        counters["iv_over_300"] += int((df["iv"] > 300).fillna(False).sum())
+        counters["iv_over_300"] += int(iv_high.fillna(False).sum())
+
+        for mask, sink, limit in (
+            (neg, negative_volume_examples, 50),
+            (iv_high, iv_over_300_examples, 50),
+        ):
+            if len(sink) >= limit:
+                continue
+            cols = [
+                "datetime", "date", "iv", "volume", "oi",
+                "strike_price", "spot", "expiry_type", "strike_type",
+                "option_type", "close",
+            ]
+            sample = df.loc[mask.fillna(False), cols].head(limit - len(sink))
+            sink.extend(sample.astype(str).to_dict(orient="records"))
 
         high = df["high"]
         low = df["low"]
@@ -128,6 +146,8 @@ def audit(path: Path) -> dict:
         "expiry_types": sorted(expiry_types),
         "strike_types": sorted(strike_types),
         "quality_counters": counters,
+        "negative_volume_examples": negative_volume_examples,
+        "iv_over_300_examples": iv_over_300_examples,
         "required_columns": REQUIRED,
         "strategy_use_note": (
             "Volume features remain disabled until negative-volume rows are explained or "
