@@ -222,3 +222,9 @@ Phase 3G — COMPLETE; FAIL_PRELIMINARY; RETIRED.
 - No numerical statistic from that slow run is accepted.
 - Replaced the nested per-signal/per-path DataFrame scans with indexed per-session price maps and one-time setup simulation, then reattaching each simulated path to all matching variants.
 - CI will now rerun automatically on the corrected branch commit.
+
+### 2026-09-24 — Step 3H.5 Corrected CI rerun
+- New indexed-engine workflow run 35918302989 is in progress.
+- Checkout and environment setup completed successfully.
+- At last inspection, dependency installation was in progress; numerical backtest had not started yet.
+- No Phase 3H strategy statistics are accepted at this point.
