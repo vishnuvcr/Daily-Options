@@ -53,3 +53,9 @@ def test_zenodo_filename_strike_and_type():
 def test_variant_identity_excludes_trade_id():
     from research.phase3i_option_execution import SIGNAL_SPECS
     assert signal_variant_key(SIGNAL_SPECS[0]) != signal_variant_key(SIGNAL_SPECS[1])
+
+
+def test_entry_schema_persists_wing_strike():
+    import inspect
+    from research.phase3i_option_execution import simulate
+    assert "wing_strike" in inspect.getsource(simulate)
