@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import argparse
 import json
+from functools import lru_cache
 from pathlib import Path
 
-import duckdb
 import numpy as np
 import pandas as pd
 
@@ -14,8 +14,13 @@ from research.phase3i_futures_spot_lead_lag import (
     build_features,
     identify_spot_futures,
 )
+from research.zenodo_option_source import (
+    ContractFile,
+    discover_option_files,
+    read_contract_file,
+)
 
-OPTION_DATA_REVISION = "45e0a04"
+OPTION_DATA_REVISION = "10.5281/zenodo.10899828-options-2017-2020"
 IST_OFFSET = pd.Timedelta(hours=5, minutes=30)
 
 SIGNAL_SPECS = (
@@ -26,18 +31,6 @@ EXPIRIES = ("WEEK", "MONTH")
 WIDTH_STEPS = (1, 2)
 HOLDS = (5, 10, 15)
 
-SETUP_COLS = [
-    "trade_id",
-    "signal_variant",
-    "trade_date",
-    "expiry_type",
-    "entry_time_utc",
-    "direction",
-    "atm_strike",
-    "wing_strike",
-    "hold_minutes",
-]
-
 
 def signal_variant_key(spec: dict) -> str:
     return json.dumps(spec, sort_keys=True)
@@ -45,18 +38,16 @@ def signal_variant_key(spec: dict) -> str:
 
 def build_signal_events(spot: pd.DataFrame, futures: pd.DataFrame) -> pd.DataFrame:
     features = build_features(spot, futures)
-    rows = []
+    rows: list[dict] = []
     next_id = 0
 
     for spec in SIGNAL_SPECS:
         key = signal_variant_key(spec)
-        if spec["feature"] == "lead_gap":
-            raw = features[f"lead_gap_{spec['lookback']}_bps"]
-        elif spec["feature"] == "basis_change":
-            raw = features[f"basis_change_{spec['lookback']}_bps"]
-        else:
-            raise ValueError(spec["feature"])
-
+        raw = (
+            features[f"lead_gap_{spec['lookback']}_bps"]
+            if spec["feature"] == "lead_gap"
+            else features[f"basis_change_{spec['lookback']}_bps"]
+        )
         x = features.loc[raw.abs().ge(spec["threshold_bps"])].copy()
         x["raw_signal_bps"] = raw.loc[x.index]
         x["direction"] = np.where(x["raw_signal_bps"] > 0, "CALL", "PUT")
@@ -70,7 +61,6 @@ def build_signal_events(spot: pd.DataFrame, futures: pd.DataFrame) -> pd.DataFra
                     "trade_date": row.trade_date,
                     "signal_time_local": row.datetime,
                     "entry_anchor_local": row.datetime + pd.Timedelta(minutes=1),
-                    "entry_anchor_utc": row.datetime + pd.Timedelta(minutes=1) - IST_OFFSET,
                     "direction": row.direction,
                     "spot": float(row.spot),
                     "signal_value_bps": float(row.raw_signal_bps),
@@ -81,219 +71,254 @@ def build_signal_events(spot: pd.DataFrame, futures: pd.DataFrame) -> pd.DataFra
     return pd.DataFrame(rows)
 
 
-def _parquet_glob(root: Path) -> str:
-    return (root / "**" / "*.parquet").as_posix()
+class OptionReader:
+    def __init__(self, index: list[ContractFile]):
+        self.index = index
+        self._cache: dict[str, pd.DataFrame] = {}
 
+    @lru_cache(maxsize=4096)
+    def load(self, path: str) -> pd.DataFrame:
+        out = read_contract_file(Path(path))
+        return out
 
-def load_entry_quotes(options_root: Path, signals: pd.DataFrame) -> pd.DataFrame:
-    if signals.empty:
-        return pd.DataFrame()
+    def available_expiry_types(self) -> tuple[str, ...]:
+        present = {x.expiry_type for x in self.index}
+        return tuple(x for x in EXPIRIES if x in present)
 
-    rows = []
-    for _, s in signals.iterrows():
-        for expiry in EXPIRIES:
-            r = s.copy()
-            r["expiry_type"] = expiry
-            r["setup_id"] = f"{int(s.trade_id)}::{expiry}"
-            rows.append(r)
-    setups = pd.DataFrame(rows)
+    def candidate_contracts(
+        self,
+        trade_date,
+        expiry_type: str,
+        direction: str,
+        spot: float,
+    ) -> tuple[date | None, list[ContractFile]]:
+        choices = [
+            x for x in self.index
+            if x.option_type == direction and x.expiry_type == expiry_type and x.expiry_date >= trade_date
+        ]
+        if not choices:
+            return None, []
 
-    con = duckdb.connect()
-    try:
-        con.register("phase3i_signal_setups", setups)
-        q = f"""
-        WITH candidate AS (
-          SELECT
-            s.setup_id,
-            s.trade_id,
-            s.signal_variant,
-            s.trade_date,
-            s.signal_time_local,
-            s.direction,
-            s.spot AS signal_spot,
-            s.expiry_type,
-            o.datetime,
-            CAST(o.strike_price AS DOUBLE) AS strike_price,
-            CAST(o.close AS DOUBLE) AS close
-          FROM phase3i_signal_setups s
-          JOIN read_parquet('{_parquet_glob(options_root)}', union_by_name=true) o
-            ON CAST(o.date AS DATE) = s.trade_date
-           AND o.expiry_type = s.expiry_type
-           AND o.option_type = s.direction
-           AND o.datetime >= s.entry_anchor_utc
-           AND o.datetime <= s.entry_anchor_utc + INTERVAL '2 minutes'
-          WHERE o.close > 0
+        expiry = min(x.expiry_date for x in choices)
+        same_expiry = [x for x in choices if x.expiry_date == expiry]
+        strikes = sorted({x.strike for x in same_expiry})
+        near = [s for s in strikes if abs(s - float(spot)) <= 500.0]
+        if not near:
+            near = sorted(strikes, key=lambda s: abs(s - float(spot)))[:7]
+
+        paths = [x for x in same_expiry if x.strike in near]
+        return expiry, paths
+
+    def paired_entry(
+        self,
+        signal,
+        expiry_type: str,
+    ) -> tuple[dict | None, list[str]]:
+        expiry, contracts = self.candidate_contracts(
+            signal.trade_date,
+            expiry_type,
+            signal.direction,
+            float(signal.spot),
         )
-        SELECT * FROM candidate
-        ORDER BY setup_id, datetime, strike_price
-        """
-        return con.execute(q).df()
-    finally:
-        con.close()
+        if expiry is None or not contracts:
+            return None, []
 
+        by_strike = {}
+        anchor = pd.Timestamp(signal.entry_anchor_local)
+        end = anchor + pd.Timedelta(minutes=2)
 
-def choose_entries(entry_quotes: pd.DataFrame) -> pd.DataFrame:
-    if entry_quotes.empty:
-        return pd.DataFrame()
+        for c in contracts:
+            df = self.load(c.path)
+            q = df.loc[
+                (df["trade_date"] == signal.trade_date) &
+                (df["datetime_local"] >= anchor) &
+                (df["datetime_local"] <= end),
+                ["datetime_local", "close"],
+            ].copy()
+            if not q.empty:
+                q = q.groupby("datetime_local", as_index=False)["close"].last()
+                by_strike.setdefault(c.strike, []).append(q)
 
-    rows = []
-    for setup_id, g in entry_quotes.groupby("setup_id", sort=False):
-        g = g.sort_values(["datetime", "strike_price"])
-        entry_time = g["datetime"].iloc[0]
-        q = g.loc[g["datetime"].eq(entry_time)].dropna(subset=["strike_price", "close"]).copy()
-        if q.empty:
-            continue
+        if not by_strike:
+            return None, []
 
-        signal_spot = float(q["signal_spot"].iloc[0])
-        direction = str(q["direction"].iloc[0])
-        strikes = sorted(float(s) for s in q["strike_price"].unique())
-        atm = min(strikes, key=lambda k: abs(k - signal_spot))
-        if direction == "CALL":
-            wings = sorted(k for k in strikes if k > atm)
+        strikes = sorted(by_strike)
+        atm = min(strikes, key=lambda s: abs(float(s) - float(signal.spot)))
+        if signal.direction == "CALL":
+            wings = sorted(s for s in strikes if s > atm)
         else:
-            wings = sorted((k for k in strikes if k < atm), reverse=True)
-
+            wings = sorted((s for s in strikes if s < atm), reverse=True)
         if len(wings) < max(WIDTH_STEPS):
-            continue
+            return None, [f"expiry={expiry} missing OTM strikes for {signal.direction}"]
 
+        merged = {}
+        for strike, frames in by_strike.items():
+            merged[strike] = pd.concat(frames, ignore_index=True).sort_values("datetime_local").drop_duplicates("datetime_local", keep="last")
+
+        common = merged[atm].rename(columns={"close": "atm_close"}).merge(
+            merged[wings[-1]].rename(columns={"close": "wing_close"}),
+            on="datetime_local",
+            how="inner",
+        )
+        if common.empty:
+            return None, [f"expiry={expiry} no common ATM/wing timestamps"]
+
+        entry_time = common["datetime_local"].min()
+        base = {
+            "trade_id": int(signal.trade_id),
+            "signal_variant": signal.signal_variant,
+            "trade_date": signal.trade_date,
+            "expiry_type": expiry_type,
+            "expiry_date": expiry,
+            "direction": signal.direction,
+            "signal_time_local": signal.signal_time_local,
+            "entry_time_local": entry_time,
+            "spot": float(signal.spot),
+            "atm_strike": float(atm),
+        }
+
+        rows = []
+        # Rebuild once using the exact strike ordering available for this expiry.
         for width in WIDTH_STEPS:
             wing = float(wings[width - 1])
-            lp = q.loc[np.isclose(q["strike_price"], atm), "close"]
-            sp = q.loc[np.isclose(q["strike_price"], wing), "close"]
-            if lp.empty or sp.empty:
+            pair = merged[atm].rename(columns={"close": "long_entry"}).merge(
+                merged[wing].rename(columns={"close": "short_entry"}),
+                on="datetime_local",
+                how="inner",
+            )
+            pair = pair.loc[pair["datetime_local"].eq(entry_time)]
+            if pair.empty:
                 continue
-            long_entry = float(lp.iloc[0])
-            short_entry = float(sp.iloc[0])
-            debit = long_entry - short_entry
-            if not np.isfinite(debit) or debit <= 0:
+            le = float(pair["long_entry"].iloc[0])
+            se = float(pair["short_entry"].iloc[0])
+            if not np.isfinite(le) or not np.isfinite(se) or le <= se:
                 continue
             rows.append(
                 {
-                    "setup_id": setup_id,
-                    "trade_id": int(g["trade_id"].iloc[0]),
-                    "signal_variant": g["signal_variant"].iloc[0],
-                    "trade_date": g["trade_date"].iloc[0],
-                    "expiry_type": g["expiry_type"].iloc[0],
-                    "signal_time_local": g["signal_time_local"].iloc[0],
-                    "entry_time_utc": entry_time,
-                    "direction": direction,
-                    "atm_strike": atm,
-                    "wing_strike": wing,
-                    "width_steps": width,
-                    "long_entry": long_entry,
-                    "short_entry": short_entry,
-                    "debit": debit,
+                    **base,
+                    "width_steps": int(width),
+                    "entry_time_local": entry_time,
+                    "entry_time_utc": entry_time - IST_OFFSET,
+                    "long_entry": le,
+                    "short_entry": se,
+                    "debit": le - se,
                 }
             )
-    return pd.DataFrame(rows)
+        if not rows:
+            return None, [f"expiry={expiry} no positive debit spread at common entry"]
+        return rows, []
 
 
-def load_exit_quotes(options_root: Path, entries: pd.DataFrame) -> pd.DataFrame:
+def build_entries(signals: pd.DataFrame, reader: OptionReader) -> tuple[pd.DataFrame, dict]:
+    if signals.empty:
+        return pd.DataFrame(), {"signals": 0, "attempts": 0, "success_rows": 0}
+
+    expiry_types = reader.available_expiry_types()
+    rows = []
+    diagnostics = {
+        "signals": int(len(signals)),
+        "attempts": 0,
+        "success_rows": 0,
+        "available_expiry_types": list(expiry_types),
+        "no_expiry": 0,
+        "no_quotes_or_strikes": 0,
+        "no_positive_debit": 0,
+    }
+
+    for signal in signals.itertuples(index=False):
+        for expiry_type in expiry_types:
+            diagnostics["attempts"] += 1
+            entries, notes = reader.paired_entry(signal, expiry_type)
+            if entries is None:
+                diagnostics["no_quotes_or_strikes"] += 1
+                if notes and "no positive debit" in notes[0]:
+                    diagnostics["no_positive_debit"] += 1
+                continue
+            rows.extend(entries)
+
+    diagnostics["success_rows"] = len(rows)
+    return (pd.DataFrame(rows) if rows else pd.DataFrame()), diagnostics
+
+
+def simulate(entries: pd.DataFrame, reader: OptionReader) -> pd.DataFrame:
     if entries.empty:
         return pd.DataFrame()
 
-    setups = []
-    for hold in HOLDS:
-        x = entries.copy()
-        x["hold_minutes"] = hold
-        x["exit_deadline_utc"] = x["entry_time_utc"] + pd.to_timedelta(hold, unit="m")
-        x["variant_id"] = x["setup_id"].astype(str) + f"::{hold}"
-        setups.append(x)
-    setups = pd.concat(setups, ignore_index=True)
-
-    con = duckdb.connect()
-    try:
-        con.register("phase3i_option_setups", setups)
-        q = f"""
-        SELECT
-          s.variant_id,
-          s.setup_id,
-          s.trade_id,
-          s.signal_variant,
-          s.trade_date,
-          s.expiry_type,
-          s.entry_time_utc,
-          s.exit_deadline_utc,
-          s.direction,
-          s.atm_strike,
-          s.wing_strike,
-          s.width_steps,
-          s.hold_minutes,
-          s.long_entry,
-          s.short_entry,
-          o.datetime,
-          CAST(o.strike_price AS DOUBLE) AS strike_price,
-          CAST(o.close AS DOUBLE) AS close
-        FROM phase3i_option_setups s
-        JOIN read_parquet('{_parquet_glob(options_root)}', union_by_name=true) o
-          ON CAST(o.date AS DATE) = s.trade_date
-         AND o.expiry_type = s.expiry_type
-         AND o.option_type = s.direction
-         AND o.datetime >= s.entry_time_utc
-         AND o.datetime <= s.exit_deadline_utc
-         AND (
-           CAST(o.strike_price AS DOUBLE) = s.atm_strike
-           OR CAST(o.strike_price AS DOUBLE) = s.wing_strike
-         )
-        WHERE o.close > 0
-        ORDER BY variant_id, datetime, strike_price
-        """
-        return con.execute(q).df()
-    finally:
-        con.close()
-
-
-def simulate(entries: pd.DataFrame, exit_quotes: pd.DataFrame) -> pd.DataFrame:
-    if entries.empty or exit_quotes.empty:
-        return pd.DataFrame()
-
     rows = []
-    for variant_id, g in exit_quotes.groupby("variant_id", sort=False):
-        meta = g.iloc[0]
-        pivot = (
-            g.pivot_table(index="datetime", columns="strike_price", values="close", aggfunc="last")
-            .sort_index()
-            .dropna(subset=[meta.atm_strike, meta.wing_strike])
-        )
-        if pivot.empty or meta.entry_time_utc not in pivot.index:
+    for row in entries.itertuples(index=False):
+        expiry = row.expiry_date
+        candidates = [
+            x for x in reader.index
+            if x.expiry_date == expiry and x.expiry_type == row.expiry_type and x.option_type == row.direction
+            and x.strike in {float(row.atm_strike), float(row.wing_strike)}
+        ]
+        by_strike = {}
+        start = pd.Timestamp(row.entry_time_local)
+        for c in candidates:
+            df = reader.load(c.path)
+            q = df.loc[
+                (df["trade_date"] == row.trade_date) &
+                (df["datetime_local"] >= start) &
+                (df["datetime_local"] <= start + pd.Timedelta(minutes=max(HOLDS))),
+                ["datetime_local", "close"],
+            ].copy()
+            if not q.empty:
+                by_strike[c.strike] = q.groupby("datetime_local", as_index=False)["close"].last()
+
+        if row.atm_strike not in by_strike or row.wing_strike not in by_strike:
             continue
 
-        end = meta.exit_deadline_utc
-        eligible = pivot.loc[(pivot.index >= meta.entry_time_utc) & (pivot.index <= end)]
-        if eligible.empty:
+        paired = by_strike[row.atm_strike].rename(columns={"close": "long_close"}).merge(
+            by_strike[row.wing_strike].rename(columns={"close": "short_close"}),
+            on="datetime_local",
+            how="inner",
+        ).sort_values("datetime_local")
+
+        entry_pair = paired.loc[paired["datetime_local"].eq(start)]
+        if entry_pair.empty:
             continue
 
-        entry = float(eligible.loc[meta.entry_time_utc, meta.atm_strike] - eligible.loc[meta.entry_time_utc, meta.wing_strike])
-        exit_time = eligible.index[-1]
-        if end - exit_time > pd.Timedelta(minutes=1):
-            continue
+        for hold in HOLDS:
+            deadline = start + pd.Timedelta(minutes=hold)
+            eligible = paired.loc[
+                (paired["datetime_local"] >= start) &
+                (paired["datetime_local"] <= deadline)
+            ]
+            if eligible.empty:
+                continue
 
-        exit_spread = float(eligible.loc[exit_time, meta.atm_strike] - eligible.loc[exit_time, meta.wing_strike])
-        rows.append(
-            {
-                "variant_id": variant_id,
-                "trade_id": int(meta.trade_id),
-                "signal_variant": meta.signal_variant,
-                "trade_date": meta.trade_date,
-                "expiry_type": meta.expiry_type,
-                "entry_time_utc": meta.entry_time_utc,
-                "entry_time_local": pd.Timestamp(meta.entry_time_utc) + IST_OFFSET,
-                "exit_time_utc": exit_time,
-                "exit_time_local": exit_time + IST_OFFSET,
-                "direction": meta.direction,
-                "atm_strike": float(meta.atm_strike),
-                "wing_strike": float(meta.wing_strike),
-                "width_steps": int(meta.width_steps),
-                "hold_minutes": int(meta.hold_minutes),
-                "long_entry": float(meta.long_entry),
-                "short_entry": float(meta.short_entry),
-                "long_exit": float(eligible.loc[exit_time, meta.atm_strike]),
-                "short_exit": float(eligible.loc[exit_time, meta.wing_strike]),
-                "debit": entry,
-                "exit_spread": exit_spread,
-                "effective_hold_minutes": float((exit_time - meta.entry_time_utc).total_seconds() / 60.0),
-            }
-        )
+            exit_time = eligible["datetime_local"].max()
+            if deadline - exit_time > pd.Timedelta(minutes=1):
+                continue
+
+            ep = entry_pair.iloc[0]
+            xp = eligible.loc[eligible["datetime_local"].eq(exit_time)].iloc[0]
+            rows.append(
+                {
+                    "variant_id": f"{row.trade_id}::{row.expiry_type}::{row.width_steps}::{hold}",
+                    "trade_id": int(row.trade_id),
+                    "signal_variant": row.signal_variant,
+                    "trade_date": row.trade_date,
+                    "expiry_type": row.expiry_type,
+                    "expiry_date": row.expiry_date,
+                    "entry_time_local": start,
+                    "entry_time_utc": start - IST_OFFSET,
+                    "exit_time_local": exit_time,
+                    "exit_time_utc": exit_time - IST_OFFSET,
+                    "direction": row.direction,
+                    "atm_strike": float(row.atm_strike),
+                    "wing_strike": float(row.wing_strike),
+                    "width_steps": int(row.width_steps),
+                    "hold_minutes": int(hold),
+                    "long_entry": float(ep.long_close),
+                    "short_entry": float(ep.short_close),
+                    "long_exit": float(xp.long_close),
+                    "short_exit": float(xp.short_close),
+                    "debit": float(ep.long_close - ep.short_close),
+                    "exit_spread": float(xp.long_close - xp.short_close),
+                    "effective_hold_minutes": float((exit_time - start).total_seconds() / 60.0),
+                }
+            )
 
     return pd.DataFrame(rows)
 
@@ -444,15 +469,26 @@ def run(options_root: Path, futures_root: Path, out_dir: Path, slippage_points: 
     spot, fut, source_meta = identify_spot_futures(futures_root)
     signals = build_signal_events(spot, fut)
 
-    entry_quotes = load_entry_quotes(options_root, signals)
-    entries = choose_entries(entry_quotes)
-    exit_quotes = load_exit_quotes(options_root, entries)
-    trades = simulate(entries, exit_quotes)
-    trades = attach_pnl(trades, slippage_points)
+    index_path = options_root.parent / "option_index.json"
+    option_index = discover_option_files(options_root, index_path=index_path)
+    reader = OptionReader(option_index)
+
+    entries, entry_diag = build_entries(signals, reader)
+    trades = attach_pnl(simulate(entries, reader), slippage_points)
 
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "phase3i_option_source.json").write_text(
-        json.dumps({"revision": OPTION_DATA_REVISION, "signal_source": source_meta}, indent=2, default=str),
+        json.dumps(
+            {
+                "revision": OPTION_DATA_REVISION,
+                "signal_source": source_meta,
+                "option_files_indexed": len(option_index),
+                "available_expiry_types": list(reader.available_expiry_types()),
+                "entry_diagnostics": entry_diag,
+            },
+            indent=2,
+            default=str,
+        ),
         encoding="utf-8",
     )
     signals.to_csv(out_dir / "phase3i_signals.csv", index=False)
@@ -466,12 +502,15 @@ def run(options_root: Path, futures_root: Path, out_dir: Path, slippage_points: 
     wf, wf_summary = walk_forward(trades)
     wf.to_csv(out_dir / "phase3i_walk_forward.csv", index=False)
 
+    variants = len(SIGNAL_SPECS) * len(reader.available_expiry_types()) * len(WIDTH_STEPS) * len(HOLDS)
     summary = {
         "option_data_revision": OPTION_DATA_REVISION,
         "signals": int(len(signals)),
+        "option_files_indexed": int(len(option_index)),
+        "available_expiry_types": list(reader.available_expiry_types()),
         "entry_rows": int(len(entries)),
         "trades": int(len(trades)),
-        "variants": len(SIGNAL_SPECS) * len(EXPIRIES) * len(WIDTH_STEPS) * len(HOLDS),
+        "variants": variants,
         "preliminary": preliminary,
         "walk_forward": wf_summary,
         "slippage_points": slippage_points,
