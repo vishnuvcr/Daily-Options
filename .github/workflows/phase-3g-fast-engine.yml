@@ -2,9 +2,6 @@ name: Phase 3G - Fast Engine
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - phase-3g-oi-confirmed-breakout
 
 jobs:
   research:
