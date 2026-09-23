@@ -26,10 +26,10 @@ jobs:
         run: |
           mkdir -p data/cache/hf
           python -c "from pathlib import Path; from huggingface_hub import hf_hub_download; dst=Path('data/cache/hf/NIFTY_2025.parquet'); p=hf_hub_download(repo_id='rissin/nse-options-intraday', filename='upstox_intraday/NIFTY/NIFTY_2025.parquet', repo_type='dataset'); (dst.write_bytes(Path(p).read_bytes()) if not dst.exists() else None); print(dst, dst.stat().st_size)"
-      - name: Run full-chain iron fly tournament
-        run: python -m research.fullchain_ironfly --data data/cache/hf/NIFTY_2025.parquet --out reports
-      - name: Upload full-chain results
+      - name: Extract compact NIFTY 2025 research subset
+        run: python -m research.extract_nifty_compact --data data/cache/hf/NIFTY_2025.parquet --out reports/nifty_2025_compact.parquet
+      - name: Upload compact full-chain dataset
         uses: actions/upload-artifact@v4
         with:
-          name: phase-3c-full-chain-results
-          path: reports/
+          name: phase-3c-full-chain-compact-data
+          path: reports/nifty_2025_compact.*
