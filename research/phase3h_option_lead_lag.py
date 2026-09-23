@@ -182,7 +182,11 @@ def choose_entries(signals: pd.DataFrame, raw: pd.DataFrame) -> pd.DataFrame:
         g = groups.get((row.trade_date, row.expiry_type))
         if g is None:
             continue
-        q = g[(g["datetime"] >= row.entry_anchor) & (g["option_type"] == row.direction)]
+        q = g[
+            (g["datetime"] >= row.entry_anchor)
+            & (g["datetime"] <= row.entry_anchor + pd.Timedelta(minutes=2))
+            & (g["option_type"] == row.direction)
+        ]
         if q.empty:
             continue
         entry_time = q["datetime"].min()
@@ -279,7 +283,15 @@ def simulate_paths(entries: pd.DataFrame, raw: pd.DataFrame) -> pd.DataFrame:
                 "debit": debit,
             }
         )
-    return pd.DataFrame(out)
+    if not out:
+        return pd.DataFrame()
+    paths = pd.DataFrame(out)
+    return entries.merge(
+        paths,
+        on=setup_cols + ["long_entry", "short_entry"],
+        how="inner",
+        suffixes=("", "_path"),
+    )
 
 
 def attach_pnl(trades: pd.DataFrame, slippage_points: float) -> pd.DataFrame:
