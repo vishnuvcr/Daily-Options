@@ -40,3 +40,8 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0024 | 2026-09-24 | 3F-skew | IV-skew feature SQL correctly filtered IST times using +5:30, but Python re-filtered the resulting rows using raw UTC timestamps, eliminating every candidate signal | Two completed CI runs reported zero signals; no P&L result was generated, so no strategy conclusion was accepted | Apply the same +5:30 conversion in the Python signal builder before matching 09:45/10:00/10:15 IST | CLOSED |
+
+
+| E0026 | 2026-09-24 | 4 | First Phase 4 walk-forward run completed its expensive selection/test computation but failed while summarizing because the empty selected-window DataFrame had no `selected` attribute | Numerical result file was generated, but workflow marked failure and no Phase 4 conclusion was accepted | Guard the summary logic for an empty result table; rerun without changing the research selection rule | CLOSED |
+
+| E0027 | 2026-09-24 | 4 | Initial Phase 4 implementation repeatedly recomputed every parameter against every observation for every window and was unnecessarily slow | High CI compute cost and risk of apparent hanging | Replaced with one-time core outcome precomputation, vectorized regime-filter expansion, and window-specific group aggregation | CLOSED |
