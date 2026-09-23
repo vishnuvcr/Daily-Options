@@ -20,7 +20,7 @@ jobs:
           curl -L --fail --retry 3 -o data/cache/nifty_1y_1min.xlsx https://raw.githubusercontent.com/rajmaurya0904/bhav/main/sample_data/nifty_1y_1min.xlsx
           ls -lh data/cache/nifty_1y_1min.xlsx
       - name: Run tournament
-        run: python research/baseline_tournament.py --data data/cache/nifty_1y_1min.xlsx --out reports
+        run: python -m research.baseline_tournament --data data/cache/nifty_1y_1min.xlsx --out reports
       - name: Upload results
         uses: actions/upload-artifact@v4
         with:
