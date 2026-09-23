@@ -48,3 +48,14 @@ def test_normalize_table_accepts_trade_dt():
     })
     out = normalize_table(df)
     assert pd.Timestamp("2019-01-02 09:15:00") == out.iloc[0]["datetime"]
+
+
+def test_headerless_nifty_csv_schema_detection(tmp_path):
+    p = tmp_path / "NIFTY.csv"
+    p.write_text(
+        "NIFTY,2017/01/02,09:16,8212,8212.1,8188.6,8189.55,58,0\n",
+        encoding="utf-8",
+    )
+    from research.phase3i_futures_spot_lead_lag import read_table
+    df = read_table(p)
+    assert list(df.columns)[:7] == ["symbol", "trade_date", "trade_time", "open", "high", "low", "close"]
