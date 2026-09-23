@@ -3,7 +3,7 @@
 Last updated: 2026-09-24
 
 ## Overall
-Phase 3G — COMPLETE; FAIL_PRELIMINARY; RETIRED.
+Phase 3I — OPTION IMPLEMENTATION IN PROGRESS; PREDICTIVE GATE PASS ACCEPTED.
 
 ## Step log
 
@@ -268,4 +268,9 @@ Phase 3H — COMPLETE; FAIL_PRELIMINARY; RETIRED.
 
 ### 2026-09-24 — Step 3I.4 Option-source compatibility correction
 - The first Phase 3I option execution did not have overlapping historical coverage with the futures/spot signal sample, so its result is rejected as invalid.
-- The option stage is being rerun from the matching 2017-2020 Zenodo NIFTY archive with lazy strike-file indexing.
+- The corrected stage uses the matching 2017-2020 Zenodo NIFTY options archive with lazy strike-file indexing.
+
+### 2026-09-24 — Step 3I.5 Pre-run code audit and correction
+- Strict predictive gate is accepted as PASS with exactly two signal families: 3-minute futures-minus-spot lead gap at 10 bps (continuation) and 3-minute basis change at 10 bps (continuation).
+- Code audit found two execution defects before numerical option statistics were accepted: source-manifest serialization referenced `common_dates/calendar_days` before assignment, and selected `wing_strike` was not persisted into entry rows used by path simulation.
+- Both defects are logged as E0054/E0055 and are being corrected before the matching 2017-2020 option run. No option P&L from the defective implementation is accepted.
