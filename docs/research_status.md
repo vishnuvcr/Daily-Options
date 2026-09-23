@@ -265,3 +265,7 @@ Phase 3H — COMPLETE; FAIL_PRELIMINARY; RETIRED.
 - The first 72-variant predictive screen produced a small cluster of overall-threshold positives and was provisionally marked PASS by the initial implementation.
 - Step 3I.3 review found that the implementation had not enforced the pre-registered requirement of two forward horizons plus same-sign performance in both sample halves. That screen is not accepted for promotion.
 - A corrected strict predictive-gate implementation is now running; only its output can determine whether Phase 3I advances to option implementation.
+
+### 2026-09-24 — Step 3I.4 Option-source compatibility correction
+- The first Phase 3I option execution did not have overlapping historical coverage with the futures/spot signal sample, so its result is rejected as invalid.
+- The option stage is being rerun from the matching 2017-2020 Zenodo NIFTY archive with lazy strike-file indexing.
