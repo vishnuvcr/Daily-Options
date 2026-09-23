@@ -224,27 +224,6 @@ def evaluate(events: pd.DataFrame, raw: pd.DataFrame, features: pd.DataFrame, ou
         for hold in HOLDS:
             x = e.copy()
             x["exit_time"] = x["entry_time"] + pd.Timedelta(minutes=hold)
-            for option_type, strike_col, out_col in [
-                ("CALL","atm_strike","long_exit"),
-                ("CALL","wing_strike","short_exit"),
-            ]:
-                y = q[q.option_type==option_type].rename(
-                    columns={"datetime":"exit_time","strike_price":"_strike","close":out_col}
-                )
-                x = x.merge(
-                    y[["trade_date","expiry_type","exit_time","_strike",out_col]],
-                    left_on=["trade_date","expiry_type","exit_time",strike_col],
-                    right_on=["trade_date","expiry_type","exit_time","_strike"],
-                    how="left",
-                ).drop(columns=["_strike"])
-                # For puts, this is swapped below through direction-specific selection.
-            call = q[q.option_type=="CALL"].rename(
-                columns={"datetime":"exit_time","strike_price":"_strike","close":"call_exit"}
-            )
-            put = q[q.option_type=="PUT"].rename(
-                columns={"datetime":"exit_time","strike_price":"_strike","close":"put_exit"}
-            )
-
             # Rebuild exact leg exits directionally with a compact per-direction merge.
             x = e.copy()
             x["exit_time"] = x["entry_time"] + pd.Timedelta(minutes=hold)
