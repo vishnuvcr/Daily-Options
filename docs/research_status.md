@@ -3,7 +3,7 @@
 Last updated: 2026-09-24
 
 ## Overall
-Phase 3G — COMPLETE; FAIL_PRELIMINARY; RETIRED.
+Phase 7 — FINAL SYNTHESIS ACTIVE; EXPLORATORY PROGRAM CLOSED WITHOUT A PROMOTION CANDIDATE.
 
 ## Step log
 
@@ -262,3 +262,12 @@ Phase 3G — COMPLETE; FAIL_PRELIMINARY; RETIRED.
 - Event-level forward spot diagnostics produced correct-direction hit rates of approximately 48.8% (15m), 50.0% (30m), and 50.9% (60m).
 - Decision: retire Phase 3I. This is the final exploratory family under the current public dataset.
 - Phase 3/3F/3G/3H/3I therefore closes without a promotion candidate. The project moves to final synthesis and explicit data-gap assessment rather than further parameter mining.
+
+
+### 2026-09-24 — Step 7.1 Final synthesis activated
+- Repository reconciliation identified `phase-3i-opening-false-break-reversion` as the plan-compliant terminal exploratory branch.
+- Canonical final exploratory run 35919447949 is accepted: all 144 variants negative at base and stress friction; 14/14 walk-forward test windows negative.
+- Phase 5 robustness remains blocked because no candidate cleared the promotion gate.
+- Created `phase-7-manuscript` and added the final manuscript, data-gap assessment, final summary JSON and two figures.
+- No further parameter mining is authorized on the current public close-based datasets.
+- Next valid restart condition: a fresh data-quality gate using higher-fidelity synchronized executable market data.
