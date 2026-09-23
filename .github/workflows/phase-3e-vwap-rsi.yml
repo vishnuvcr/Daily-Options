@@ -27,7 +27,62 @@ jobs:
           mkdir -p data/cache reports
           test -s data/cache/nifty_1y_1min.xlsx || curl -L --fail --retry 3 -o data/cache/nifty_1y_1min.xlsx https://raw.githubusercontent.com/rajmaurya0904/bhav/main/sample_data/nifty_1y_1min.xlsx
       - name: Diagnose VWAP/RSI signal availability
-        run: python -m research.vwap_rsi_diagnostics --data data/cache/nifty_1y_1min.xlsx --out reports
+        run: |
+          python - <<'PY'
+          import json, pathlib, pandas as pd, numpy as np
+          from research.vwap_rsi_momentum import add_features
+          p='data/cache/nifty_1y_1min.xlsx'
+          spot=pd.read_excel(p,sheet_name='Spot_1min')
+          opt=pd.read_excel(p,sheet_name='ATM_Options_1min')
+          spot['timestamp']=pd.to_datetime(spot['Date'].astype(str)+' '+spot['Time'].astype(str),errors='coerce')
+          opt['timestamp']=pd.to_datetime(opt['Timestamp'],utc=True,errors='coerce').dt.tz_convert('Asia/Kolkata').dt.tz_localize(None)
+          spot=spot.rename(columns={'Open':'open','High':'high','Low':'low','Close':'close','Volume':'volume'}).dropna(subset=['timestamp','close'])
+          opt=opt.rename(columns={'Open':'open','High':'high','Low':'low','Close':'close','Volume':'volume','Type':'option_type','Strike':'strike'})
+          opt['option_type']=opt.option_type.astype(str).str.upper().replace({'CALL':'CE','PUT':'PE','C':'CE','P':'PE'})
+          for c in ['close','volume','strike']: opt[c]=pd.to_numeric(opt[c],errors='coerce')
+          spot_days={d:ds for d,ds in spot.groupby(spot.timestamp.dt.date)}
+          opt_days={d:ds for d,ds in opt.groupby(opt.timestamp.dt.date)}
+          diag={'spot_days':len(spot_days),'option_days':len(opt_days),'overlap_days':len(set(spot_days)&set(opt_days))}
+          vol=pd.to_numeric(spot['volume'],errors='coerce')
+          diag['spot_volume_nonzero_fraction']=float((vol.fillna(0)>0).mean())
+          diag['spot_volume_unique_sample']=vol.dropna().head(20).tolist()
+          diag['option_types']=sorted(opt.option_type.dropna().unique().tolist())
+          diag['vol_ratio_finite_rows']=0
+          diag['spot_rows']=int(len(spot)); diag['option_rows']=int(len(opt))
+          signal_hits=0; option_matches=0; path_matches=0; relaxed_hits=0
+          for d,ds in spot_days.items():
+            if d not in opt_days: continue
+            x=add_features(ds)
+            diag['vol_ratio_finite_rows'] += int(x['vol_ratio'].replace([np.inf,-np.inf],np.nan).notna().sum())
+            for entry in (9*60+30,9*60+45,10*60,10*60+15):
+              start=pd.Timestamp(d)+pd.Timedelta(minutes=entry); end=start+pd.Timedelta(minutes=45)
+              z=x[(x.timestamp>=start)&(x.timestamp<=end)].copy()
+              valid=z.replace([np.inf,-np.inf],np.nan).dropna(subset=['close','vwap','ema20','ema50','rsi','vol_ratio'])
+              for req in (3,4):
+                for rl,rs in ((55,45),(60,40)):
+                  for vr in (1.0,1.2,1.5):
+                    for _,r in valid.iterrows():
+                      ls=sum([r.close>r.vwap,r.rsi>rl,r.ema20>r.ema50,r.vol_ratio>=vr])
+                      ss=sum([r.close<r.vwap,r.rsi<rs,r.ema20<r.ema50,r.vol_ratio>=vr])
+                      if ls>=req or ss>=req:
+                        signal_hits+=1
+                        typ='CE' if ls>=req else 'PE'; st=r.timestamp
+                        q=opt_days[d][(opt_days[d].option_type==typ)&(opt_days[d].timestamp>=st+pd.Timedelta(minutes=1))&(opt_days[d].timestamp<=st+pd.Timedelta(minutes=4))&(opt_days[d].close>0)]
+                        if not q.empty:
+                          option_matches+=1
+                          spot_px=float(ds[ds.timestamp>=st].head(1).close.iloc[0])
+                          strike=min(q.strike.dropna().unique(),key=lambda s:abs(s-spot_px))
+                          et=q[q.strike==strike].sort_values('timestamp').timestamp.iloc[0]
+                          path=opt_days[d][(opt_days[d].option_type==typ)&(opt_days[d].strike==strike)&(opt_days[d].timestamp>et)&(opt_days[d].timestamp<=et+pd.Timedelta(minutes=90))]
+                          if not path.empty: path_matches+=1
+                        break
+          diag['signal_hits_first_signal_style']=signal_hits
+          diag['option_matches_after_signal']=option_matches
+          diag['path_matches_after_option']=path_matches
+          diag['vol_ratio_finite_fraction']=diag['vol_ratio_finite_rows']/max(1,len(spot))
+          pathlib.Path('reports/vwap_rsi_diagnostics.json').write_text(json.dumps(diag,indent=2,default=str))
+          print(json.dumps(diag,indent=2,default=str))
+          PY
       - name: Run VWAP/RSI momentum tournament
         run: python -m research.vwap_rsi_momentum --data data/cache/nifty_1y_1min.xlsx --out reports
       - uses: actions/upload-artifact@v4
