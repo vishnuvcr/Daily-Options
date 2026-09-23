@@ -31,7 +31,9 @@ def load(path: Path) -> pl.DataFrame:
     ts_idx=table.schema.get_field_index("timestamp")
     ts_type=table.schema.field("timestamp").type
     if pa.types.is_timestamp(ts_type) and ts_type.tz:
-        naive=pc.cast(table["timestamp"],pa.timestamp("us"))
+        raw=pc.cast(table["timestamp"],pa.int64())
+        raw=pc.add(raw,pa.scalar(19800000000,pa.int64()))
+        naive=pc.cast(raw,pa.timestamp("us"))
         table=table.set_column(ts_idx,"timestamp",naive)
     df=pl.from_arrow(table)
     return (
