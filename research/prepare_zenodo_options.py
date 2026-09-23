@@ -52,16 +52,41 @@ def build_nested_index(archive: Path) -> list[tuple[tuple[str, ...], ContractFil
     return rows
 
 
-def materialize_contract(archive: Path, chain: tuple[str, ...], out: Path) -> Path:
+def materialize_contracts(
+    archive: Path,
+    chains: set[tuple[str, ...]],
+    out: Path,
+) -> int:
+    if not chains:
+        return 0
+
+    prefix_cache: dict[tuple[str, ...], bytes] = {}
+    count = 0
+
     with zipfile.ZipFile(archive) as outer:
-        payload = outer.read(chain[0])
-    for member in chain[1:]:
-        with zipfile.ZipFile(io.BytesIO(payload)) as z:
-            payload = z.read(member)
-    target = out.joinpath(*chain)
-    target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_bytes(payload)
-    return target
+        for chain in sorted(chains):
+            top = chain[:1]
+            if top not in prefix_cache:
+                prefix_cache[top] = outer.read(chain[0])
+
+            for depth in range(1, len(chain) - 1):
+                prefix = chain[: depth + 1]
+                if prefix in prefix_cache:
+                    continue
+                parent = prefix[:-1]
+                with zipfile.ZipFile(io.BytesIO(prefix_cache[parent])) as z:
+                    prefix_cache[prefix] = z.read(chain[depth])
+
+            parent = chain[:-1]
+            with zipfile.ZipFile(io.BytesIO(prefix_cache[parent])) as z:
+                payload = z.read(chain[-1])
+
+            target = out.joinpath(*chain)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(payload)
+            count += 1
+
+    return count
 
 def main() -> None:
     ap = argparse.ArgumentParser()
@@ -101,14 +126,13 @@ def main() -> None:
         elif p.is_dir():
             p.rmdir()
 
-    for chain in sorted(needed):
-        materialize_contract(args.archive, chain, args.out)
+    extracted = materialize_contracts(args.archive, needed, args.out)
 
     manifest = {
         "archive": str(args.archive),
         "signal_rows": int(len(signals)),
         "indexed_contract_files": int(len(index)),
-        "extracted_contract_files": int(len(needed)),
+        "extracted_contract_files": int(extracted),
         "available_expiry_types": sorted({cf.expiry_type for _, cf in index}),
         "selected_expiry_types": sorted({cf.expiry_type for chain, cf in index if chain in needed}),
     }
