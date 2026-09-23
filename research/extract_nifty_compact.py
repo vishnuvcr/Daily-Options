@@ -26,7 +26,7 @@ def read_source(path: Path) -> pl.DataFrame:
         pl.col("timestamp").cast(pl.Datetime("us")),
         pl.col("expiry").cast(pl.Date),
         pl.col("strike").cast(pl.Float64),
-        pl.col("option_type").cast(pl.String).str.to_uppercase(),
+        pl.col("option_type").cast(pl.String).str.to_uppercase().replace({"CALL":"CE","PUT":"PE","C":"CE","P":"PE"}),
         pl.col("high").cast(pl.Float64),
         pl.col("low").cast(pl.Float64),
         pl.col("close").cast(pl.Float64),
@@ -54,11 +54,14 @@ def extract(path: Path, out: Path, wing_steps: int = 3) -> dict:
         (pl.col("timestamp").dt.hour()==9) &
         (pl.col("timestamp").dt.minute()>=30) &
         (pl.col("timestamp").dt.minute()<=32)
-    ).group_by(["date","strike","option_type"]).agg(pl.col("close").first())
-    px=q.pivot(values="close",index=["date","strike"],columns="option_type",aggregate_function="first")
-    if "CE" not in px.columns or "PE" not in px.columns:
-        raise RuntimeError("09:30 chain does not contain both CE and PE columns")
+    )
+    px=q.group_by(["date","strike"]).agg([
+        pl.when(pl.col("option_type")=="CE").then(pl.col("close")).drop_nulls().first().alias("CE"),
+        pl.when(pl.col("option_type")=="PE").then(pl.col("close")).drop_nulls().first().alias("PE"),
+    ])
     px=px.drop_nulls(["CE","PE"]).with_columns((pl.col("CE")-pl.col("PE")).abs().alias("gap"))
+    if px.height==0:
+        raise RuntimeError("09:30-09:32 chain has no common CE/PE strike pairs")
     atm=(
         px.sort(["date","gap"])
         .group_by("date",maintain_order=True)
