@@ -42,3 +42,9 @@ This log records requirements, research decisions, evidence and outcomes. It int
 - The multi-year directional IV/OI/volume imbalance screen failed the promotion gate; zero of 972 variants reached Rs 1,000/day and the best configuration was negative after costs.
 - Decision: stop tuning the failed directional family and move immediately to a defined-risk short-volatility/iron-fly regime hypothesis using IV/RV, trend magnitude and chain-balance filters.
 - The directional result and full data-audit summary are committed under `reports/`.
+
+
+## 2026-09-24 — OI repositioning result
+- The next materially different Phase 3F hypothesis tested normalized OI changes on fixed daily strike bands around prior-15-minute price breaks.
+- The full 216-variant grid failed: no positive calendar-day expectancy and no target-qualified configuration.
+- Decision: stop tuning this family and move to IV-skew shock/reversion/relative-value features.

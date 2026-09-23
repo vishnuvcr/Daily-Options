@@ -143,3 +143,12 @@ Add source download adapters and immutable cache manifests, run the first manual
 - Best result: 92 trades, mean active-day net Rs -234.26, mean all-day net Rs -17.62, win rate 16.30%, positive-day rate 1.23%, profit factor 0.148, max drawdown Rs -21,379.94.
 - Decision: retire the directional IV/OI/volume imbalance family as a Phase 3F lead. Do not spend additional tuning budget on this family.
 - Next: test a defined-risk short-volatility/iron-fly regime screen using the same audited dataset.
+
+
+### 2026-09-24 — Step 3F.8 OI repositioning result
+- Fixed-strike OI repositioning around intraday spot breaks completed in Actions run `35908269271`.
+- 216 parameter/structure variants were evaluated after realistic debit-spread costs and 0.20-point slippage.
+- Zero variants had positive mean all-calendar-day net; zero variants reached the ₹1,000/day target.
+- The least-negative ranking result had only 2 trades, so it is not considered a viable candidate. With at least 30 trades, the least-negative configuration still had mean all-day net -₹7.14 and PF 0.288. With at least 75 trades, the least-negative configuration had mean all-day net -₹11.20 and PF 0.608.
+- Decision: retire the OI repositioning + break family without further tuning.
+- Next: test IV-skew shock/reversion and relative-value option structures.
