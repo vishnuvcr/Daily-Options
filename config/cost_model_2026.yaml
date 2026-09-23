@@ -1,0 +1,35 @@
+# Default NSE index-options cost model
+effective_date: "2026-04-01"
+broker: "Paytm Money"
+
+brokerage:
+  per_executed_order_inr: 20.0
+
+statutory:
+  stt:
+    option_sale_rate: 0.0015
+    option_buy_rate: 0.0
+  stamp_duty:
+    option_buy_rate: 0.00003
+    option_sell_rate: 0.0
+  sebi_turnover_fee_rate: 0.000001
+  gst_rate: 0.18
+
+exchange:
+  nse_option_premium_turnover_rate: 0.0003503
+  note: "Research default. Must be revalidated against the latest exchange tariff in CI."
+
+execution:
+  base_round_trip_slippage_premium_points: 0.20
+  stressed_round_trip_slippage_multiplier: 2.0
+  signal_to_fill_latency_seconds: 60
+
+risk:
+  max_daily_loss_inr_per_lot: -1500
+  max_trades_per_day: 2
+
+notes:
+  - "NSE STT: 0.15% on option sale premium effective 2026-04-01."
+  - "Paytm Money: flat Rs 20 brokerage across segments effective 2025-01-15."
+  - "GST: 18% on applicable brokerage, exchange and SEBI service charges."
+  - "Exact broker/exchange charges are date-versioned and revalidated during research."
