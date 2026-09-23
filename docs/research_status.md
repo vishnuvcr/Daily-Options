@@ -175,5 +175,12 @@ Status: candidate sources only; independent validation pending Phase 1.
 - Historical bid/ask/depth data may require licensed or broker-authenticated sources.
 - Some public datasets have close/market-price bars without executable quotes.
 
+### 2026-09-24 — Step 3G.1 Bounded implementation prepared
+- Created branch phase-3g-oi-confirmed-breakout from the completed Phase 4 validation branch.
+- Pre-registered 128 parameter variants: 15/30-minute structure lookback, 3/5-minute OI confirmation, 0.01/0.02 normalized OI threshold, WEEK/MONTH expiry, 1/2-strike debit spread, 60/90-minute hold, and optional IV/RV <=1.25 filter.
+- OI is used only after the price-structure break; the strategy does not use OI as a standalone predictor.
+- Added base-cost and 2x-slippage runs, date-aware NIFTY lot sizes, and a temporary CI bridge because the dedicated Phase 3G workflow was not being scheduled by the repository Actions connection.
+- Implementation code and bounded hypothesis documentation are committed; numerical results are not yet accepted until CI produces the trade/leaderboard artifacts.
+
 ## Current phase
-Phase 3G — bounded hypothesis preparation.
+Phase 3G — bounded experiment awaiting CI result.
