@@ -206,3 +206,8 @@ Phase 3G — COMPLETE; FAIL_PRELIMINARY; RETIRED.
 - Added a leakage-safe forward-return diagnostic and defined-risk debit-spread execution engine.
 - Added manual GitHub Actions workflow with cached pinned dataset and base/stress slippage runs.
 - Current status: awaiting CI numerical result.
+
+### 2026-09-24 — Step 3H.2 Pre-result engine correction
+- Unit tests passed in the initial Phase 3H CI attempt, but code review identified a path-simulation bookkeeping defect before any strategy statistic was accepted: identical setups were deduplicated without remapping the simulated path to every matching variant.
+- Correction: simulate each unique setup once, then merge path outcomes back to all matching variants; constrain "next executable" entry lookup to a two-minute execution budget.
+- No numerical Phase 3H result from the pre-correction run is eligible for acceptance.
