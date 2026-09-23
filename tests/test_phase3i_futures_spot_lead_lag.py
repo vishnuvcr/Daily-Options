@@ -13,6 +13,7 @@ def test_phase3i_grid_is_bounded():
     assert {v.lookback for v in grid} == {1, 3, 5}
     assert {v.threshold_bps for v in grid} == {0.0, 2.0, 5.0, 10.0}
     assert {v.mode for v in grid} == {"continuation", "contrarian"}
+    assert {v.feature for v in grid} == {"futures_return", "lead_gap", "basis_change"}
 
 
 def test_normalize_table_builds_datetime():
