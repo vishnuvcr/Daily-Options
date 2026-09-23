@@ -9,6 +9,7 @@ on:
       - "research/phase3i_futures_spot_lead_lag.py"
       - "research/phase3i_option_execution.py"
       - "research/zenodo_option_source.py"
+      - "research/prepare_zenodo_options.py"
       - "tests/test_phase3i_futures_spot_lead_lag.py"
       - "tests/test_phase3i_option_execution.py"
       - "docs/phase3i_hypothesis.md"
@@ -83,17 +84,9 @@ jobs:
             python -c 'import urllib.request; urllib.request.urlretrieve("https://zenodo.org/records/10899828/files/Nifty%20Options%20Data.zip?download=1","data/cache/zenodo_nifty_options/source.zip")'
           fi
           echo "717d15361af52d1d654b4909d998967e  data/cache/zenodo_nifty_options/source.zip" | md5sum -c -
-          if [ ! -f data/cache/zenodo_nifty_options/.READY ]; then
-            rm -rf data/cache/zenodo_nifty_options/extracted
-            mkdir -p data/cache/zenodo_nifty_options/extracted
-            unzip -q data/cache/zenodo_nifty_options/source.zip -d data/cache/zenodo_nifty_options/extracted
-            find data/cache/zenodo_nifty_options/extracted -type f -name '*.zip' -print0 | while IFS= read -r -d '' z; do
-              out="${z%.zip}"
-              mkdir -p "$out"
-              unzip -q "$z" -d "$out"
-            done
-            touch data/cache/zenodo_nifty_options/.READY
-          fi
+          rm -rf data/cache/zenodo_nifty_options/extracted
+          mkdir -p data/cache/zenodo_nifty_options/extracted
+          python -m research.prepare_zenodo_options             --archive data/cache/zenodo_nifty_options/source.zip             --signals reports/phase3i/phase3i_signals.csv             --out data/cache/zenodo_nifty_options/extracted
           find data/cache/zenodo_nifty_options/extracted -type f \( -name '*.csv' -o -name '*.xlsx' -o -name '*.xls' \) | wc -l
 
       - name: Run Phase 3I option implementation - base
