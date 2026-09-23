@@ -5,8 +5,6 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  push:
-    branches: [phase-3e-vwap-rsi-momentum]
   workflow_dispatch:
 
 jobs:
