@@ -15,7 +15,7 @@ Phase 4 and Phase 3G have both failed their stated promotion gates and are retir
 | 3F | phase-3f-option-microstructure | COMPLETE — lead families retired |
 | 4 | phase-4-walk-forward-selection-v2 | COMPLETE — FAIL_PRELIMINARY |
 | 3G | phase-3g-oi-confirmed-breakout | COMPLETE — FAIL_PRELIMINARY; RETIRED |
-| 3H | phase-3h-option-lead-lag | ACTIVE — CI RUN PENDING |
+| 3H | phase-3h-option-lead-lag | ACTIVE — indexed CI rerun 35918302989 |
 | 5 | phase-5-robustness | BLOCKED until a candidate passes validation |
 | 6 | phase-6-paper-shadow | PLANNED |
 | 7 | phase-7-manuscript | PLANNED |
