@@ -51,3 +51,11 @@
 - All 144 variants were negative at base and stress friction; all 14 walk-forward test windows were negative.
 - No Phase 3 candidate met the Rs 1,000/lot/day promotion gate.
 - Decision: stop exploratory Phase 3 under the current public dataset and move to final synthesis/data-quality assessment.
+
+
+## 2026-09-24 — Phase 7 final synthesis
+- Research continuation was anchored to the repository state and the recorded terminal exploratory result.
+- The bounded exploratory program is closed without a promotion candidate.
+- Phase 7 manuscript work was started on branch phase-7-manuscript.
+- Final manuscript, data-gap assessment, summary JSON and figures were added to the repository.
+- Phase 5 robustness and Phase 6 paper-shadow remain blocked until a candidate passes the promotion gate.
