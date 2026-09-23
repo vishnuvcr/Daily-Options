@@ -37,4 +37,7 @@
 | E0039 | 2026-09-24 | 3G | First fast2 result produced an empty WFA table because reusable WFA compared Python date objects with timestamp-valued trade_date rows | Preliminary leaderboard was valid but OOS window statistics were unavailable | Normalize trade_date to Python dates inside walk_forward before window membership tests | FIXED |
 | E0040 | 2026-09-24 | 3G-CI | Fast2 branch run 35916489142 failed at checkout because GitHub runner reported a transient server certificate verification error | No research code executed in that run | Re-triggered through a new fast2 workflow; subsequent checkout/data/tests passed | CLOSED |
 
+| E0039 | 2026-09-24 | 3G | Reusable walk-forward evaluator compared Python date objects with timestamp-valued trade dates, returning zero WFA windows | OOS statistics were unavailable from the first artifact | Normalize trade_date to Python dates inside WFA; independently recompute from immutable path artifact | CLOSED |
+| E0041 | 2026-09-24 | 3G | Accepted fast2 artifact showed all 128 variants negative after costs | Candidate family did not meet the research target | Retire Phase 3G rather than enlarge the grid | CLOSED |
+
 Every subsequent research or engineering error gets a new row. Fixes are never silently discarded.
