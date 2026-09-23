@@ -29,3 +29,7 @@ def test_phase3h_information_barrier_shape():
 def test_lot_size_transition():
     assert nifty_lot_size("2025-12-30") == 75
     assert nifty_lot_size("2026-01-06") == 65
+
+
+def test_fast_engine_imports():
+    from research import phase3h_fast_engine  # noqa: F401
