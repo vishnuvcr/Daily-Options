@@ -84,6 +84,19 @@ jobs:
             python -c 'import urllib.request; urllib.request.urlretrieve("https://zenodo.org/records/10899828/files/Nifty%20Options%20Data.zip?download=1","data/cache/zenodo_nifty_options/source.zip")'
           fi
           echo "717d15361af52d1d654b4909d998967e  data/cache/zenodo_nifty_options/source.zip" | md5sum -c -
+          python - <<'PY'
+          import zipfile
+          from collections import Counter
+          p = "data/cache/zenodo_nifty_options/source.zip"
+          with zipfile.ZipFile(p) as z:
+              names = [n for n in z.namelist() if not n.endswith("/")]
+              print("OPTION_ARCHIVE_FILE_COUNT", len(names))
+              print("OPTION_ARCHIVE_FIRST_NAMES")
+              for n in names[:80]:
+                  print(n)
+              print("OPTION_ARCHIVE_SUFFIX_COUNTS", Counter(n.rsplit(".",1)[-1].lower() for n in names if "." in n).most_common(20))
+              print("OPTION_ARCHIVE_NESTED_ZIPS", [n for n in names if n.lower().endswith(".zip")][:20])
+          PY
           rm -rf data/cache/zenodo_nifty_options/extracted
           mkdir -p data/cache/zenodo_nifty_options/extracted
           python -m research.prepare_zenodo_options             --archive data/cache/zenodo_nifty_options/source.zip             --futures data/cache/zenodo_nifty_spot_futures/extracted             --out data/cache/zenodo_nifty_options/extracted
