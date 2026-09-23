@@ -31,3 +31,7 @@ def test_phase3i_parameter_sets_are_fixed():
 def test_lot_size_transition():
     assert nifty_lot_size("2025-12-30") == 75
     assert nifty_lot_size("2026-01-06") == 65
+
+
+def test_fast_engine_imports():
+    from research import phase3i_fast_engine  # noqa: F401
