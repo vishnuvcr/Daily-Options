@@ -1,4 +1,8 @@
 name: Phase 2 - Baseline Tournament
+concurrency:
+  group: phase2-baseline-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches: [phase-2-baseline-tournament]
