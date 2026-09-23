@@ -1,0 +1,28 @@
+name: Phase 2 - Baseline Tournament
+on:
+  push:
+    branches: [phase-2-baseline-tournament]
+  workflow_dispatch:
+jobs:
+  tournament:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Install dependencies
+        run: pip install pandas openpyxl numpy pytest pyyaml
+      - name: Unit tests
+        run: pytest -q
+      - name: Download one-year NIFTY sample
+        run: |
+          mkdir -p data/cache reports
+          curl -L --fail --retry 3 -o data/cache/nifty_1y_1min.xlsx https://raw.githubusercontent.com/rajmaurya0904/bhav/main/sample_data/nifty_1y_1min.xlsx
+          ls -lh data/cache/nifty_1y_1min.xlsx
+      - name: Run tournament
+        run: python research/baseline_tournament.py --data data/cache/nifty_1y_1min.xlsx --out reports
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase-2-baseline-results
+          path: reports/
