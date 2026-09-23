@@ -37,6 +37,12 @@ Status: candidate sources only; independent validation pending Phase 1.
 - Added manual GitHub Actions workflow.
 - Detected and fixed E0005 before the first workflow run.
 
+### 2026-09-23 — Step 2.1 Baseline tournament CI run
+- CI downloaded the 18 MB one-year NIFTY 1-minute sample successfully.
+- Unit tests passed (4/4).
+- Backtest stage stopped on E0006 before numerical results were produced.
+- Correction committed so the next push reruns the tournament.
+
 ## Current blockers
 - Historical bid/ask/depth data may require licensed or broker-authenticated sources.
 - Some public datasets have close/market-price bars without executable quotes.
