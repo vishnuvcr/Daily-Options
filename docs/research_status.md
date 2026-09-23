@@ -211,3 +211,8 @@ Phase 3G — COMPLETE; FAIL_PRELIMINARY; RETIRED.
 - Unit tests passed in the initial Phase 3H CI attempt, but code review identified a path-simulation bookkeeping defect before any strategy statistic was accepted: identical setups were deduplicated without remapping the simulated path to every matching variant.
 - Correction: simulate each unique setup once, then merge path outcomes back to all matching variants; constrain "next executable" entry lookup to a two-minute execution budget.
 - No numerical Phase 3H result from the pre-correction run is eligible for acceptance.
+
+### 2026-09-24 — Step 3H.3 Cache reuse correction
+- Phase 3H initially used a phase-specific cache key.
+- Correction: switched to the pinned-data cache key shared across phases, with the Phase 3G cache as a restore source.
+- No strategy statistic was accepted from the pre-correction CI attempt.
