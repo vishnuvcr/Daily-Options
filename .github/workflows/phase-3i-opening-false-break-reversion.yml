@@ -7,6 +7,7 @@ on:
       - phase-3i-opening-false-break-reversion
     paths:
       - "research/phase3i_opening_false_break_reversion.py"
+      - "research/phase3i_fast_engine.py"
       - "docs/phase3i_hypothesis.md"
       - "tests/test_phase3i_opening_false_break_reversion.py"
       - "research/cost_model.py"
