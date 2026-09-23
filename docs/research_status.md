@@ -3,7 +3,7 @@
 Last updated: 2026-09-23
 
 ## Overall
-Phase 0 — BOOTSTRAPPED
+Phase 1 — DATA FOUNDATION IN PROGRESS
 
 ## Step log
 
@@ -29,10 +29,17 @@ Candidate sources:
 
 Status: candidate sources only; independent validation pending Phase 1.
 
+### 2026-09-23 — Step 1.1 Data foundation scaffold
+- Added source manifest.
+- Added generic CSV/Parquet/XLSX audit utility.
+- Added configurable Paytm/NSE option cost model.
+- Added unit tests.
+- Added manual GitHub Actions workflow.
+- Detected and fixed E0005 before the first workflow run.
+
 ## Current blockers
-- Repository started empty.
-- High-quality historical bid/ask/depth may require licensed or broker-authenticated sources.
-- Some public datasets have close/market-price bars without bid/ask and cannot be treated as perfect executable prices.
+- Historical bid/ask/depth data may require licensed or broker-authenticated sources.
+- Some public datasets have close/market-price bars without executable quotes.
 
 ## Next action
-Create phase-1-data-foundation with data manifests, download adapters, schema validation, cached sample datasets and automated quality checks.
+Add source download adapters and immutable cache manifests, run the first manual data audit, then promote to the Phase 2 baseline tournament.
