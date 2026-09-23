@@ -126,3 +126,10 @@ Add source download adapters and immutable cache manifests, run the first manual
 - No market-data audit was executed in that failed run, so no data result was accepted.
 - Correction applied: dataset acquisition now uses a single-line Python invocation pinned to revision `45e0a04`.
 - A new path-filtered run should execute automatically from the correction commit.
+
+
+### 2026-09-24 — Step 3F.5 Microstructure tournament launch correction
+- The first Phase 3F tournament attempt reached the strategy step only after the full data audit passed, then failed before execution because the workflow ran the script directly and Python could not import the repository `research` package.
+- No strategy statistic from that run is accepted.
+- Correction: workflow now invokes `python -m research.phase3f_microstructure_tournament`, matching the known-good package execution pattern from Phase 2.
+- The complete-data audit remains valid: 84 parquet files, 33,963,731 rows, 1,228 dates, IV/OI/spot non-null, 16 negative-volume rows quarantined, 485 IV>300 observations flagged.
