@@ -224,7 +224,11 @@ def build_trade_table(obs_df: pd.DataFrame) -> pd.DataFrame:
                             "net_pnl": float(pnl),
                         }
                     )
-    return pd.DataFrame(rows)
+    columns = [
+        "obs_id","trade_date","expiry_type","entry_min","stop_mult","target_decay",
+        "hold_minutes","gap","r15","iv_rv","net_pnl"
+    ]
+    return pd.DataFrame(rows, columns=columns)
 
 
 def expand_filters(trades: pd.DataFrame) -> pd.DataFrame:
@@ -278,10 +282,25 @@ def metric_table(x: pd.DataFrame, dates: pd.DatetimeIndex) -> pd.DataFrame:
 
 def main(data: Path, out: Path) -> None:
     obs, calendars = load_observations(data)
+    print(f"PHASE4_OBSERVATIONS={len(obs)}")
     trades = build_trade_table(obs)
+    print(f"PHASE4_CORE_TRADE_ROWS={len(trades)}")
     # This is deliberately limited to 8 regime filters; all core stop/target/hold combinations
     # are computed once and reused across walk-forward windows.
+    if trades.empty:
+        out.mkdir(parents=True, exist_ok=True)
+        summary = {
+            "observations": int(len(obs)),
+            "core_trade_rows": 0,
+            "gate": "NO_VALID_TRADE_PATH",
+            "reason": "No ATM call+put paired path survived the entry/holding-period construction.",
+        }
+        (out / "phase4_walk_forward_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+        print(json.dumps(summary, indent=2))
+        return
+
     expanded = expand_filters(trades)
+    print(f"PHASE4_EXPANDED_ROWS={len(expanded)}")
 
     dates_all = pd.DatetimeIndex(sorted(obs.trade_date.unique()))
     windows = expanding_windows(
