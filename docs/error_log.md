@@ -34,4 +34,7 @@
 | E0036 | 2026-09-24 | 4 | Manual Phase 4 result-table transcription contained one floating-point typo | Repository table temporarily diverged from the CI artifact | Corrected the value against the downloaded artifact | CLOSED |\n\n| E0037 | 2026-09-24 | 3G | First Phase 3G execution failed because entry-row construction dropped trade_id before path simulation | No Phase 3G statistics were produced | Preserve trade_id through entry selection and path simulation | CLOSED |
 | E0038 | 2026-09-24 | 3G | Initial OI confirmation implementation used a backward-looking OI change at the break timestamp | Specification did not satisfy the declared post-break confirmation barrier; no result from that run is eligible for promotion | Use forward OI change over the confirmation window and delay entry until the window has elapsed | CLOSED |
 
+| E0039 | 2026-09-24 | 3G | First fast2 result produced an empty WFA table because reusable WFA compared Python date objects with timestamp-valued trade_date rows | Preliminary leaderboard was valid but OOS window statistics were unavailable | Normalize trade_date to Python dates inside walk_forward before window membership tests | FIXED |
+| E0040 | 2026-09-24 | 3G-CI | Fast2 branch run 35916489142 failed at checkout because GitHub runner reported a transient server certificate verification error | No research code executed in that run | Re-triggered through a new fast2 workflow; subsequent checkout/data/tests passed | CLOSED |
+
 Every subsequent research or engineering error gets a new row. Fixes are never silently discarded.
