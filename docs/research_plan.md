@@ -167,3 +167,19 @@ Phase 3G failed its bounded OOS gate, so the next predefined hypothesis is a dis
 - Walk-forward: 180-day train, 60-day validation, 5-day embargo, 60-day untouched test, 60-day step, with the same top-12 train -> best validation selection rule used in Phase 3G.
 - Diagnostic requirement: report the option-pressure feature's forward spot-return conditional means/hit rates in addition to trading P&L, so a trading result cannot be mistaken for predictive evidence.
 - Stop rule: if the fixed 108-variant family fails after cost and leakage-safe WFA, retire it and move to the next predefined hypothesis; do not enlarge thresholds or add ad hoc features.
+
+## 11. Plan amendment — Phase 3I futures-versus-spot price discovery
+
+Phase 3H failed its pre-registered option-price lead-lag family. The next hypothesis changes the information source rather than enlarging the failed option-pressure grid.
+
+### Phase 3I — NIFTY futures-versus-spot lead-lag / dislocation
+- Research question: does short-horizon NIFTY futures information add predictive value for the next 1–5 minute NIFTY spot move after realistic execution costs?
+- Data gate before optimization: verify at least one reproducible 1-minute NIFTY futures source with continuous timestamps, contract identity, expiry/roll handling, session completeness and no look-ahead from contract selection.
+- Primary candidate public source: Zenodo NIFTY spot/futures/options one-minute data (2017–2020). Secondary candidate sources must independently validate timestamp/contract fields before use.
+- Features: futures return over 1/3/5 minutes, futures-minus-spot basis change, standardized futures/spot divergence, and contemporaneous futures volume/OI only where the field passes audit.
+- Signal: pre-register a compact continuation/dislocation grid; no feature is allowed to use future spot data. Entry is the next executable minute.
+- Trade expression: defined-risk NIFTY call or put debit spread with deterministic strike/expiry selection.
+- Costs: repository Paytm Money/NSE cost model, date-aware lot size, 0.20 option-premium points per-leg base slippage and 0.40 stress rerun.
+- Validation: 180-day train, 60-day validation, 5-day embargo, 60-day untouched test, 60-day step; no test-period parameter selection.
+- Promotion: positive net OOS expectancy after costs and at least one untouched test window at or above Rs 1,000/lot/day, with stress results retained as a decision input.
+- Stop rule: if the data gate fails, acquire no unlicensed data merely to rescue the phase; if the bounded strategy family fails, retire it without grid expansion and move to the next predefined hypothesis.
