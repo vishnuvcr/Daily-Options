@@ -244,10 +244,6 @@ def simulate_paths(trades: pd.DataFrame, raw: pd.DataFrame) -> pd.DataFrame:
         (use["datetime"] <= use["max_exit_time"]) &
         (use["option_type"] == use["direction"])
     ].copy()
-    use = use.loc[
-        np.isclose(use["strike_price"].to_numpy(), np.repeat(t[["atm_strike","wing_strike"]].to_numpy(), 1, axis=0).mean(axis=1)[0])
-        if False else np.ones(len(use), dtype=bool)
-    ]
     records = []
     for trade_id, g in use.groupby("trade_id", sort=False):
         tr = t.loc[t["trade_id"].eq(trade_id)].iloc[0]
