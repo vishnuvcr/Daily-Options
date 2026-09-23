@@ -15,11 +15,15 @@ Research program for discovering and validating an intraday NSE options strategy
 | 0 | main | Research charter, audit trail, cost model, repository scaffolding | BOOTSTRAPPED |
 | 1 | phase-1-data-foundation | Acquire/cache/validate spot, futures, option-chain, OI, IV and context data | PLANNED |
 | 2 | phase-2-baseline-tournament | Benchmark ORB, VWAP, EMA, momentum, mean-reversion and volatility strategies | PLANNED |
-| 3 | phase-3-options-structure | Test spreads, straddles/strangles, gamma/IV/OI and regime-conditioned structures | PLANNED |
-| 4 | phase-4-walk-forward-selection | Freeze parameters via nested walk-forward OOS testing | PLANNED |
+| 3 | phase-3-options-structure | Test spreads, straddles/strangles, gamma/IV/OI and regime-conditioned structures | PARTIAL — price/structure families tested; 3E retired |
+| 3F | phase-3f-option-microstructure | IV/OI/volume/strike-structure and volatility-regime hypothesis | ACTIVE — data audit |
 | 5 | phase-5-robustness | Stress costs, slippage, delays, regime shifts, Monte Carlo and parameter perturbations | PLANNED |
 | 6 | phase-6-paper-shadow | Daily paper-trading/shadow execution validation | PLANNED |
 | 7 | phase-7-manuscript | Final strategy specification, results, figures, appendices and future research | PLANNED |
+
+## Current status
+- Phase 3E VWAP/RSI momentum was corrected and tested; no variant met the Rs 1,000/day target, so it is retired.
+- Phase 3F is now the active research branch. It will not reuse the failed price-only feature family; it first audits a multi-year IV/OI-capable dataset, then tests option-chain microstructure and volatility regimes.
 
 ## Initial evidence
 As of 2026-09-23:
