@@ -1,0 +1,6 @@
+name: Phase 3G - OI Confirmed Breakout
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened]
