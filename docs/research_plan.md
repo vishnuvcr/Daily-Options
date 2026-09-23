@@ -63,6 +63,10 @@ Report net mean/median daily P&L per lot, win rate, payoff ratio, expectancy, pr
 
 The primary estimate for the target is OOS mean net daily P&L per active lot, accompanied by confidence intervals and percentiles. The mean alone is not sufficient for promotion.
 
+
+### Phase 3F data-quality precondition
+Before any option-microstructure strategy optimization, every parquet partition in the pinned source revision is audited rather than sampling the first file. Required IV/OI/price fields must be present and numerically coherent. Any anomalous field is quarantined from feature construction until it is reconciled against an independent source or a deterministic transformation is proven safe. In particular, volume is not used merely because the schema contains a volume column.
+
 ## 5. Strategy families
 
 A. Directional:
