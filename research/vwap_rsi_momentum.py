@@ -273,33 +273,60 @@ def build_bases(spot, opt, configs):
 
 
 def precompute_outcomes(bases, configs, cm):
+    """Precompute all stop/target/hold outcomes without row-by-row Python loops."""
     risk_keys = sorted({(cfg.stop, cfg.target, cfg.hold) for cfg in configs})
+    stops = sorted({x[0] for x in risk_keys})
+    targets = sorted({x[1] for x in risk_keys})
+    holds = sorted({x[2] for x in risk_keys})
     out = {}
+
     for i, b in enumerate(bases):
         path = b["path"]
-        for stop, target, hold in risk_keys:
-            p = path[path.timestamp <= b["entry_time"] + pd.Timedelta(minutes=hold)]
-            if p.empty:
+        if path.empty:
+            continue
+
+        ts = path["timestamp"].to_numpy()
+        lows = pd.to_numeric(path["low"], errors="coerce").to_numpy(dtype=float)
+        highs = pd.to_numeric(path["high"], errors="coerce").to_numpy(dtype=float)
+        closes = pd.to_numeric(path["close"], errors="coerce").to_numpy(dtype=float)
+
+        for hold in holds:
+            cutoff = np.datetime64(
+                b["entry_time"] + pd.Timedelta(minutes=hold)
+            )
+            mask = ts <= cutoff
+            if not mask.any():
                 continue
 
-            stop_px = b["entry"] * (1 - stop)
-            target_px = b["entry"] * (1 + target)
-            exit_px = None
+            hl = lows[mask]
+            hh = highs[mask]
+            hc = closes[mask]
 
-            for _, r in p.iterrows():
-                if float(r.low) <= stop_px:
-                    exit_px = stop_px
-                    break
-                if float(r.high) >= target_px:
-                    exit_px = target_px
-                    break
+            first_stop = {}
+            first_target = {}
+            for stop in stops:
+                stop_px = b["entry"] * (1 - stop)
+                hits = np.flatnonzero(hl <= stop_px)
+                first_stop[stop] = int(hits[0]) if len(hits) else 10**9
+            for target in targets:
+                target_px = b["entry"] * (1 + target)
+                hits = np.flatnonzero(hh >= target_px)
+                first_target[target] = int(hits[0]) if len(hits) else 10**9
 
-            if exit_px is None:
-                exit_px = float(p.iloc[-1].close)
+            for stop, target in ((s, t) for s in stops for t in targets):
+                sidx = first_stop[stop]
+                tidx = first_target[target]
 
-            out[(i, stop, target, hold)] = float(
-                cm.net_pnl(b["entry"], exit_px, 1, b["lot"])
-            )
+                if sidx <= tidx:
+                    exit_px = b["entry"] * (1 - stop)
+                elif tidx < sidx:
+                    exit_px = b["entry"] * (1 + target)
+                else:
+                    exit_px = float(hc[-1])
+
+                out[(i, stop, target, hold)] = float(
+                    cm.net_pnl(b["entry"], exit_px, 1, b["lot"])
+                )
     return out
 
 
