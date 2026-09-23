@@ -10,4 +10,6 @@
 | E0006 | 2026-09-23 | 2 | Baseline CI ran the tournament as a file and could not import the research package | Backtest stopped before execution | Changed CI to run the module with python -m research.baseline_tournament | CLOSED |
 | E0006 | 2026-09-23 | 2 | Baseline workflow executed research/baseline_tournament.py as a script, so the repository root was not on sys.path and the module import failed | Tournament could not reach the data backtest | Changed CI to execute python -m research.baseline_tournament; rerun is triggered by the fix commit | CLOSED |
 
+| E0007 | 2026-09-23 | 3 | Vertical-spread VWAP used pandas NA, making signal boolean comparison ambiguous on missing/zero-volume cases | Phase 3 stopped before spread results were produced | Switched to numeric NaN and rerun the workflow | CLOSED |
+
 Every subsequent error gets a new row. Fixes are never silently discarded.
