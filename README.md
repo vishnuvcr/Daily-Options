@@ -4,7 +4,7 @@ Research program for discovering and validating an intraday NSE options strategy
 
 ## Current status — 2026-09-24
 
-Phase 4, Phase 3G, and Phase 3H have now failed their stated promotion gates and are retired. The next bounded experiment will target underlying-price regime behavior rather than another option-microstructure permutation.
+Phase 4, Phase 3G, and Phase 3H have now failed their stated promotion gates and are retired. Phase 3I is the final bounded exploratory family under the current public dataset.
 
 | Phase | Branch | Status |
 |---|---|---|
