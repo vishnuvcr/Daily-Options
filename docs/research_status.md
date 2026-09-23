@@ -143,3 +143,10 @@ Add source download adapters and immutable cache manifests, run the first manual
 - Best result: 92 trades, mean active-day net Rs -234.26, mean all-day net Rs -17.62, win rate 16.30%, positive-day rate 1.23%, profit factor 0.148, max drawdown Rs -21,379.94.
 - Decision: retire the directional IV/OI/volume imbalance family as a Phase 3F lead. Do not spend additional tuning budget on this family.
 - Next: test a defined-risk short-volatility/iron-fly regime screen using the same audited dataset.
+
+
+### 2026-09-24 — Step 3F.9 IV-skew screen launch
+- Initial IV-skew workflow run `35908956508` passed unit tests and data acquisition, but the first shock grid (2/4/6 IV points) produced zero signals. No P&L result was produced and no strategy conclusion was drawn.
+- Interpretation: the initial event thresholds were too coarse for the observed intraday skew-change scale.
+- Correction: widen the preliminary shock grid to 0.25/0.50/1.00 IV points and absolute-skew filters to 0/1/2 points, while keeping the same fixed strikes, next-minute entry and defined-risk four-leg structure.
+- The workflow remains manual-capable and push-triggered only; the overlapping PR trigger was removed after concurrency cancellation noise.
