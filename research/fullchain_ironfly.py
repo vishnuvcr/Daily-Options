@@ -67,10 +67,14 @@ def net_credit_pnl(entry_credit, exit_value, lot, cm: OptionCostModel,
 
 def prepare_observations(df: pl.DataFrame):
     observations=[]
-    dates=df.select(pl.col("date").unique().sort()).to_series().to_list()
+    partitions=df.partition_by("date",maintain_order=True,as_dict=True)
+    dates=sorted(partitions.keys())
 
     for day in dates:
-        daydf=df.filter(pl.col("date")==day)
+        daydf=partitions[day].filter(
+            (pl.col("timestamp")>=pd.Timestamp(day).to_datetime64()+np.timedelta64(9*60+15,"m")) &
+            (pl.col("timestamp")<=pd.Timestamp(day).to_datetime64()+np.timedelta64(13*60+15,"m"))
+        )
         expiries=daydf.select(pl.col("expiry").unique().sort()).to_series().to_list()
         expiries=[e for e in expiries if e is not None and e>=day]
         if not expiries:
