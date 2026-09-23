@@ -31,3 +31,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0018 | 2026-09-24 | 3F | First tournament implementation used repeated pandas filtering inside nested parameter loops and was computationally inefficient; the run was cancelled before producing a result | Excessive runtime and wasted CI time | Replaced with vectorized joins and one-trade-per-day construction; rerun completed successfully | CLOSED |
+
+
+| E0020 | 2026-09-24 | 3F-oi | First fixed-strike OI repositioning run passed tests and data setup but the execution screen referenced call/put exit tables before defining them | Strategy results were not produced | Define the call/put exit quote tables once before the width/hold loop and rerun; no numerical result from the failed run is accepted | CLOSED |
