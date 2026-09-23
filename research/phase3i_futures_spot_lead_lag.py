@@ -228,31 +228,57 @@ def diagnostic(features: pd.DataFrame) -> pd.DataFrame:
             raw = features[f"lead_gap_{v.lookback}_bps"]
         else:
             raw = features[f"basis_change_{v.lookback}_bps"]
+
         x = features.loc[raw.abs().ge(v.threshold_bps)].copy()
         if x.empty:
             continue
+
         if v.mode == "continuation":
             x["direction"] = np.sign(raw.loc[x.index])
         else:
             x["direction"] = -np.sign(raw.loc[x.index])
         x = x.loc[x["direction"].ne(0)].sort_values(["trade_date", "datetime"])
         x = x.drop_duplicates(["trade_date"], keep="first")
+        dates = sorted(x["trade_date"].unique())
+        if not dates:
+            continue
+        midpoint = dates[(len(dates) - 1) // 2]
+        x["sample_half"] = np.where(x["trade_date"] <= midpoint, 1, 2)
+
         for horizon in (1, 3, 5):
-            fwd = x[f"fwd_spot_{horizon}_bps"]
-            signed = fwd * x["direction"]
+            xh = x.dropna(subset=[f"fwd_spot_{horizon}_bps"]).copy()
+            if xh.empty:
+                continue
+            signed = xh[f"fwd_spot_{horizon}_bps"] * xh["direction"]
+
+            def metrics(series: pd.Series) -> tuple[float, float]:
+                return float(series.mean()), float((series > 0).mean())
+
+            mean_all, hit_all = metrics(signed)
+            h1 = signed.loc[xh["sample_half"] == 1]
+            h2 = signed.loc[xh["sample_half"] == 2]
+            mean_h1, hit_h1 = metrics(h1) if len(h1) else (float("nan"), float("nan"))
+            mean_h2, hit_h2 = metrics(h2) if len(h2) else (float("nan"), float("nan"))
+
             rows.append({
                 "variant": v.key(),
+                "feature": v.feature,
                 "lookback": v.lookback,
                 "threshold_bps": v.threshold_bps,
                 "mode": v.mode,
                 "horizon": horizon,
-                "events": int(len(x)),
-                "mean_signed_fwd_bps": float(signed.mean()),
+                "events": int(len(signed)),
+                "mean_signed_fwd_bps": mean_all,
                 "median_signed_fwd_bps": float(signed.median()),
-                "hit_rate": float((signed > 0).mean()),
+                "hit_rate": hit_all,
+                "half1_events": int(len(h1)),
+                "half1_mean_signed_fwd_bps": mean_h1,
+                "half1_hit_rate": hit_h1,
+                "half2_events": int(len(h2)),
+                "half2_mean_signed_fwd_bps": mean_h2,
+                "half2_hit_rate": hit_h2,
             })
     return pd.DataFrame(rows)
-
 
 def run(root: Path, out_dir: Path) -> dict:
     spot, fut, meta = identify_spot_futures(root)
@@ -271,20 +297,50 @@ def run(root: Path, out_dir: Path) -> dict:
     diag = diagnostic(features)
     diag.to_csv(out_dir / "phase3i_leadlag_diagnostic.csv", index=False)
 
-    informative = diag.loc[
+    basic = diag.loc[
         (diag["horizon"].isin([1, 3, 5])) &
         (diag["hit_rate"] >= 0.55) &
         (diag["mean_signed_fwd_bps"] >= 2.0)
-    ]
+    ].copy()
+
+    # Pre-registered gate: at least two forward horizons must meet the
+    # all-sample threshold and have the same positive sign in both halves.
+    stable = basic.loc[
+        (basic["half1_mean_signed_fwd_bps"] > 0) &
+        (basic["half2_mean_signed_fwd_bps"] > 0) &
+        (basic["half1_hit_rate"] > 0.50) &
+        (basic["half2_hit_rate"] > 0.50)
+    ].copy()
+    stable_counts = stable.groupby("variant")["horizon"].nunique()
+    qualifying_variants = stable_counts.loc[stable_counts >= 2].index.tolist()
+
+    diag["qualifies_all_sample_threshold"] = (
+        diag["horizon"].isin([1, 3, 5]) &
+        (diag["hit_rate"] >= 0.55) &
+        (diag["mean_signed_fwd_bps"] >= 2.0)
+    )
+    diag["qualifies_stable_both_halves"] = (
+        diag["qualifies_all_sample_threshold"] &
+        (diag["half1_mean_signed_fwd_bps"] > 0) &
+        (diag["half2_mean_signed_fwd_bps"] > 0) &
+        (diag["half1_hit_rate"] > 0.50) &
+        (diag["half2_hit_rate"] > 0.50)
+    )
+    informative = diag.loc[diag["qualifies_stable_both_halves"]].copy()
+    informative.to_csv(out_dir / "phase3i_predictive_candidates.csv", index=False)
+
     summary = {
         "stage": "PREDICTIVE_DIAGNOSTIC",
         "data_gate": "PASS",
         "features": int(len(features)),
         "diagnostic_variants": 72,
         "diagnostic_rows": int(len(diag)),
-        "informative_rows": int(len(informative)),
-        "predictive_gate": "PASS" if not informative.empty else "FAIL",
-        "next_stage": "OPTION_IMPLEMENTATION" if not informative.empty else "RETIRE",
+        "basic_threshold_rows": int(len(basic)),
+        "stable_rows": int(len(informative)),
+        "qualifying_variants": int(len(qualifying_variants)),
+        "qualifying_variant_keys": qualifying_variants[:20],
+        "predictive_gate": "PASS" if qualifying_variants else "FAIL",
+        "next_stage": "OPTION_IMPLEMENTATION" if qualifying_variants else "RETIRE",
     }
     (out_dir / "phase3i_summary.json").write_text(json.dumps(summary, indent=2, default=str))
     print(json.dumps(summary, indent=2, default=str))
