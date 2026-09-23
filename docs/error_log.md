@@ -7,5 +7,6 @@
 | E0003 | 2026-09-23 | 0 | NSE permitted-lot-size CSV could not be retrieved through the web content reader | Exact table not embedded yet | Use NSE contract-information page as authoritative source and create CI downloader/cacher | OPEN |
 | E0004 | 2026-09-23 | 0 | Paytm Money current pricing page renders some trading-charge values dynamically | Static text does not expose all charges | Pin statutory/exchange components from authoritative sources and keep broker items configurable | OPEN |
 | E0005 | 2026-09-23 | 1 | Phase-1 workflow parsed YAML but initially did not install PyYAML | Manual workflow would fail before tests | Added pyyaml to workflow dependency installation before execution | CLOSED |
+| E0006 | 2026-09-23 | 2 | Baseline workflow executed research/baseline_tournament.py as a script, so the repository root was not on sys.path and the module import failed | Tournament could not reach the data backtest | Changed CI to execute python -m research.baseline_tournament; rerun is triggered by the fix commit | CLOSED |
 
 Every subsequent error gets a new row. Fixes are never silently discarded.
