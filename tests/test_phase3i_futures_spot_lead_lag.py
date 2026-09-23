@@ -35,3 +35,16 @@ def test_normalize_table_rejects_non_price_rows():
     df = pd.DataFrame({"Date": ["2020-01-02"], "Time": ["09:15"], "Close": [-1]})
     out = normalize_table(df)
     assert out.empty
+
+
+def test_normalize_table_accepts_trade_dt():
+    df = pd.DataFrame({
+        "trade dt": ["2019-01-02"],
+        "trade time": ["09:15"],
+        "Open": [100.0],
+        "High": [101.0],
+        "Low": [99.0],
+        "Close": [100.5],
+    })
+    out = normalize_table(df)
+    assert pd.Timestamp("2019-01-02 09:15:00") == out.iloc[0]["datetime"]
