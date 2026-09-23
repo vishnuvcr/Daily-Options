@@ -35,7 +35,7 @@ def parse_expiry_date(path: Path) -> date | None:
         cleaned = part.replace("_", "-").strip()
         for fmt in DATE_PATTERNS:
             try:
-                return pd.Timestamp.strptime(cleaned, fmt).date()
+                return pd.to_datetime(cleaned, format=fmt, errors="raise").date()
             except Exception:
                 pass
         m = re.search(r"(\d{1,2})[- ]([A-Za-z]{3})[- ](20\d{2})", part)
