@@ -9,6 +9,8 @@ from pathlib import Path
 import pandas as pd
 
 from research.zenodo_option_source import ContractFile, parse_expiry_date, parse_strike_type, expiry_type
+from research.phase3i_option_execution import build_signal_events
+from research.phase3i_futures_spot_lead_lag import identify_spot_futures
 
 
 def build_nested_index(archive: Path) -> list[tuple[str, str, ContractFile]]:
@@ -46,11 +48,12 @@ def build_nested_index(archive: Path) -> list[tuple[str, str, ContractFile]]:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--archive", type=Path, required=True)
-    ap.add_argument("--signals", type=Path, required=True)
+    ap.add_argument("--futures", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
     args = ap.parse_args()
 
-    signals = pd.read_csv(args.signals)
+    spot, fut, _ = identify_spot_futures(args.futures)
+    signals = build_signal_events(spot, fut)
     signals["trade_date"] = pd.to_datetime(signals["trade_date"]).dt.date
     signals["spot"] = pd.to_numeric(signals["spot"], errors="coerce")
 
