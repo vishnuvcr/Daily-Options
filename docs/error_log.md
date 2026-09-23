@@ -28,4 +28,7 @@
 | E0034 | 2026-09-24 | 4 | WFA engine rebuilt daily series and group-bys repeatedly inside each window | Run appeared stalled | Pre-aggregate daily P&L once and compute full diagnostics only for selected test candidates | CLOSED |
 | E0035 | 2026-09-24 | Research environment | Direct local git clone failed because DNS/network resolution to github.com was unavailable in the execution container | Local clone could not be used for inspection | Continue using the GitHub connector as the authoritative repository interface; no research result depends on the failed clone | CLOSED |
 
+| E0013 | 2026-09-24 | 3F | Phase 3E showed the one-year sample lacked usable spot-index volume and was too limited for IV/OI microstructure research | Repeating price-only feature tuning would add little information | Open a new phase using an IV/OI-capable multi-year dataset and require schema/liquidity validation | CLOSED |
+| E0022 | 2026-09-24 | 3F-skew | Four-leg cost-model unit test used an incorrect manual gross-P&L sign formula | CI unit test failed before data acquisition | Corrected the test to match the explicit signed cash-flow implementation | CLOSED |
+
 Every subsequent research or engineering error gets a new row. Fixes are never silently discarded.
