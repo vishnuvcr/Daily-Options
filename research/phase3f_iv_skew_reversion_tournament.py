@@ -14,8 +14,8 @@ from research.cost_model import OptionCostModel
 
 
 ENTRY_IST = ("09:45:00", "10:00:00", "10:15:00")
-SKEW_SHOCK_POINTS = (2.0, 4.0, 6.0)
-ABS_SKEW_MIN = (0.0, 2.0, 4.0)
+SKEW_SHOCK_POINTS = (0.25, 0.50, 1.00)
+ABS_SKEW_MIN = (0.0, 1.0, 2.0)
 HOLDS = (30, 60, 90)
 
 
@@ -263,6 +263,9 @@ def run(root: Path, out: Path) -> dict:
             "features": int(len(features)),
             "signals": 0,
             "variants": 0,
+            "skew_change_abs_max": float(features.skew_chg15.abs().max()) if len(features) else None,
+            "skew_change_abs_p95": float(features.skew_chg15.abs().quantile(0.95)) if len(features) else None,
+            "skew_abs_p95": float(features.abs_skew.quantile(0.95)) if len(features) else None,
             "target_daily_net": 1000.0,
             "gate": "NO_SIGNALS",
         }
