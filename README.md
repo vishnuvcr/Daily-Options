@@ -15,8 +15,8 @@ Phase 4, Phase 3G, and Phase 3H have now failed their stated promotion gates and
 | 3F | phase-3f-option-microstructure | COMPLETE — lead families retired |
 | 4 | phase-4-walk-forward-selection-v2 | COMPLETE — FAIL_PRELIMINARY |
 | 3G | phase-3g-oi-confirmed-breakout | COMPLETE — FAIL_PRELIMINARY; RETIRED |
-| 3H | phase-3h-option-lead-lag | ACTIVE — indexed CI rerun 35918302989 |
-| 5 | phase-5-robustness | BLOCKED until a candidate passes validation |
+| 3H | phase-3h-option-lead-lag | COMPLETE — FAIL_PRELIMINARY; RETIRED |
+| 3I | phase-3i-futures-spot-lead-lag | NEXT — DATA GATE |\n| 5 | phase-5-robustness | BLOCKED until a candidate passes validation |
 | 6 | phase-6-paper-shadow | PLANNED |
 | 7 | phase-7-manuscript | PLANNED |
 
@@ -28,9 +28,17 @@ Phase 4, Phase 3G, and Phase 3H have now failed their stated promotion gates and
 - Corrected walk-forward: 13 test windows; 1 positive at base friction and 0 positive at stress friction; mean test-window net Rs -192.79 and Rs -252.79 respectively.
 - Decision: retire Phase 3G without enlarging the grid.
 
+## Phase 3H result
+
+- Run 35918302989 completed successfully after the indexed-engine and cache corrections.
+- 108 pre-registered variants: all negative at both base and stressed slippage.
+- Base best mean net: Rs -181.83/lot/day; stress best mean net: Rs -241.83/lot/day.
+- Nested WFA: 0/16 positive test windows at both frictions; mean test-window net Rs -191.39 and Rs -251.39 respectively.
+- Decision: retire Phase 3H without enlarging the option-pressure family.
+
 ## Next research direction
 
-Phase 3H tests derivative price-discovery / option-lead-lag: whether short-horizon ATM call/put price changes contain incremental information about the next 1-5 minute NIFTY spot move, with any tradable edge expressed via defined-risk debit spreads.
+Phase 3I will test NIFTY futures-versus-spot price discovery/dislocation as the information source, subject to a historical 1-minute futures data-quality gate and the same cost-aware, leakage-safe walk-forward standard.
 
 ## Cost baseline
 
