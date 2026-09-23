@@ -203,6 +203,7 @@ def choose_entry_legs(signals: pd.DataFrame, raw: pd.DataFrame) -> pd.DataFrame:
     meta = s.set_index("trade_id")
     for trade_id, g in q.groupby("trade_id", sort=False):
         row = meta.loc[trade_id].to_dict()
+        row["trade_id"] = int(trade_id)
         strikes = sorted(g["strike_price"].dropna().unique())
         if not strikes:
             continue
