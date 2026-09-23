@@ -51,3 +51,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0029 | 2026-09-24 | 4 | Phase 4 raw timestamps were kept in UTC while entry/path logic compared them with IST clock values, yielding an empty observation table and a follow-on missing-column error | No walk-forward result was produced | Shift raw timestamps by +5:30 before the Python feature builder, matching the SQL signal-time convention used in prior phases | CLOSED |
+
+
+| E0030 | 2026-09-24 | 4 | Phase 4 filter expansion used DataFrame attribute access for fields such as `gap`; pandas treated the field ambiguously during the cross-join | Walk-forward computation stopped before scoring | Switched the filter expansion to explicit bracketed column indexing | CLOSED |
