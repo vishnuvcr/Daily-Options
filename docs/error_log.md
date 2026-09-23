@@ -21,4 +21,6 @@
 
 | E0013 | 2026-09-23 | 3C | Full-chain iron-fly code rescanned the entire 34M-row parquet once per trading day | Validation runtime became unnecessarily long | Partitioned the parquet once by trading date and restricted each day to the 09:15-13:15 research window | CLOSED |
 
+| E0014 | 2026-09-23 | 3C | Full-chain extractor treated a single day with no complete CE/PE overlap as a global dataset failure, even though diagnostic confirmed many days have full 75-strike overlap | Prevented compact dataset creation unnecessarily | Changed extraction to skip incomplete days and retain all valid dates; fail only when the entire dataset has no overlap | CLOSED |
+
 Every subsequent error gets a new row. Fixes are never silently discarded.
