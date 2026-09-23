@@ -22,3 +22,10 @@ This log records requirements, research decisions, evidence and outcomes. It int
 - The first CI backtest attempt found an import-path error (E0006); the workflow was corrected to execute the research module form and automatically rerun.
 - Current numerical result is intentionally not declared until the corrected backtest completes.
 - The research target remains a hypothesis threshold, not a guaranteed daily outcome.
+
+
+## 2026-09-24 — New-chat continuation
+- User asked what comes next after Phase 3E. The decision is to avoid further RSI/VWAP/EMA tuning.
+- Phase 3F was created: option-chain microstructure and volatility-regime research using IV, OI, volume, strike concentration and derived gamma proxies.
+- A manual data-audit workflow was added. It uses a multi-year public NIFTY options dataset candidate with explicit IV/OI fields and caches the downloaded source between workflow runs.
+- The first gate is data validity; strategy optimization begins only after the source passes the audit.
