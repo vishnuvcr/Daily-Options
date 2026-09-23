@@ -56,6 +56,18 @@ Status: candidate sources only; independent validation pending Phase 1.
 - Promotion gate: FAIL.
 - Inference: simple single-leg directional option buying is rejected as the lead family under this cost/execution model; Phase 3 will test defined-risk option structures and regime-conditioned volatility signals.
 
+
+### 2026-09-23 — Step 3.1 Phase 3 structure tournament
+- Vertical-spread preliminary test: 21 multi-strike days were testable; the two tested widths did not meet the promotion gate. Best width-2 result: 9 trades, 33.33% win rate, mean active-day net Rs -155.82, mean all-day net Rs -5.75, profit factor 0.305, total net Rs -1,402.35.
+- VRP-filtered directional option-buying test: 5 thresholds. Best recorded threshold 0.00: 168 trades, 44.05% win rate, mean active-day net Rs -185.32, mean all-day net Rs -127.60, profit factor 0.793, total net Rs -31,133.95. Gate FAIL_PRELIMINARY.
+- Unfiltered intraday ATM short-straddle test: 3 variants. Best recorded configuration used a 2.0x premium stop, 50% premium-decay target and 180-minute maximum hold: 240 trades, 62.5% win rate, mean active-day net Rs 237.81, mean all-day net Rs 233.91, profit factor 1.351, total net Rs 57,074.53. Gate FAIL_PRELIMINARY but this is the strongest current hypothesis family.
+- Added literature/data review covering NIFTY order flow/VRP studies, realistic-friction VRP research, and candidate multi-year option datasets.
+
+### 2026-09-23 — Step 3.2 Next experiment
+- Added a VRP-filtered short-volatility experiment using an IV-minus-realized-volatility threshold at the 09:30 entry window.
+- Phase 3 CI was changed to manual-only so documentation commits do not cancel benchmark runs.
+- Result: pending the next manual Phase 3 execution; the existing completed short-straddle result remains the current quantitative lead.
+
 ## Current blockers
 - Historical bid/ask/depth data may require licensed or broker-authenticated sources.
 - Some public datasets have close/market-price bars without executable quotes.
