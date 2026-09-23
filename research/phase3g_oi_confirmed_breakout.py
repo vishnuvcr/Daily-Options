@@ -328,7 +328,9 @@ def summarize(trades: pd.DataFrame, calendar_days: int) -> tuple[pd.DataFrame, d
 def walk_forward(trades: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
     if trades.empty:
         return pd.DataFrame(), {"gate": "NO_TRADES"}
-    dates = sorted(pd.to_datetime(trades["trade_date"]).dt.date.unique())
+    trades = trades.copy()
+    trades["trade_date"] = pd.to_datetime(trades["trade_date"]).dt.date
+    dates = sorted(trades["trade_date"].unique())
     train_len, val_len, embargo, test_len, step = 180, 60, 5, 60, 60
     results = []
     start = 0
