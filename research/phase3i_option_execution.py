@@ -467,6 +467,8 @@ def run(options_root: Path, futures_root: Path, out_dir: Path, slippage_points: 
     trades = attach_pnl(simulate(entries, reader), slippage_points)
 
     out_dir.mkdir(parents=True, exist_ok=True)
+    common_dates = set(spot["trade_date"]).intersection(set(fut["trade_date"]))
+    calendar_days = int(len(common_dates))
     (out_dir / "phase3i_option_source.json").write_text(
         json.dumps(
             {
@@ -474,9 +476,9 @@ def run(options_root: Path, futures_root: Path, out_dir: Path, slippage_points: 
                 "signal_source": source_meta,
                 "option_files_indexed": len(option_index),
                 "available_expiry_types": list(reader.available_expiry_types()),
-        "source_common_trading_days": calendar_days,
-        "source_date_min": str(min(common_dates)) if common_dates else None,
-        "source_date_max": str(max(common_dates)) if common_dates else None,
+                "source_common_trading_days": calendar_days,
+                "source_date_min": str(min(common_dates)) if common_dates else None,
+                "source_date_max": str(max(common_dates)) if common_dates else None,
                 "entry_diagnostics": entry_diag,
             },
             indent=2,
@@ -488,8 +490,6 @@ def run(options_root: Path, futures_root: Path, out_dir: Path, slippage_points: 
     entries.to_csv(out_dir / "phase3i_entries.csv", index=False)
     trades.to_csv(out_dir / "phase3i_trades.csv", index=False)
 
-    common_dates = set(spot["trade_date"]).intersection(set(fut["trade_date"]))
-    calendar_days = int(len(common_dates))
     board, preliminary = summarize(trades, calendar_days)
     board.to_csv(out_dir / "phase3i_leaderboard.csv", index=False)
 
