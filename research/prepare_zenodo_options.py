@@ -13,68 +13,55 @@ from research.phase3i_option_execution import build_signal_events
 from research.phase3i_futures_spot_lead_lag import identify_spot_futures
 
 
-def build_nested_index(archive: Path) -> list[tuple[str, str, ContractFile]]:
+def build_nested_index(archive: Path) -> list[tuple[tuple[str, ...], ContractFile]]:
+    def walk(payload: bytes, chain: tuple[str, ...]) -> list[tuple[tuple[str, ...], ContractFile]]:
+        rows = []
+        with zipfile.ZipFile(io.BytesIO(payload)) as z:
+            for member in z.namelist():
+                if member.endswith("/"):
+                    continue
+                next_chain = chain + (member,)
+                if member.lower().endswith(".zip"):
+                    rows.extend(walk(z.read(member), next_chain))
+                    continue
+                if not member.lower().endswith((".txt", ".csv", ".xlsx", ".xls")):
+                    continue
+                virtual_path = Path(*next_chain)
+                expiry = parse_expiry_date(virtual_path)
+                strike, typ = parse_strike_type(virtual_path)
+                if expiry is None or strike is None or typ is None:
+                    continue
+                rows.append((
+                    next_chain,
+                    ContractFile(
+                        path=member,
+                        option_type=typ,
+                        strike=float(strike),
+                        expiry_date=expiry,
+                        expiry_type=expiry_type(expiry),
+                    ),
+                ))
+        return rows
+
     rows = []
     with zipfile.ZipFile(archive) as outer:
-        nested_members = [x for x in outer.namelist() if x.lower().endswith(".zip")]
-        print("INNER_ARCHIVE_COUNT", len(nested_members))
-        for outer_member in nested_members:
-            raw = outer.read(outer_member)
-            with zipfile.ZipFile(io.BytesIO(raw)) as inner:
-                members = [m for m in inner.namelist() if not m.endswith("/")]
-                print("INNER_ARCHIVE", outer_member, "FILE_COUNT", len(members))
-                if members:
-                    print("INNER_ARCHIVE_SAMPLE", members[:40])
-                for month_member in members[:3]:
-                    if month_member.lower().endswith(".zip"):
-                        try:
-                            month_raw = inner.read(month_member)
-                            with zipfile.ZipFile(io.BytesIO(month_raw)) as month_zip:
-                                month_files = [m for m in month_zip.namelist() if not m.endswith("/")]
-                                print("MONTH_ARCHIVE", month_member, "FILE_COUNT", len(month_files))
-                                print("MONTH_ARCHIVE_SAMPLE", month_files[:60])
-                                for mf in month_files[:5]:
-                                    if mf.lower().endswith(".txt") or mf.lower().endswith(".csv"):
-                                        raw = month_zip.read(mf)
-                                        print("CONTRACT_SAMPLE", outer_member, month_member, mf)
-                                        print(raw[:1200].decode("utf-8", errors="replace"))
-                                # One deeper CSV/TXT archive sample for later years.
-                                for mf in month_files[:5]:
-                                    if mf.lower().endswith(".zip"):
-                                        nested_raw = month_zip.read(mf)
-                                        with zipfile.ZipFile(io.BytesIO(nested_raw)) as nested_zip:
-                                            nested_files = [m for m in nested_zip.namelist() if not m.endswith("/")][:5]
-                                            print("DEEP_ARCHIVE", mf, "FILES", nested_files)
-                                            for df in nested_files[:2]:
-                                                raw = nested_zip.read(df)
-                                                print("DEEP_CONTRACT_SAMPLE", mf, df)
-                                                print(raw[:1200].decode("utf-8", errors="replace"))
-                        except Exception as exc:
-                            print("MONTH_ARCHIVE_ERROR", month_member, repr(exc))
-                for member in members:
-                    lower = member.lower()
-                    if not lower.endswith((".csv", ".xlsx", ".xls")):
-                        continue
-                    p = Path(member)
-                    expiry = parse_expiry_date(p)
-                    strike, typ = parse_strike_type(p)
-                    if expiry is None or strike is None or typ is None:
-                        continue
-                    rows.append(
-                        (
-                            outer_member,
-                            member,
-                            ContractFile(
-                                path=str(member),
-                                option_type=typ,
-                                strike=float(strike),
-                                expiry_date=expiry,
-                                expiry_type=expiry_type(expiry),
-                            ),
-                        )
-                    )
+        for member in outer.namelist():
+            if member.endswith("/") or not member.lower().endswith(".zip"):
+                continue
+            rows.extend(walk(outer.read(member), (member,)))
     return rows
 
+
+def materialize_contract(archive: Path, chain: tuple[str, ...], out: Path) -> Path:
+    with zipfile.ZipFile(archive) as outer:
+        payload = outer.read(chain[0])
+    for member in chain[1:]:
+        with zipfile.ZipFile(io.BytesIO(payload)) as z:
+            payload = z.read(member)
+    target = out.joinpath(*chain)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes(payload)
+    return target
 
 def main() -> None:
     ap = argparse.ArgumentParser()
