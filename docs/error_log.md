@@ -45,3 +45,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0026 | 2026-09-24 | 4 | First Phase 4 walk-forward run completed its expensive selection/test computation but failed while summarizing because the empty selected-window DataFrame had no `selected` attribute | Numerical result file was generated, but workflow marked failure and no Phase 4 conclusion was accepted | Guard the summary logic for an empty result table; rerun without changing the research selection rule | CLOSED |
 
 | E0027 | 2026-09-24 | 4 | Initial Phase 4 implementation repeatedly recomputed every parameter against every observation for every window and was unnecessarily slow | High CI compute cost and risk of apparent hanging | Replaced with one-time core outcome precomputation, vectorized regime-filter expansion, and window-specific group aggregation | CLOSED |
+
+
+| E0028 | 2026-09-24 | 4 | Optimized Phase 4 loader computed a prior-session close Series but did not merge it into the daily feature table, causing a KeyError when building the gap filter | Walk-forward computation stopped before numerical validation | Build `prev_close` directly from the daily last spot with a one-day shift before calculating the gap | CLOSED |
