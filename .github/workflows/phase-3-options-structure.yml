@@ -27,6 +27,8 @@ jobs:
         run: python -m research.spread_tournament --data data/cache/nifty_1y_1min.xlsx --out reports
       - name: Run VRP regime filter tournament
         run: python -m research.vrp_filter_tournament --data data/cache/nifty_1y_1min.xlsx --out reports
+      - name: Run short volatility tournament
+        run: python -m research.short_straddle_tournament --data data/cache/nifty_1y_1min.xlsx --out reports
       - name: Upload results
         uses: actions/upload-artifact@v4
         with:
