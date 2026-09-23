@@ -1,9 +1,5 @@
 name: Phase 3C - Full Chain NIFTY
 
-concurrency:
-  group: phase3c-fullchain-${{ github.ref }}
-  cancel-in-progress: true
-
 on:
   push:
     branches: [phase-3c-full-chain-validation]
