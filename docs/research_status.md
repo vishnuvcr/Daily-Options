@@ -228,3 +228,15 @@ Phase 3G — COMPLETE; FAIL_PRELIMINARY; RETIRED.
 - Checkout and environment setup completed successfully.
 - At last inspection, dependency installation was in progress; numerical backtest had not started yet.
 - No Phase 3H strategy statistics are accepted at this point.
+
+
+### 2026-09-24 — Step 3H.4 Phase 3H final result and retirement
+- Corrected optimized run 35918302989 completed successfully on commit 64abd09e74e5a209b461f86efef4d41a91478681; artifact 10775828210.
+- 108 pre-registered option-lead-lag variants were evaluated over 438,043 feature rows and 132,072 executable trades.
+- Base slippage 0.20: every variant had negative mean calendar-day net; best was Rs -181.83/lot/day.
+- Stress slippage 0.40: every variant remained negative; best was Rs -241.83/lot/day.
+- Base WFA: 16/16 test windows negative; mean test-window net Rs -191.39; bootstrap 95% interval approximately [-214.70,-169.35].
+- Stress WFA: 16/16 test windows negative; mean Rs -251.39; bootstrap 95% interval approximately [-274.70,-229.35].
+- Forward spot diagnostics showed no stable directional hit-rate edge; observed 1-minute hit rates ranged about 46.8%–56.1%.
+- Decision: retire Phase 3H. No parameter expansion is permitted.
+- Next bounded direction: regime-conditioned underlying-price behavior (intraday dislocation/mean-reversion or opening-range regime) expressed through defined-risk spreads.
