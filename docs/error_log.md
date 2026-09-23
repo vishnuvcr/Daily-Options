@@ -12,4 +12,6 @@
 
 | E0007 | 2026-09-23 | 3 | Vertical-spread VWAP used pandas NA, making signal boolean comparison ambiguous on missing/zero-volume cases | Phase 3 stopped before spread results were produced | Switched to numeric NaN and rerun the workflow | CLOSED |
 
+| E0008 | 2026-09-23 | 3 | Push-triggered Phase 3 workflow was repeatedly relaunched by research-log commits, canceling earlier benchmark runs | Wasted CI runs and made run provenance noisy | Changed Phase 3 to manual-only execution with workflow_dispatch; documentation commits no longer trigger the benchmark | CLOSED |
+
 Every subsequent error gets a new row. Fixes are never silently discarded.
