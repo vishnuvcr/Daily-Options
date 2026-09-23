@@ -34,3 +34,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0022 | 2026-09-24 | 3F-skew | New four-leg cost-model unit test used an incorrect manual gross-P&L sign formula; the implementation returned the correct signed cash-flow result | CI unit test failed and blocked data acquisition; no strategy result was produced | Corrected the test's gross-P&L calculation to match the explicit long/short leg signs | CLOSED |
+
+
+| E0023 | 2026-09-24 | 3F-skew CI | Simultaneous push and pull-request triggers shared the same concurrency group, causing the successful code push run to be canceled by the PR-triggered run | Corrected unit-test commit never reached data acquisition | Removed the overlapping pull_request trigger; workflow retains manual workflow_dispatch and path-filtered push execution | CLOSED |
