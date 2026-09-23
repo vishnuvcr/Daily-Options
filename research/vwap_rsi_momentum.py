@@ -95,14 +95,16 @@ def _merge_option_features(spot_features: pd.DataFrame, option_day: pd.DataFrame
     if len(strikes) == 0:
         return left.iloc[0:0].copy()
 
-    left["strike"] = _nearest_strikes(left.close.to_numpy(dtype=float), strikes)
+    left["strike"] = _nearest_strikes(left.close.to_numpy(dtype=float), strikes).astype("int64")
     left = left.sort_values("timestamp")
 
     right = option_day[
         option_day.option_type == option_type
     ][
         ["timestamp", "strike", "close", "option_vwap", "vol_ratio"]
-    ].sort_values("timestamp")
+    ].copy()
+    right["strike"] = pd.to_numeric(right["strike"], errors="coerce").astype("int64")
+    right = right.sort_values("timestamp")
 
     merged = pd.merge_asof(
         left,
