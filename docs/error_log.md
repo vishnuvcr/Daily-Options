@@ -17,3 +17,6 @@
 Every subsequent error gets a new row. Fixes are never silently discarded.
 
 | E0013 | 2026-09-24 | 3F | Phase 3E showed the current one-year sample lacks usable spot-index volume and is too limited for IV/OI microstructure research | Repeating price-only feature tuning would add little information | Open a new phase using an IV/OI-capable multi-year dataset and require schema/liquidity validation before strategy testing | CLOSED |
+
+
+| E0014 | 2026-09-24 | 3F | Public source viewer reports a negative minimum for the `volume` field and an unusually large positive maximum; the anomaly has not yet been independently reconciled | Volume-based microstructure features could be contaminated or misleading if used directly | Quarantine volume; scan all parquet partitions, quantify affected rows, and cross-check against an independent source before enabling volume features | OPEN |
