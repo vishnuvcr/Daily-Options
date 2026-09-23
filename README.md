@@ -16,17 +16,18 @@ Research program for discovering and validating an intraday NSE options strategy
 | 1 | phase-1-data-foundation | Acquire/cache/validate spot, futures, option-chain, OI, IV and context data | PLANNED |
 | 2 | phase-2-baseline-tournament | Benchmark ORB, VWAP, EMA, momentum, mean-reversion and volatility strategies | PLANNED |
 | 3 | phase-3-options-structure | Test spreads, straddles/strangles, gamma/IV/OI and regime-conditioned structures | PARTIAL — price/structure families tested; 3E retired |
-| 3F | phase-3f-option-microstructure | IV/OI/volume/strike-structure and volatility-regime hypothesis | ACTIVE — data audit |
+| 3F | phase-3f-option-microstructure | IV/OI/volume/strike-structure and volatility-regime hypothesis | ACTIVE — full data audit |
+| 4 | phase-4-walk-forward-selection | Freeze candidate families and run nested walk-forward OOS selection | PLANNED |
 | 5 | phase-5-robustness | Stress costs, slippage, delays, regime shifts, Monte Carlo and parameter perturbations | PLANNED |
 | 6 | phase-6-paper-shadow | Daily paper-trading/shadow execution validation | PLANNED |
 | 7 | phase-7-manuscript | Final strategy specification, results, figures, appendices and future research | PLANNED |
 
 ## Current status
 - Phase 3E VWAP/RSI momentum was corrected and tested; no variant met the Rs 1,000/day target, so it is retired.
-- Phase 3F is now the active research branch. It will not reuse the failed price-only feature family; it first audits a multi-year IV/OI-capable dataset, then tests option-chain microstructure and volatility regimes.
+- Phase 3F is now the active research branch. It audits every parquet partition of a pinned multi-year IV/OI-capable dataset before strategy testing. The public source viewer currently shows an anomalous negative minimum for volume, so volume features are quarantined pending CI measurement and independent reconciliation.
 
 ## Initial evidence
-As of 2026-09-23:
+As of 2026-09-24:
 - The repository was empty when research began.
 - NSE contract information currently provides permitted lot-size data and was updated 2026-09-10.
 - From 2026-04-01, NSE option-sale STT is 0.15% of premium.
@@ -54,3 +55,9 @@ A strategy is not promoted merely because raw P&L is high. It must clear:
 - .github/workflows/ for manual phase workflows
 
 This project is research, not a promise of guaranteed profit. The target is treated as a hypothesis to attack with evidence.
+
+
+## Phase 3F data provenance
+- Primary pinned source: [artist-23/nifty-options-data](https://huggingface.co/datasets/artist-23/nifty-options-data), revision `45e0a04`.
+- Source tree contains `NIFTY/MONTH` and `NIFTY/WEEK` parquet partitions; the repository now scans the complete tree rather than a single file.
+- Raw 1.27 GB source data are cached on GitHub Actions runners; the repository keeps the immutable source manifest and derived audit reports/artifacts rather than duplicating the binary dataset.
