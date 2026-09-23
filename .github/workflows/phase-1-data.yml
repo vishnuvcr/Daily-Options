@@ -24,7 +24,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install research dependencies
-        run: pip install pandas pyarrow openpyxl pytest
+        run: pip install pandas pyarrow openpyxl pytest pyyaml
 
       - name: Create research directories
         run: mkdir -p data/raw data/cache reports
@@ -32,8 +32,9 @@ jobs:
       - name: Validate manifest
         run: python - <<'PY'
 import pathlib, yaml
-pathlib.Path("data/sources.yaml").read_text()
-print("sources.yaml present")
+data = yaml.safe_load(pathlib.Path("data/sources.yaml").read_text())
+assert "sources" in data and data["sources"]
+print(f"validated {len(data['sources'])} sources")
 PY
 
       - name: Run unit tests
