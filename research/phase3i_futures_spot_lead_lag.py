@@ -46,7 +46,7 @@ def normalize_table(df: pd.DataFrame) -> pd.DataFrame:
 
     cols = {key(c): c for c in df.columns}
 
-    date_col = next((cols[k] for k in ("tradedate", "date", "datetime", "timestamp") if k in cols), None)
+    date_col = next((cols[k] for k in ("tradedate", "tradedt", "date", "datetime", "timestamp") if k in cols), None)
     time_col = next((cols[k] for k in ("tradetime", "time") if k in cols), None)
     close_col = next((cols[k] for k in ("close", "ltp", "last") if k in cols), None)
     if date_col is None or time_col is None or close_col is None:
@@ -85,61 +85,56 @@ def read_table(path: Path) -> pd.DataFrame:
 
 def identify_spot_futures(root: Path) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
     files = candidate_files(root)
-    spot_candidates = []
-    futures_candidates = []
 
-    for path in files:
+    def classify(path: Path) -> str | None:
         name = path.name.lower()
-        try:
-            sample = normalize_table(read_table(path).head(2000))
-        except Exception:
-            continue
-        if sample.empty:
-            continue
-        if re.search(r"f1|future", name) or "nifty_f1" in " ".join(map(str, sample.columns)).lower():
-            futures_candidates.append((path, len(sample)))
-        if "spot" in name or "nifty spot" in name:
-            spot_candidates.append((path, len(sample)))
+        if name == "nifty_f1.csv" or "nifty_f1" in name:
+            return "futures"
+        if name == "nifty.csv" or (("nifty" in name) and "future" not in name and "option" not in name):
+            return "spot"
+        return None
 
-    if not spot_candidates:
-        for path in files:
-            name = path.name.lower()
-            if "nifty" in name and "future" not in name and "option" not in name:
-                try:
-                    sample = normalize_table(read_table(path).head(2000))
-                    if not sample.empty:
-                        spot_candidates.append((path, len(sample)))
-                except Exception:
-                    pass
+    spot_paths = [p for p in files if classify(p) == "spot"]
+    futures_paths = [p for p in files if classify(p) == "futures"]
 
-    if not futures_candidates:
-        for path in files:
-            if "fut" in path.name.lower():
-                try:
-                    sample = normalize_table(read_table(path).head(2000))
-                    if not sample.empty:
-                        futures_candidates.append((path, len(sample)))
-                except Exception:
-                    pass
-
-    if not spot_candidates or not futures_candidates:
+    if not spot_paths or not futures_paths:
         raise RuntimeError({
             "files": [str(p) for p in files],
-            "spot_candidates": [str(p) for p, _ in spot_candidates],
-            "futures_candidates": [str(p) for p, _ in futures_candidates],
+            "spot_paths": [str(p) for p in spot_paths],
+            "futures_paths": [str(p) for p in futures_paths],
         })
 
-    spot_path = max(spot_candidates, key=lambda x: x[1])[0]
-    fut_path = max(futures_candidates, key=lambda x: x[1])[0]
-    spot = normalize_table(read_table(spot_path))
-    fut = normalize_table(read_table(fut_path))
+    def load_many(paths: list[Path]) -> tuple[pd.DataFrame, dict]:
+        frames = []
+        file_meta = []
+        for path in sorted(paths):
+            raw = read_table(path)
+            frame = normalize_table(raw)
+            if frame.empty:
+                raise ValueError(f"No valid rows after normalization: {path}")
+            frames.append(frame)
+            file_meta.append({
+                "path": str(path),
+                "raw_rows": int(len(raw)),
+                "normalized_rows": int(len(frame)),
+            })
+        out = pd.concat(frames, ignore_index=True)
+        out = out.sort_values("datetime").drop_duplicates("datetime", keep="last").reset_index(drop=True)
+        return out, {"files": file_meta, "rows_after_concat": int(len(out))}
+
+    spot, spot_meta = load_many(spot_paths)
+    fut, fut_meta = load_many(futures_paths)
+
     meta = {
-        "spot_file": str(spot_path),
-        "futures_file": str(fut_path),
-        "all_files": [str(p) for p in files],
+        "spot_files": spot_meta,
+        "futures_files": fut_meta,
+        "all_files": [str(p) for p in sorted(files)],
+        "spot_date_min": str(spot["trade_date"].min()) if not spot.empty else None,
+        "spot_date_max": str(spot["trade_date"].max()) if not spot.empty else None,
+        "futures_date_min": str(fut["trade_date"].min()) if not fut.empty else None,
+        "futures_date_max": str(fut["trade_date"].max()) if not fut.empty else None,
     }
     return spot, fut, meta
-
 
 def quality_audit(spot: pd.DataFrame, fut: pd.DataFrame) -> dict:
     def session_minutes(df: pd.DataFrame) -> pd.Series:
@@ -193,14 +188,16 @@ def build_features(spot: pd.DataFrame, fut: pd.DataFrame) -> pd.DataFrame:
     y = fut[["datetime", "close"]].rename(columns={"close": "futures"})
     z = x.merge(y, on="datetime", how="inner").sort_values("datetime")
     z["trade_date"] = z["datetime"].dt.date
+    z = z.sort_values(["trade_date", "datetime"]).copy()
+    z["basis_bps"] = (z["futures"] / z["spot"] - 1.0) * 10000.0
+    grouped = z.groupby("trade_date", sort=False)
     for k in (1, 3, 5):
-        z[f"fut_ret_{k}"] = np.log(z["futures"] / z["futures"].shift(k))
-        z[f"spot_ret_{k}"] = np.log(z["spot"] / z["spot"].shift(k))
+        z[f"fut_ret_{k}"] = grouped["futures"].transform(lambda s: np.log(s / s.shift(k)))
+        z[f"spot_ret_{k}"] = grouped["spot"].transform(lambda s: np.log(s / s.shift(k)))
         z[f"lead_gap_{k}_bps"] = (z[f"fut_ret_{k}"] - z[f"spot_ret_{k}"]) * 10000.0
-        z["basis_bps"] = (z["futures"] / z["spot"] - 1.0) * 10000.0
-        z[f"basis_change_{k}_bps"] = z["basis_bps"] - z["basis_bps"].shift(k)
-        z[f"fwd_spot_{k}_bps"] = (
-            np.log(z["spot"].shift(-k) / z["spot"]) * 10000.0
+        z[f"basis_change_{k}_bps"] = grouped["basis_bps"].transform(lambda s: s - s.shift(k))
+        z[f"fwd_spot_{k}_bps"] = grouped["spot"].transform(
+            lambda s: np.log(s.shift(-k) / s) * 10000.0
         )
     z = z.loc[
         z["datetime"].dt.strftime("%H:%M:%S").between("09:30:00", "12:30:00")
