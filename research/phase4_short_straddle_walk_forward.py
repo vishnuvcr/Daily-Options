@@ -55,7 +55,7 @@ def load_observations(root: Path) -> tuple[pd.DataFrame, dict[str, pd.DatetimeIn
     con = duckdb.connect()
     raw = con.execute(sql).df()
     con.close()
-    raw["datetime"] = pd.to_datetime(raw["datetime"])
+    raw["datetime"] = pd.to_datetime(raw["datetime"]) + pd.Timedelta(hours=5, minutes=30)
     raw["trade_date"] = pd.to_datetime(raw["trade_date"])
 
     spot = (
@@ -157,13 +157,15 @@ def load_observations(root: Path) -> tuple[pd.DataFrame, dict[str, pd.DatetimeIn
                 }
             )
 
+    obs_columns = ["obs_id","trade_date","expiry_type","entry_min","entry","gap","r15","iv_rv","lot"]
     obs_df = pd.DataFrame(
-        [{k: v for k, v in o.items() if k not in {"hi","lo","close"}} for o in observations]
+        [{k: v for k, v in o.items() if k not in {"hi","lo","close"}} for o in observations],
+        columns=obs_columns,
     )
     # Keep arrays outside the DataFrame for fast precomputation.
     obs_df.attrs["paths"] = [(o["hi"], o["lo"], o["close"]) for o in observations]
     calendars = {
-        k: pd.DatetimeIndex(sorted(obs_df.loc[obs_df.expiry_type == k, "trade_date"].unique()))
+        k: pd.DatetimeIndex(sorted(obs_df.loc[obs_df["expiry_type"] == k, "trade_date"].unique()))
         for k in ("WEEK","MONTH")
     }
     return obs_df, calendars
