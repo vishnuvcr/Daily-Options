@@ -43,6 +43,45 @@ class OptionCostModel:
         slippage = 4.0 * slippage_points * multiplier
         return gross - (brokerage + exchange + sebi + stt + stamp + gst + slippage)
 
+    def ironfly_net_pnl(
+        self,
+        ce_short_entry: float,
+        pe_short_entry: float,
+        ce_long_entry: float,
+        pe_long_entry: float,
+        ce_short_exit: float,
+        pe_short_exit: float,
+        ce_long_exit: float,
+        pe_long_exit: float,
+        lot_size: int,
+        qty: int = 1,
+        slippage_points: float = 0.20,
+    ) -> float:
+        """Net P&L for a four-leg short iron fly, opened and closed intraday."""
+        multiplier = qty * lot_size
+        entry_credit = ce_short_entry + pe_short_entry - ce_long_entry - pe_long_entry
+        exit_mark = ce_short_exit + pe_short_exit - ce_long_exit - pe_long_exit
+        gross = (entry_credit - exit_mark) * multiplier
+
+        turnover = (
+            ce_short_entry + pe_short_entry + ce_long_entry + pe_long_entry
+            + ce_short_exit + pe_short_exit + ce_long_exit + pe_long_exit
+        ) * multiplier
+        brokerage = 8.0 * self.brokerage_per_order
+        exchange = turnover * self.exchange_rate
+        sebi = turnover * self.sebi_rate
+        stt_sell_value = (
+            ce_short_entry + pe_short_entry + ce_long_exit + pe_long_exit
+        ) * multiplier
+        stamp_buy_value = (
+            ce_long_entry + pe_long_entry + ce_short_exit + pe_short_exit
+        ) * multiplier
+        stt = stt_sell_value * self.stt_sell_rate
+        stamp = stamp_buy_value * self.stamp_buy_rate
+        gst = self.gst_rate * (brokerage + exchange + sebi)
+        slippage = 8.0 * slippage_points * multiplier
+        return gross - (brokerage + exchange + sebi + stt + stamp + gst + slippage)
+
     def short_straddle_net_pnl(self, call_entry: float, put_entry: float, call_exit: float, put_exit: float, lot_size: int, qty: int = 1, slippage_points: float = 0.20) -> float:
         """Net P&L for short call + short put, opened then closed."""
         multiplier = qty * lot_size

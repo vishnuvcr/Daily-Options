@@ -42,3 +42,10 @@ This log records requirements, research decisions, evidence and outcomes. It int
 - The multi-year directional IV/OI/volume imbalance screen failed the promotion gate; zero of 972 variants reached Rs 1,000/day and the best configuration was negative after costs.
 - Decision: stop tuning the failed directional family and move immediately to a defined-risk short-volatility/iron-fly regime hypothesis using IV/RV, trend magnitude and chain-balance filters.
 - The directional result and full data-audit summary are committed under `reports/`.
+
+
+## 2026-09-24 — Iron-fly branch result
+- The materially different defined-risk iron-fly volatility screen was executed automatically after the directional microstructure family failed.
+- Stage 1 failed across its full tested grid; no positive expectancy configuration was found after costs.
+- The user instruction to avoid wasting time on non-working strategies was applied: the family is retired without further optimization.
+- Next research branch will test OI repositioning/change around price-structure breaks with fixed daily strikes to avoid dynamic-ATM OI measurement artifacts.

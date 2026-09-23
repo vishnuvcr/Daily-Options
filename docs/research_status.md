@@ -143,3 +143,12 @@ Add source download adapters and immutable cache manifests, run the first manual
 - Best result: 92 trades, mean active-day net Rs -234.26, mean all-day net Rs -17.62, win rate 16.30%, positive-day rate 1.23%, profit factor 0.148, max drawdown Rs -21,379.94.
 - Decision: retire the directional IV/OI/volume imbalance family as a Phase 3F lead. Do not spend additional tuning budget on this family.
 - Next: test a defined-risk short-volatility/iron-fly regime screen using the same audited dataset.
+
+
+### 2026-09-24 — Step 3F.7 Iron-fly volatility result
+- Stage 1 evaluated 162 parameter/expiry configurations from the defined-risk iron-fly regime grid.
+- Zero configurations had positive net calendar-day expectancy after the project cost model and eight-leg slippage.
+- Best Stage 1: MONTH expiry, IV/RV >=1.50, abs 15-minute return <=0.05%, abs OI imbalance <=5%, abs volume imbalance <=5%; 29 trades; mean all-day net -₹10.56; 0% trade win rate; PF 0.
+- Decision: retire the iron-fly hypothesis without further tuning.
+- Stage 2 is now economically gated so it cannot consume compute when Stage 1 is already negative.
+- Next materially different hypothesis: fixed daily strike-band OI repositioning around intraday price-structure breaks.
