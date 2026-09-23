@@ -28,3 +28,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0017 | 2026-09-24 | 3F | Tournament workflow executed a repository script directly, so `research` package imports failed with `ModuleNotFoundError` after the data audit had already passed | Strategy screen did not execute; no numerical strategy result was produced | Run the tournament as `python -m research.phase3f_microstructure_tournament`, matching the corrected Phase 2 import pattern | CLOSED |
+
+
+| E0018 | 2026-09-24 | 3F | First tournament implementation used repeated pandas filtering inside nested parameter loops and was computationally inefficient; the run was cancelled before producing a result | Excessive runtime and wasted CI time | Replaced with vectorized joins and one-trade-per-day construction; rerun completed successfully | CLOSED |
