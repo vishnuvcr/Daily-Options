@@ -76,52 +76,41 @@ def main() -> None:
     signals["spot"] = pd.to_numeric(signals["spot"], errors="coerce")
 
     index = build_nested_index(args.archive)
-    needed: dict[str, set[str]] = {}
+    needed: set[tuple[str, ...]] = set()
 
     for row in signals.itertuples(index=False):
-        for et in ("WEEK", "MONTH"):
+        for requested in ("WEEK", "MONTH"):
             choices = [
-                (outer, member, cf)
-                for outer, member, cf in index
+                (chain, cf)
+                for chain, cf in index
                 if cf.option_type == row.direction
-                and cf.expiry_type == et
+                and cf.expiry_type == requested
                 and cf.expiry_date >= row.trade_date
             ]
             if not choices:
                 continue
-            expiry = min(cf.expiry_date for _, _, cf in choices)
-            around = [
-                (outer, member, cf)
-                for outer, member, cf in choices
-                if cf.expiry_date == expiry and abs(cf.strike - float(row.spot)) <= 500.0
-            ]
-            for outer, member, _ in around:
-                needed.setdefault(outer, set()).add(member)
+            expiry = min(cf.expiry_date for _, cf in choices)
+            for chain, cf in choices:
+                if cf.expiry_date == expiry and abs(cf.strike - float(row.spot)) <= 500.0:
+                    needed.add(chain)
 
     args.out.mkdir(parents=True, exist_ok=True)
-    for p in args.out.rglob("*"):
+    for p in sorted(args.out.rglob("*"), reverse=True):
         if p.is_file():
             p.unlink()
+        elif p.is_dir():
+            p.rmdir()
 
-    extracted = 0
-    for outer_member, members in needed.items():
-        with zipfile.ZipFile(args.archive) as outer:
-            raw = outer.read(outer_member)
-        with zipfile.ZipFile(io.BytesIO(raw)) as inner:
-            for member in sorted(members):
-                target = args.out / Path(member)
-                target.parent.mkdir(parents=True, exist_ok=True)
-                with inner.open(member) as src, target.open("wb") as dst:
-                    dst.write(src.read())
-                extracted += 1
+    for chain in sorted(needed):
+        materialize_contract(args.archive, chain, args.out)
 
     manifest = {
         "archive": str(args.archive),
         "signal_rows": int(len(signals)),
-        "nested_year_archives": len(needed),
-        "indexed_contract_files": len(index),
-        "extracted_contract_files": extracted,
-        "expiry_types_requested": ["WEEK", "MONTH"],
+        "indexed_contract_files": int(len(index)),
+        "extracted_contract_files": int(len(needed)),
+        "available_expiry_types": sorted({cf.expiry_type for _, cf in index}),
+        "selected_expiry_types": sorted({cf.expiry_type for chain, cf in index if chain in needed}),
     }
     (args.out.parent / "option_subset_manifest.json").write_text(
         json.dumps(manifest, indent=2),
