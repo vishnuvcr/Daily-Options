@@ -1,0 +1,61 @@
+name: Phase 3G - OI Confirmed Breakout
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - phase-3g-oi-confirmed-breakout
+    paths:
+      - "research/phase3g_oi_confirmed_breakout.py"
+      - "tests/test_phase3g_oi_confirmed_breakout.py"
+      - ".github/workflows/phase-3g-oi-confirmed-breakout.yml"
+      - "data/manifests/phase3f_artist23.json"
+
+concurrency:
+  group: phase3g-oi-confirmed-breakout
+  cancel-in-progress: true
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install research dependencies
+        run: |
+          pip install pandas pyarrow huggingface_hub pytest duckdb
+
+      - name: Unit tests
+        run: pytest -q tests/test_phase3g_oi_confirmed_breakout.py
+
+      - uses: actions/cache@v4
+        with:
+          path: data/cache/hf_nifty_options
+          key: phase3g-artist23-45e0a04-v1
+
+      - name: Acquire or reuse pinned multi-year NIFTY option data
+        run: |
+          mkdir -p data/cache/hf_nifty_options
+          if ! find data/cache/hf_nifty_options -type f -name '*.parquet' -print -quit | grep -q .; then
+            python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="artist-23/nifty-options-data", repo_type="dataset", revision="45e0a04", local_dir="data/cache/hf_nifty_options", allow_patterns=["NIFTY/**/*.parquet", "NIFTY/**"])'
+          fi
+          test -d data/cache/hf_nifty_options/NIFTY
+
+      - name: Run Phase 3G base-cost tournament
+        run: |
+          python -m research.phase3g_oi_confirmed_breakout             --data data/cache/hf_nifty_options/NIFTY             --out reports/phase3g_base             --slippage 0.20
+
+      - name: Run Phase 3G stressed-cost tournament
+        run: |
+          python -m research.phase3g_oi_confirmed_breakout             --data data/cache/hf_nifty_options/NIFTY             --out reports/phase3g_stress             --slippage 0.40
+
+      - name: Upload Phase 3G reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase3g-oi-confirmed-breakout
+          path: reports/
