@@ -4,7 +4,7 @@ Research program for discovering and validating an intraday NSE options strategy
 
 ## Current status — 2026-09-24
 
-Phase 4, Phase 3G, and Phase 3H have now failed their stated promotion gates and are retired. The next bounded experiment will target underlying-price regime behavior rather than another option-microstructure permutation.
+Phase 4, Phase 3G, and Phase 3H have failed their stated promotion gates and are retired. Phase 3I has passed its strict futures/spot predictive gate and is now in the corrected matching 2017–2020 option implementation.
 
 | Phase | Branch | Status |
 |---|---|---|
@@ -16,7 +16,7 @@ Phase 4, Phase 3G, and Phase 3H have now failed their stated promotion gates and
 | 4 | phase-4-walk-forward-selection-v2 | COMPLETE — FAIL_PRELIMINARY |
 | 3G | phase-3g-oi-confirmed-breakout | COMPLETE — FAIL_PRELIMINARY; RETIRED |
 | 3H | phase-3h-option-lead-lag | COMPLETE — FAIL_PRELIMINARY; RETIRED |
-| 3I | phase-3i-futures-spot-lead-lag | NEXT — DATA GATE |\n| 5 | phase-5-robustness | BLOCKED until a candidate passes validation |
+| 3I | phase-3i-futures-spot-lead-lag | IN PROGRESS — OPTION IMPLEMENTATION |\n| 5 | phase-5-robustness | BLOCKED until a candidate passes validation |
 | 6 | phase-6-paper-shadow | PLANNED |
 | 7 | phase-7-manuscript | PLANNED |
 
@@ -36,9 +36,11 @@ Phase 4, Phase 3G, and Phase 3H have now failed their stated promotion gates and
 - Nested WFA: 0/16 positive test windows at both frictions; mean test-window net Rs -191.39 and Rs -251.39 respectively.
 - Decision: retire Phase 3H without enlarging the option-pressure family.
 
-## Next research direction
+## Phase 3I status
 
-Phase 3I will test NIFTY futures-versus-spot price discovery/dislocation as the information source, subject to a historical 1-minute futures data-quality gate and the same cost-aware, leakage-safe walk-forward standard.
+- Data gate: PASS — 991 common trading dates, 99.733% timestamp overlap, 99.193% common-day session completeness at the >=350-minute threshold.
+- Strict predictive gate: PASS — two qualifying 3-minute continuation families (10 bps futures-minus-spot lead gap; 10 bps basis change), stable across both sample halves and at least two forward horizons.
+- Option implementation: correcting two pre-run bookkeeping defects before accepting any numerical P&L.
 
 ## Cost baseline
 
@@ -53,6 +55,8 @@ Research default remains Rs 20 per executed order, 0.15% option-sale STT from 20
 - docs/phase3g_results.md
 - docs/phase3h_results.md
 - docs/phase4_walk_forward_results.md
+- docs/phase3i_hypothesis.md
+- docs/phase3i_option_implementation.md
 - config/cost_model_2026.yaml
 - research/
 - .github/workflows/
