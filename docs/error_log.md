@@ -57,3 +57,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0031 | 2026-09-24 | 4 | Phase 4 assumed the public dataset used an explicit `strike_type == ATM` label for both call and put at the same timestamp; the resulting candidate set was empty | Walk-forward could not produce any trades and only a data-mapping diagnostic was generated | Select the executable ATM contract deterministically from the common call/put strike set nearest the spot at the entry timestamp, then hold that absolute strike through the test path | CLOSED |
+
+
+| E0032 | 2026-09-24 | 4 | The common-strike fix still rejected otherwise valid entries when call and put quote timestamps differed within the allowed 2-minute entry window | The successful Phase 4 rerun remained a no-trade mapping result | Allow independently timestamped call/put quotes within the entry window, use the common strike nearest the spot, and anchor the observation at the later of the two quote timestamps | OPEN |
