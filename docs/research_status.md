@@ -191,3 +191,18 @@ Phase 3G — bounded experiment awaiting CI result.
 - Research execution failed because trade_id was dropped before path simulation; no strategy statistic was accepted.
 - Initial OI confirmation also used backward-looking change at the break timestamp; this did not satisfy the declared information barrier and is rejected.
 - Correction: preserve trade_id, use forward 3/5-minute OI change, delay entry until the confirmation window plus one minute, and cache the pinned dataset.
+
+
+### 2026-09-24 — Step 3G.2 Fast2 result and corrected WFA
+- GitHub Actions run 35916600082 completed successfully; artifact 10775362997 is the accepted Phase 3G path artifact.
+- 128 pre-registered variants produced 79,888 executable trade paths.
+- Base friction (0.20 premium-point slippage): all 128 variants had negative mean calendar-day net; best mean all-day net Rs -61.11/lot/day; best positive-day rate 29.27%; best PF about 0.59; zero target-qualified variants.
+- Stress friction (0.40): all 128 variants remained negative; best mean all-day net Rs -79.55/lot/day; best positive-day rate 26.74%; best PF about 0.48; zero target-qualified variants.
+- The reusable WFA function initially returned zero windows because of a date-type mismatch. Correction committed in b499770d36fe06c15b1b3244a8b162cbd43deb22.
+- Independent WFA recomputation from the immutable accepted artifact produced 13 test windows at each slippage level. Base: 1 positive/13, mean test-window net Rs -192.79, 95% bootstrap CI about [-268.12,-117.72]. Stress: 0 positive/13, mean Rs -252.79, 95% CI about [-326.40,-179.16].
+- Gate: FAIL_PRELIMINARY.
+- Decision: retire Phase 3G as a lead family; do not enlarge the grid.
+
+### 2026-09-24 — Step 3G.3 Literature-driven next hypothesis
+- Current evidence suggests OI is too reactive to serve as the main intraday predictor.
+- Literature shows derivative markets can lead spot in price discovery, motivating a materially different Phase 3H: option-price lead/lag rather than OI-state prediction.
