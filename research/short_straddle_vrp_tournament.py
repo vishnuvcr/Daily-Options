@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 
 from research.cost_model import OptionCostModel
+from research.contracts import nifty_lot_size
 
 LOT = 65
 RISK_FREE = 0.06
