@@ -159,3 +159,10 @@ Add source download adapters and immutable cache manifests, run the first manual
 - Best configuration: MONTH expiry, 10:15 IST entry, skew shock >=1.0 IV point, absolute skew >=2.0 IV points, 90-minute hold; 12 trades; mean active-day net -₹306.43; mean all-day net -₹3.02; win rate 8.33%; PF 0.014; total net -₹3,677.20.
 - Decision: retire IV-skew shock/reversion. Four economically distinct Phase 3F families have now failed preliminary promotion: directional IV/OI imbalance, defined-risk iron fly, fixed-strike OI-break, and IV-skew reversion.
 - Next phase: Phase 4 nested walk-forward on the strongest near-miss candidate family from Phase 3 (intraday ATM short straddle) using the multi-year IV/OI dataset. This is a validation phase, not permission to promote the strategy.
+
+
+### 2026-09-24 — Step 4.1 Phase 4 initialized
+- Four Phase 3F microstructure hypotheses were tested and retired without a positive cost-aware result: directional IV/OI imbalance, iron-fly volatility regime, fixed-strike OI repositioning around breaks, and IV-skew shock/reversion.
+- Phase 4 is now activated as a validation phase for the only prior near-miss family with positive in-sample expectancy: the intraday ATM short straddle.
+- Added nested expanding-window train -> validation -> embargo -> untouched-test evaluation on the multi-year IV/OI dataset.
+- The Phase 4 workflow is manual-capable and path-filtered; raw source is reused from the pinned Actions cache.
