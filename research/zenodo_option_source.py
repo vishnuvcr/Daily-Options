@@ -89,14 +89,20 @@ def parse_strike_type(path: Path) -> tuple[float | None, str | None]:
 
 def discover_option_files(root: Path, index_path: Path | None = None) -> list[ContractFile]:
     if index_path and index_path.exists():
-        payload = json.loads(index_path.read_text(encoding="utf-8"))
-        return [ContractFile(**{
-            **x,
-            "expiry_date": pd.Timestamp(x["expiry_date"]).date(),
-        }) for x in payload]
+        try:
+            payload = json.loads(index_path.read_text(encoding="utf-8"))
+            valid = bool(payload) and all(Path(x["path"]).exists() for x in payload[: min(20, len(payload))])
+            if valid:
+                return [ContractFile(**{
+                    **x,
+                    "expiry_date": pd.Timestamp(x["expiry_date"]).date(),
+                }) for x in payload]
+        except Exception:
+            pass
+        index_path.unlink(missing_ok=True)
 
     records: list[ContractFile] = []
-    for path in sorted(p for p in root.rglob("*") if p.is_file() and p.suffix.lower() in {".csv", ".xlsx", ".xls"}):
+    for path in sorted(p for p in root.rglob("*") if p.is_file() and p.suffix.lower() in {".txt", ".csv", ".xlsx", ".xls"}):
         expiry = parse_expiry_date(path)
         strike, typ = parse_strike_type(path)
         if expiry is None or strike is None or typ is None:
