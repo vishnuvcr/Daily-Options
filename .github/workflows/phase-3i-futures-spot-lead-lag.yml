@@ -1,0 +1,57 @@
+name: Phase 3I - NIFTY Futures Spot Lead-Lag
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - phase-3i-futures-spot-lead-lag
+    paths:
+      - "research/phase3i_futures_spot_lead_lag.py"
+      - "tests/test_phase3i_futures_spot_lead_lag.py"
+      - "docs/phase3i_hypothesis.md"
+      - ".github/workflows/phase-3i-futures-spot-lead-lag.yml"
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install research dependencies
+        run: |
+          pip install pandas numpy openpyxl pytest
+
+      - name: Unit tests
+        run: pytest -q tests/test_phase3i_futures_spot_lead_lag.py
+
+      - uses: actions/cache@v4
+        with:
+          path: data/cache/zenodo_nifty_spot_futures
+          key: zenodo-10899828-nifty-spot-futures-v1
+
+      - name: Acquire or reuse pinned Zenodo source
+        run: |
+          mkdir -p data/cache/zenodo_nifty_spot_futures
+          if [ ! -f data/cache/zenodo_nifty_spot_futures/source.zip ]; then
+            python -c 'import urllib.request; urllib.request.urlretrieve("https://zenodo.org/records/10899828/files/Nifty%20spot%20and%20futures%20data.zip?download=1","data/cache/zenodo_nifty_spot_futures/source.zip")'
+          fi
+          echo "240aecc77a7275ec2f05a092b976bf91  data/cache/zenodo_nifty_spot_futures/source.zip" | md5sum -c -
+          rm -rf data/cache/zenodo_nifty_spot_futures/extracted
+          mkdir -p data/cache/zenodo_nifty_spot_futures/extracted
+          unzip -q data/cache/zenodo_nifty_spot_futures/source.zip -d data/cache/zenodo_nifty_spot_futures/extracted
+          find data/cache/zenodo_nifty_spot_futures/extracted -type f | sed -n '1,80p'
+
+      - name: Run Phase 3I data and predictive gate
+        run: |
+          python -m research.phase3i_futures_spot_lead_lag             --data data/cache/zenodo_nifty_spot_futures/extracted             --out reports/phase3i
+
+      - name: Upload Phase 3I reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase3i-futures-spot-lead-lag
+          path: reports/phase3i
