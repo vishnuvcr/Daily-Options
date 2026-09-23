@@ -186,6 +186,7 @@ class OptionReader:
             rows.append(
                 {
                     **base,
+                    "wing_strike": float(wing),
                     "width_steps": int(width),
                     "entry_time_local": entry_time,
                     "entry_time_utc": entry_time - IST_OFFSET,
