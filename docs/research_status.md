@@ -86,3 +86,14 @@ Status: candidate sources only; independent validation pending Phase 1.
 
 ## Next action
 Add source download adapters and immutable cache manifests, run the first manual data audit, then promote to the Phase 2 baseline tournament.
+
+
+### 2026-09-23 — Step 3E.3 Corrected VWAP/RSI momentum tournament
+- The diagnostic established that the cached NIFTY spot-index Volume field is zero for all 91,185 spot rows, so spot-index volume cannot be a valid volume filter on this dataset.
+- The implementation was corrected to use traded-option session VWAP and traded-option volume ratio, while keeping spot RSI/EMA as underlying filters.
+- The corrected workflow passed CI and evaluated 1,296 variants across 244 calendar days with 11,178 signal/contract-path bases.
+- No configuration reached the Rs 1,000/day target.
+- Best configuration: 10:00 entry, 4-of-4 conditions, RSI 60/40, option volume ratio >=1.5, 15% stop, 30% target, 90-minute hold.
+- Best result: 204 trades, 83.61% calendar-day coverage, mean all-day net Rs -558.10/day, mean active-trade-day net Rs -667.54, median daily net Rs -1,050.65, 10th-percentile daily net Rs -2,402.94, positive-day rate 21.31%, trade win rate 25.49%, profit factor 0.457, max drawdown about Rs -137,294/lot.
+- Decision: Phase 3E is retired as a lead family. The failure is now attributable to the corrected signal specification rather than missing signal data.
+- Next research branch should move to a materially different hypothesis instead of further tuning this family.
