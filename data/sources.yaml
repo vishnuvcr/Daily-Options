@@ -1,0 +1,46 @@
+version: 1
+as_of: "2026-09-23"
+
+sources:
+  nse_contract_info:
+    type: reference
+    url: "https://www.nseindia.com/static/products-services/equity-derivatives-contract-information"
+    purpose: "authoritative contract/lot-size metadata"
+  nse_stt:
+    type: reference
+    url: "https://www.nseindia.com/static/products-services/equity-derivatives-securities-transaction-tax"
+    purpose: "current option/futures STT rates"
+  nse_reports:
+    type: reference
+    url: "https://www.nseindia.com/all-reports-derivatives"
+    purpose: "daily F&O reports, UDiFF bhavcopy, participant/OI/FII reports"
+  nse_option_chain:
+    type: reference
+    url: "https://www.nseindia.com/option-chain"
+    purpose: "current chain, OI, volume, IV and bid/ask reference"
+  paytm_pricing:
+    type: reference
+    url: "https://www.paytmmoney.com/stocks/pricing"
+    purpose: "broker tariff reference"
+  paytm_pricing_update:
+    type: reference
+    url: "https://www.paytmmoney.com/blog/all-new-paytm-money-updates-revisions-and-more/"
+    purpose: "Paytm Money flat Rs 20 brokerage announcement"
+  zenodo_nifty_2017_2020:
+    type: historical_dataset
+    url: "https://zenodo.org/records/10899828"
+    purpose: "one-minute NIFTY spot/futures/options data for 2017-2020"
+    expected_features: [timestamp, open, high, low, close, volume, strike, option_type, expiry]
+  huggingface_nifty_options:
+    type: historical_dataset
+    url: "https://huggingface.co/datasets/artist-23/nifty-options-data"
+    purpose: "minute option dataset spanning 2020-12-29 to 2025-12-26"
+    expected_features: [timestamp, open, high, low, close, iv, volume, oi, strike_price, spot, expiry_type, strike_type, option_type]
+  ema_open_source_study:
+    type: external_benchmark
+    url: "https://phadmahadev-ops.github.io/ema-backtesting/"
+    purpose: "baseline strategy/data methodology comparison"
+  nifty_vrp_preprint_2026:
+    type: external_benchmark
+    url: "https://papers.ssrn.com/sol3/Delivery.cfm/6530119.pdf?abstractid=6530119&mirid=1"
+    purpose: "NIFTY VRP benchmark using one-minute option bars"
