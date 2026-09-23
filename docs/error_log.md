@@ -14,4 +14,7 @@
 
 | E0008 | 2026-09-23 | 3 | Push-triggered Phase 3 workflow was repeatedly relaunched by research-log commits, canceling earlier benchmark runs | Wasted CI runs and made run provenance noisy | Changed Phase 3 to manual-only execution with workflow_dispatch; documentation commits no longer trigger the benchmark | CLOSED |
 
+| E0015 | 2026-09-23 | 3C | Compact full-chain extractor still raised a global overlap error because its per-strike CE/PE aggregation was brittle | Full-chain artifact was not produced | Replaced the CE/PE timestamp join with direct grouped CE/PE aggregation by date and strike | OPEN |
+| E0016 | 2026-09-23 | 3D | RSI implementation returned all-NaN on monotonic data because zero downside was replaced with NaN | Phase 3D CI stopped at unit tests | Return RSI=100 for pure upside, 50 for flat, and standard formula otherwise | CLOSED |
+
 Every subsequent error gets a new row. Fixes are never silently discarded.
