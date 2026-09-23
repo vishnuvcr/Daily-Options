@@ -250,3 +250,11 @@ Phase 3H — COMPLETE; FAIL_PRELIMINARY; RETIRED.
 - Forward spot diagnostics showed no stable directional hit-rate edge; observed 1-minute hit rates ranged about 46.8%–56.1%.
 - Decision: retire Phase 3H. No parameter expansion is permitted.
 - Next bounded direction: regime-conditioned underlying-price behavior (intraday dislocation/mean-reversion or opening-range regime) expressed through defined-risk spreads.
+
+### 2026-09-24 — Step 3I.1 Phase 3I implementation and data-gate launch
+- Created branch `phase-3i-futures-spot-lead-lag` from the accepted Phase 3H record.
+- Added a pre-registered 72-variant futures/spot predictive diagnostic using futures return, futures-minus-spot lead gap, and basis-change features over 1/3/5-minute lookbacks with 0/2/5/10-bps thresholds and continuation/contrarian modes.
+- Added a Stage-1 data gate against the pinned Zenodo spot/futures archive and a manual GitHub Actions workflow with cache reuse and artifact upload.
+- First execution revealed that the Zenodo master archive contains nested yearly ZIP files. This is logged as E0047 and corrected by recursively extracting those yearly archives.
+- Current corrected workflow run: 35919545224, based on commit 39b68958683b02883706e9c39e017de0b96b64fe.
+- No Phase 3I numerical result is accepted until the corrected run produces the source audit and predictive diagnostic.
