@@ -258,3 +258,10 @@ Phase 3H — COMPLETE; FAIL_PRELIMINARY; RETIRED.
 - First execution revealed that the Zenodo master archive contains nested yearly ZIP files. This is logged as E0047 and corrected by recursively extracting those yearly archives.
 - Current corrected workflow run: 35919545224, based on commit 39b68958683b02883706e9c39e017de0b96b64fe.
 - No Phase 3I numerical result is accepted until the corrected run produces the source audit and predictive diagnostic.
+
+### 2026-09-24 — Step 3I.2 Data gate pass; first predictive screen provisional
+- Canonical run 35919907675 (artifact 10776373001) successfully loaded all four years from the pinned Zenodo archive.
+- Data audit: 372,055 spot rows, 371,783 futures rows, 991 common trading dates, 99.733% timestamp overlap and 99.193% common-day session completeness at the >=350-minute threshold. Date range: 2017-01-02 through 2020-12-31.
+- The first 72-variant predictive screen produced a small cluster of overall-threshold positives and was provisionally marked PASS by the initial implementation.
+- Step 3I.3 review found that the implementation had not enforced the pre-registered requirement of two forward horizons plus same-sign performance in both sample halves. That screen is not accepted for promotion.
+- A corrected strict predictive-gate implementation is now running; only its output can determine whether Phase 3I advances to option implementation.
