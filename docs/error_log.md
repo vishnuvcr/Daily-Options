@@ -60,3 +60,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0032 | 2026-09-24 | 4 | The common-strike fix still rejected otherwise valid entries when call and put quote timestamps differed within the allowed 2-minute entry window | The successful Phase 4 rerun remained a no-trade mapping result | Allow independently timestamped call/put quotes within the entry window, use the common strike nearest the spot, and anchor the observation at the later of the two quote timestamps | OPEN |
+
+
+| E0033 | 2026-09-24 | 4 | Phase 4 entry clock was constructed as midnight + 45/60/75 minutes instead of 09:15 + 30/45/60 minutes, so every entry lookup missed the market session | WFA returned zero observations despite otherwise valid quote mapping | Corrected entry timestamp to 09:15 IST base plus the configured post-open offset | CLOSED |
