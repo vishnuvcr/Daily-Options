@@ -76,28 +76,47 @@ def trade_one(day_spot,day_opt,signal,cost_model,stop=0.25,target=0.50,hold=60):
     return {"date":str(et.date()),"entry_time":et.isoformat(),"exit_time":xt.isoformat(),"option_type":otype,"strike":float(strike),"entry":entry,"exit":float(exit_px),"net_pnl":float(net),"reason":reason}
 
 def run(path:Path,out:Path):
-    spot,opt=load_data(path); out.mkdir(parents=True,exist_ok=True); cm=OptionCostModel()
-    configs=[]
-    for family in ("orb","vwap","ema"):
-        for vf in (False,True):
-            for vol in (False,True):
-                configs.append((family,vf,vol))
-    rows=[]; days=int(spot.timestamp.dt.date.nunique())
+    spot,opt=load_data(path)
+    out.mkdir(parents=True,exist_ok=True)
+    cm=OptionCostModel()
+    configs=[(family,vf,vol) for family in ("orb","vwap","ema") for vf in (False,True) for vol in (False,True)]
+    spot_days={d:ds for d,ds in spot.groupby(spot.timestamp.dt.date)}
+    opt_days={d:do for d,do in opt.groupby(opt.timestamp.dt.date)}
+    days=len(spot_days)
+    rows=[]
     for family,vf,vol in configs:
         trades=[]
-        for d,ds in spot.groupby(spot.timestamp.dt.date):
-            do=opt[opt.timestamp.dt.date==d]
+        for d,ds in spot_days.items():
+            do=opt_days.get(d)
+            if do is None:
+                continue
             sig=first_signal(ds,family,15,vf,vol)
             if sig:
                 t=trade_one(ds,do,sig,cm)
                 if t: trades.append(t)
         if trades:
-            df=pd.DataFrame(trades); daily=df.groupby("date").net_pnl.sum()
-            wins=df.loc[df.net_pnl>0,"net_pnl"].sum(); losses=-df.loc[df.net_pnl<0,"net_pnl"].sum()
-            rows.append({"family":family,"vwap_filter":vf,"volume_filter":vol,"trades":len(df),"win_rate":float((df.net_pnl>0).mean()),"mean_active_day":float(daily.mean()),"mean_all_day":float(df.net_pnl.sum()/days),"profit_factor":float(wins/losses) if losses else 999.0,"total_net":float(df.net_pnl.sum())})
-    board=pd.DataFrame(rows).sort_values(["mean_all_day","mean_active_day"],ascending=False)
+            df=pd.DataFrame(trades)
+            daily=df.groupby("date").net_pnl.sum()
+            wins=df.loc[df.net_pnl>0,"net_pnl"].sum()
+            losses=-df.loc[df.net_pnl<0,"net_pnl"].sum()
+            rows.append({
+                "family":family,"vwap_filter":vf,"volume_filter":vol,
+                "trades":len(df),"win_rate":float((df.net_pnl>0).mean()),
+                "mean_active_day":float(daily.mean()),
+                "mean_all_day":float(df.net_pnl.sum()/days),
+                "profit_factor":float(wins/losses) if losses else 999.0,
+                "total_net":float(df.net_pnl.sum())
+            })
+    board=pd.DataFrame(rows)
+    if not board.empty:
+        board=board.sort_values(["mean_all_day","mean_active_day"],ascending=False)
     board.to_csv(out/"phase2_leaderboard.csv",index=False)
-    result={"dataset":str(path),"trading_days":days,"variants_tested":len(configs),"lot_size":LOT_SIZE,"target_inr_per_day":1000.0,"top":board.iloc[0].to_dict() if len(board) else None,"gate":"PASS" if len(board) and board.iloc[0].mean_all_day>=1000 else "FAIL"}
+    result={
+        "dataset":str(path),"trading_days":days,"variants_tested":len(configs),
+        "lot_size":LOT_SIZE,"target_inr_per_day":1000.0,
+        "top":board.iloc[0].to_dict() if len(board) else None,
+        "gate":"PASS" if len(board) and board.iloc[0].mean_all_day>=1000 else "FAIL"
+    }
     (out/"phase2_summary.json").write_text(json.dumps(result,indent=2,default=str),encoding="utf-8")
     print(json.dumps(result,indent=2,default=str))
 
