@@ -55,19 +55,14 @@ def extract(path: Path, out: Path, wing_steps: int = 3) -> dict:
         (pl.col("timestamp")<=pl.col("timestamp").dt.truncate("1d")+pl.duration(hours=10,minutes=15)) &
         (pl.col("close")>0)
     )
-    ce=q.filter(pl.col("option_type")=="CE").group_by(["date","strike"]).agg([
-        pl.col("timestamp").min().alias("ce_time"),
-        pl.col("close").first().alias("CE"),
-    ])
-    pe=q.filter(pl.col("option_type")=="PE").group_by(["date","strike"]).agg([
-        pl.col("timestamp").min().alias("pe_time"),
-        pl.col("close").first().alias("PE"),
-    ])
-    px=ce.join(pe,on=["date","strike"],how="inner").with_columns(
-        pl.max_horizontal("ce_time","pe_time").alias("entry_time")
-    ).with_columns((pl.col("CE")-pl.col("PE")).abs().alias("gap"))
+    px=q.group_by(["date","strike"]).agg([
+        pl.when(pl.col("option_type")=="CE").then(pl.col("close")).drop_nulls().mean().alias("CE"),
+        pl.when(pl.col("option_type")=="PE").then(pl.col("close")).drop_nulls().mean().alias("PE"),
+    ]).drop_nulls(["CE","PE"]).with_columns(
+        (pl.col("CE")-pl.col("PE")).abs().alias("gap")
+    )
     if px.height==0:
-        raise RuntimeError("09:15-10:15 chain has no common CE/PE strike pairs")
+        raise RuntimeError("source-wide CE/PE overlap is empty after nearest-expiry and time-window filters")
     atm=(
         px.sort(["date","gap"])
         .group_by("date",maintain_order=True)
