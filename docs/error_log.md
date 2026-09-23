@@ -54,3 +54,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0030 | 2026-09-24 | 4 | Phase 4 filter expansion used DataFrame attribute access for fields such as `gap`; pandas treated the field ambiguously during the cross-join | Walk-forward computation stopped before scoring | Switched the filter expansion to explicit bracketed column indexing | CLOSED |
+
+
+| E0031 | 2026-09-24 | 4 | Phase 4 assumed the public dataset used an explicit `strike_type == ATM` label for both call and put at the same timestamp; the resulting candidate set was empty | Walk-forward could not produce any trades and only a data-mapping diagnostic was generated | Select the executable ATM contract deterministically from the common call/put strike set nearest the spot at the entry timestamp, then hold that absolute strike through the test path | CLOSED |
