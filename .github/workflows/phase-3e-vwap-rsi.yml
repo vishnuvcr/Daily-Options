@@ -1,0 +1,33 @@
+name: Phase 3E - VWAP RSI Momentum
+
+concurrency:
+  group: phase3e-vwap-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [phase-3e-vwap-rsi-momentum]
+  workflow_dispatch:
+
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pandas numpy openpyxl pytest pyyaml
+      - run: pytest -q
+      - uses: actions/cache@v4
+        with:
+          path: data/cache/nifty_1y_1min.xlsx
+          key: nifty-1y-1min-jul2025-jun2026-v1
+      - run: |
+          mkdir -p data/cache reports
+          test -s data/cache/nifty_1y_1min.xlsx || curl -L --fail --retry 3 -o data/cache/nifty_1y_1min.xlsx https://raw.githubusercontent.com/rajmaurya0904/bhav/main/sample_data/nifty_1y_1min.xlsx
+      - run: python -m research.vwap_rsi_momentum --data data/cache/nifty_1y_1min.xlsx --out reports
+      - uses: actions/upload-artifact@v4
+        with:
+          name: phase-3e-vwap-rsi-results
+          path: reports/
