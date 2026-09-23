@@ -234,10 +234,10 @@ def expand_filters(trades: pd.DataFrame) -> pd.DataFrame:
     f["_key"] = 1
     x = t.merge(f, on="_key").drop(columns="_key")
     mask = (
-        ((x.gap_max.isna()) | (x.gap.notna() & (x.gap <= x.gap_max)))
-        & ((x.r15_max.isna()) | (x.r15.notna() & (x.r15 <= x.r15_max)))
-        & x.iv_rv.notna()
-        & (x.iv_rv >= x.iv_rv_min)
+        ((x["gap_max"].isna()) | (x["gap"].notna() & (x["gap"] <= x["gap_max"])))
+        & ((x["r15_max"].isna()) | (x["r15"].notna() & (x["r15"] <= x["r15_max"])))
+        & x["iv_rv"].notna()
+        & (x["iv_rv"] >= x["iv_rv_min"])
     )
     return x.loc[mask].copy()
 
