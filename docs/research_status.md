@@ -97,3 +97,11 @@ Add source download adapters and immutable cache manifests, run the first manual
 - Best result: 204 trades, 83.61% calendar-day coverage, mean all-day net Rs -558.10/day, mean active-trade-day net Rs -667.54, median daily net Rs -1,050.65, 10th-percentile daily net Rs -2,402.94, positive-day rate 21.31%, trade win rate 25.49%, profit factor 0.457, max drawdown about Rs -137,294/lot.
 - Decision: Phase 3E is retired as a lead family. The failure is now attributable to the corrected signal specification rather than missing signal data.
 - Next research branch should move to a materially different hypothesis instead of further tuning this family.
+
+
+### 2026-09-24 — Step 3F.1 Phase 3F initiated
+- Created branch `phase-3f-option-microstructure` from the completed Phase 3E branch.
+- New hypothesis: use option-chain IV/OI/volume structure and volatility regime, rather than another RSI/VWAP/EMA variation.
+- Added an auditable data-schema gate and manual-only GitHub Actions workflow.
+- Primary external dataset candidate: artist-23/nifty-options-data, reported as 33.96M rows from 2020-12-29 to 2025-12-26 with IV, OI, volume, spot, strike and expiry metadata. This is a candidate source and must pass independent audit before strategy results are trusted.
+- Current phase status: DATA AUDIT PENDING.
