@@ -1,0 +1,21 @@
+{
+  "project": "Daily-Options",
+  "branch": "phase-7-manuscript",
+  "status": "FINAL_SYNTHESIS",
+  "exploratory_program": "CLOSED",
+  "promotion_candidate": false,
+  "phase4_gate": "FAIL_PRELIMINARY",
+  "phase3g_gate": "FAIL_PRELIMINARY",
+  "phase3h_gate": "FAIL_PRELIMINARY",
+  "final_exploratory_family": "opening-range false-break reversion",
+  "final_run_id": 35919447949,
+  "final_variants": 144,
+  "final_base_best_mean_all_day_net_inr_per_lot_day": -854.06,
+  "final_stress_best_mean_all_day_net_inr_per_lot_day": -886.27,
+  "final_base_mean_test_window_net_inr_per_lot": -1626.99,
+  "final_stress_mean_test_window_net_inr_per_lot": -1686.99,
+  "target_inr_per_lot_day": 1000,
+  "phase5_status": "BLOCKED",
+  "phase6_status": "NOT_STARTED",
+  "next_requirement": "higher-fidelity synchronized executable market data"
+}
