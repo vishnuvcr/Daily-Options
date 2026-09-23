@@ -16,3 +16,5 @@ def test_phase3g_grid_size():
 def test_lot_size_transition():
     assert nifty_lot_size("2025-12-30") == 75
     assert nifty_lot_size("2026-01-06") == 65
+
+# Canonical Phase 3G CI trigger: regression suite must pass before research execution.
