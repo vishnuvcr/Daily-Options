@@ -199,3 +199,10 @@ Status: candidate sources only; independent validation pending Phase 1.
 
 ## Current phase
 Phase 3G — COMPLETE; FAIL_PRELIMINARY; RETIRED.
+
+### 2026-09-24 — Step 3H.1 Phase 3H initialized
+- Created branch phase-3h-option-lead-lag from the finalized Phase 3G branch.
+- Pre-registered 108 variants testing ATM option-pressure lead-lag: 1/3/5-minute lookback, 1%/2%/3% pressure threshold, WEEK/MONTH expiry, 1/2-strike spread width, 5/10/15-minute hold.
+- Added a leakage-safe forward-return diagnostic and defined-risk debit-spread execution engine.
+- Added manual GitHub Actions workflow with cached pinned dataset and base/stress slippage runs.
+- Current status: awaiting CI numerical result.
