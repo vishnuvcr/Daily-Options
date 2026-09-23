@@ -167,3 +167,25 @@ Phase 3G failed its bounded OOS gate, so the next predefined hypothesis is a dis
 - Walk-forward: 180-day train, 60-day validation, 5-day embargo, 60-day untouched test, 60-day step, with the same top-12 train -> best validation selection rule used in Phase 3G.
 - Diagnostic requirement: report the option-pressure feature's forward spot-return conditional means/hit rates in addition to trading P&L, so a trading result cannot be mistaken for predictive evidence.
 - Stop rule: if the fixed 108-variant family fails after cost and leakage-safe WFA, retire it and move to the next predefined hypothesis; do not enlarge thresholds or add ad hoc features.
+
+
+## 11. Plan amendment — Phase 3I opening false-break mean reversion
+
+Phase 3H found no tradable option-price lead-lag edge. The next bounded family returns to the underlying price process and tests opening-window false breaks rather than another option-chain microstructure signal.
+
+### Phase 3I — Opening-range false-break reversion
+- Build an auditable NIFTY spot series from the same multi-year options dataset.
+- Define the opening range from the first 5, 15, or 30 minutes after the 09:15 IST open.
+- A downside false break requires spot to trade at least 0.05% or 0.10% below the opening-range low and then re-enter above the low by at least 0.02% or 0.05%.
+- An upside false break requires spot to trade at least 0.05% or 0.10% above the opening-range high and then re-enter below the high by at least 0.02% or 0.05%.
+- The trade is the opposite direction of the failed break: downside false break -> call debit spread; upside false break -> put debit spread.
+- Entry is the next executable minute after re-entry.
+- Expiry WEEK/MONTH, spread width 1/2 strikes, maximum hold 15/30/60 minutes.
+- One first qualifying false-break signal per day per variant.
+- No volume feature is used because source volume remains quarantined.
+- 144 pre-registered variants; no post-hoc threshold expansion.
+- Base slippage 0.20 premium points per leg and 0.40 stress slippage.
+- Same date-aware lot-size, transaction-cost, train/validation/5-day embargo/test WFA and stop/target logic used in the previous bounded families.
+- Promotion requires positive net OOS expectancy and at least one untouched test window >= Rs 1,000/lot/day. A negative family is retired without enlargement.
+
+This is intended as the last Phase 3 exploratory family before final synthesis/data-gap assessment unless a completely new independent historical data source becomes available.
