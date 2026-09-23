@@ -1,0 +1,39 @@
+name: Phase 3D - Regime Adaptive Directional
+
+concurrency:
+  group: phase3d-regime-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [phase-3d-regime-adaptive-directional]
+  workflow_dispatch:
+
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pandas numpy openpyxl pytest pyyaml
+      - name: Unit tests
+        run: pytest -q
+      - name: Cache public NIFTY sample
+        uses: actions/cache@v4
+        with:
+          path: data/cache/nifty_1y_1min.xlsx
+          key: nifty-1y-1min-jul2025-jun2026-v1
+      - name: Download sample on cache miss
+        run: |
+          mkdir -p data/cache reports
+          test -s data/cache/nifty_1y_1min.xlsx || curl -L --fail --retry 3 -o data/cache/nifty_1y_1min.xlsx https://raw.githubusercontent.com/rajmaurya0904/bhav/main/sample_data/nifty_1y_1min.xlsx
+      - name: Run regime adaptive tournament
+        run: python -m research.regime_adaptive_directional --data data/cache/nifty_1y_1min.xlsx --out reports
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase-3d-regime-adaptive-results
+          path: reports/
