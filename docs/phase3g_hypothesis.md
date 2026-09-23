@@ -42,6 +42,9 @@ Use next-minute entry, date-aware NIFTY lot size, the repository Paytm Money/NSE
 
 Train -> validation -> embargo -> untouched test, followed by blocked bootstrap confidence intervals and year/regime/session breakdowns. Final-test parameters are never selected.
 
+## CI validation revision
+This file revision is intentionally used to trigger repository-level validation after the workflow was installed on the PR base branch.
+
 ## Stop rule
 
 If the bounded grid fails the OOS gate, do not enlarge it. Retire Phase 3G and move to the next predefined hypothesis.
