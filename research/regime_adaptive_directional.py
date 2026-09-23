@@ -32,8 +32,10 @@ def rsi(series: pd.Series, period: int = 14) -> pd.Series:
     delta = series.diff()
     up = delta.clip(lower=0).ewm(alpha=1/period, adjust=False).mean()
     down = -delta.clip(upper=0).ewm(alpha=1/period, adjust=False).mean()
-    rs = up / down.replace(0, np.nan)
-    return 100 - 100 / (1 + rs)
+    rs = up.div(down)
+    out = 100 - 100 / (1 + rs)
+    out = out.where(down != 0, np.where(up > 0, 100.0, 50.0))
+    return out
 
 
 def load(path: Path):
