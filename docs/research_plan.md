@@ -149,3 +149,7 @@ Phase 4 did not validate the intraday ATM short-straddle family. The research pl
 - Stop rule: if the fixed pre-registered family has no positive net OOS expectancy after costs or shows unstable performance across test windows, retire it and move directly to the predefined next hypothesis rather than enlarging the grid.
 
 This amendment is the only plan change caused by the Phase 4 result.
+
+
+## 10. Plan amendment — Phase 3H option-price lead/lag
+After Phase 3G failed, the next bounded family is derivative price-discovery: short-horizon near-ATM option price changes as a possible lead signal for subsequent spot movement. The pre-registered grid is defined in docs/phase3h_hypothesis.md and will not be expanded post hoc.
