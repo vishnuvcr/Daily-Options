@@ -166,3 +166,10 @@ Add source download adapters and immutable cache manifests, run the first manual
 - Phase 4 is now activated as a validation phase for the only prior near-miss family with positive in-sample expectancy: the intraday ATM short straddle.
 - Added nested expanding-window train -> validation -> embargo -> untouched-test evaluation on the multi-year IV/OI dataset.
 - The Phase 4 workflow is manual-capable and path-filtered; raw source is reused from the pinned Actions cache.
+
+
+### 2026-09-24 — Step 4.2 Phase 4 execution hardening
+- Phase 4 successfully completed its workflow setup and WFA engine execution path, but the first valid dataset run still produced no tradable ATM straddle observations.
+- Root cause: call and put quotes in the public data can occur at different timestamps inside the allowed entry window, so requiring an exact common timestamp was too restrictive.
+- Correction applied: choose the common strike nearest spot using the available call/put quotes within the 2-minute entry window; use the later quote timestamp as the signal/entry anchor, then hold that absolute strike through the path.
+- A rerun is now executing with this correction. No Phase 4 numerical conclusion is accepted until it produces an actual observation/trade table.
