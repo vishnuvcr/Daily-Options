@@ -133,3 +133,19 @@ The search is open-ended within the scientific phases but not unbounded. A resea
 ## 8. Final deliverables
 
 Abstract, introduction, research questions, literature review, data, methodology, cost model, candidate strategy definitions, statistical analysis, results, robustness checks, discussion, strengths, limitations, conclusion, future research, references, appendices, source manifest, reproducibility instructions and execution checklist.
+
+
+## 9. Plan amendment — bounded Phase 3G after Phase 4 falsification
+
+Phase 4 did not validate the intraday ATM short-straddle family. The research plan therefore adds one bounded hypothesis before any robustness/paper phase:
+
+### Phase 3G — Dynamic price-structure break with post-break OI confirmation
+- Primary event: a real-time intraday price-structure break, defined without future information.
+- Confirmation: change in put-minus-call OI around the break, used only after price has already crossed the structure level; OI is not treated as an advance predictor.
+- Trade expression: defined-risk call debit spread for upward breaks or put debit spread for downward breaks.
+- Context filters: one compact pre-registered set of realized-volatility and IV/RV conditions; no large optimization grid.
+- Execution: next executable minute after confirmation; date-aware lot size; Paytm Money/NSE cost model; 0.20-point base round-trip slippage and stressed-cost rerun.
+- Validation: train/validation selection, embargo, untouched test, blocked bootstrap and stability checks. No final-test parameter selection.
+- Stop rule: if the fixed pre-registered family has no positive net OOS expectancy after costs or shows unstable performance across test windows, retire it and move directly to the predefined next hypothesis rather than enlarging the grid.
+
+This amendment is the only plan change caused by the Phase 4 result.
