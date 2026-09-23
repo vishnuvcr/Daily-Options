@@ -198,7 +198,10 @@ Status: candidate sources only; independent validation pending Phase 1.
 - Some public datasets have close/market-price bars without executable quotes.
 
 ## Current phase
-Phase 3G — COMPLETE; FAIL_PRELIMINARY; RETIRED.
+Phase 7 — FINAL SYNTHESIS ACTIVE.
+
+### Phase 5/6 gate
+No candidate has passed promotion, so robustness and paper-shadow phases remain blocked.
 
 ### 2026-09-24 — Step 3H.1 Phase 3H initialized
 - Created branch phase-3h-option-lead-lag from the finalized Phase 3G branch.
