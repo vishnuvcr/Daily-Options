@@ -31,3 +31,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0018 | 2026-09-24 | 3F | First tournament implementation used repeated pandas filtering inside nested parameter loops and was computationally inefficient; the run was cancelled before producing a result | Excessive runtime and wasted CI time | Replaced with vectorized joins and one-trade-per-day construction; rerun completed successfully | CLOSED |
+
+
+| E0019 | 2026-09-24 | 3F-ironfly | Stage-2 result grouping combined the top Stage-1 configurations into a single row and therefore was not parameter-isolated | Stage-2 output was not decision-grade despite completing successfully | Stage 2 is now hard-gated on positive Stage-1 expectancy/PF and the code retains one base configuration per result; because all Stage-1 configurations failed, Stage 2 is skipped for future runs | CLOSED |
