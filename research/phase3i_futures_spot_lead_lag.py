@@ -78,9 +78,23 @@ def candidate_files(root: Path) -> list[Path]:
 
 
 def read_table(path: Path) -> pd.DataFrame:
-    if path.suffix.lower() == ".csv":
-        return pd.read_csv(path)
-    return pd.read_excel(path)
+    if path.suffix.lower() != ".csv":
+        return pd.read_excel(path)
+    df = pd.read_csv(path)
+    if len(df.columns) >= 8:
+        first = str(df.columns[0]).strip().lower()
+        second = str(df.columns[1]).strip()
+        third = str(df.columns[2]).strip() if len(df.columns) > 2 else ""
+        looks_headerless = (
+            first in {"nifty", "nifty_f1"}
+            and bool(re.fullmatch(r"\d{4}/\d{2}/\d{2}", second))
+            and bool(re.fullmatch(r"\d{1,2}:\d{2}", third))
+        )
+        if looks_headerless:
+            df = pd.read_csv(path, header=None)
+            cols = ["symbol", "trade_date", "trade_time", "open", "high", "low", "close", "volume", "oi"]
+            df.columns = cols[: len(df.columns)]
+    return df
 
 
 def identify_spot_futures(root: Path) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
