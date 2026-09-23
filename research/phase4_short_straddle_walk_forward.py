@@ -102,28 +102,25 @@ def load_observations(root: Path) -> tuple[pd.DataFrame, dict[str, pd.DatetimeIn
         for entry_min in ENTRY_MINUTES:
             entry_time = pd.Timestamp(d) + pd.Timedelta(minutes=15 + entry_min)
             q = od[(od.datetime >= entry_time) & (od.datetime <= entry_time + pd.Timedelta(minutes=2))]
-            ce = q[q.option_type == "CALL"].sort_values("datetime")
-            pe = q[q.option_type == "PUT"].sort_values("datetime")
-            common = sorted(set(ce.datetime) & set(pe.datetime))
-            if not common:
+            ce = q[q.option_type == "CALL"].dropna(subset=["strike_price","close"]).sort_values("datetime")
+            pe = q[q.option_type == "PUT"].dropna(subset=["strike_price","close"]).sort_values("datetime")
+            if ce.empty or pe.empty:
                 continue
-            et = common[0]
-            ce_t = ce[ce.datetime == et].dropna(subset=["strike_price","close"])
-            pe_t = pe[pe.datetime == et].dropna(subset=["strike_price","close"])
-            common_strikes = sorted(set(ce_t.strike_price) & set(pe_t.strike_price))
+            common_strikes = sorted(set(ce.strike_price) & set(pe.strike_price))
             if not common_strikes:
                 continue
-            spot_at_entry = float(day_spot.loc[day_spot.datetime == et, "spot"].iloc[0]) if not day_spot.loc[day_spot.datetime == et, "spot"].empty else np.nan
-            if not np.isfinite(spot_at_entry):
-                spot_at_entry = open_spot
+            spot_at_entry = float(
+                day_spot.loc[day_spot.datetime >= entry_time, "spot"].iloc[0]
+            ) if not day_spot.loc[day_spot.datetime >= entry_time, "spot"].empty else open_spot
             strike = float(min(common_strikes, key=lambda k: abs(k - spot_at_entry)))
-            ce_row = ce_t[ce_t.strike_price == strike]
-            pe_row = pe_t[pe_t.strike_price == strike]
-            if ce_row.empty or pe_row.empty:
-                continue
-            ce0 = float(ce_row.close.iloc[0])
-            pe0 = float(pe_row.close.iloc[0])
-            ivs = pd.concat([ce_row.iv, pe_row.iv]).dropna()
+            ce_row = ce[ce.strike_price == strike].iloc[0]
+            pe_row = pe[pe.strike_price == strike].iloc[0]
+            ce_ts = pd.Timestamp(ce_row.datetime)
+            pe_ts = pd.Timestamp(pe_row.datetime)
+            et = max(ce_ts, pe_ts)
+            ce0 = float(ce_row.close)
+            pe0 = float(pe_row.close)
+            ivs = pd.Series([ce_row.iv, pe_row.iv]).dropna()
             entry = ce0 + pe0
             if entry <= 0 or ivs.empty:
                 continue
