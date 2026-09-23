@@ -51,17 +51,23 @@ def extract(path: Path, out: Path, wing_steps: int = 3) -> dict:
 
     # Determine an ATM proxy independently for each day using 09:30 parity.
     q=near.filter(
-        (pl.col("timestamp").dt.hour()==9) &
-        (pl.col("timestamp").dt.minute()>=30) &
-        (pl.col("timestamp").dt.minute()<=32)
+        (pl.col("timestamp")>=pl.col("timestamp").dt.truncate("1d")+pl.duration(hours=9,minutes=15)) &
+        (pl.col("timestamp")<=pl.col("timestamp").dt.truncate("1d")+pl.duration(hours=10,minutes=15)) &
+        (pl.col("close")>0)
     )
-    px=q.group_by(["date","strike"]).agg([
-        pl.when(pl.col("option_type")=="CE").then(pl.col("close")).drop_nulls().first().alias("CE"),
-        pl.when(pl.col("option_type")=="PE").then(pl.col("close")).drop_nulls().first().alias("PE"),
+    ce=q.filter(pl.col("option_type")=="CE").group_by(["date","strike"]).agg([
+        pl.col("timestamp").min().alias("ce_time"),
+        pl.col("close").first().alias("CE"),
     ])
-    px=px.drop_nulls(["CE","PE"]).with_columns((pl.col("CE")-pl.col("PE")).abs().alias("gap"))
+    pe=q.filter(pl.col("option_type")=="PE").group_by(["date","strike"]).agg([
+        pl.col("timestamp").min().alias("pe_time"),
+        pl.col("close").first().alias("PE"),
+    ])
+    px=ce.join(pe,on=["date","strike"],how="inner").with_columns(
+        pl.max_horizontal("ce_time","pe_time").alias("entry_time")
+    ).with_columns((pl.col("CE")-pl.col("PE")).abs().alias("gap"))
     if px.height==0:
-        raise RuntimeError("09:30-09:32 chain has no common CE/PE strike pairs")
+        raise RuntimeError("09:15-10:15 chain has no common CE/PE strike pairs")
     atm=(
         px.sort(["date","gap"])
         .group_by("date",maintain_order=True)
