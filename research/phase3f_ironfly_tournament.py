@@ -197,42 +197,23 @@ def exact_exit(sig: pd.DataFrame, raw: pd.DataFrame, hold: int) -> pd.DataFrame:
     return x.dropna(subset=["ce_short_exit","pe_short_exit","ce_long_exit","pe_long_exit"]).copy()
 
 
-def ironfly_cost(cm: OptionCostModel, df: pd.DataFrame) -> np.ndarray:
-    lot = df.trade_date.map(lambda d: nifty_lot_size(d)).to_numpy(float)
-    return cm.ironfly_net_pnl(
-        df.ce_short_entry, df.pe_short_entry,
-        df.ce_long_entry, df.pe_long_entry,
-        df.ce_short_exit, df.pe_short_exit,
-        df.ce_long_exit, df.pe_long_exit,
-        lot_size=int(lot[0]) if len(np.unique(lot)) == 1 else 75,
-    )
-
-
 def net_vector(cm: OptionCostModel, d: pd.DataFrame) -> np.ndarray:
-    lot = d.trade_date.map(lambda x: nifty_lot_size(x)).to_numpy(float)
-    multiplier = lot
-    gross = (
-        d.credit - (
-            d.ce_short_exit + d.pe_short_exit
-            - d.ce_long_exit - d.pe_long_exit
+    out = np.empty(len(d), dtype=float)
+    for i, row in enumerate(d.itertuples(index=False)):
+        out[i] = cm.ironfly_net_pnl(
+            row.ce_short_entry,
+            row.pe_short_entry,
+            row.ce_long_entry,
+            row.pe_long_entry,
+            row.ce_short_exit,
+            row.pe_short_exit,
+            row.ce_long_exit,
+            row.pe_long_exit,
+            lot_size=nifty_lot_size(row.trade_date),
+            qty=1,
+            slippage_points=0.20,
         )
-    ).to_numpy(float) * multiplier
-    turnover = (
-        d.ce_short_entry + d.pe_short_entry + d.ce_long_entry + d.pe_long_entry
-        + d.ce_short_exit + d.pe_short_exit + d.ce_long_exit + d.pe_long_exit
-    ).to_numpy(float) * multiplier
-    brokerage = 8.0 * cm.brokerage_per_order
-    exchange = turnover * cm.exchange_rate
-    sebi = turnover * cm.sebi_rate
-    stt = (
-        d.ce_short_entry + d.pe_short_entry + d.ce_long_exit + d.pe_long_exit
-    ).to_numpy(float) * multiplier * cm.stt_sell_rate
-    stamp = (
-        d.ce_long_entry + d.pe_long_entry + d.ce_short_exit + d.pe_short_exit
-    ).to_numpy(float) * multiplier * cm.stamp_buy_rate
-    gst = cm.gst_rate * (brokerage + exchange + sebi)
-    slippage = 8.0 * 0.20 * multiplier
-    return gross - (brokerage + exchange + sebi + stt + stamp + gst + slippage)
+    return out
 
 
 def metrics(df: pd.DataFrame, calendar_days: int) -> dict:
@@ -293,7 +274,7 @@ def stage1(features: pd.DataFrame, raw: pd.DataFrame, out: Path) -> tuple[pd.Dat
     return sig, board, {"signals": int(len(sig)), "variants": int(len(board))}
 
 
-def path_mark(raw_index: pd.Series, row: pd.Series, exit_time: pd.Timestamp) -> float | None:
+def path_legs(raw_index: pd.Series, row: pd.Series, exit_time: pd.Timestamp) -> pd.DataFrame | None:
     ts = pd.date_range(row.entry_time + pd.Timedelta(minutes=1), exit_time, freq="min")
     keys = []
     for t in ts:
@@ -303,16 +284,21 @@ def path_mark(raw_index: pd.Series, row: pd.Series, exit_time: pd.Timestamp) -> 
             (row.trade_date, row.expiry_type, t, "CALL", row.ce_long_strike),
             (row.trade_date, row.expiry_type, t, "PUT", row.pe_long_strike),
         ])
-    vals = raw_index.reindex(keys).to_numpy()
-    if len(vals) < 4 or np.any(pd.isna(vals)):
+    vals = raw_index.reindex(keys).to_numpy(dtype=float)
+    if len(vals) != 4 * len(ts) or np.any(pd.isna(vals)):
         return None
-    marks = (
-        vals[0::4] + vals[1::4] - vals[2::4] - vals[3::4]
-    )
-    return marks
+    arr = vals.reshape(len(ts), 4)
+    return pd.DataFrame({
+        "datetime": ts,
+        "ce_short_exit": arr[:, 0],
+        "pe_short_exit": arr[:, 1],
+        "ce_long_exit": arr[:, 2],
+        "pe_long_exit": arr[:, 3],
+        "mark": arr[:, 0] + arr[:, 1] - arr[:, 2] - arr[:, 3],
+    })
 
 
-def stage2(sig: pd.DataFrame, board: pd.DataFrame, raw: pd.DataFrame, out: Path) -> tuple[pd.DataFrame, dict]:
+def stage2(sig: pd.DataFrame, board: pd.DataFrame, raw: pd.DataFrame, out: Path, calendar_days: dict) -> tuple[pd.DataFrame, dict]:
     top = board.head(10).copy()
     if top.empty or sig.empty:
         return pd.DataFrame(), {"variants": 0}
@@ -345,56 +331,37 @@ def stage2(sig: pd.DataFrame, board: pd.DataFrame, raw: pd.DataFrame, out: Path)
                 for row in candidates.itertuples(index=False):
                     entry_credit = float(row.credit)
                     exit_deadline = row.entry_time + pd.Timedelta(minutes=hold)
-                    mark_arr = path_mark(idx, row, exit_deadline)
-                    if mark_arr is None or len(mark_arr) == 0:
+                    path = path_legs(idx, row, exit_deadline)
+                    if path is None or path.empty:
                         continue
                     target = entry_credit * (1.0 - target_decay)
                     stop = entry_credit * stop_mult
-                    stop_idx = np.flatnonzero(mark_arr >= stop)
-                    target_idx = np.flatnonzero(mark_arr <= target)
+                    stop_idx = np.flatnonzero(path.mark.to_numpy() >= stop)
+                    target_idx = np.flatnonzero(path.mark.to_numpy() <= target)
                     sidx = int(stop_idx[0]) if len(stop_idx) else None
                     tidx = int(target_idx[0]) if len(target_idx) else None
                     if sidx is None and tidx is None:
-                        ix = len(mark_arr)-1
-                        exit_mark = float(mark_arr[ix])
+                        ix = len(path) - 1
                     elif sidx is None:
                         ix = tidx
-                        exit_mark = target
                     elif tidx is None:
                         ix = sidx
-                        exit_mark = stop
-                    elif sidx <= tidx:
-                        ix = sidx
-                        exit_mark = stop
                     else:
-                        ix = tidx
-                        exit_mark = target
-                    ce_short_exit = float(pd.Series([row.ce_short_strike]))
-                    # To keep path P&L deterministic, convert the selected iron-fly mark
-                    # into net spread P&L and apply the exact eight-leg cost using the
-                    # original entry and the observed exit mark.
-                    lot = nifty_lot_size(row.trade_date)
-                    gross = (entry_credit - exit_mark) * lot
-                    turnover = (
-                        row.ce_short_entry + row.pe_short_entry
-                        + row.ce_long_entry + row.pe_long_entry
-                    ) * lot
-                    # Approximate exit turnover from the mark while retaining conservative
-                    # four-leg slippage and statutory costs. Full leg exit reconciliation
-                    # is reserved for a promoted candidate.
-                    exit_turnover = max(0.0, abs(exit_mark)) * lot
-                    brokerage = 8.0 * cm.brokerage_per_order
-                    exchange = (turnover + exit_turnover) * cm.exchange_rate
-                    sebi = (turnover + exit_turnover) * cm.sebi_rate
-                    stt = (
-                        row.ce_short_entry + row.pe_short_entry
-                    ) * lot * cm.stt_sell_rate
-                    stamp = (
-                        row.ce_long_entry + row.pe_long_entry
-                    ) * lot * cm.stamp_buy_rate
-                    gst = cm.gst_rate * (brokerage + exchange + sebi)
-                    slippage = 8.0 * 0.20 * lot
-                    net = gross - (brokerage + exchange + sebi + stt + stamp + gst + slippage)
+                        ix = min(sidx, tidx)
+                    ex = path.iloc[ix]
+                    net = cm.ironfly_net_pnl(
+                        row.ce_short_entry,
+                        row.pe_short_entry,
+                        row.ce_long_entry,
+                        row.pe_long_entry,
+                        ex.ce_short_exit,
+                        ex.pe_short_exit,
+                        ex.ce_long_exit,
+                        ex.pe_long_exit,
+                        lot_size=nifty_lot_size(row.trade_date),
+                        qty=1,
+                        slippage_points=0.20,
+                    )
                     recs.append({
                         "trade_date": row.trade_date,
                         "expiry_type": row.expiry_type,
@@ -412,7 +379,7 @@ def stage2(sig: pd.DataFrame, board: pd.DataFrame, raw: pd.DataFrame, out: Path)
                 if not recs:
                     continue
                 d = pd.DataFrame(recs)
-                m = metrics(d, int(features[features.expiry_type.eq(d.expiry_type.iloc[0])].trade_date.nunique()))
+                m = metrics(d, int(calendar_days.get(d.expiry_type.iloc[0], d.trade_date.nunique())))
                 results.append({
                     "expiry_type": d.expiry_type.iloc[0],
                     "iv_rv_min": d.iv_rv_min.iloc[0],
@@ -443,7 +410,8 @@ def main() -> None:
 
     features, raw = load_data(args.data)
     sig, board1, extra = stage1(features, raw, args.out)
-    board2, extra2 = stage2(sig, board1, raw, args.out)
+    calendar_days = features.groupby("expiry_type")["trade_date"].nunique().to_dict()
+    board2, extra2 = stage2(sig, board1, raw, args.out, calendar_days)
 
     best1 = board1.iloc[0].to_dict() if not board1.empty else None
     best2 = board2.iloc[0].to_dict() if not board2.empty else None
