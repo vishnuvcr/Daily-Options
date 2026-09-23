@@ -48,3 +48,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0028 | 2026-09-24 | 4 | Optimized Phase 4 loader computed a prior-session close Series but did not merge it into the daily feature table, causing a KeyError when building the gap filter | Walk-forward computation stopped before numerical validation | Build `prev_close` directly from the daily last spot with a one-day shift before calculating the gap | CLOSED |
+
+
+| E0029 | 2026-09-24 | 4 | Phase 4 raw timestamps were kept in UTC while entry/path logic compared them with IST clock values, yielding an empty observation table and a follow-on missing-column error | No walk-forward result was produced | Shift raw timestamps by +5:30 before the Python feature builder, matching the SQL signal-time convention used in prior phases | CLOSED |
