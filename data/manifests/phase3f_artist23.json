@@ -1,0 +1,47 @@
+{
+  "source": "artist-23/nifty-options-data",
+  "platform": "Hugging Face",
+  "url": "https://huggingface.co/datasets/artist-23/nifty-options-data",
+  "revision": "45e0a04",
+  "accessed_utc": "2026-09-24",
+  "reported_rows": 33963731,
+  "reported_size": "1.27 GB",
+  "reported_date_range": [
+    "2020-12-29 03:45:00",
+    "2025-12-26 09:59:00"
+  ],
+  "parquet_roots": [
+    "NIFTY/MONTH",
+    "NIFTY/WEEK"
+  ],
+  "expected_schema": [
+    "timestamp",
+    "open",
+    "high",
+    "low",
+    "close",
+    "iv",
+    "volume",
+    "oi",
+    "strike_price",
+    "spot",
+    "datetime",
+    "date",
+    "expiry_type",
+    "strike_type",
+    "option_type"
+  ],
+  "documented_classes": {
+    "expiry_type": [
+      "MONTH",
+      "WEEK"
+    ],
+    "option_type": [
+      "CALL",
+      "PUT"
+    ],
+    "strike_type_count": 21
+  },
+  "data_quality_note": "The current Hugging Face viewer reports a negative minimum for volume (-4,288,892,671). The repository therefore treats volume as quarantined until the CI audit explains or reconciles those rows against an independent source.",
+  "provenance_note": "This manifest pins the dataset revision used by CI. Raw 1.27 GB source data stay in runner cache; derived audit manifests/reports are committed or uploaded as workflow artifacts."
+}
