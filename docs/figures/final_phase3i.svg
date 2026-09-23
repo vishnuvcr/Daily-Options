@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="460" viewBox="0 0 900 460">
+<text x="40" y="35" font-size="22" font-family="Arial">Final Phase 3I Opening-False-Break Walk-Forward</text>
+<line x1="100" y1="230" x2="830" y2="230" stroke="#000" stroke-width="2"/>
+<text x="75" y="235" font-size="12" font-family="Arial">0</text>
+<rect x="170" y="300" width="180" height="70" fill="#777"/>
+<rect x="470" y="295" width="180" height="75" fill="#777"/>
+<text x="185" y="395" font-size="14" font-family="Arial">Base: -Rs 1,626.99/test window</text>
+<text x="485" y="420" font-size="14" font-family="Arial">Stress: -Rs 1,686.99/test window</text>
+<text x="40" y="445" font-size="13" font-family="Arial">Positive walk-forward windows: 0/14 at both friction levels.</text>
+</svg>
