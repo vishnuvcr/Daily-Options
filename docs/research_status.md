@@ -184,3 +184,10 @@ Status: candidate sources only; independent validation pending Phase 1.
 
 ## Current phase
 Phase 3G — bounded experiment awaiting CI result.
+
+
+### 2026-09-24 — Step 3G.0 CI diagnostic and specification correction
+- Run 35914357367 passed all 12 unit tests and fetched all 84 pinned parquet partitions.
+- Research execution failed because trade_id was dropped before path simulation; no strategy statistic was accepted.
+- Initial OI confirmation also used backward-looking change at the break timestamp; this did not satisfy the declared information barrier and is rejected.
+- Correction: preserve trade_id, use forward 3/5-minute OI change, delay entry until the confirmation window plus one minute, and cache the pinned dataset.
