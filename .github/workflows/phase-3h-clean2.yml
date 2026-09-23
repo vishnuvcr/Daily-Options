@@ -1,0 +1,40 @@
+name: Phase 3H - Clean2
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - phase-3h-option-leadlag
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install research dependencies
+        run: pip install pandas pyarrow huggingface_hub pytest duckdb
+      - name: Unit test clean2
+        run: pytest -q tests/test_phase3h_clean2.py
+      - uses: actions/cache@v4
+        with:
+          path: data/cache/hf_nifty_options
+          key: phase3g-artist23-45e0a04-v1
+      - name: Acquire or reuse pinned data
+        run: |
+          mkdir -p data/cache/hf_nifty_options
+          if ! find data/cache/hf_nifty_options -type f -name '*.parquet' -print -quit | grep -q .; then
+            python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="artist-23/nifty-options-data", repo_type="dataset", revision="45e0a04", local_dir="data/cache/hf_nifty_options", allow_patterns=["NIFTY/**/*.parquet", "NIFTY/**"])'
+          fi
+          test -d data/cache/hf_nifty_options/NIFTY
+      - name: Run clean2 lead-lag screen
+        run: |
+          python -m research.phase3h_option_leadlag_clean2             --data data/cache/hf_nifty_options/NIFTY             --out reports/phase3h_clean2
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase3h-clean2
+          path: reports/
