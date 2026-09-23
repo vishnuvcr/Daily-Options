@@ -151,6 +151,12 @@ The research design reduced selection bias by fixing each family before looking 
 
 Where bootstrap intervals were calculated, they remained below zero for the important failed walk-forward families. This reduces the plausibility that the negative mean arose only from one or two extreme observations.
 
+
+
+![Selected walk-forward mean net P&L](figures/final_wfa_summary.svg)
+
+![Final Phase 3I walk-forward summary](figures/final_phase3i.svg)
+
 ## 8. Market-context coverage and data gaps
 
 The research plan called for broader market context where applicable. The exploratory program covered volatility regime, option IV/OI/volume structure, futures/spot price discovery, opening-range behavior and the literature surrounding institutional flows and global market transmission.
