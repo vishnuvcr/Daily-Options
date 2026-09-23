@@ -3,7 +3,7 @@
 Last updated: 2026-09-23
 
 ## Overall
-Phase 1 — DATA FOUNDATION IN PROGRESS
+Phase 3F — OPTION MICROSTRUCTURE DATA AUDIT IN PROGRESS
 
 ## Step log
 
@@ -105,3 +105,17 @@ Add source download adapters and immutable cache manifests, run the first manual
 - Added an auditable data-schema gate and manual-only GitHub Actions workflow.
 - Primary external dataset candidate: artist-23/nifty-options-data, reported as 33.96M rows from 2020-12-29 to 2025-12-26 with IV, OI, volume, spot, strike and expiry metadata. This is a candidate source and must pass independent audit before strategy results are trusted.
 - Current phase status: DATA AUDIT PENDING.
+
+
+### 2026-09-24 — Step 3F.2 Source-tree and schema hardening
+- Inspected the pinned Hugging Face source tree. The NIFTY dataset is partitioned into both `NIFTY/MONTH` and `NIFTY/WEEK`; each contains multiple strike/option parquet files.
+- Correction: the original Phase 3F audit selected only the first parquet file. It has been replaced with a full-partition PyArrow scan so the audit covers all available parquet files.
+- The dataset revision is pinned to Hugging Face revision `45e0a04` in `data/manifests/phase3f_artist23.json`.
+- The public dataset viewer currently reports a negative minimum for `volume` while also reporting a very large positive maximum. This is a data-quality warning, not a strategy result. Volume features are quarantined until CI measures the affected rows and an independent reconciliation is completed.
+- Added unit tests for multi-file scanning and negative-volume quarantine.
+
+### 2026-09-24 — Step 3F.3 Automated audit trigger
+- Changed the Phase 3F workflow to retain a manual `workflow_dispatch` button while also allowing a path-filtered push trigger for code/data-audit changes only.
+- This avoids the earlier E0008 failure mode where documentation-only commits repeatedly relaunched long-running research jobs.
+- Workflow now pins the external dataset revision, caches the raw source on the runner, runs unit tests first, then audits the complete `NIFTY` tree and uploads the report.
+- Current status: audit run triggered by the research-code update; strategy optimization remains blocked until the data-quality gate is resolved.
