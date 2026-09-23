@@ -29,3 +29,9 @@ This log records requirements, research decisions, evidence and outcomes. It int
 - Phase 3F was created: option-chain microstructure and volatility-regime research using IV, OI, volume, strike concentration and derived gamma proxies.
 - A manual data-audit workflow was added. It uses a multi-year public NIFTY options dataset candidate with explicit IV/OI fields and caches the downloaded source between workflow runs.
 - The first gate is data validity; strategy optimization begins only after the source passes the audit.
+
+
+## 2026-09-24 — Execution continuation
+- User issued "Ok proceed" to continue the research without stopping mid-phase.
+- Action taken: hardened Phase 3F so the complete IV/OI-capable source tree is audited before any trading optimization.
+- Decision: do not use the dataset's volume field until the observed schema anomaly is quantified and independently reconciled. This prevents another round of parameter tuning on an unvalidated input.
