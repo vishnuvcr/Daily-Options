@@ -7,3 +7,20 @@ on:
   push:
     branches:
       - phase-3g-oi-confirmed-breakout
+
+concurrency:
+  group: phase3g-oi-confirmed-breakout
+  cancel-in-progress: true
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install research dependencies
+        run: pip install pandas pyarrow pytest duckdb
+      - name: Unit tests
+        run: pytest -q tests/test_phase3g_oi_confirmed_breakout.py
