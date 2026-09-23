@@ -255,17 +255,16 @@ def run_tournament(root: Path, out: Path) -> dict:
 
     group_cols = ["expiry_type","width_steps","hold_minutes","oi_thr","vol_thr","ret_thr","iv_rv_min"]
     boards = []
-    daily_all = set()
+    calendar_days = int(trades_df["trade_date"].nunique())
     for _, g in trades_df.groupby(group_cols, dropna=False):
         daily = g.groupby("trade_date")["net_pnl"].sum()
-        daily_all.update(daily.index.tolist())
         wins = g.loc[g.net_pnl > 0, "net_pnl"].sum()
         losses = -g.loc[g.net_pnl < 0, "net_pnl"].sum()
         boards.append({
             **{k: row for k, row in zip(group_cols, g.iloc[0][group_cols])},
             "trades": len(g),
             "mean_active_day": float(daily.mean()),
-            "mean_all_calendar_day": float(daily.sum()/max(1,len(daily_all))),
+            "mean_all_calendar_day": float(daily.sum()/max(1,calendar_days)),
             "median_trade": float(g.net_pnl.median()),
             "win_rate": float((g.net_pnl > 0).mean()),
             "profit_factor": float(wins/losses) if losses else 999.0,
