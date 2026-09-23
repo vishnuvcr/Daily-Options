@@ -104,7 +104,7 @@ jobs:
       - name: Run Phase 3I option implementation - stress
         if: steps.predictive.outputs.gate == 'PASS'
         run: |
-          python -m research.phase3i_option_execution             --options data/cache/hf_nifty_options/NIFTY             --futures data/cache/zenodo_nifty_spot_futures/extracted             --out reports/phase3i-option-stress             --slippage 0.40
+          python -m research.phase3i_option_execution             --options data/cache/zenodo_nifty_options/extracted             --futures data/cache/zenodo_nifty_spot_futures/extracted             --out reports/phase3i-option-stress             --slippage 0.40
 
       - name: Write Phase 3I decision summary
         if: always()
