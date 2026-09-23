@@ -25,6 +25,8 @@ jobs:
           curl -L --fail --retry 3 -o data/cache/nifty_1y_1min.xlsx https://raw.githubusercontent.com/rajmaurya0904/bhav/main/sample_data/nifty_1y_1min.xlsx
       - name: Run vertical spread tournament
         run: python -m research.spread_tournament --data data/cache/nifty_1y_1min.xlsx --out reports
+      - name: Run VRP regime filter tournament
+        run: python -m research.vrp_filter_tournament --data data/cache/nifty_1y_1min.xlsx --out reports
       - name: Upload results
         uses: actions/upload-artifact@v4
         with:
