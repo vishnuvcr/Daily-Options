@@ -20,3 +20,8 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0014 | 2026-09-24 | 3F | Public source viewer reports a negative minimum for the `volume` field and an unusually large positive maximum; the anomaly has not yet been independently reconciled | Volume-based microstructure features could be contaminated or misleading if used directly | Quarantine volume; scan all parquet partitions, quantify affected rows, and cross-check against an independent source before enabling volume features | OPEN |
+
+
+| E0015 | 2026-09-24 | 3F | First automatic data-audit run failed before download because the shell heredoc delimiter was indented inside the YAML block | Dataset acquisition never started; no data conclusions were made | Replaced the heredoc with a single-line Python invocation and kept the workflow unit-tested before acquisition | CLOSED |
+
+| E0016 | 2026-09-24 | CI | Legacy Phase 1 workflow still triggers on every branch push and is failing on this research branch, producing unrelated CI noise | Does not block Phase 3F directly but obscures phase-specific run status | Keep Phase 3F path-filtered; inspect and isolate legacy workflow triggers during CI cleanup before final merge | OPEN |
