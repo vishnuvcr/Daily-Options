@@ -49,3 +49,9 @@ This log records requirements, research decisions, evidence and outcomes. It int
 - Continuation point verified from the repository: Phase 3F directional IV/OI/volume failed; subsequent defined-risk iron-fly and fixed-strike OI-break sub-hypotheses were also tested on their branches and retired without reaching the target.
 - Current branch: `phase-3f-iv-skew-reversion`.
 - Next materially different hypothesis: IV-skew shock/reversion using fixed daily strike bands and a defined-risk four-leg double-vertical structure.
+
+
+## 2026-09-24 — Transition to Phase 4
+- The IV-skew shock/reversion family also failed: 162 variants, zero positive all-day configurations, best mean all-day net approximately -₹3/day.
+- Rather than tuning a fifth microstructure family indefinitely, the research moves to the predefined walk-forward phase using the earlier short-straddle near-miss as the candidate to falsify.
+- Phase 4 will select parameters only on train/validation data and score them on untouched test periods.
