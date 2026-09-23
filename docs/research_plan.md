@@ -149,3 +149,21 @@ Phase 4 did not validate the intraday ATM short-straddle family. The research pl
 - Stop rule: if the fixed pre-registered family has no positive net OOS expectancy after costs or shows unstable performance across test windows, retire it and move directly to the predefined next hypothesis rather than enlarging the grid.
 
 This amendment is the only plan change caused by the Phase 4 result.
+
+
+## 10. Plan amendment — Phase 3H option lead-lag / derivative price discovery
+
+Phase 3G failed its bounded OOS gate, so the next predefined hypothesis is a distinct information-source test rather than a larger version of the failed break/OI grid.
+
+### Phase 3H — Short-horizon ATM option lead-lag
+- Primary question: do short-horizon changes in ATM call/put prices contain incremental information about the next 1–5 minute NIFTY spot move?
+- Feature: directional option-pressure proxy = log return of ATM call minus log return of ATM put over a pre-registered 1/3/5-minute lookback.
+- Signal barrier: feature uses only timestamps at or before signal time; entry is the next executable minute.
+- Trade expression: bullish signal -> defined-risk call debit spread; bearish signal -> defined-risk put debit spread.
+- Compact grid: 1/3/5-minute feature lookback, 1%/2%/3% pressure threshold, WEEK/MONTH expiry, 5/10/15-minute maximum hold, 1/2-strike spread width = 108 variants.
+- One trade per day per variant. No volume feature is used because source volume remains quarantined.
+- Cost model: repository NSE/Paytm Money baseline, date-aware lot size, 0.20 option-premium points per-leg slippage plus a 0.40 stress rerun.
+- Primary decision gates: positive net OOS expectancy after costs; at least one test window >= Rs 1,000/lot/day is required for promotion; no family-level promotion if the bounded grid is negative.
+- Walk-forward: 180-day train, 60-day validation, 5-day embargo, 60-day untouched test, 60-day step, with the same top-12 train -> best validation selection rule used in Phase 3G.
+- Diagnostic requirement: report the option-pressure feature's forward spot-return conditional means/hit rates in addition to trading P&L, so a trading result cannot be mistaken for predictive evidence.
+- Stop rule: if the fixed 108-variant family fails after cost and leakage-safe WFA, retire it and move to the next predefined hypothesis; do not enlarge thresholds or add ad hoc features.
