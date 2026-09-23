@@ -9,6 +9,9 @@ from research.phase3g_oi_confirmed_breakout import summarize,walk_forward
 GRID=[{"lookback":l,"persist":p,"threshold":t,"expiry_type":e,"width_steps":w,"hold_minutes":h}
       for l in (1,3) for p in (1,2) for t in (0.001,0.002)
       for e in ("WEEK","MONTH") for w in (1,2) for h in (15,30,60)]
+def grid():
+    return GRID
+
 SETUP=["trade_date","expiry_type","entry_time","direction","atm_strike","wing_strike","hold_minutes"]
 
 def lead_sql(root):
