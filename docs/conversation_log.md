@@ -13,3 +13,12 @@ The repository was empty, so bootstrap it with a research charter, phase plan, s
 
 ### Communication decision
 This log records requirements, research decisions, evidence and outcomes. It intentionally does not record private hidden chain-of-thought.
+
+
+## 2026-09-23 — Research execution update
+- Repository audit confirmed the project started empty.
+- Phase 0 charter and Phase 1 data/cost scaffolding were created.
+- Phase 2 baseline tournament branch was created with an automated NIFTY one-minute sample download, leakage-aware signal timing, configurable costs/slippage, and unit tests.
+- The first CI backtest attempt found an import-path error (E0006); the workflow was corrected to execute the research module form and automatically rerun.
+- Current numerical result is intentionally not declared until the corrected backtest completes.
+- The research target remains a hypothesis threshold, not a guaranteed daily outcome.
