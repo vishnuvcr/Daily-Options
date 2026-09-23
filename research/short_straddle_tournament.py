@@ -4,6 +4,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from research.cost_model import OptionCostModel
+from research.contracts import nifty_lot_size
 
 LOT=65
 
@@ -66,14 +67,14 @@ def run(data,out):
             er=piv.loc[xt] if xt in piv.index else None
             if er is None:continue
             ce_exit=float(er[("close","CE")]); pe_exit=float(er[("close","PE")])
-            net=cm.short_straddle_net_pnl(ce0,pe0,ce_exit,pe_exit,LOT)
+            net=cm.short_straddle_net_pnl(ce0,pe0,ce_exit,pe_exit,nifty_lot_size(d))
             trades.append({"date":str(d),"entry_time":et.isoformat(),"exit_time":xt.isoformat(),"strike":strike,"entry_straddle":entry,"exit_straddle":exit_strad,"net_pnl":net,"reason":reason})
         if trades:
             df=pd.DataFrame(trades); daily=df.groupby("date").net_pnl.sum(); wins=df.loc[df.net_pnl>0,"net_pnl"].sum(); losses=-df.loc[df.net_pnl<0,"net_pnl"].sum()
             rows.append({"stop_mult":stop_mult,"target_decay":target_decay,"hold_min":hold,"trades":len(df),"win_rate":float((df.net_pnl>0).mean()),"mean_active_day":float(daily.mean()),"mean_all_day":float(df.net_pnl.sum()/len(days)),"profit_factor":float(wins/losses) if losses else 999.0,"total_net":float(df.net_pnl.sum())})
     board=pd.DataFrame(rows).sort_values("mean_all_day",ascending=False) if rows else pd.DataFrame()
     board.to_csv(out/"short_straddle_leaderboard.csv",index=False)
-    result={"dataset":str(data),"trading_days":len(days),"variants_tested":3,"lot_size":LOT,"target_inr_per_day":1000.0,"top":board.iloc[0].to_dict() if len(board) else None,"gate":"PASS_PRELIMINARY" if len(board) and board.iloc[0].mean_all_day>=1000 else "FAIL_PRELIMINARY"}
+    result={"dataset":str(data),"trading_days":len(days),"variants_tested":3,"lot_size":"date-aware","target_inr_per_day":1000.0,"top":board.iloc[0].to_dict() if len(board) else None,"gate":"PASS_PRELIMINARY" if len(board) and board.iloc[0].mean_all_day>=1000 else "FAIL_PRELIMINARY"}
     (out/"short_straddle_summary.json").write_text(json.dumps(result,indent=2,default=str))
     print(json.dumps(result,indent=2,default=str))
 
