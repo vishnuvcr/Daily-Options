@@ -2,14 +2,6 @@ name: Phase 1 - Data Foundation
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - phase-3g-oi-confirmed-breakout
-    paths:
-      - "research/phase3g_oi_confirmed_breakout.py"
-      - "scripts/run_phase3g_ci.sh"
-      - ".github/workflows/phase-1-data.yml"
-      - "tests/test_phase3g_oi_confirmed_breakout.py"
 
 jobs:
   audit:
