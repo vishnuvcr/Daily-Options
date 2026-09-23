@@ -24,11 +24,13 @@ def signal(day):
     x["typical"]=(x.high+x.low+x.close)/3
     den=x.volume.cumsum().astype(float).replace(0,float("nan"))
     x["vwap"]=(x.typical*x.volume).cumsum()/den
+    x["ema8"]=x.close.ewm(span=8,adjust=False).mean()
+    x["ema24"]=x.close.ewm(span=24,adjust=False).mean()
     oh=x.loc[(x.timestamp>=start)&(x.timestamp<end),"high"].max()
     ol=x.loc[(x.timestamp>=start)&(x.timestamp<end),"low"].min()
     x=x[(x.timestamp>=end+pd.Timedelta(minutes=1))&(x.timestamp<=d+pd.Timedelta(hours=14,minutes=45))].copy()
-    up=x[(x.close>oh)&(x.close>x.vwap)]
-    dn=x[(x.close<ol)&(x.close<x.vwap)]
+    up=x[(x.close>oh)&(x.close>x.vwap)|(x.ema8>x.ema24)&(x.close>x.ema8)]
+    dn=x[(x.close<ol)&(x.close<x.vwap)|(x.ema8<x.ema24)&(x.close<x.ema8)]
     if up.empty and dn.empty:return None
     if dn.empty or (not up.empty and up.iloc[0].timestamp<dn.iloc[0].timestamp): return up.iloc[0].timestamp,"CE"
     return dn.iloc[0].timestamp,"PE"
