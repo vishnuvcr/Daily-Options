@@ -15,3 +15,5 @@
 | E0008 | 2026-09-23 | 3 | Push-triggered Phase 3 workflow was repeatedly relaunched by research-log commits, canceling earlier benchmark runs | Wasted CI runs and made run provenance noisy | Changed Phase 3 to manual-only execution with workflow_dispatch; documentation commits no longer trigger the benchmark | CLOSED |
 
 Every subsequent error gets a new row. Fixes are never silently discarded.
+
+| E0013 | 2026-09-24 | 3F | Phase 3E showed the current one-year sample lacks usable spot-index volume and is too limited for IV/OI microstructure research | Repeating price-only feature tuning would add little information | Open a new phase using an IV/OI-capable multi-year dataset and require schema/liquidity validation before strategy testing | CLOSED |
