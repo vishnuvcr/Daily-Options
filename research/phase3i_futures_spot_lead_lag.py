@@ -16,12 +16,14 @@ SESSION_END = "15:30"
 
 @dataclass(frozen=True)
 class Variant:
+    feature: str
     lookback: int
     threshold_bps: float
     mode: str
 
     def key(self) -> str:
         return json.dumps({
+            "feature": self.feature,
             "lookback": self.lookback,
             "threshold_bps": self.threshold_bps,
             "mode": self.mode,
@@ -30,7 +32,8 @@ class Variant:
 
 def diagnostic_grid() -> list[Variant]:
     return [
-        Variant(lb, th, mode)
+        Variant(feature, lb, th, mode)
+        for feature in ("futures_return", "lead_gap", "basis_change")
         for lb in (1, 3, 5)
         for th in (0.0, 2.0, 5.0, 10.0)
         for mode in ("continuation", "contrarian")
@@ -188,6 +191,8 @@ def build_features(spot: pd.DataFrame, fut: pd.DataFrame) -> pd.DataFrame:
         z[f"fut_ret_{k}"] = np.log(z["futures"] / z["futures"].shift(k))
         z[f"spot_ret_{k}"] = np.log(z["spot"] / z["spot"].shift(k))
         z[f"lead_gap_{k}_bps"] = (z[f"fut_ret_{k}"] - z[f"spot_ret_{k}"]) * 10000.0
+        z["basis_bps"] = (z["futures"] / z["spot"] - 1.0) * 10000.0
+        z[f"basis_change_{k}_bps"] = z["basis_bps"] - z["basis_bps"].shift(k)
         z[f"fwd_spot_{k}_bps"] = (
             np.log(z["spot"].shift(-k) / z["spot"]) * 10000.0
         )
@@ -200,14 +205,19 @@ def build_features(spot: pd.DataFrame, fut: pd.DataFrame) -> pd.DataFrame:
 def diagnostic(features: pd.DataFrame) -> pd.DataFrame:
     rows = []
     for v in diagnostic_grid():
-        gap = features[f"lead_gap_{v.lookback}_bps"]
-        x = features.loc[gap.abs().ge(v.threshold_bps)].copy()
+        if v.feature == "futures_return":
+            raw = features[f"fut_ret_{v.lookback}"] * 10000.0
+        elif v.feature == "lead_gap":
+            raw = features[f"lead_gap_{v.lookback}_bps"]
+        else:
+            raw = features[f"basis_change_{v.lookback}_bps"]
+        x = features.loc[raw.abs().ge(v.threshold_bps)].copy()
         if x.empty:
             continue
         if v.mode == "continuation":
-            x["direction"] = np.sign(gap.loc[x.index])
+            x["direction"] = np.sign(raw.loc[x.index])
         else:
-            x["direction"] = -np.sign(gap.loc[x.index])
+            x["direction"] = -np.sign(raw.loc[x.index])
         x = x.loc[x["direction"].ne(0)].sort_values(["trade_date", "datetime"])
         x = x.drop_duplicates(["trade_date"], keep="first")
         for horizon in (1, 3, 5):
