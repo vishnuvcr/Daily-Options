@@ -133,3 +133,13 @@ Add source download adapters and immutable cache manifests, run the first manual
 - No strategy statistic from that run is accepted.
 - Correction: workflow now invokes `python -m research.phase3f_microstructure_tournament`, matching the known-good package execution pattern from Phase 2.
 - The complete-data audit remains valid: 84 parquet files, 33,963,731 rows, 1,228 dates, IV/OI/spot non-null, 16 negative-volume rows quarantined, 485 IV>300 observations flagged.
+
+
+### 2026-09-24 — Step 3F.6 Directional microstructure result
+- The complete multi-year IV/OI/volume directional screen completed successfully in GitHub Actions run `35906761397`.
+- 7,303 feature rows and 972 variants were evaluated using one-trade-per-day-per-parameter logic, next-bar entry, defined-risk debit spreads, the project cost model and 0.20-point slippage.
+- Zero variants reached the Rs 1,000/day target.
+- Best recorded configuration: MONTH expiry, 2-strike debit spread, 30-minute hold, OI imbalance >=0.20, volume imbalance >=0.20, 15-minute spot-return threshold 0.10%, IV/RV >=1.25.
+- Best result: 92 trades, mean active-day net Rs -234.26, mean all-day net Rs -17.62, win rate 16.30%, positive-day rate 1.23%, profit factor 0.148, max drawdown Rs -21,379.94.
+- Decision: retire the directional IV/OI/volume imbalance family as a Phase 3F lead. Do not spend additional tuning budget on this family.
+- Next: test a defined-risk short-volatility/iron-fly regime screen using the same audited dataset.
