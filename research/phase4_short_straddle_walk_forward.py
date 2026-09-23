@@ -63,7 +63,7 @@ def load_observations(root: Path) -> tuple[pd.DataFrame, dict[str, pd.DatetimeIn
         .drop_duplicates(["trade_date","datetime"], keep="last")
         .sort_values(["trade_date","datetime"])
     )
-    opt = raw[raw.strike_type == "ATM"].copy().sort_values(["trade_date","datetime"])
+    opt = raw.copy().sort_values(["trade_date","datetime"])
 
     prev_close = (
         spot.groupby("trade_date")["spot"].last()
@@ -104,18 +104,26 @@ def load_observations(root: Path) -> tuple[pd.DataFrame, dict[str, pd.DatetimeIn
             q = od[(od.datetime >= entry_time) & (od.datetime <= entry_time + pd.Timedelta(minutes=2))]
             ce = q[q.option_type == "CALL"].sort_values("datetime")
             pe = q[q.option_type == "PUT"].sort_values("datetime")
-            if ce.empty or pe.empty:
-                continue
             common = sorted(set(ce.datetime) & set(pe.datetime))
             if not common:
                 continue
             et = common[0]
-            ce0 = float(ce.loc[ce.datetime == et, "close"].iloc[0])
-            pe0 = float(pe.loc[pe.datetime == et, "close"].iloc[0])
-            ivs = pd.concat([
-                ce.loc[ce.datetime == et, "iv"],
-                pe.loc[pe.datetime == et, "iv"],
-            ]).dropna()
+            ce_t = ce[ce.datetime == et].dropna(subset=["strike_price","close"])
+            pe_t = pe[pe.datetime == et].dropna(subset=["strike_price","close"])
+            common_strikes = sorted(set(ce_t.strike_price) & set(pe_t.strike_price))
+            if not common_strikes:
+                continue
+            spot_at_entry = float(day_spot.loc[day_spot.datetime == et, "spot"].iloc[0]) if not day_spot.loc[day_spot.datetime == et, "spot"].empty else np.nan
+            if not np.isfinite(spot_at_entry):
+                spot_at_entry = open_spot
+            strike = float(min(common_strikes, key=lambda k: abs(k - spot_at_entry)))
+            ce_row = ce_t[ce_t.strike_price == strike]
+            pe_row = pe_t[pe_t.strike_price == strike]
+            if ce_row.empty or pe_row.empty:
+                continue
+            ce0 = float(ce_row.close.iloc[0])
+            pe0 = float(pe_row.close.iloc[0])
+            ivs = pd.concat([ce_row.iv, pe_row.iv]).dropna()
             entry = ce0 + pe0
             if entry <= 0 or ivs.empty:
                 continue
@@ -127,6 +135,7 @@ def load_observations(root: Path) -> tuple[pd.DataFrame, dict[str, pd.DatetimeIn
             path = od[
                 (od.datetime > et)
                 & (od.datetime <= et + pd.Timedelta(minutes=max(HOLDS)))
+                & (od.strike_price == strike)
             ]
             piv = path.pivot_table(
                 index="datetime",
