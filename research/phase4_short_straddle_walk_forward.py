@@ -72,9 +72,11 @@ def load_observations(root: Path) -> tuple[pd.DataFrame, dict[str, pd.DatetimeIn
     spot["prev_close"] = spot["trade_date"].map(prev_close)
     daily = spot.groupby("trade_date").agg(
         first_spot=("spot","first"),
+        last_spot=("spot","last"),
         high15=("spot","max"),
         low15=("spot","min"),
     )
+    daily["prev_close"] = daily["last_spot"].shift(1)
     first15 = spot[
         spot.datetime.dt.time.between(
             pd.Timestamp("09:15").time(),
@@ -83,7 +85,7 @@ def load_observations(root: Path) -> tuple[pd.DataFrame, dict[str, pd.DatetimeIn
         )
     ].groupby("trade_date")["spot"].agg(["max","min"])
     daily["r15"] = (first15["max"] - first15["min"]) / daily["first_spot"]
-    daily["gap"] = (daily["first_spot"] - daily["prev_close"].fillna(np.nan)).abs() / daily["prev_close"].abs()
+    daily["gap"] = (daily["first_spot"] - daily["prev_close"]).abs() / daily["prev_close"].abs()
     daily = daily.reset_index()
 
     observations = []
