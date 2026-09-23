@@ -31,3 +31,12 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0018 | 2026-09-24 | 3F | First tournament implementation used repeated pandas filtering inside nested parameter loops and was computationally inefficient; the run was cancelled before producing a result | Excessive runtime and wasted CI time | Replaced with vectorized joins and one-trade-per-day construction; rerun completed successfully | CLOSED |
+
+
+| E0022 | 2026-09-24 | 3F-skew | New four-leg cost-model unit test used an incorrect manual gross-P&L sign formula; the implementation returned the correct signed cash-flow result | CI unit test failed and blocked data acquisition; no strategy result was produced | Corrected the test's gross-P&L calculation to match the explicit long/short leg signs | CLOSED |
+
+
+| E0023 | 2026-09-24 | 3F-skew CI | Simultaneous push and pull-request triggers shared the same concurrency group, causing the successful code push run to be canceled by the PR-triggered run | Corrected unit-test commit never reached data acquisition | Removed the overlapping pull_request trigger; workflow retains manual workflow_dispatch and path-filtered push execution | CLOSED |
+
+
+| E0024 | 2026-09-24 | 3F-skew | IV-skew feature SQL correctly filtered IST times using +5:30, but Python re-filtered the resulting rows using raw UTC timestamps, eliminating every candidate signal | Two completed CI runs reported zero signals; no P&L result was generated, so no strategy conclusion was accepted | Apply the same +5:30 conversion in the Python signal builder before matching 09:45/10:00/10:15 IST | CLOSED |

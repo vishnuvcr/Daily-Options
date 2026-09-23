@@ -42,3 +42,10 @@ This log records requirements, research decisions, evidence and outcomes. It int
 - The multi-year directional IV/OI/volume imbalance screen failed the promotion gate; zero of 972 variants reached Rs 1,000/day and the best configuration was negative after costs.
 - Decision: stop tuning the failed directional family and move immediately to a defined-risk short-volatility/iron-fly regime hypothesis using IV/RV, trend magnitude and chain-balance filters.
 - The directional result and full data-audit summary are committed under `reports/`.
+
+
+## 2026-09-24 — User interruption / continuation
+- User stated they believed the research had been stuck and asked to continue from the stopping point.
+- Continuation point verified from the repository: Phase 3F directional IV/OI/volume failed; subsequent defined-risk iron-fly and fixed-strike OI-break sub-hypotheses were also tested on their branches and retired without reaching the target.
+- Current branch: `phase-3f-iv-skew-reversion`.
+- Next materially different hypothesis: IV-skew shock/reversion using fixed daily strike bands and a defined-risk four-leg double-vertical structure.

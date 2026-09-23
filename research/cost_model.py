@@ -43,6 +43,47 @@ class OptionCostModel:
         slippage = 4.0 * slippage_points * multiplier
         return gross - (brokerage + exchange + sebi + stt + stamp + gst + slippage)
 
+    def four_leg_defined_net_pnl(
+        self,
+        leg1_entry: float,
+        leg2_entry: float,
+        leg3_entry: float,
+        leg4_entry: float,
+        leg1_exit: float,
+        leg2_exit: float,
+        leg3_exit: float,
+        leg4_exit: float,
+        lot_size: int,
+        qty: int = 1,
+        leg_signs: tuple[int, int, int, int] = (1, -1, -1, 1),
+        slippage_points: float = 0.20,
+    ) -> float:
+        """Net P&L for four option legs with explicit long(+1)/short(-1) signs."""
+        multiplier = qty * lot_size
+        signs = leg_signs
+        entry_cash = sum(s * p for s, p in zip(signs, (leg1_entry, leg2_entry, leg3_entry, leg4_entry)))
+        exit_cash = sum(s * p for s, p in zip(signs, (leg1_exit, leg2_exit, leg3_exit, leg4_exit)))
+        gross = (exit_cash - entry_cash) * multiplier
+
+        turnover = (
+            leg1_entry + leg2_entry + leg3_entry + leg4_entry
+            + leg1_exit + leg2_exit + leg3_exit + leg4_exit
+        ) * multiplier
+        brokerage = 8.0 * self.brokerage_per_order
+        exchange = turnover * self.exchange_rate
+        sebi = turnover * self.sebi_rate
+
+        sell_entry = sum(-s * p for s, p in zip(signs, (leg1_entry, leg2_entry, leg3_entry, leg4_entry)) if s < 0)
+        sell_exit = sum(s * p for s, p in zip(signs, (leg1_exit, leg2_exit, leg3_exit, leg4_exit)) if s > 0)
+        buy_entry = sum(s * p for s, p in zip(signs, (leg1_entry, leg2_entry, leg3_entry, leg4_entry)) if s > 0)
+        buy_exit = sum(-s * p for s, p in zip(signs, (leg1_exit, leg2_exit, leg3_exit, leg4_exit)) if s < 0)
+
+        stt = (sell_entry + sell_exit) * multiplier * self.stt_sell_rate
+        stamp = (buy_entry + buy_exit) * multiplier * self.stamp_buy_rate
+        gst = self.gst_rate * (brokerage + exchange + sebi)
+        slippage = 8.0 * slippage_points * multiplier
+        return gross - (brokerage + exchange + sebi + stt + stamp + gst + slippage)
+
     def short_straddle_net_pnl(self, call_entry: float, put_entry: float, call_exit: float, put_exit: float, lot_size: int, qty: int = 1, slippage_points: float = 0.20) -> float:
         """Net P&L for short call + short put, opened then closed."""
         multiplier = qty * lot_size

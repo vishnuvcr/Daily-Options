@@ -143,3 +143,19 @@ Add source download adapters and immutable cache manifests, run the first manual
 - Best result: 92 trades, mean active-day net Rs -234.26, mean all-day net Rs -17.62, win rate 16.30%, positive-day rate 1.23%, profit factor 0.148, max drawdown Rs -21,379.94.
 - Decision: retire the directional IV/OI/volume imbalance family as a Phase 3F lead. Do not spend additional tuning budget on this family.
 - Next: test a defined-risk short-volatility/iron-fly regime screen using the same audited dataset.
+
+
+### 2026-09-24 — Step 3F.9 IV-skew screen launch
+- Initial IV-skew workflow run `35908956508` passed unit tests and data acquisition, but the first shock grid (2/4/6 IV points) produced zero signals. No P&L result was produced and no strategy conclusion was drawn.
+- Interpretation: the initial event thresholds were too coarse for the observed intraday skew-change scale.
+- Correction: widen the preliminary shock grid to 0.25/0.50/1.00 IV points and absolute-skew filters to 0/1/2 points, while keeping the same fixed strikes, next-minute entry and defined-risk four-leg structure.
+- The workflow remains manual-capable and push-triggered only; the overlapping PR trigger was removed after concurrency cancellation noise.
+
+
+### 2026-09-24 — Step 3F.10 IV-skew shock/reversion result
+- Corrected IV-skew screen completed in GitHub Actions run `35909289272`.
+- 7,245 feature rows and 162 expiry/parameter variants were evaluated.
+- Zero variants had positive all-calendar-day expectancy; zero reached the ₹1,000/day target.
+- Best configuration: MONTH expiry, 10:15 IST entry, skew shock >=1.0 IV point, absolute skew >=2.0 IV points, 90-minute hold; 12 trades; mean active-day net -₹306.43; mean all-day net -₹3.02; win rate 8.33%; PF 0.014; total net -₹3,677.20.
+- Decision: retire IV-skew shock/reversion. Four economically distinct Phase 3F families have now failed preliminary promotion: directional IV/OI imbalance, defined-risk iron fly, fixed-strike OI-break, and IV-skew reversion.
+- Next phase: Phase 4 nested walk-forward on the strongest near-miss candidate family from Phase 3 (intraday ATM short straddle) using the multi-year IV/OI dataset. This is a validation phase, not permission to promote the strategy.
