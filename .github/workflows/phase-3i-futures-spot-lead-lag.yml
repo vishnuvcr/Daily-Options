@@ -43,7 +43,12 @@ jobs:
           rm -rf data/cache/zenodo_nifty_spot_futures/extracted
           mkdir -p data/cache/zenodo_nifty_spot_futures/extracted
           unzip -q data/cache/zenodo_nifty_spot_futures/source.zip -d data/cache/zenodo_nifty_spot_futures/extracted
-          find data/cache/zenodo_nifty_spot_futures/extracted -type f | sed -n '1,80p'
+          find data/cache/zenodo_nifty_spot_futures/extracted -type f -name '*.zip' -print0 | while IFS= read -r -d '' z; do
+            out="${z%.zip}"
+            mkdir -p "$out"
+            unzip -q "$z" -d "$out"
+          done
+          find data/cache/zenodo_nifty_spot_futures/extracted -type f ! -name '*.zip' | sed -n '1,80p'
 
       - name: Run Phase 3I data and predictive gate
         run: |
