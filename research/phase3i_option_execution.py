@@ -155,15 +155,7 @@ class OptionReader:
         for strike, frames in by_strike.items():
             merged[strike] = pd.concat(frames, ignore_index=True).sort_values("datetime_local").drop_duplicates("datetime_local", keep="last")
 
-        common = merged[atm].rename(columns={"close": "atm_close"}).merge(
-            merged[wings[-1]].rename(columns={"close": "wing_close"}),
-            on="datetime_local",
-            how="inner",
-        )
-        if common.empty:
-            return None, [f"expiry={expiry} no common ATM/wing timestamps"]
-
-        entry_time = common["datetime_local"].min()
+        rows = []
         base = {
             "trade_id": int(signal.trade_id),
             "signal_variant": signal.signal_variant,
@@ -172,13 +164,10 @@ class OptionReader:
             "expiry_date": expiry,
             "direction": signal.direction,
             "signal_time_local": signal.signal_time_local,
-            "entry_time_local": entry_time,
             "spot": float(signal.spot),
             "atm_strike": float(atm),
         }
 
-        rows = []
-        # Rebuild once using the exact strike ordering available for this expiry.
         for width in WIDTH_STEPS:
             wing = float(wings[width - 1])
             pair = merged[atm].rename(columns={"close": "long_entry"}).merge(
@@ -186,9 +175,10 @@ class OptionReader:
                 on="datetime_local",
                 how="inner",
             )
-            pair = pair.loc[pair["datetime_local"].eq(entry_time)]
             if pair.empty:
                 continue
+            pair = pair.sort_values("datetime_local")
+            entry_time = pair["datetime_local"].iloc[0]
             le = float(pair["long_entry"].iloc[0])
             se = float(pair["short_entry"].iloc[0])
             if not np.isfinite(le) or not np.isfinite(se) or le <= se:
@@ -295,7 +285,7 @@ def simulate(entries: pd.DataFrame, reader: OptionReader) -> pd.DataFrame:
             xp = eligible.loc[eligible["datetime_local"].eq(exit_time)].iloc[0]
             rows.append(
                 {
-                    "variant_id": f"{row.trade_id}::{row.expiry_type}::{row.width_steps}::{hold}",
+                    "variant_id": f"{row.signal_variant}::{row.expiry_type}::{row.width_steps}::{hold}",
                     "trade_id": int(row.trade_id),
                     "signal_variant": row.signal_variant,
                     "trade_date": row.trade_date,
@@ -484,6 +474,9 @@ def run(options_root: Path, futures_root: Path, out_dir: Path, slippage_points: 
                 "signal_source": source_meta,
                 "option_files_indexed": len(option_index),
                 "available_expiry_types": list(reader.available_expiry_types()),
+        "source_common_trading_days": calendar_days,
+        "source_date_min": str(min(common_dates)) if common_dates else None,
+        "source_date_max": str(max(common_dates)) if common_dates else None,
                 "entry_diagnostics": entry_diag,
             },
             indent=2,
@@ -495,7 +488,8 @@ def run(options_root: Path, futures_root: Path, out_dir: Path, slippage_points: 
     entries.to_csv(out_dir / "phase3i_entries.csv", index=False)
     trades.to_csv(out_dir / "phase3i_trades.csv", index=False)
 
-    calendar_days = int(signals["trade_date"].nunique()) if not signals.empty else 0
+    common_dates = set(spot["trade_date"]).intersection(set(fut["trade_date"]))
+    calendar_days = int(len(common_dates))
     board, preliminary = summarize(trades, calendar_days)
     board.to_csv(out_dir / "phase3i_leaderboard.csv", index=False)
 
