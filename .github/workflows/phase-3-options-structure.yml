@@ -1,6 +1,6 @@
 name: Phase 3 - Options Structure
 concurrency:
-  group: phase3-structure-\${{ github.ref }}
+  group: phase3-structure-${{ github.ref }}
   cancel-in-progress: true
 
 on:
