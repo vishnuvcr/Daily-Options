@@ -1,0 +1,48 @@
+name: Phase 1 - Data Foundation
+
+on:
+  workflow_dispatch:
+    inputs:
+      source:
+        description: "Dataset source to validate"
+        required: false
+        default: "manifest-only"
+        type: choice
+        options:
+          - manifest-only
+          - zenodo
+          - huggingface
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install research dependencies
+        run: pip install pandas pyarrow openpyxl pytest
+
+      - name: Create research directories
+        run: mkdir -p data/raw data/cache reports
+
+      - name: Validate manifest
+        run: python - <<'PY'
+import pathlib, yaml
+pathlib.Path("data/sources.yaml").read_text()
+print("sources.yaml present")
+PY
+
+      - name: Run unit tests
+        run: pytest -q
+
+      - name: Upload audit scaffold
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase-1-audit-scaffold
+          path: |
+            data/
+            reports/
