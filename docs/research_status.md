@@ -247,3 +247,9 @@ Phase 3G — COMPLETE; FAIL_PRELIMINARY; RETIRED.
 - Implemented one-pass base/stress evaluation using the same pinned multi-year dataset and cost model.
 - Added regression tests and manual GitHub Actions workflow.
 - Status: CI numerical result pending.
+
+### 2026-09-24 — Step 3I.2 Runtime optimization before result acceptance
+- The initial Phase 3I engine was not accepted because diagnostics performed repeated full-day spot scans per signal and the 144-variant loop was more expensive than necessary.
+- Added phase3i_fast_engine.py with precomputed false-break event candidates, indexed option pivots and vectorized forward diagnostics.
+- Updated CI to run the fast engine in one base/stress data pass.
+- No pre-optimization numerical result was accepted.
