@@ -57,3 +57,6 @@ A negative family is retired without expanding the grid.
 ## Research interpretation
 
 A pass here would establish a tradeable implementation candidate, not a claim of live profitability. Paper/shadow validation remains a later phase.
+
+
+Source correction note: use the matching 2017-2020 Zenodo NIFTY options archive; the prior cross-domain option run is rejected as invalid.
