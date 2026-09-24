@@ -161,3 +161,10 @@ Phase 17 is the active exact-expiry NIFTY family: premium-skew + option volume/O
 ## Phase 19 parked fallback — 2026-09-24
 
 Phase 19 is preregistered but **not launched**: global overnight returns + NIFTY opening gap as a pre-open regime classifier, followed by intraday volatility-compression confirmation and exact-expiry defined-risk iron-condor execution. The 384-cell grid is frozen in `docs/phase19_plan.md`; it will not be tuned from Phase 18 results.
+
+
+## Active continuation checkpoint — 2026-09-25
+
+Phase 19 — NIFTY short strangle regime is the active execution frontier on branch `phase-19-nifty-short-strangle-regime-v1`. Authoritative GitHub Actions run **36042015205** (commit `2ed269eb2bc875671c818f5cde2707e0a97e4499`) is currently running both Base and Stress friction. Unit tests and exact-expiry cached-data acquisition have passed; the numerical friction step is still in progress. No P&L is accepted until both friction jobs complete and the frozen 144-cell result is reviewed.
+
+The E0195 correction derives option `trade_date` from the normalized UTC→IST timestamp; no strategy, regime, entry, exit, slippage or cost parameter was changed.
