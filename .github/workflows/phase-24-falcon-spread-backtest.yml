@@ -11,7 +11,7 @@ on:
 
 concurrency:
   group: phase24-falcon-spread-v1
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   research:
