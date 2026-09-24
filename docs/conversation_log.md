@@ -56,3 +56,7 @@ The first clean exact-ref Phase 8 run completed base and stress. Across all 96 p
 ### Phase 10 closure — 2026-09-24
 
 The exact-ref Phase 10 v4 workflow completed. Across 128 variants, best base mean all-day net was -₹113.62/lot/day, stress -₹136.48, and all 3 walk-forward test windows were negative. The family is retired without retuning.
+
+### 2026-09-24 — Phase 10 completed and retired
+
+Phase 10 completed base and doubled-slippage stress execution. The best base result was ₹-113.62/lot/day and the best stress result ₹-136.48/lot/day. All three untouched WFA windows were negative in both friction settings. The family was retired with no post-result retuning.
