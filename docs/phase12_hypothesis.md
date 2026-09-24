@@ -17,14 +17,14 @@ The literature does not justify assuming a permanent direction. A 2007 NIFTY stu
 
 NIFTY only in Stage 1.
 
-Variant grid: 144 configurations
+Pre-registered grid: 144 signal/contract configurations × 2 fixed risk profiles = 288 simulation cells
 - lead window: 1 / 3 minutes;
 - lead-gap z-threshold: 0.75 / 1.00 / 1.50;
 - entry: 09:45 / 10:00 IST;
 - expiry: next WEEK / next MONTH;
 - debit-spread width: 1 / 2 available strike steps;
 - maximum hold: 10 / 20 / 30 minutes;
-- risk profile: stop 30% / target 60%, or stop 50% / target 100%.
+- risk profile: two fixed exit profiles evaluated for every signal/contract configuration: stop 30% / target 60%, or stop 50% / target 100%.
 
 No result-based parameter additions are permitted.
 
