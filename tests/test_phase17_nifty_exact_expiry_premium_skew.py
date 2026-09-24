@@ -137,3 +137,11 @@ def test_build_setups_records_executable_entry_delay():
     assert "MAX_ENTRY_DELAY_MINUTES" in src
     assert '"entry_delay_min"' in src
     assert "common=sorted(set(short_q.ts).intersection(set(wing_q.ts)))" in src
+
+    
+def test_quote_query_loads_full_three_minute_execution_feasibility_window():
+    from research import phase17_nifty_exact_expiry_premium_skew as mod
+    import inspect
+    src=inspect.getsource(mod.load_option_quotes)
+    assert 'o."timestamp">=w.ts' in src
+    assert "o.\"timestamp\"<=w.ts+INTERVAL '3 minutes'" in src
