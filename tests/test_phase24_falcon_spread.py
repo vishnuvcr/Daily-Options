@@ -21,11 +21,12 @@ def test_monday_one_strike_wings():
     assert 'ce_w = ce[ce > setup["short_ce_strike"]]' in src
     assert 'pe_w = pe[pe < setup["short_pe_strike"]]' in src
 
-def test_current_expiry_exit_is_pre_expiry_not_0dte():
-    src = inspect.getsource(simulate_setup)
-    assert 'Tuesday' in src
-    assert 'PRE_EXPIRY_EXIT' in src
-    assert '15:15:00' in src
+def test_current_expiry_calendar_geometry_is_documented_in_simulator():
+    from research.phase24_falcon_spread import build_setup
+    src = inspect.getsource(build_setup)
+    assert 'entry = expiry - 4 sessions' in src
+    assert 'adjustment = expiry - 2 sessions' in src
+    assert 'exit = expiry - 1 session' in src
 
 def test_costs_include_brokerage_and_stt_and_gst():
     from research.phase24_falcon_spread import cost
@@ -57,6 +58,8 @@ def test_mark_panel_uses_backward_asof_only():
     assert out['b'].tolist() == [2.0]
 
 
-def test_monday_adjustment_is_allowed_on_current_pre_expiry_day():
-    src = inspect.getsource(simulate_setup)
-    assert 'if mon.date() > exit_date' in src
+def test_adjustment_date_is_explicit_in_setup():
+    from research.phase24_falcon_spread import build_setup
+    src = inspect.getsource(build_setup)
+    assert '"adjust_date": adjust_date' in src
+    assert '"exit_date": exit_date' in src
