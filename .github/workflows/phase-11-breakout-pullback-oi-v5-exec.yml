@@ -92,6 +92,17 @@ jobs:
             fi
           done
 
+          for YEAR in 2019 2020; do
+            find "data/cache/phase12_zenodo/options/$YEAR" -type f -name '*.zip' -print0 |
+            while IFS= read -r -d '' MONTH_ZIP; do
+              DEST="${MONTH_ZIP%.zip}"
+              if ! find "$DEST" -type f \( -name '*.xlsx' -o -name '*.xls' -o -name '*.csv' \) -print -quit 2>/dev/null | grep -q .; then
+                mkdir -p "$DEST"
+                unzip -q "$MONTH_ZIP" -d "$DEST"
+              fi
+            done
+          done
+
           find data/cache/phase12_zenodo/market -type f | head -20
           find data/cache/phase12_zenodo/options -type f | head -20
 
