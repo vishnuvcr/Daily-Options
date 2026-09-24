@@ -284,7 +284,7 @@ def simulate_unique(entries: pd.DataFrame, out: Path, slippage: float) -> pd.Dat
     if entries.empty:
         return pd.DataFrame()
     cm = OptionCostModel()
-    unique = entries[["trade_date","entry_time","direction","expiry","side","atm_strike","wing_strike","atm_path","wing_path","spot"]].drop_duplicates()
+    unique = entries[["variant_id","trade_date","entry_time","direction","expiry","side","atm_strike","wing_strike","atm_path","wing_path","spot"]].drop_duplicates()
     rows = []
     for rec in unique.itertuples(index=False):
         bars = _merge_leg_bars(rec.atm_path, rec.wing_path, pd.Timestamp(rec.entry_time), 30)
