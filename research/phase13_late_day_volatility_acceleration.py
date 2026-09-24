@@ -287,13 +287,11 @@ def simulate(entries: pd.DataFrame, slippage: float, out: Path) -> pd.DataFrame:
             else:
                 # One-leg option P&L with the same cost model through a synthetic
                 # zero-short vertical. The net is explicitly one long option leg.
-                net = cm.vertical_debit_spread_net_pnl(
+                net = cm.net_pnl(
                     float(first["open"]),
-                    0.0,
                     float(ex["close"]),
-                    0.0,
-                    lot_size=index_option_lot_size("NIFTY", rec.expiry),
                     qty=1,
+                    lot_size=index_option_lot_size("NIFTY", rec.expiry),
                     slippage_points=slippage,
                 )
 
