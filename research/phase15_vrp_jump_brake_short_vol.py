@@ -85,7 +85,8 @@ def load_signal_rows(root, expiry_type=None):
     return out
 
 def select_signals(features,variant):
-    m=features.datetime.dt.strftime('%H:%M:%S').eq(variant['entry_time']) & features.vrp.ge(variant['vrp_threshold']) & features.abs_ret15.le(variant['jump_max']) & features.expiry_type.eq(variant['expiry_type'])
+    ist_time=(features.datetime + pd.Timedelta(hours=5, minutes=30)).dt.strftime('%H:%M:%S')
+    m=ist_time.eq(variant['entry_time']) & features.vrp.ge(variant['vrp_threshold']) & features.abs_ret15.le(variant['jump_max']) & features.expiry_type.eq(variant['expiry_type'])
     x=features[m].copy()
     return x.sort_values(['trade_date','datetime']).drop_duplicates(['trade_date','expiry_type'])[['trade_date','datetime','expiry_type','spot','vrp','abs_ret15']]
 def load_entry_quotes(root,signals):
