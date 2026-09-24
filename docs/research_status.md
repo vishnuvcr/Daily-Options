@@ -301,3 +301,7 @@ The corrected TradeMarkk Stress artifact is **data-limited**: 270 variants, but 
 Run **36056063674** completed the Stress friction job successfully. The Stress artifact reports 270 preregistered variants but only **32 executable setups / 5 unique entry dates** (2023-12-15, 2025-06-13, 2025-12-17, 2026-03-18, 2026-06-29) and 288 trade records. The apparent 18 target-qualified cells are dominated by single-trade observations and are rejected as strategy evidence. The audit indicates the restored exact-expiry cache was under-covered for the nominal research window; data-acquisition completeness must be validated before accepting any Phase 24 P&L. Base friction is still running from the same ref and will be treated as non-evidentiary until the cache problem is corrected.
 
 Phase 24 next execution requirement: rebuild/reacquire a coverage-validated exact-expiry cache, then rerun the unchanged 270-cell grid. No parameter retuning is authorized from the sparse Stress leaderboard.
+
+
+## Phase 24 v2 independent-source launch — 2026-09-25
+TradeMarkk v1 is classified data-limited and its apparent Stress winners are rejected. The frozen Falcon strategy is now being evaluated on Rissin/Upstox 1-minute NIFTY option data at immutable revision c97e450a27e945983519cda2bc24301afa7efac1. Current timing is Wednesday entry → Thursday adjustment → Monday pre-expiry exit. Latest v2 workflow run: 36057664349, queued Base and Stress; no v2 P&L is accepted yet.
