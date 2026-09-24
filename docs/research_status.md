@@ -18,3 +18,8 @@ Phase 18 corrected execution run `36040028422` completed Base and Stress success
 ## 2026-09-24 — Phase 19 timestamp-alignment correction
 
 Phase 19 Base/Stress returned zero setups, but a targeted 20-signal diagnostic showed the option quote window was empty after the internal timestamp normalization. This contradicts the independent Phase 17c feasibility smoke, which found common PE/CE execution minutes. E0192 replaces the join-based quote loader with the validated direct local-time window query; no signal, offset, regime, exit or cost parameter changes.
+
+
+## 2026-09-24 — Phase 19 dataset date-key correction
+
+E0195 identified the remaining zero-setup cause: Phase 19 used the option file's `trading_day` as the join key. The pinned dataset convention requires `trade_date` to be derived from the timestamp after UTC→IST normalization. The loader has been corrected without changing entry times, offsets, regime filters, exits, slippage or costs.
