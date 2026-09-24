@@ -114,7 +114,7 @@ def build_setups(spot,quotes):
         if sig.empty: continue
         strikes=np.sort(sig.strike.dropna().unique())
         if len(strikes)<9: continue
-        atm=int(np.argmin(np.abs(strikes-float(sm.close))))
+        atm=int(np.argmin(np.abs(strikes-float(sm.spot_close))))
         for so in SHORT_OFFSETS:
             pi=atm-so; ci=atm+so
             if pi<0 or ci>=len(strikes): continue
