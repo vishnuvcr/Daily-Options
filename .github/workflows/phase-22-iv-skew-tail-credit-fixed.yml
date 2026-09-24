@@ -1,0 +1,41 @@
+name: Phase 22 - IV Skew Tail Credit Fixed
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [phase-22-iv-skew-tail-credit-fixed]
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-22-iv-skew-tail-credit-fixed
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pandas numpy pyarrow duckdb yfinance huggingface_hub pytest
+      - run: PYTHONPATH=. pytest -q tests/test_phase16_iv_skew_tail_credit.py
+      - uses: actions/cache@v4
+        with:
+          path: data/cache/artist23
+          key: phase16-artist23-v2
+          restore-keys: phase16-artist23-
+      - name: Acquire or reuse dataset
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/artist23
+          if [ ! -f data/cache/artist23/manifest.json ]; then
+            python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="artist-23/nifty-options-data",repo_type="dataset",revision="45e0a04",local_dir="data/cache/artist23")'
+          fi
+      - name: Base
+        run: PYTHONPATH=. python -m research.phase16_iv_skew_tail_credit --data data/cache/artist23 --out reports/phase22-base --slippage 0.20
+      - name: Stress
+        run: PYTHONPATH=. python -m research.phase16_iv_skew_tail_credit --data data/cache/artist23 --out reports/phase22-stress --slippage 0.40
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase22-iv-skew-tail-credit
+          path: reports/
