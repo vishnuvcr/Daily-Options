@@ -1,0 +1,38 @@
+name: Phase 9 - Aggregate Repair
+
+on:
+  push:
+    branches:
+      - phase-9-regime-credit-spread-v7-aggregate-repair
+  workflow_dispatch:
+
+jobs:
+  aggregate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install aggregate dependencies
+        run: pip install pandas numpy duckdb
+
+      - name: Download completed Phase 9 shard artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: phase9-shard-*
+          path: downloads
+          merge-multiple: true
+          run-id: 35975698105
+
+      - name: Aggregate base and stress
+        run: python -m research.phase9_aggregate --downloads downloads --out reports
+
+      - name: Upload aggregate reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase9-aggregate-repaired
+          path: reports/
