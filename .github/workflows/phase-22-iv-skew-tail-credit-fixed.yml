@@ -30,10 +30,14 @@ jobs:
           if [ ! -f data/cache/artist23/manifest.json ]; then
             python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="artist-23/nifty-options-data",repo_type="dataset",revision="45e0a04",local_dir="data/cache/artist23")'
           fi
-      - name: Base
-        run: PYTHONPATH=. python -m research.phase16_iv_skew_tail_credit --data data/cache/artist23 --out reports/phase22-base --slippage 0.20
-      - name: Stress
-        run: PYTHONPATH=. python -m research.phase16_iv_skew_tail_credit --data data/cache/artist23 --out reports/phase22-stress --slippage 0.40
+      - name: Base WEEK
+        run: PYTHONPATH=. python -m research.phase16_iv_skew_tail_credit --data data/cache/artist23/NIFTY --out reports/WEEK/base --slippage 0.20 --expiry-type WEEK
+      - name: Stress WEEK
+        run: PYTHONPATH=. python -m research.phase16_iv_skew_tail_credit --data data/cache/artist23/NIFTY --out reports/WEEK/stress --slippage 0.40 --expiry-type WEEK
+      - name: Base MONTH
+        run: PYTHONPATH=. python -m research.phase16_iv_skew_tail_credit --data data/cache/artist23/NIFTY --out reports/MONTH/base --slippage 0.20 --expiry-type MONTH
+      - name: Stress MONTH
+        run: PYTHONPATH=. python -m research.phase16_iv_skew_tail_credit --data data/cache/artist23/NIFTY --out reports/MONTH/stress --slippage 0.40 --expiry-type MONTH
       - uses: actions/upload-artifact@v4
         if: always()
         with:
