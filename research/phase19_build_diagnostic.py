@@ -12,8 +12,12 @@ def main(root: Path, out: Path):
         qq=q[(q["trade_date"]==d)&(q["ts"]>=ts)&(q["ts"]<=ts+pd.Timedelta(minutes=3))]
         sig=qq[qq["ts"]==ts]
         strikes=sorted(sig["strike"].dropna().unique().tolist())
+        dayq=q[q["trade_date"]==d]
         item={
             "trade_date":str(d),"signal_ts":str(ts),
+            "day_quote_rows":int(len(dayq)),
+            "day_quote_min_ts":str(dayq["ts"].min()) if not dayq.empty else None,
+            "day_quote_max_ts":str(dayq["ts"].max()) if not dayq.empty else None,
             "window_rows":int(len(qq)),"signal_rows":int(len(sig)),
             "strikes":int(len(strikes)),
             "option_types":sorted(sig["option_type"].dropna().astype(str).unique().tolist()),
