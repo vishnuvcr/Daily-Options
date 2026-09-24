@@ -246,3 +246,11 @@ The user supplied a detailed transcript-derived rule set for Equity Income's Fal
 Phase 24 is preregistered on branch phase-24-falcon-spread-backtest-v1 with 270 frozen cells covering only unspecified timing/stop/strike-interpretation sensitivities. The source-primary cell is 25-point premium, diagonal far-week strike selection, and fixed Friday/Monday execution conventions.
 
 No numerical result is accepted until Base and Stress runs complete and the artifact is inspected.
+
+## Phase 24 diagnostic checkpoint — 2026-09-25
+
+Run 36051595562 completed successfully through tests and data acquisition but produced 270 variants, 52 setups, and 0 trades in both Base and Stress. It was invalidated as evidence after E0224 identified a Friday-only trading_day filter in the multi-day series loader.
+
+Corrected run 36052354346 removed that filter but still returned 52 setups and 0 trades in Stress. E0226 identified exact-timestamp intersection across multiple option legs as a likely sparse-quote blocker for stop marking. The correction replaces exact inner joins with fixed one-minute backward-asof alignment only, without future quotes.
+
+The newest corrected code is committed on phase-24-falcon-spread-backtest-v1. Runs triggered by the latest correction are queued/active; no Falcon P&L is accepted until a clean corrected run completes.
