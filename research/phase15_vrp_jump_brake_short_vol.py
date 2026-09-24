@@ -134,13 +134,16 @@ def load_execution_windows(root,setup_rows,max_hold=60):
     con=duckdb.connect()
     legs=[]
     for rec in setup_rows.itertuples(index=False):
-        for leg,strike in (
-            ('call',rec.call_strike),('put',rec.put_strike),
-            ('call_wing',rec.call_wing_strike),('put_wing',rec.put_wing_strike)
+        for leg,strike,option_type in (
+            ('call',rec.call_strike,'CALL'),
+            ('put',rec.put_strike,'PUT'),
+            ('call_wing',rec.call_wing_strike,'CALL'),
+            ('put_wing',rec.put_wing_strike,'PUT')
         ):
             legs.append({
                 'trade_date':rec.trade_date,'expiry_type':rec.expiry_type,
-                'entry_time':rec.entry_time,'leg':leg,'strike':float(strike)
+                'entry_time':rec.entry_time,'leg':leg,
+                'strike':float(strike),'option_type':option_type
             })
     leg_df=pd.DataFrame(legs).drop_duplicates()
     con.register('legs',leg_df)
@@ -154,6 +157,7 @@ def load_execution_windows(root,setup_rows,max_hold=60):
            CAST(o.low AS DOUBLE) AS low,
            CAST(o.close AS DOUBLE) AS close,
            CAST(o.strike_price AS DOUBLE) AS strike,
+           l.option_type AS leg_option_type,
            l.trade_date AS trade_date,
            l.entry_time AS entry_time,
            l.leg AS leg
@@ -161,6 +165,7 @@ def load_execution_windows(root,setup_rows,max_hold=60):
     JOIN legs l
       ON o.expiry_type=l.expiry_type
      AND CAST(o.strike_price AS DOUBLE)=l.strike
+     AND o.option_type=l.option_type
      AND CAST(o.datetime AS TIMESTAMP)>=l.entry_time
      AND CAST(o.datetime AS TIMESTAMP)<=l.entry_time + INTERVAL '60 minutes'
      AND CAST(CAST(o.datetime AS TIMESTAMP) + INTERVAL '5 hours 30 minutes' AS DATE)=l.trade_date
