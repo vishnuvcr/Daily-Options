@@ -226,3 +226,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0158 | 2026-09-24 | Phase 16 optimization patch | First outcome-cache implementation created a composite index but accidentally iterated the unindexed DataFrame, which would have broken key unpacking | No run accepted; corrected before execution | Iterate the composite setup index explicitly and rerun tests | CLOSED — pre-result |
 
 | E0193 | 2026-09-24 | Phase 19 preregistration | New family was proposed without an execution artifact yet | No research impact because the phase is parked before execution | Freeze the 384-cell hypothesis and launch only after Phase 18 is closed; no Phase 19 parameters may be selected from Phase 18 results | CLOSED — preregistration |
+
+| E0196 | 2026-09-24 | Phase 19 implementation | First implementation draft contained three pre-run inconsistencies: reversed gap-to-spread side mapping, string expiry type instead of date, and incomplete hold/stop attribution | No run launched from the draft | Corrected side mapping, normalize exact expiry to date, and carry hold/stop through setup/outcome attribution before execution | CLOSED — pre-result |
