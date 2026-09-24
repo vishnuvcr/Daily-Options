@@ -127,3 +127,8 @@ Phase 17 uses exact-expiry NIFTY option files, a frozen 384-cell grid, base/stre
 ## Phase 18 v2 isolated execution
 
 Superseded Phase 18 runs were cancelled before job creation after branch updates. The authoritative v2 execution branch is `phase-18-nifty-iron-condor-regime-v2` with a unique concurrency group. No Phase 18 P&L is accepted until this isolated run completes Base and Stress.
+
+
+## Phase 18 closure
+
+Run 36040028422 completed successfully in Base and Stress. Zero executable setups in both shards; no P&L and no WFA. Phase 18 retired. Do not retune the 192-cell grid after seeing this result.
