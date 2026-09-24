@@ -6,7 +6,7 @@ on:
     branches: [phase-18-nifty-iron-condor-regime-v2]
 
 concurrency:
-  group: phase18-iron-condor-v2
+  group: phase18-iron-condor-v2-e0189
   cancel-in-progress: false
 
 jobs:
