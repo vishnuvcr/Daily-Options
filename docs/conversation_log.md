@@ -59,3 +59,9 @@
 - Phase 7 manuscript work was started on branch phase-7-manuscript.
 - Final manuscript, data-gap assessment, summary JSON and figures were added to the repository.
 - Phase 5 robustness and Phase 6 paper-shadow remain blocked until a candidate passes the promotion gate.
+
+
+## 2026-09-24 — User-directed continuation
+- User instructed that the study must continue until a Rs 1,000 net/lot/day strategy is found or created.
+- The prior Phase 3 closure is therefore treated as an evidence checkpoint, not the end of the program.
+- Phase 8 was opened to test a materially different hybrid mechanism using trend/regime information plus option-premium confirmation and dynamic exits.
