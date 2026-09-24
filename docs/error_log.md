@@ -104,3 +104,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0116 | 2026-09-24 | Phase 12 v3 execution performance | Option-pair caching still merged full historical leg files before slicing to the 30-minute execution window | No P&L was accepted; the calculation was superseded | Slice each leg to the exact executable window before merging; execution semantics are unchanged | CLOSED — execution optimization |
 
 | E0117 | 2026-09-24 | Tooling | Phase 12 result archive script failed with a JavaScript quoting error before GitHub mutation | No research or numerical data impact | Reissued the same archive write using an array-join payload; result stored successfully | CLOSED |
+
+| E0118 | 2026-09-24 | Phase 13 cost model | Outright long-option path initially reused the 4-leg vertical cost function with zero short legs, overstating brokerage/slippage | No numerical result was accepted; unit tests had not yet run on the branch | Replaced with the audited 2-order `OptionCostModel.net_pnl()` and added a regression test | CLOSED — pre-result |
