@@ -95,3 +95,12 @@ The three active research families have not yet produced an accepted strategy re
 - Phase 11 is now executable on its dedicated branch: 64 pre-registered BANKNIFTY breakout-pullback/OI-confirmation variants, with base/stress slippage and walk-forward gates. A pre-run option-side selection defect was fixed before accepting any result.
 
 - Phase 11 v2 / PR #12 corrects nearest-wing selection for PUT debit spreads before any P&L is accepted; the original Phase 11 PR #11 is retained as audit history.
+
+
+### Updated evidence — 2026-09-24
+- Phase 8 exact-ref v3: **RETIRED** — best base mean all-day net -₹6.13/lot/day; stress -₹36.13; 0/96 target-qualified.
+- Phase 10 exact-ref v4: **RETIRED** — best base mean all-day net -₹113.62/lot/day; stress -₹136.48; 0/128 target-qualified; 0/3 positive WFA windows.
+- Phase 9: active sharded computation remains underway after runner/resource remediation.
+- Phase 11: preregistered breakout-pullback/OI family remains pending execution.
+
+The next accepted candidate must still clear the unchanged ₹1,000 net/active-lot/day OOS gate after realistic costs and stress slippage.
