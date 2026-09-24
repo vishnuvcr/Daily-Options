@@ -192,8 +192,9 @@ def build_setups(signal_df, quotes):
                 sh=sel[sel.strike==short_strike]
                 wh=sel[sel.strike==wing_strike]
                 sig=meta.iloc[0]
-                sigp=quotes[(quotes.trade_date==d)&(quotes.ts==ts)&(quotes.strike==short_strike)&(quotes.option_type==side)].head(1)
-                sigw=quotes[(quotes.trade_date==d)&(quotes.ts==ts)&(quotes.strike==wing_strike)&(quotes.option_type==side)].head(1)
+                option_code="PE" if side=="PUT" else "CE"
+                sigp=quotes[(quotes.trade_date==d)&(quotes.ts==ts)&(quotes.strike==short_strike)&(quotes.option_type==option_code)].head(1)
+                sigw=quotes[(quotes.trade_date==d)&(quotes.ts==ts)&(quotes.strike==wing_strike)&(quotes.option_type==option_code)].head(1)
                 if sigp.empty or sigw.empty: continue
                 p=float(sigp.iloc[0].close); w=float(sigw.iloc[0].close)
                 if p<=w: continue
