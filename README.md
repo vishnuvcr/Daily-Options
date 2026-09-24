@@ -198,3 +198,13 @@ The Equity Income YouTube channel is now a formal hypothesis source. The researc
 [Phase 23 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-23-equity-income-video-hypotheses/docs/phase23_plan.md) · [Equity Income strategy catalogue](https://github.com/vishnuvcr/Daily-Options/blob/phase-23-equity-income-video-hypotheses/docs/equity_income_channel_catalog.md) · [Phase 23 workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-23-equity-income-video-hypotheses/.github/workflows/phase-23-equity-income-video-hypotheses.yml)
 
 Channel: https://www.youtube.com/@equityincome
+
+## Frontier update — 2026-09-25 — Falcon Spread
+
+The supplied transcript for Equity Income's **Falcon Spread — Top Hedging Trick Public Won't Know** has now been formalized and entered as Phase 24. The source-derived mechanics are a Friday 5:3 near-week/far-week ratio-diagonal strangle around the ~25-point premium zone, Monday purchase of five near-week outer wings one strike beyond each short, a hard stop, and a Wednesday time-out.
+
+Phase 24 is preregistered on branch phase-24-falcon-spread-backtest-v1 with 270 cells covering only the source-unspecified timing, hard-stop and far-strike interpretation uncertainties. Base and doubled-slippage runs use the pinned TradeMarkk exact-expiry NIFTY dataset and the existing Paytm Money/NSE cost model.
+
+Current authoritative Actions run: **36051595562**. Tests and cached data acquisition have passed; Base and Stress are currently in the numerical friction stage. No Falcon P&L is accepted yet.
+
+[Phase 24 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-24-falcon-spread-backtest-v1/docs/phase24_plan.md) · [Falcon simulator](https://github.com/vishnuvcr/Daily-Options/blob/phase-24-falcon-spread-backtest-v1/research/phase24_falcon_spread.py) · [Phase 24 workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-24-falcon-spread-backtest-v1/.github/workflows/phase-24-falcon-spread-backtest.yml)
