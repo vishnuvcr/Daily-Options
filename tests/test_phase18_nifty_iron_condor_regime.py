@@ -22,3 +22,9 @@ def test_variant_attribution_locks_structure_dimensions():
 def test_cost_model_uses_four_leg_defined_pnl():
     src=inspect.getsource(mod.simulate)
     assert "four_leg_defined_net_pnl" in src
+
+
+def test_empty_setup_filter_is_safe():
+    import pandas as pd
+    from research import phase18_nifty_iron_condor_regime as mod
+    assert mod.filter_setups(pd.DataFrame()).empty
