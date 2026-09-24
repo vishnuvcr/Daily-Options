@@ -68,3 +68,5 @@ jobs:
         with:
           name: phase11-breakout-pullback-oi-v5
           path: reports/
+
+# v5 execution-trigger checkpoint
