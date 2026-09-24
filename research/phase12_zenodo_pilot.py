@@ -68,10 +68,9 @@ def _read_table(path: Path) -> pd.DataFrame:
     if suffix in {".xlsx", ".xls"}:
         return pd.read_excel(path)
     if suffix in {".txt", ".csv"}:
-        try:
-            return pd.read_csv(path)
-        except Exception:
-            return pd.read_csv(path, sep=None, engine="python")
+        # Zenodo market/option files are headerless positional records.
+        # Reading with header=None preserves the first market minute.
+        return pd.read_csv(path, header=None, dtype=str, sep=",")
     raise ValueError(f"unsupported table suffix: {suffix}")
 
 def _norm_cols(df: pd.DataFrame) -> dict[str, str]:
@@ -90,11 +89,39 @@ def _combine_datetime(df: pd.DataFrame) -> pd.Series:
 def _standardize_ohlc(df: pd.DataFrame) -> pd.DataFrame:
     m = _norm_cols(df)
     out = pd.DataFrame()
-    out["datetime"] = _combine_datetime(df)
-    for k in ("open", "high", "low", "close", "volume"):
-        src = m.get(k)
-        if src is not None:
-            out[k] = pd.to_numeric(df[src], errors="coerce")
+
+    # Header-based sources.
+    if any(k in m for k in ("datetime", "trade_date", "date")):
+        out["datetime"] = _combine_datetime(df)
+        for k in ("open", "high", "low", "close", "volume"):
+            src = m.get(k)
+            if src is not None:
+                out[k] = pd.to_numeric(df[src], errors="coerce")
+    else:
+        # Headerless Zenodo records:
+        # market: [symbol, date, time, open, high, low, close, volume, oi]
+        # option: [date, time, open, high, low, close, volume, oi]
+        cols = list(df.columns)
+        if len(cols) < 6:
+            raise ValueError("headerless OHLC record has fewer than 6 columns")
+        first_as_date = pd.to_datetime(df[cols[0]], errors="coerce", format="%Y/%m/%d").notna().mean()
+        second_as_date = pd.to_datetime(df[cols[1]], errors="coerce", format="%Y/%m/%d").notna().mean() if len(cols) > 1 else 0.0
+        if second_as_date >= 0.80:
+            date_col, time_col, price_start = cols[1], cols[2], 3
+        elif first_as_date >= 0.80:
+            date_col, time_col, price_start = cols[0], cols[1], 2
+        else:
+            raise ValueError("unable to identify date/time columns in headerless OHLC file")
+        out["datetime"] = _utc_naive(df[date_col].astype(str) + " " + df[time_col].astype(str))
+        if price_start + 3 >= len(cols):
+            raise ValueError("headerless OHLC record lacks OHLC columns")
+        out["open"] = pd.to_numeric(df[cols[price_start]], errors="coerce")
+        out["high"] = pd.to_numeric(df[cols[price_start + 1]], errors="coerce")
+        out["low"] = pd.to_numeric(df[cols[price_start + 2]], errors="coerce")
+        out["close"] = pd.to_numeric(df[cols[price_start + 3]], errors="coerce")
+        if price_start + 4 < len(cols):
+            out["volume"] = pd.to_numeric(df[cols[price_start + 4]], errors="coerce")
+
     return out.dropna(subset=["datetime", "close"]).loc[lambda x: x["close"] > 0].sort_values("datetime")
 
 def load_zenodo_market(root: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
