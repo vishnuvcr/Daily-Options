@@ -1,0 +1,69 @@
+name: Phase 24 v2 - Falcon Spread independent Rissin validation
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "docs/phase24_v2_plan.md"
+      - "research/phase24_falcon_spread_rissin.py"
+      - "tests/test_phase24_falcon_spread_rissin.py"
+      - ".github/workflows/phase24-falcon-spread-v2-rissin.yml"
+
+concurrency:
+  group: phase24-falcon-rissin-v2
+  cancel-in-progress: true
+
+jobs:
+  research:
+    strategy:
+      fail-fast: false
+      matrix:
+        friction: [base, stress]
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-24-falcon-spread-backtest-v2-rissin
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pandas numpy duckdb pyarrow huggingface_hub pytest
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_phase24_falcon_spread_rissin.py
+      - name: Cache independent Rissin NIFTY data
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase24_rissin
+          key: phase24-rissin-c97e450-nifty-v2
+          restore-keys: |
+            phase24-rissin-c97e450-
+      - name: Acquire or reuse independent Rissin NIFTY data
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase24_rissin
+          for attempt in 1 2 3 4; do
+            python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="rissin/nse-options-intraday",repo_type="dataset",revision="c97e450a27e945983519cda2bc24301afa7efac1",local_dir="data/cache/phase24_rissin",allow_patterns=["upstox_intraday/NIFTY/NIFTY_2025.parquet","upstox_intraday/NIFTY/NIFTY_2026.parquet"])' && break
+            if [ "$attempt" -eq 4 ]; then exit 1; fi
+            sleep $((attempt*15))
+          done
+          test -s data/cache/phase24_rissin/upstox_intraday/NIFTY/NIFTY_2025.parquet
+          test -s data/cache/phase24_rissin/upstox_intraday/NIFTY/NIFTY_2026.parquet
+          cp data/cache/phase24_rissin/upstox_intraday/NIFTY/NIFTY_2025.parquet data/cache/phase24_rissin/NIFTY_2025.parquet
+          cp data/cache/phase24_rissin/upstox_intraday/NIFTY/NIFTY_2026.parquet data/cache/phase24_rissin/NIFTY_2026.parquet
+      - name: Run friction
+        env:
+          SLIP: \${{ matrix.friction == 'base' && '0.20' || '0.40' }}
+          LABEL: \${{ matrix.friction }}
+        run: |
+          PYTHONPATH=. python -m research.phase24_falcon_spread_rissin \
+            --data data/cache/phase24_rissin \
+            --out reports/\${LABEL} \
+            --slippage "\${SLIP}"
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase24-falcon-rissin-\${{ matrix.friction }}
+          path: reports/
