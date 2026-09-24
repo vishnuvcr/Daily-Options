@@ -38,3 +38,23 @@ def test_load_option_window_handles_expiry_column(tmp_path):
     assert out.iloc[0]["expiry"] == pd.Timestamp("2021-01-28")
 
 # DuckDB-query-fix trigger checkpoint 2026-09-24
+
+def test_nearest_future_month_expiry_is_selected():
+    import pandas as pd
+    from research.phase13b_frozen_oos import simulate
+
+    signals = pd.DataFrame([{
+        "datetime": pd.Timestamp("2021-01-04 09:15:00"),
+        "trade_date": pd.Timestamp("2021-01-04").date(),
+    }])
+    options = pd.DataFrame([
+        {"datetime": pd.Timestamp("2021-01-04 09:16:00"), "trade_date": pd.Timestamp("2021-01-04").date(),
+         "expiry": pd.Timestamp("2021-01-28"), "strike": 100.0, "open": 10.0, "high": 10.0, "low": 10.0, "close": 10.0},
+        {"datetime": pd.Timestamp("2021-01-04 09:17:00"), "trade_date": pd.Timestamp("2021-01-04").date(),
+         "expiry": pd.Timestamp("2021-01-28"), "strike": 100.0, "open": 10.0, "high": 10.2, "low": 9.9, "close": 10.1},
+        {"datetime": pd.Timestamp("2021-01-04 09:16:00"), "trade_date": pd.Timestamp("2021-01-04").date(),
+         "expiry": pd.Timestamp("2021-02-25"), "strike": 100.0, "open": 20.0, "high": 20.0, "low": 20.0, "close": 20.0},
+    ])
+    out = simulate(signals, options, slippage=0.20)
+    assert len(out) == 1
+    assert out.iloc[0]["expiry"] == pd.Timestamp("2021-01-28")
