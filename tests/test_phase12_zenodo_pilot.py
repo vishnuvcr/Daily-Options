@@ -7,6 +7,8 @@ from research.phase12_zenodo_pilot import (
     _last_thursday,
     _utc_naive,
     load_zenodo_market,
+    _read_table,
+    _standardize_ohlc,
 )
 
 
@@ -76,3 +78,26 @@ def test_headerless_zenodo_option_row_parses_ohlc(tmp_path):
     out = _standardize_ohlc(_read_table(p))
     assert len(out) == 1
     assert float(out.iloc[0]["close"]) == 120.8
+
+    
+def test_headerless_zenodo_row_maps_to_named_ohlc_columns(tmp_path):
+    p = tmp_path / "NIFTY.csv"
+    p.write_text(
+        "NIFTY,2019/01/01,09:16,10884.1,10885.3,10872.3,10874.5,0,0\n"
+        "NIFTY,2019/01/01,09:17,10874.1,10879.2,10874.1,10874.9,0,0\n"
+    )
+    raw = _read_table(p)
+    x = _standardize_ohlc(raw)
+    assert list(x.columns) == ["datetime", "open", "high", "low", "close", "volume"]
+    assert float(x.iloc[0]["close"]) == 10874.5
+
+
+def test_headerless_zenodo_option_row_maps_to_named_ohlc_columns(tmp_path):
+    p = tmp_path / "NIFTY11650PE.csv"
+    p.write_text(
+        "NIFTY11650PE,2019/05/02,09:16,120.5,121.0,119.8,120.2,150,0\n"
+    )
+    raw = _read_table(p)
+    x = _standardize_ohlc(raw)
+    assert float(x.iloc[0]["open"]) == 120.5
+    assert float(x.iloc[0]["close"]) == 120.2
