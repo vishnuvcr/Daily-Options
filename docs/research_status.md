@@ -229,3 +229,8 @@ A clean Phase 19 v3 branch `phase-19-nifty-short-strangle-regime-v3-authoritativ
 ## 2026-09-25 — Phase 13 deduplication audit
 
 Retrospective audit of the authoritative Phase 13 artifact found exact two-for-one duplication in every Base and Stress trade row. The simulator looped over both risk profiles even though `risk_id` was already part of the unique setup key. Exact-deduplication correction gives best full-sample mean active-day net ₹142.72 base / ₹112.72 stress, 0 target-qualified cells, and corrected nested-WFA mean test-window net ₹121.82 base / ₹91.82 stress. The published Phase 13 ₹285.45/₹225.45 result is invalidated and no retuning is permitted.
+
+
+## 2026-09-25 — Phase 20 closure / Phase 21 active
+
+Authoritative Phase 20 run 36045068043 completed Base and Stress for the frozen 384-cell global-gated Phase 13 interaction. It produced 3,872 trades; best mean active-day net was Rs 481.73 base and Rs 451.73 stress, with 0 target-qualified cells and 0 walk-forward windows. Phase 20 is retired without retuning. Phase 21 is now the active distinct hypothesis: fixed regime-switching long-gamma on expansion regimes and short-vega on calm regimes, with 60 frozen cells.
