@@ -1,0 +1,38 @@
+{
+  "phase": 10,
+  "status": "RETIRED",
+  "run_id": 35973884459,
+  "variants_preregistered": 128,
+  "variants_with_trades": 64,
+  "base": {
+    "signals": 46592,
+    "entries": 10752,
+    "trades": 10752,
+    "target_qualified_variants": 0,
+    "best_variant": "gap0.75|09:45:00|MONTH|w1|h15|r1",
+    "best_mean_active_day_net_inr_per_lot": -113.61660721920892,
+    "best_win_rate": 0.03424657534246575,
+    "best_profit_factor": 0.05759383778517102,
+    "walk_forward_windows": 3,
+    "positive_test_windows": 0,
+    "target_test_windows": 0,
+    "mean_test_window_net_inr_per_lot": -122.39118547169295
+  },
+  "stress": {
+    "signals": 46592,
+    "entries": 10752,
+    "trades": 10752,
+    "target_qualified_variants": 0,
+    "best_variant": "gap0.75|09:45:00|MONTH|w1|h15|r1",
+    "best_mean_active_day_net_inr_per_lot": -136.47962091783904,
+    "best_win_rate": 0.023972602739726028,
+    "best_profit_factor": 0.041135382962311104,
+    "walk_forward_windows": 3,
+    "positive_test_windows": 0,
+    "target_test_windows": 0,
+    "mean_test_window_net_inr_per_lot": -138.2703314543177
+  },
+  "promotion_gate": "FAIL",
+  "retirement_reason": "Best base and stress variants were materially negative and every untouched walk-forward test window was negative. No target-qualified variant existed.",
+  "retuning_performed": false
+}
