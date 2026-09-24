@@ -34,7 +34,7 @@ def spot_candidates(root):
     ),
     r AS (
       SELECT *,
-             close/LAG(close,10) OVER(PARTITION BY trade_date ORDER BY ts)-1 ret10
+             close_px/LAG(close_px,10) OVER(PARTITION BY trade_date ORDER BY ts)-1 ret10
       FROM b
     )
     SELECT *
