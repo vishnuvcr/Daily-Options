@@ -63,3 +63,8 @@ def test_adjustment_date_is_explicit_in_setup():
     src = inspect.getsource(build_setup)
     assert '"adjust_date": adjust_date' in src
     assert '"exit_date": exit_date' in src
+
+
+def test_no_legacy_friday_variable_in_simulator():
+    src = inspect.getsource(simulate_setup)
+    assert "{friday}" not in src
