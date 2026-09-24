@@ -37,6 +37,20 @@ jobs:
         with:
           path: data/cache/phase24_trademarkk
           key: phase24-trademarkk-51ca58c-v2
+      - name: Acquire or reuse exact-expiry NIFTY data
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase24_trademarkk
+          if [ ! -f data/cache/phase24_trademarkk/index/NIFTY.parquet ]; then
+            for attempt in 1 2 3 4; do
+              python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="thetrademarkk/india-index-options-1m",repo_type="dataset",revision="51ca58c",local_dir="data/cache/phase24_trademarkk",allow_patterns=["index/NIFTY.parquet","options/NIFTY/*.parquet"])' && break
+              if [ "$attempt" -eq 4 ]; then exit 1; fi
+              sleep $((attempt*15))
+            done
+          fi
+          test -f data/cache/phase24_trademarkk/index/NIFTY.parquet
+          test -d data/cache/phase24_trademarkk/options/NIFTY
+          find data/cache/phase24_trademarkk/options/NIFTY -maxdepth 1 -type f -name '*.parquet' | wc -l
       - name: Validate exact-expiry cache coverage
         run: |
           set -euo pipefail
@@ -69,20 +83,6 @@ jobs:
               raise SystemExit("Phase 24 cache preflight failed: under-covered exact-expiry option cache")
           PY
 
-      - name: Acquire or reuse exact-expiry NIFTY data
-        run: |
-          set -euo pipefail
-          mkdir -p data/cache/phase24_trademarkk
-          if [ ! -f data/cache/phase24_trademarkk/index/NIFTY.parquet ]; then
-            for attempt in 1 2 3 4; do
-              python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="thetrademarkk/india-index-options-1m",repo_type="dataset",revision="51ca58c",local_dir="data/cache/phase24_trademarkk",allow_patterns=["index/NIFTY.parquet","options/NIFTY/*.parquet"])' && break
-              if [ "$attempt" -eq 4 ]; then exit 1; fi
-              sleep $((attempt*15))
-            done
-          fi
-          test -f data/cache/phase24_trademarkk/index/NIFTY.parquet
-          test -d data/cache/phase24_trademarkk/options/NIFTY
-          find data/cache/phase24_trademarkk/options/NIFTY -maxdepth 1 -type f -name '*.parquet' | wc -l
       - name: Run friction
         env:
           SLIP: ${{ matrix.friction == 'base' && '0.20' || '0.40' }}
