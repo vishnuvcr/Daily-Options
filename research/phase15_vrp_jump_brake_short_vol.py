@@ -271,9 +271,16 @@ def walk_forward(trades):
 def run(data_root,out,slippage,expiry_type=None):
     features=load_signal_rows(data_root, expiry_type=expiry_type)
     variants=[v for v in variant_grid() if (expiry_type is None or v['expiry_type']==expiry_type)]
-    unique_signals=features[['trade_date','datetime','expiry_type','spot','vrp','abs_ret15']].drop_duplicates(['trade_date','datetime','expiry_type'])
+
+    unique_signals=features[
+        ['trade_date','datetime','expiry_type','spot','vrp','abs_ret15']
+    ].drop_duplicates(['trade_date','datetime','expiry_type'])
+
     entry_quotes=load_entry_quotes(data_root,unique_signals)
-    entry_groups={key:g.copy() for key,g in entry_quotes.groupby(['trade_date','expiry_type','datetime'],sort=False)}
+    entry_groups={
+        key:g.copy()
+        for key,g in entry_quotes.groupby(['trade_date','expiry_type','datetime'],sort=False)
+    }
 
     setup_cache={}
     setup_rows=[]
@@ -298,29 +305,68 @@ def run(data_root,out,slippage,expiry_type=None):
 
     setup_df=pd.DataFrame(setup_rows).drop_duplicates()
     window_rows=load_execution_windows(data_root,setup_df,max_hold=max(HOLDS))
+
     window_cache={}
     if not window_rows.empty:
         for key in window_rows[['trade_date','expiry_type','entry_time']].drop_duplicates().itertuples(index=False,name=None):
-            window_cache[key]=window_rows[(window_rows.trade_date==key[0])&(window_rows.expiry_type==key[1])&(window_rows.entry_time==key[2])].copy()
+            window_cache[key]=window_rows[
+                (window_rows.trade_date==key[0])
+                &(window_rows.expiry_type==key[1])
+                &(window_rows.entry_time==key[2])
+            ].copy()
+
+    # Cache the expensive pivot once per signal/hold.
+    bars_cache={}
+    # Cache deterministic outcome once per signal/structure/hold/stop.
+    outcome_cache={}
+
+    def cached_bars(signal, setup, hold):
+        key=(signal.trade_date,signal.datetime,signal.expiry_type,hold)
+        if key not in bars_cache:
+            wkey=(signal.trade_date,signal.expiry_type,setup['entry_time'])
+            bars_cache[key]=bars_from_long_window(
+                window_cache.get(wkey,pd.DataFrame()),wkey,hold
+            )
+        return bars_cache[key]
+
+    def cached_trade(signal, setup, structure, hold, stop_ratio):
+        key=(signal.trade_date,signal.datetime,signal.expiry_type,structure,hold,stop_ratio)
+        if key not in outcome_cache:
+            bars=cached_bars(signal,setup,hold)
+            outcome_cache[key]=simulate(signal,setup,bars,structure,stop_ratio,slippage)
+        return outcome_cache[key]
 
     trades=[]
     for v in variants:
         sig=select_signals(features,v)
-        if sig.empty: continue
+        if sig.empty:
+            continue
         for _,signal in sig.iterrows():
             key=(signal.trade_date,signal.datetime,signal.expiry_type)
             setup=setup_cache.get(key)
-            if setup is None: continue
-            wkey=(signal.trade_date,signal.expiry_type,setup['entry_time'])
-            bars=bars_from_long_window(window_cache.get(wkey,pd.DataFrame()),wkey,v['hold_minutes'])
-            t=simulate(signal,setup,bars,v['structure'],v['stop_ratio'],slippage)
+            if setup is None:
+                continue
+
+            t=cached_trade(
+                signal,setup,
+                v['structure'],
+                v['hold_minutes'],
+                v['stop_ratio'],
+            )
             if t is not None:
-                t['variant_id']=f"{v['entry_time']}|vrp{v['vrp_threshold']:.1f}|jump{v['jump_max']:.4f}|{v['structure']}|{v['expiry_type']}|h{v['hold_minutes']}|s{v['stop_ratio']:.2f}"
+                t=dict(t)
+                t['variant_id']=(
+                    f"{v['entry_time']}|vrp{v['vrp_threshold']:.1f}|"
+                    f"jump{v['jump_max']:.4f}|{v['structure']}|"
+                    f"{v['expiry_type']}|h{v['hold_minutes']}|s{v['stop_ratio']:.2f}"
+                )
                 trades.append(t)
 
     trades=pd.DataFrame(trades)
     out.mkdir(parents=True,exist_ok=True)
-    if not trades.empty: trades.to_csv(out/'phase15_trades.csv',index=False)
+    if not trades.empty:
+        trades.to_csv(out/'phase15_trades.csv',index=False)
+
     rows=[]
     if not trades.empty:
         total_days=features.trade_date.nunique()
@@ -329,7 +375,9 @@ def run(data_root,out,slippage,expiry_type=None):
             wins=g.loc[g.net_pnl>0,'net_pnl'].sum()
             losses=-g.loc[g.net_pnl<0,'net_pnl'].sum()
             rows.append({
-                'variant_id':vid,'trades':len(g),'active_days':len(d),
+                'variant_id':vid,
+                'trades':len(g),
+                'active_days':len(d),
                 'mean_active_day_net':float(d.mean()),
                 'mean_all_day_net':float(d.sum()/max(1,total_days)),
                 'win_rate':float((g.net_pnl>0).mean()),
@@ -337,10 +385,12 @@ def run(data_root,out,slippage,expiry_type=None):
                 'max_drawdown':float((d.cumsum()-d.cumsum().cummax()).min()),
                 'total_net':float(g.net_pnl.sum())
             })
+
     board=pd.DataFrame(rows).sort_values('mean_all_day_net',ascending=False) if rows else pd.DataFrame()
     board.to_csv(out/'phase15_leaderboard.csv',index=False)
     wf=walk_forward(trades)
     wf.to_csv(out/'phase15_walk_forward.csv',index=False)
+
     result={
         'variants':len(variants),
         'expiry_shard':expiry_type,
@@ -350,6 +400,8 @@ def run(data_root,out,slippage,expiry_type=None):
         'unique_candidate_signals':int(len(unique_signals)),
         'setup_count':int(len(setup_cache)),
         'window_rows':int(len(window_rows)),
+        'unique_bar_cache':int(len(bars_cache)),
+        'unique_outcome_cache':int(len(outcome_cache)),
         'trade_rows':int(len(trades)),
         'positive_variants':int((board.mean_all_day_net>0).sum()) if not board.empty else 0,
         'target_qualified_prelim':int((board.mean_all_day_net>=TARGET).sum()) if not board.empty else 0,
@@ -359,11 +411,18 @@ def run(data_root,out,slippage,expiry_type=None):
         'target_test_windows':int((wf.test_mean>=TARGET).sum()) if not wf.empty else 0,
         'mean_test_window_net':float(wf.test_mean.mean()) if not wf.empty else None,
         'slippage_points_per_leg':slippage,
-        'gate':'PASS_PRELIMINARY' if (not board.empty and board.iloc[0].mean_all_day_net>=TARGET and not wf.empty and (wf.test_mean>=TARGET).any()) else 'FAIL_PRELIMINARY'
+        'gate':'PASS_PRELIMINARY' if (
+            not board.empty
+            and board.iloc[0].mean_all_day_net>=TARGET
+            and not wf.empty
+            and (wf.test_mean>=TARGET).any()
+        ) else 'FAIL_PRELIMINARY'
     }
+
     (out/'phase15_summary.json').write_text(json.dumps(result,indent=2,default=str))
     print(json.dumps(result,indent=2,default=str))
     return result
+
 
 if __name__=='__main__':
     ap=argparse.ArgumentParser(); ap.add_argument('--data',type=Path,required=True); ap.add_argument('--out',type=Path,required=True); ap.add_argument('--slippage',type=float,default=0.20); ap.add_argument('--expiry-type',choices=['WEEK','MONTH']); a=ap.parse_args(); run(a.data,a.out,a.slippage,a.expiry_type)
