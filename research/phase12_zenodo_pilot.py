@@ -64,9 +64,15 @@ def _utc_naive(series: pd.Series) -> pd.Series:
     return x.dt.tz_localize("Asia/Kolkata", ambiguous="NaT", nonexistent="NaT").dt.tz_convert("UTC").dt.tz_localize(None)
 
 def _read_table(path: Path) -> pd.DataFrame:
-    if path.suffix.lower() in {".xlsx", ".xls"}:
+    suffix = path.suffix.lower()
+    if suffix in {".xlsx", ".xls"}:
         return pd.read_excel(path)
-    return pd.read_csv(path)
+    if suffix in {".txt", ".csv"}:
+        try:
+            return pd.read_csv(path)
+        except Exception:
+            return pd.read_csv(path, sep=None, engine="python")
+    raise ValueError(f"unsupported table suffix: {suffix}")
 
 def _norm_cols(df: pd.DataFrame) -> dict[str, str]:
     return {str(c).strip().lower().replace(" ", "_").replace("-", "_"): c for c in df.columns}
@@ -92,7 +98,7 @@ def _standardize_ohlc(df: pd.DataFrame) -> pd.DataFrame:
     return out.dropna(subset=["datetime", "close"]).loc[lambda x: x["close"] > 0].sort_values("datetime")
 
 def load_zenodo_market(root: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
-    files = [p for p in root.rglob("*") if p.is_file() and p.suffix.lower() in {".csv", ".xlsx", ".xls"}]
+    files = [p for p in root.rglob("*") if p.is_file() and p.suffix.lower() in {".csv", ".txt", ".xlsx", ".xls"}]
     futures, spots = [], []
     for p in files:
         name = p.name.upper()
@@ -149,25 +155,38 @@ def lead_features(futures: pd.DataFrame, spot: pd.DataFrame, window: int) -> pd.
     return x
 
 def _parse_expiry(parts: tuple[str, ...]) -> pd.Timestamp | None:
-    patterns = [
-        re.compile(r"^(\d{1,2})[-_ ]([A-Za-z]{3,9})[-_ ](\d{4})$"),
-        re.compile(r"^(\d{4})[-_](\d{1,2})[-_](\d{1,2})$"),
-        re.compile(r"^(\d{4})(\d{2})(\d{2})$"),
-    ]
+    month_map = {
+        "JAN": 1, "FEB": 2, "MAR": 3, "APR": 4, "MAY": 5, "JUN": 6,
+        "JUL": 7, "AUG": 8, "SEP": 9, "OCT": 10, "NOV": 11, "DEC": 12,
+    }
+    candidates: list[pd.Timestamp] = []
     for part in parts:
-        q = part.strip()
-        for pat in patterns:
-            m = pat.match(q)
-            if not m:
-                continue
+        q = part.upper().replace("_", "-").replace("/", "-")
+        for y, m, d in re.findall(r"(?<!\d)(20\d{2})-(\d{1,2})-(\d{1,2})(?!\d)", q):
             try:
-                if len(m.groups()) == 3 and len(m.group(1)) == 4:
-                    return pd.Timestamp(year=int(m.group(1)), month=int(m.group(2)), day=int(m.group(3)))
-                if len(m.groups()) == 3:
-                    return pd.Timestamp(day=int(m.group(1)), month=pd.to_datetime(m.group(2), format="%b").month if m.group(2)[:3].isalpha() else int(m.group(2)), year=int(m.group(3)))
+                candidates.append(pd.Timestamp(year=int(y), month=int(m), day=int(d)))
             except Exception:
                 pass
-    return None
+        for d, mon, y in re.findall(
+            r"(?<!\d)(\d{1,2})-([A-Z]{3,9})-(\d{2,4})(?!\d)", q
+        ):
+            mon_num = month_map.get(mon[:3])
+            if not mon_num:
+                continue
+            yy = int(y)
+            yy = 2000 + yy if yy < 100 else yy
+            try:
+                candidates.append(pd.Timestamp(year=yy, month=mon_num, day=int(d)))
+            except Exception:
+                pass
+        for d, m, y in re.findall(r"(?<!\d)(\d{1,2})-(\d{1,2})-(\d{2,4})(?!\d)", q):
+            yy = int(y)
+            yy = 2000 + yy if yy < 100 else yy
+            try:
+                candidates.append(pd.Timestamp(year=yy, month=int(m), day=int(d)))
+            except Exception:
+                pass
+    return max(candidates).normalize() if candidates else None
 
 def _last_thursday(year: int, month: int) -> pd.Timestamp:
     d = pd.Timestamp(year=year, month=month, day=1) + pd.offsets.MonthEnd(0)
