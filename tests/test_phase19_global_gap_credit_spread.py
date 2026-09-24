@@ -25,3 +25,9 @@ def test_variant_attribution_locks_hold_stop():
     assert '"hold": v.hold' in src
     assert '"stop": v.stop' in src
     assert '["trade_date","entry_ts","expiry","side","short_strike","wing_strike","hold","stop"]' in sim
+
+    
+def test_simulation_preserves_variant_id_after_setup_deduplication():
+    src=inspect.getsource(__import__("research.phase19_global_gap_credit_spread",fromlist=["simulate"]))
+    assert "return entries.merge(outcomes_df" in src
+    assert "join_cols = ["trade_date","entry_ts","expiry","side","short_strike","wing_strike","hold","stop"]" in src
