@@ -140,3 +140,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0130 | 2026-09-24 | Phase 14d workflow | Initial Rissin validator mixed the option and NIFTY-index cache roots and the workflow contained an obsolete duplicate execution block | No Rissin P&L was accepted; branch was pre-execution | Separate `--option-root` and `--index-root` arguments and reduce the workflow to one base plus one stress execution | CLOSED — pre-result |
 
 | E0131 | 2026-09-24 | Phase 14d Rissin query | Rissin `date` is a VARCHAR field; DuckDB rejected direct comparison with DATE literals before any P&L | No later-OOS result accepted | Cast Rissin `date` to DATE in the option query | CLOSED — pre-result |
+
+| E0132 | 2026-09-24 | Phase 14d execution performance | The Rissin validator scanned the full 2024–2025 NIFTY option files before filtering to signal dates; the GitHub runner was shut down during that scan | No P&L produced; frozen rule unchanged | Restrict DuckDB option loading to the exact frozen signal dates, preserving all contract/price rules while removing unnecessary rows | CLOSED — execution optimization |
