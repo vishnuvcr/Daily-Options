@@ -79,3 +79,5 @@ def test_current_rule_sequence_is_three_sessions():
     assert "current Tuesday regime: Wednesday entry -> Thursday adjustment -> Monday exit" in src
 
 # date-aware NSE transaction charge code is importable
+
+# trigger after literal-newline correction
