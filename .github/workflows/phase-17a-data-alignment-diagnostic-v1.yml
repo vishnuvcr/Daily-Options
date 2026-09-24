@@ -1,0 +1,48 @@
+name: Phase 17a - Data Alignment Diagnostic
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [phase-17a-data-alignment-diagnostic-v1]
+
+concurrency:
+  group: phase17a-diagnostic
+  cancel-in-progress: false
+
+jobs:
+  diagnostic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-17a-data-alignment-diagnostic-v1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pandas pyarrow duckdb huggingface_hub
+      - name: Cache TradeMarkk NIFTY data
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase17_trademarkk
+          key: phase17-trademarkk-51ca58c-v1
+      - name: Acquire or reuse exact-expiry NIFTY data
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase17_trademarkk
+          if [ ! -f data/cache/phase17_trademarkk/index/NIFTY.parquet ]; then
+            for attempt in 1 2 3 4; do
+              python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="thetrademarkk/india-index-options-1m",repo_type="dataset",revision="51ca58c",local_dir="data/cache/phase17_trademarkk",allow_patterns=["index/NIFTY.parquet","options/NIFTY/*.parquet"])' && break
+              if [ "$attempt" -eq 4 ]; then exit 1; fi
+              sleep $((attempt*15))
+            done
+          fi
+      - name: Run data alignment diagnostic
+        run: PYTHONPATH=. python -m research.phase17a_data_alignment_diagnostic data/cache/phase17_trademarkk reports/diagnostic
+      - name: Upload diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase17a-diagnostic
+          path: reports/diagnostic/
