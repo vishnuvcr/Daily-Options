@@ -154,8 +154,23 @@ jobs:
           features = {w: lead_features(futures, spot, w) for w in LEAD_WINDOWS}
           manifest = discover_option_manifest(root / "options")
           entries = build_entries(features, manifest)
+          feature_days = {str(w): int(features[w]["trade_date"].nunique()) for w in features}
+          feature_date_ranges = {
+              str(w): {
+                  "min": str(features[w]["trade_date"].min()),
+                  "max": str(features[w]["trade_date"].max()),
+              }
+              for w in features
+          }
+          entry_date_counts = (
+              entries.groupby("trade_date").size().sort_values(ascending=False).head(20).to_dict()
+              if not entries.empty else {}
+          )
 
           audit = {
+              "feature_days": feature_days,
+              "feature_date_ranges": feature_date_ranges,
+              "entry_date_counts_top20": {str(k): int(v) for k, v in entry_date_counts.items()},
               "entries": int(len(entries)),
               "unique_atm_paths": int(entries.atm_path.nunique()) if not entries.empty else 0,
               "unique_wing_paths": int(entries.wing_path.nunique()) if not entries.empty else 0,
