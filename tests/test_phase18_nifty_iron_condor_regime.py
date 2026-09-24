@@ -29,3 +29,8 @@ def test_spot_query_uses_spot_close_alias():
     import inspect
     src=inspect.getsource(mod.load_spot)
     assert 'SELECT trade_date,ts,spot_close,ret10,rv_ratio' in src
+
+
+def test_empty_setup_frame_is_non_error():
+    import pandas as pd
+    assert mod.filter_setups(pd.DataFrame()) .empty
