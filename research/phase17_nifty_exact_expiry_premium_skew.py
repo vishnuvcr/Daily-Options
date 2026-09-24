@@ -158,7 +158,8 @@ def load_option_quotes(root, signals):
         FROM read_parquet('{path}') o
         JOIN wanted w
           ON CAST(o.trading_day AS DATE)=w.trade_date
-         AND (o."timestamp"=w.ts OR o."timestamp"=w.entry_ts)
+         AND o."timestamp">=w.ts
+         AND o."timestamp"<=w.ts+INTERVAL '3 minutes'
         WHERE CAST(o.trading_day AS DATE) IN ({vals})
           AND o.close>0
         """
