@@ -369,17 +369,23 @@ def _choose_strikes(manifest: pd.DataFrame, expiry, side: str, spot: float, widt
         return None
     return a.iloc[0], w.iloc[0]
 
-@lru_cache(maxsize=2048)
-def _load_merged_paths(path_a: str, path_b: str) -> pd.DataFrame:
-    a = _load_option_path(path_a).rename(columns={"open":"open_a","high":"high_a","low":"low_a","close":"close_a"})
-    b = _load_option_path(path_b).rename(columns={"open":"open_b","high":"high_b","low":"low_b","close":"close_b"})
-    return a.merge(b, on="datetime", how="inner").sort_values("datetime")
-
-
 def _merge_leg_bars(path_a: str, path_b: str, entry_time: pd.Timestamp, max_hold: int) -> pd.DataFrame:
-    bars = _load_merged_paths(path_a, path_b)
-    end = entry_time + pd.Timedelta(minutes=max_hold)
-    return bars[(bars["datetime"] >= entry_time) & (bars["datetime"] <= end)].copy()
+    end_time = entry_time + pd.Timedelta(minutes=max_hold)
+
+    a = _load_option_path(path_a).rename(
+        columns={"open":"open_a","high":"high_a","low":"low_a","close":"close_a"}
+    )
+    b = _load_option_path(path_b).rename(
+        columns={"open":"open_b","high":"high_b","low":"low_b","close":"close_b"}
+    )
+
+    # Slice each leg first, then merge only the executable window.
+    a = a[(a["datetime"] >= entry_time) & (a["datetime"] <= end_time)]
+    b = b[(b["datetime"] >= entry_time) & (b["datetime"] <= end_time)]
+    if a.empty or b.empty:
+        return pd.DataFrame()
+
+    return a.merge(b, on="datetime", how="inner").sort_values("datetime")
 
 def build_entries(features_by_window: dict[int, pd.DataFrame], manifest: pd.DataFrame) -> pd.DataFrame:
     rows = []
