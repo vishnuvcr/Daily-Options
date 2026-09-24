@@ -180,3 +180,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0147 | 2026-09-24 | Phase 15 shard probe | Attempt to embed a compound `if` statement inside a Python `-c` one-liner caused SyntaxError in both WEEK and MONTH probes | No Base/P&L stage ran; the probe itself had already verified 200 rows per shard | Make the alignment probe diagnostic-only and remove the invalid one-line compound statement | CLOSED — pre-result |
 
 | E0148 | 2026-09-24 | Phase 15 shard probe fix | First probe cleanup removed the compound statement but left the conditional source line in the Python one-liner, so both shards still hit SyntaxError | No Base/P&L accepted | Remove the entire inline conditional statement from the probe | CLOSED — pre-result |
+
+| E0144 | 2026-09-24 | Phase 15 diagnostic | First zero-trade diagnostic selected an arbitrary variant with zero candidate signals, so it could not explain shard-wide zero trades | No research impact; shard diagnostics show 3,663/3,656 candidate/setup counts | Retarget diagnostic to the broadest valid WEEK cell: VRP>=0, jump<=0.40%, 09:30, STRADDLE, 30m, 1.30x stop | CLOSED — diagnostic refinement |
