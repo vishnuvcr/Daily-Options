@@ -77,3 +77,5 @@ def test_no_legacy_friday_variable_in_simulator():
 def test_current_rule_sequence_is_three_sessions():
     src = inspect.getsource(__import__("research.phase24_falcon_spread", fromlist=["build_setup"]).build_setup)
     assert "current Tuesday regime: Wednesday entry -> Thursday adjustment -> Monday exit" in src
+
+# date-aware NSE transaction charge code is importable
