@@ -26,7 +26,7 @@ IV_RV_MIN = 1.10
 
 def open_db() -> duckdb.DuckDBPyConnection:
     Path('/tmp/phase9_duckdb').mkdir(parents=True, exist_ok=True)
-    con = open_db()
+    con = duckdb.connect()
     con.execute("PRAGMA threads=2")
     con.execute("PRAGMA memory_limit='3GB'")
     con.execute("PRAGMA preserve_insertion_order=false")
@@ -129,19 +129,37 @@ def select_entries(signals: pd.DataFrame, root: Path) -> pd.DataFrame:
     glob = parquet_glob(root)
     sql = f'''
     WITH raw AS (
-      SELECT CAST(datetime AS TIMESTAMPTZ) AS ts_utc, CAST(date AS DATE) AS trade_date, expiry_type, option_type,
-             CAST(strike_price AS DOUBLE) AS strike, CAST(spot AS DOUBLE) AS spot, CAST(open AS DOUBLE) AS open
+      SELECT CAST(datetime AS TIMESTAMPTZ) AS ts_utc, CAST(date AS DATE) AS trade_date,
+             CAST(expiry AS DATE) AS expiry, expiry_type, option_type,
+             CAST(strike_price AS DOUBLE) AS strike, CAST(spot AS DOUBLE) AS spot,
+             CAST(open AS DOUBLE) AS open
       FROM read_parquet('{glob}', union_by_name=true)
       WHERE close > 0 AND expiry_type IN ('WEEK','MONTH')
     ),
-    ranked AS (
-      SELECT s.*, r.expiry_type, r.option_type, r.strike, r.ts_utc, r.open,
-             r.ts_utc + INTERVAL '5 hours 30 minutes' AS local_ts,
-             ROW_NUMBER() OVER (PARTITION BY s.variant_id, s.trade_date
-               ORDER BY ABS(r.strike - CASE WHEN s.family='BULL_PUT' THEN s.spot-3*50.0 ELSE s.spot+3*50.0 END), r.ts_utc) AS rn
-      FROM signals_df s JOIN raw r
+    expiry_choice AS (
+      SELECT s.variant_id, s.trade_date, split_part(s.variant_id,'|',3) AS expiry_type,
+             MIN(r.expiry) AS expiry
+      FROM signals_df s
+      JOIN raw r
         ON r.trade_date=s.trade_date
        AND r.expiry_type=split_part(s.variant_id,'|',3)
+       AND r.expiry >= s.trade_date
+      GROUP BY s.variant_id, s.trade_date
+    ),
+    ranked AS (
+      SELECT s.*, r.expiry, r.expiry_type, r.option_type, r.strike, r.ts_utc, r.open,
+             r.ts_utc + INTERVAL '5 hours 30 minutes' AS local_ts,
+             ROW_NUMBER() OVER (
+               PARTITION BY s.variant_id, s.trade_date
+               ORDER BY ABS(r.strike - CASE WHEN s.family='BULL_PUT' THEN s.spot-3*50.0 ELSE s.spot+3*50.0 END), r.ts_utc
+             ) AS rn
+      FROM signals_df s
+      JOIN expiry_choice e
+        ON e.variant_id=s.variant_id AND e.trade_date=s.trade_date
+      JOIN raw r
+        ON r.trade_date=s.trade_date
+       AND r.expiry=e.expiry
+       AND r.expiry_type=e.expiry_type
        AND r.option_type=CASE WHEN s.family='BULL_PUT' THEN 'PUT' ELSE 'CALL' END
        AND r.ts_utc + INTERVAL '5 hours 30 minutes' BETWEEN s.entry_anchor AND s.entry_anchor + INTERVAL '2 minutes'
     )
@@ -155,18 +173,24 @@ def select_entries(signals: pd.DataFrame, root: Path) -> pd.DataFrame:
     con.register('short_df', short)
     sql2 = f'''
     WITH raw AS (
-      SELECT CAST(datetime AS TIMESTAMPTZ) AS ts_utc, CAST(date AS DATE) AS trade_date, expiry_type, option_type,
+      SELECT CAST(datetime AS TIMESTAMPTZ) AS ts_utc, CAST(date AS DATE) AS trade_date,
+             CAST(expiry AS DATE) AS expiry, expiry_type, option_type,
              CAST(strike_price AS DOUBLE) AS strike, CAST(open AS DOUBLE) AS open
       FROM read_parquet('{glob}', union_by_name=true)
       WHERE close > 0 AND expiry_type IN ('WEEK','MONTH')
     ),
     ranked AS (
       SELECT s.*, r.strike AS long_strike, r.open AS long_open,
-             ROW_NUMBER() OVER (PARTITION BY s.variant_id, s.trade_date
+             ROW_NUMBER() OVER (
+               PARTITION BY s.variant_id, s.trade_date
                ORDER BY CASE WHEN s.family='BULL_PUT' THEN ABS(r.strike-(s.strike+s.width_steps*-50.0))
-                             ELSE ABS(r.strike-(s.strike+s.width_steps*50.0)) END) AS rn2
+                             ELSE ABS(r.strike-(s.strike+s.width_steps*50.0)) END
+             ) AS rn2
       FROM short_df s JOIN raw r
-        ON r.trade_date=s.trade_date AND r.expiry_type=s.expiry_type AND r.option_type=s.option_type
+        ON r.trade_date=s.trade_date
+       AND r.expiry=s.expiry
+       AND r.expiry_type=s.expiry_type
+       AND r.option_type=s.option_type
        AND r.ts_utc + INTERVAL '5 hours 30 minutes' = s.local_ts
        AND CASE WHEN s.family='BULL_PUT' THEN r.strike < s.strike ELSE r.strike > s.strike END
     )
@@ -190,7 +214,8 @@ def simulate(entries: pd.DataFrame, root: Path, out_dir: Path, slippage_points: 
     glob = parquet_glob(root)
     sql = f'''
     WITH raw AS (
-      SELECT CAST(datetime AS TIMESTAMPTZ) AS ts_utc, CAST(date AS DATE) AS trade_date, expiry_type, option_type,
+      SELECT CAST(datetime AS TIMESTAMPTZ) AS ts_utc, CAST(date AS DATE) AS trade_date,
+             CAST(expiry AS DATE) AS expiry, expiry_type, option_type,
              CAST(strike_price AS DOUBLE) AS strike, CAST(open AS DOUBLE) AS open, CAST(high AS DOUBLE) AS high,
              CAST(low AS DOUBLE) AS low, CAST(close AS DOUBLE) AS close
       FROM read_parquet('{glob}', union_by_name=true)
@@ -198,7 +223,7 @@ def simulate(entries: pd.DataFrame, root: Path, out_dir: Path, slippage_points: 
     )
     SELECT e.*, r.ts_utc + INTERVAL '5 hours 30 minutes' AS local_ts, r.strike, r.open, r.high, r.low, r.close
     FROM entries_df e JOIN raw r
-      ON r.trade_date=e.trade_date AND r.expiry_type=e.expiry_type AND r.option_type=e.option_type
+      ON r.trade_date=e.trade_date AND r.expiry=e.expiry AND r.expiry_type=e.expiry_type AND r.option_type=e.option_type
      AND r.strike IN (e.strike,e.long_strike)
      AND r.ts_utc + INTERVAL '5 hours 30 minutes' BETWEEN e.entry_time_local AND e.entry_time_local + e.hold_minutes * INTERVAL '1 minute'
     ORDER BY e.variant_id,e.trade_date,r.strike,r.ts_utc
