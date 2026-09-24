@@ -6,7 +6,7 @@ on:
       phase_ref:
         description: "Exact Phase 17 commit to execute"
         required: true
-        default: "e80803f943abab764985647e2de2a21036f00abf"
+        default: "ddccef2660816db4a518e65d37c29051eb04aaf9"
   pull_request:
     types: [opened, synchronize, reopened]
   push:
@@ -14,7 +14,7 @@ on:
       - ".github/workflows/phase-17-execution-bridge.yml"
 
 concurrency:
-  group: phase17-execution
+  group: phase17-execution-v2
   cancel-in-progress: false
 
 jobs:
