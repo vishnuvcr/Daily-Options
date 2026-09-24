@@ -250,3 +250,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0187 | 2026-09-24 | Phase 18 data query | DuckDB rejected the projected alias `close` in the NIFTY spot query before simulation | Both base/stress numerical stages failed before any P&L | Use a non-reserved alias `spot_close` consistently through the spot feature calculation and candidate construction | CLOSED — pre-result |
 
 | E0188 | 2026-09-24 | Phase 18 data query | After the spot alias correction, the final feature SELECT still projected a nonexistent `close` column from the CTE | Phase 18 would fail again before signal construction | Project `spot_close` explicitly and keep candidate construction on the corrected field | CLOSED — pre-result |
+
+| E0189 | 2026-09-24 | Phase 18 residual spot reference | ATM strike selection still referenced `sm.close` after the spot column was renamed `spot_close` | Fresh run would fail during setup construction after query correction | Use `sm.spot_close` and re-run; static source audit added | CLOSED — pre-result |
