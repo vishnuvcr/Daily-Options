@@ -89,3 +89,8 @@ After the v1 friction stall and v2 runner contention, an isolated Phase 19 v3 br
 ## 2026-09-25 — Phase 13 integrity correction
 
 The prior Phase 13 result was revisited during candidate-audit work. Every trade row in the authoritative Base/Stress artifact was an exact duplicate, caused by risk-profile expansion before merging on the already-keyed `risk_id`. The corrected result is about half the published net: ₹142.72 base / ₹112.72 stress best-cell mean active-day net, with no target-qualified cell and corrected WFA mean ₹121.82 / ₹91.82. This is an audit correction, not a new strategy search or parameter tuning.
+
+
+## 2026-09-25 — Phase 20 final result / Phase 21 launch
+
+Authoritative Phase 20 run 36045068043 completed Base and Stress cleanly. The frozen 384-cell global-gated late-day volatility-acceleration family produced 3,872 trades; best mean active-day net was Rs 481.73 base and Rs 451.73 stress, with 0 target-qualified cells and 0 nested-WFA windows. Phase 20 is retired without retuning. Phase 21 is the active frontier: a preregistered regime switch between long ATM straddles on fixed expansion regimes and short OTM strangles on fixed calm regimes.
