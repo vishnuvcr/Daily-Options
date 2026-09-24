@@ -68,3 +68,8 @@ After reviewing current/historical lead-lag evidence, a futures/derivative-versu
 ### Phase 9 closure — 2026-09-24
 
 The corrected Phase 9 engine produced real trades after the earlier path-join defect was fixed. All 96 variants and 106,152 trades were independently aggregated from the four shard artifacts. Best base mean active-day net was -₹168.79/lot/day; stress -₹228.79; all 16 WFA windows were negative. The family is retired without retuning.
+
+
+## 2026-09-24 — Phase 19 preregistration
+
+Prepared a materially distinct fallback hypothesis combining pre-open global information with NIFTY opening gap and intraday volatility compression, expressed through exact-expiry defined-risk iron condors. Phase 19 is parked until Phase 18 completes; it is not tuned from Phase 18 results.
