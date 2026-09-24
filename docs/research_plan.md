@@ -254,3 +254,40 @@ Preliminary: mean active-day net >= Rs 1,000/lot.
 Formal: positive untouched-test expectancy, at least one untouched test window >= Rs 1,000/lot/day, and no materially negative stress collapse.
 
 This family is distinct from the prior short straddle because risk is directional, max loss is defined by the spread, and the sold tail is conditioned on the underlying regime.
+
+
+## 14. Phase 10 — Cross-index relative-strength option execution on 1-minute data
+
+### Data source
+Primary research source: `thetrademarkk/india-index-options-1m`. The dataset card documents 1-minute OHLCV(+OI) spot and option bars for NIFTY, BANKNIFTY and SENSEX, with timestamped option strike/type/expiry fields. It reports 377M rows and a CC-BY-NC-4.0 license. This phase is therefore research-only; any promoted candidate must later be rerun on an executable/licensed source such as Paytm Money historical data. 
+
+### Hypothesis
+At an intraday time t, the index whose standardized short-horizon return is materially stronger than the other index can contain incremental information about the next movement. Trade the selected leader through a defined-risk debit spread only when an ATM option-pressure confirmation agrees.
+
+### Pre-registered grid
+128 variants:
+- leader-gap threshold: 0.75 or 1.25 standardized units;
+- entry: 09:45 or 10:00 IST;
+- expiry: next WEEK or next MONTH where that contract type exists;
+- spread width: 1 or 2 available strike steps;
+- hold: 15/30/45/60 minutes;
+- exit profile: stop 25% or 40% of debit, target 50% or 90% of debit.
+
+The leader is selected mechanically from NIFTY versus BANKNIFTY; no post-result underlying selection is allowed.
+
+### Signal
+For each index compute 5-minute return, 15-minute return and rolling intraday volatility. Select the index with the larger absolute standardized 5-minute move when the standardized strength gap clears the pre-registered threshold. Direction follows the leader's move. ATM call/put 3-minute premium return must confirm direction.
+
+### Execution
+- Next executable minute.
+- Absolute strike/expiry selected at entry and frozen.
+- Defined-risk debit spread.
+- Stop/target collision resolves in favor of the stop.
+- Date/expiry-aware historical NIFTY and BANKNIFTY lots.
+- Base slippage 0.20 premium points per leg; stress 0.40.
+
+### Validation
+180-day train -> 60-day validation -> 5-day embargo -> 60-day untouched test -> 60-day step.
+
+### License constraint
+The public 1-minute dataset is CC-BY-NC-4.0, so even a successful result cannot be treated as a live-deployment data license. Promotion requires independent rerun on licensed/executable Paytm Money/NSE data.
