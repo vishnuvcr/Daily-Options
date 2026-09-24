@@ -37,6 +37,35 @@ jobs:
             python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='artist-23/nifty-options-data', repo_type='dataset', revision='45e0a04', local_dir='data/cache/hf_nifty_options', allow_patterns=['NIFTY/**/*.parquet'])"
           fi
           test -d data/cache/hf_nifty_options/NIFTY
+      - name: Lightweight timestamp and quote alignment probe
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import duckdb, json
+          root=Path('data/cache/hf_nifty_options/NIFTY')
+          g=(root/'**'/'*.parquet').as_posix()
+          con=duckdb.connect()
+          q=f"""
+          SELECT
+            CAST(date AS DATE) AS date_field,
+            STRFTIME(CAST(datetime AS TIMESTAMP) + INTERVAL '5 hours 30 minutes','%H:%M:%S') AS ist_time,
+            expiry_type,
+            strike_type,
+            option_type,
+            COUNT(*) AS rows
+          FROM read_parquet('{g}', union_by_name=true)
+          WHERE close>0
+            AND STRFTIME(CAST(datetime AS TIMESTAMP) + INTERVAL '5 hours 30 minutes','%H:%M:%S') IN ('09:30:00','09:31:00','10:00:00','10:01:00','10:30:00','10:31:00')
+          GROUP BY ALL
+          ORDER BY date_field,ist_time,expiry_type,strike_type,option_type
+          LIMIT 200
+          """
+          x=con.execute(q).df()
+          print(x.to_string(index=False))
+          print("row_count_probe",len(x))
+          con.close()
+          PY
+
       - name: Base friction
         run: PYTHONPATH=. python -m research.phase15_vrp_jump_brake_short_vol --data data/cache/hf_nifty_options/NIFTY --out reports/phase15-base --slippage 0.20
       - name: Stress friction
