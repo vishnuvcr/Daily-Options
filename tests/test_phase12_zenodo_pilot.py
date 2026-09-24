@@ -155,3 +155,23 @@ def test_build_entries_does_not_stop_after_first_signal_day():
     entries = build_entries(features, manifest)
     chosen = entries[entries.variant_id == "lw1|z0.75|09:45:00|MONTH|w1|h10|r0"]
     assert chosen["trade_date"].nunique() == 2
+
+
+def test_path_coverage_range_is_parsed():
+    from pathlib import Path
+    from research.phase12_zenodo_pilot import _path_coverage_dates
+    start, end = _path_coverage_dates(
+        Path("CSV 01-04-19 to 30-05-19 (General Elections)") / "NIFTY11000CE.csv"
+    )
+    assert start == pd.Timestamp("2019-04-01")
+    assert end == pd.Timestamp("2019-05-30")
+
+
+def test_option_manifest_exposes_coverage_dates(tmp_path):
+    from research.phase12_zenodo_pilot import discover_option_manifest
+    p = tmp_path / "2019" / "May 2019" / "CSV 01-04-19 to 30-05-19 (General Elections)" / "NIFTY11000CE.csv"
+    p.parent.mkdir(parents=True)
+    p.write_text("2019/04/01,09:16,1,1,1,1,10,20\n")
+    man = discover_option_manifest(tmp_path)
+    assert man.iloc[0]["coverage_start"] == pd.Timestamp("2019-04-01").date()
+    assert man.iloc[0]["coverage_end"] == pd.Timestamp("2019-05-30").date()
