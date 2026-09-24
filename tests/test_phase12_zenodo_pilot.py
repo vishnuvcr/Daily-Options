@@ -125,3 +125,33 @@ def test_option_manifest_accepts_ce_space_strike_filename(tmp_path):
     assert len(m) == 1
     assert float(m.iloc[0]["strike"]) == 10500.0
     assert m.iloc[0]["option_type"] == "CE"
+
+
+def test_build_entries_does_not_stop_after_first_signal_day():
+    import pandas as pd
+    from research.phase12_zenodo_pilot import build_entries
+
+    features = {
+        1: pd.DataFrame({
+            "datetime": pd.to_datetime(["2019-01-02 03:46:00", "2019-01-03 03:46:00"]),
+            "fut_z": [1.0, 1.0],
+            "spot_z": [0.5, 0.5],
+            "lead_gap": [1.0, 1.0],
+            "direction": ["CALL", "CALL"],
+            "spot_close": [100.0, 100.0],
+            "trade_date": [pd.Timestamp("2019-01-02").date(), pd.Timestamp("2019-01-03").date()],
+            "trade_time_ist": ["09:16:00", "09:16:00"],
+            "trade_time_utc": ["03:46:00", "03:46:00"],
+        }),
+        3: pd.DataFrame(columns=[
+            "datetime","fut_z","spot_z","lead_gap","direction","spot_close",
+            "trade_date","trade_time_ist","trade_time_utc"
+        ])
+    }
+    manifest = pd.DataFrame([
+        {"path": "CE100", "strike": 100.0, "option_type": "CE", "expiry": pd.Timestamp("2019-01-31").date(), "expiry_type": "MONTH"},
+        {"path": "CE110", "strike": 110.0, "option_type": "CE", "expiry": pd.Timestamp("2019-01-31").date(), "expiry_type": "MONTH"},
+    ])
+    entries = build_entries(features, manifest)
+    chosen = entries[entries.variant_id == "lw1|z0.75|09:45:00|MONTH|w1|h10|r0"]
+    assert chosen["trade_date"].nunique() == 2
