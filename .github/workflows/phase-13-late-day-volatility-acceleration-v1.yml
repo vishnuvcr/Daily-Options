@@ -81,7 +81,8 @@ jobs:
       - name: Decision summary
         if: always()
         run: |
-          python - <<'PY'
+          mkdir -p reports
+          python - <<'PY
           import json
           from pathlib import Path
           payload = {
