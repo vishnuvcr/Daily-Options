@@ -20,25 +20,40 @@ def files(root,expiry):
     if miss: raise FileNotFoundError(','.join(miss))
     return '['+','.join(repr(p) for p in ps)+']'
 
-def load_features(root,expiry):
-    g=files(root,expiry); times=','.join(repr(x) for x in ENTRY_TIMES)
-    q=f'''WITH b AS (
-      SELECT CAST(datetime AS TIMESTAMP) datetime,CAST(date AS DATE) trade_date,expiry_type,option_type,strike_type,
-             CAST(spot AS DOUBLE) spot,CAST(iv AS DOUBLE) iv
-      FROM read_parquet({g},union_by_name=true)
+def feature_query(root, expiry_type):
+    g=files(root, expiry_type)
+    times=','.join(repr(x) for x in ENTRY_TIMES)
+    return f'''
+    WITH b AS (
+      SELECT CAST(datetime AS TIMESTAMP) datetime, CAST(date AS DATE) trade_date, expiry_type,
+             option_type, strike_type, CAST(spot AS DOUBLE) spot, CAST(iv AS DOUBLE) iv
+      FROM read_parquet({g}, union_by_name=true)
       WHERE close>0 AND iv BETWEEN 0 AND 300
         AND STRFTIME(CAST(datetime AS TIMESTAMP)+INTERVAL '5 hours 30 minutes','%H:%M:%S') IN ({times})
-    ), m AS (
-      SELECT datetime,trade_date,expiry_type,MAX(spot) spot,
-       AVG(CASE WHEN option_type='PUT' AND strike_type='ATM-2' THEN iv END) put_iv,
-       AVG(CASE WHEN option_type='CALL' AND strike_type='ATM+2' THEN iv END) call_iv
-      FROM b GROUP BY ALL
-    ) SELECT *,put_iv-call_iv skew_iv,
-       spot/LAG(spot,15) OVER(PARTITION BY trade_date ORDER BY datetime)-1 ret15
-      FROM m WHERE put_iv IS NOT NULL AND call_iv IS NOT NULL ORDER BY trade_date,datetime'''
-    con=duckdb.connect(); x=con.execute(q).df(); con.close()
+    ),
+    m AS (
+      SELECT datetime, trade_date, expiry_type, MAX(spot) spot,
+        AVG(CASE WHEN option_type='PUT' AND strike_type='ATM-2' THEN iv END) put_iv,
+        AVG(CASE WHEN option_type='CALL' AND strike_type='ATM+2' THEN iv END) call_iv
+      FROM b
+      GROUP BY datetime, trade_date, expiry_type
+    )
+    SELECT *, put_iv-call_iv skew_iv,
+      spot/LAG(spot,15) OVER(PARTITION BY trade_date ORDER BY datetime)-1 ret15
+    FROM m
+    WHERE put_iv IS NOT NULL AND call_iv IS NOT NULL
+    ORDER BY trade_date, datetime
+    '''
+
+
+def load_features(root,expiry):
+    q=feature_query(root,expiry)
+    con=duckdb.connect()
+    x=con.execute(q).df()
+    con.close()
     if x.empty:return x
-    x.trade_date=pd.to_datetime(x.trade_date).dt.date; x.datetime=pd.to_datetime(x.datetime)
+    x['trade_date']=pd.to_datetime(x.trade_date).dt.date
+    x['datetime']=pd.to_datetime(x.datetime)
     x['ist_time']=(x['datetime']+pd.Timedelta(hours=5,minutes=30)).dt.strftime('%H:%M:%S')
     x=x.sort_values(['ist_time','trade_date','datetime'])
     g=x.groupby('ist_time')
