@@ -40,4 +40,4 @@ def test_feature_query_keeps_dense_lookback_before_entry_filter(tmp_path):
     q = feature_query(tmp_path, "WEEK")
     assert "BETWEEN '09:30:00' AND '10:30:00'" in q
     assert "LAG(spot,15)" in q
-    assert "IN ({times})" in q
+    assert "IN ('09:45:00','10:00:00','10:15:00')" in q
