@@ -34,10 +34,7 @@ jobs:
           set -euo pipefail
           mkdir -p data/cache/phase14_later_oos
           if [ ! -d data/cache/phase14_later_oos/NIFTY/MONTH ]; then
-            python - <<'PY'
-            from huggingface_hub import snapshot_download
-            snapshot_download(repo_id='artist-23/nifty-options-data', repo_type='dataset', revision='45e0a04', local_dir='data/cache/phase14_later_oos', allow_patterns=['NIFTY/MONTH/**'])
-            PY
+            python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='artist-23/nifty-options-data', repo_type='dataset', revision='45e0a04', local_dir='data/cache/phase14_later_oos', allow_patterns=['NIFTY/MONTH/**'])"
           fi
           find data/cache/phase14_later_oos/NIFTY/MONTH -type f -name '*.parquet' | sed -n '1,10p'
       - name: Acquire global data
