@@ -66,7 +66,7 @@ def load_phase21_quotes(root: Path, spot: pd.DataFrame) -> pd.DataFrame:
     dates = sorted(pd.to_datetime(spot["trade_date"]).dt.date.unique())
     wanted = {}
     for d in dates:
-        future = [x for x in files if x[0] > d]
+        future = [x for x in files if x[0] >= d]
         if not future:
             continue
         weekly = min(future, key=lambda x: x[0])[0]
