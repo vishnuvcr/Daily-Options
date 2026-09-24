@@ -68,3 +68,8 @@ After reviewing current/historical lead-lag evidence, a futures/derivative-versu
 ### Phase 9 closure — 2026-09-24
 
 The corrected Phase 9 engine produced real trades after the earlier path-join defect was fixed. All 96 variants and 106,152 trades were independently aggregated from the four shard artifacts. Best base mean active-day net was -₹168.79/lot/day; stress -₹228.79; all 16 WFA windows were negative. The family is retired without retuning.
+
+
+## 2026-09-24 — User: "Ok proceed — Don't stop until you find a strategy"
+
+Decision: after Phase 16 hit a source-schema limitation, continue with a distinct exact-expiry mechanism rather than fabricate missing expiry or IV data. Phase 17 uses TradeMarkk exact-expiry NIFTY files and observable premium-skew/volume/OI pressure.
