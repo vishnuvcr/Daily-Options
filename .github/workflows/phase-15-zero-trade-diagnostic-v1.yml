@@ -1,0 +1,85 @@
+name: Phase 15 - Zero Trade Diagnostic
+
+on:
+  push:
+    branches:
+      - phase-15-vrp-jump-brake-diagnostic-v1
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install pandas numpy duckdb pyarrow huggingface_hub
+      - name: Reuse pinned Artist23 cache
+        uses: actions/cache@v4
+        with:
+          path: data/cache/hf_nifty_options
+          key: phase3f-artist23-45e0a04-v2
+      - name: Acquire dataset if needed
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/hf_nifty_options
+          if ! find data/cache/hf_nifty_options -type f -name '*.parquet' -print -quit | grep -q .; then
+            python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='artist-23/nifty-options-data',repo_type='dataset',revision='45e0a04',local_dir='data/cache/hf_nifty_options',allow_patterns=['NIFTY/**/*.parquet'])"
+          fi
+      - name: Diagnose first 25 setups
+        run: |
+          PYTHONPATH=. python - <<'PY'
+          import json
+          import numpy as np
+          import pandas as pd
+          from pathlib import Path
+          from research.phase15_vrp_jump_brake_short_vol import (
+              load_signal_rows, variant_grid, select_signals,
+              load_entry_quotes, pick_setup, load_execution_windows,
+              bars_from_long_window, simulate, HOLDS
+          )
+          root=Path("data/cache/hf_nifty_options/NIFTY")
+          variant=[v for v in variant_grid() if v["expiry_type"]=="WEEK"][0]
+          features=load_signal_rows(root,"WEEK")
+          sig=select_signals(features,variant).head(25)
+          eq=load_entry_quotes(root,sig)
+          setups=[]
+          for _,s in sig.iterrows():
+              ts=pd.Timestamp(s.datetime)+pd.Timedelta(minutes=1)
+              e=eq[(eq.trade_date==s.trade_date)&(eq.expiry_type=="WEEK")&(eq.datetime==ts)]
+              st=pick_setup(e,s)
+              if st is not None:
+                  setups.append((s,st))
+          setup_df=pd.DataFrame([{
+              "trade_date":s.trade_date,"expiry_type":"WEEK","entry_time":st["entry_time"],
+              "call_strike":st["call_strike"],"put_strike":st["put_strike"],
+              "call_wing_strike":st["call_wing_strike"],"put_wing_strike":st["put_wing_strike"]
+          } for s,st in setups])
+          wr=load_execution_windows(root,setup_df,max_hold=max(HOLDS))
+          report={"candidate_signals":len(sig),"entry_rows":len(eq),"setups":len(setups),"window_rows":len(wr),"bars_nonempty":0,"pkg_positive":0,"sim_success":0,"sample":[]}
+          for s,st in setups:
+              key=(s.trade_date,"WEEK",st["entry_time"])
+              bars=bars_from_long_window(wr, key, 30)
+              item={"date":str(s.trade_date),"entry":str(st["entry_time"]),"bars":int(len(bars))}
+              if not bars.empty:
+                  report["bars_nonempty"]+=1
+                  pkg=st["call_entry"]+st["put_entry"]
+                  item["entry_pkg"]=float(pkg)
+                  if pkg>0: report["pkg_positive"]+=1
+                  t=simulate(s,st,bars,"STRADDLE",1.3,0.20)
+                  item["sim_is_none"]=t is None
+                  if t is not None:
+                      report["sim_success"]+=1
+                      item["net_pnl"]=float(t["net_pnl"])
+              report["sample"].append(item)
+          Path("diagnostic").mkdir(exist_ok=True)
+          Path("diagnostic/phase15_zero_trade_diagnostic.json").write_text(json.dumps(report,indent=2,default=str))
+          print(json.dumps(report,indent=2,default=str))
+          PY
+      - name: Upload diagnostic
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase15-zero-trade-diagnostic
+          path: diagnostic/
