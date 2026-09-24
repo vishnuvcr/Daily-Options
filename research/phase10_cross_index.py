@@ -341,7 +341,6 @@ def simulate(entries: pd.DataFrame, root: Path, out_dir: Path, slippage: float) 
             continue
         con = duckdb.connect()
         con.register("entries_df", es)
-        con.register("entries_df", es)
         path = con.execute(
             f"""
             WITH raw AS (
@@ -383,6 +382,7 @@ def simulate(entries: pd.DataFrame, root: Path, out_dir: Path, slippage: float) 
         for (variant_id, trade_date), g in path.groupby(["variant_id","trade_date"], sort=False):
             if g.empty:
                 continue
+            meta = g.iloc[0]
 
             pivot = (
                 g.pivot_table(
@@ -392,17 +392,19 @@ def simulate(entries: pd.DataFrame, root: Path, out_dir: Path, slippage: float) 
                     aggfunc="last",
                 ).sort_index()
             )
-            if row.atm_strike not in pivot["close"].columns or row.wing_strike not in pivot["close"].columns:
+            atm_strike = float(meta.atm_strike)
+            wing_strike = float(meta.wing_strike)
+            if atm_strike not in pivot["close"].columns or wing_strike not in pivot["close"].columns:
                 continue
 
             entry = pivot.iloc[0]
-            long_entry = float(entry[("open", row.atm_strike)])
-            short_entry = float(entry[("open", row.wing_strike)])
+            long_entry = float(entry[("open", atm_strike)])
+            short_entry = float(entry[("open", wing_strike)])
             debit = long_entry - short_entry
             if debit <= 0:
                 continue
 
-            risk_id = int(row.variant_id.split("|r")[1])
+            risk_id = int(meta.risk_id)
             prof = RISK_PROFILES[risk_id]
             stop_level = debit * (1 - prof["stop_pct"])
             target_level = debit * (1 + prof["target_pct"])
@@ -410,8 +412,8 @@ def simulate(entries: pd.DataFrame, root: Path, out_dir: Path, slippage: float) 
             reason = "TIME"
 
             for ts, bar in pivot.iterrows():
-                spread_high = float(bar[("high", row.atm_strike)] - bar[("low", row.wing_strike)])
-                spread_low = float(bar[("low", row.atm_strike)] - bar[("high", row.wing_strike)])
+                spread_high = float(bar[("high", atm_strike)] - bar[("low", wing_strike)])
+                spread_low = float(bar[("low", atm_strike)] - bar[("high", wing_strike)])
                 if spread_low <= stop_level:
                     exit_ts = ts
                     reason = "STOP"
@@ -424,28 +426,28 @@ def simulate(entries: pd.DataFrame, root: Path, out_dir: Path, slippage: float) 
             last = pivot.loc[pivot.index == exit_ts]
             if last.empty:
                 last = pivot.iloc[[-1]]
-            long_exit = float(last[("close", row.atm_strike)].iloc[0])
-            short_exit = float(last[("close", row.wing_strike)].iloc[0])
+            long_exit = float(last[("close", atm_strike)].iloc[0])
+            short_exit = float(last[("close", wing_strike)].iloc[0])
 
-            lot = index_option_lot_size(symbol, row.expiry)
+            lot = index_option_lot_size(symbol, meta.expiry)
             net = cm.vertical_debit_spread_net_pnl(
                 long_entry, short_entry, long_exit, short_exit,
                 lot_size=lot, qty=1, slippage_points=slippage
             )
             rows.append(
                 {
-                    "variant_id": row.variant_id,
-                    "trade_date": row.trade_date,
-                    "leader": row.leader,
-                    "direction": row.direction,
-                    "entry_time": row.entry_time,
+                    "variant_id": meta.variant_id,
+                    "trade_date": meta.trade_date,
+                    "leader": meta.leader,
+                    "direction": meta.direction,
+                    "entry_time": meta.entry_time,
                     "exit_time": exit_ts,
-                    "expiry": row.expiry,
-                    "atm_strike": row.atm_strike,
-                    "wing_strike": row.wing_strike,
+                    "expiry": meta.expiry,
+                    "atm_strike": atm_strike,
+                    "wing_strike": wing_strike,
                     "entry_debit": debit,
                     "exit_debit": long_exit - short_exit,
-                    "premium_ret3": row.premium_ret3,
+                    "premium_ret3": meta.premium_ret3,
                     "net_pnl": net,
                     "exit_reason": reason,
                 }
