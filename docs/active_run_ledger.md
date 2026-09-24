@@ -98,3 +98,9 @@ These are the first runs using exact branch-parent construction after E0078. No 
 - PR: #20
 - Commit currently holds a manual data-gate workflow only.
 - It is not being executed while Phases 9 and 11 are active.
+
+### Phase 9 closure
+- Corrected computation run: 35975698105.
+- All four shards completed base and stress; global trade files were independently aggregated after reducer packaging defects.
+- Final: best base -₹168.79/lot/day; stress -₹228.79; 0/16 positive WFA windows.
+- Phase 9 is frozen negative and retired.
