@@ -81,3 +81,9 @@ def test_current_rule_sequence_is_three_sessions():
 # date-aware NSE transaction charge code is importable
 
 # trigger after literal-newline correction
+
+
+def test_source_does_not_contain_literal_newline_escape_in_cost_expression():
+    from research.phase24_falcon_spread import cost
+    src = inspect.getsource(cost)
+    assert "\\\\n" not in src
