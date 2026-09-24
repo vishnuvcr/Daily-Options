@@ -126,3 +126,18 @@ The phase is intentionally parked until:
 - sufficient option entry coverage.
 
 No Phase 12 P&L result exists yet.
+
+## Phase 9 final result — 2026-09-24
+
+Corrected Phase 9 v6 computation completed all four shards successfully. Independent aggregation of the four completed shard trade files produced the global result:
+
+- 96 preregistered variants.
+- 106,152 trades.
+- Best base mean active-day net: **-₹168.79/lot/day**.
+- Best doubled-slippage stress mean active-day net: **-₹228.79/lot/day**.
+- 0/96 variants positive on mean active-day net.
+- Base profit factor: **0.340**.
+- Stress profit factor: **0.253**.
+- Global nested walk-forward: 16 windows, **0 positive**, 0 target windows; mean test-window net **-₹231.14** base and **-₹252.34** stress.
+
+Decision: Phase 9 is retired. The defined-risk regime credit-spread family is frozen; no further parameter tuning is permitted.
