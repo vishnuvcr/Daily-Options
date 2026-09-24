@@ -300,7 +300,8 @@ def mark_panel(series_map, tolerance_minutes=1):
     return base.dropna().sort_values("ts")
 
 
-def cost(legs, lot, slippage):
+def cost(legs, lot, slippage, entry_date=None, exit_date=None):
+    """Transaction costs with date-aware option STT around the 2026-04-01 hike."""
     turnover = sum((leg["entry"] + leg["exit"]) * leg["qty"] * lot for leg in legs)
     sell_entry = sum(leg["entry"] * leg["qty"] * lot for leg in legs if leg["sign"] < 0)
     sell_exit = sum(leg["exit"] * leg["qty"] * lot for leg in legs if leg["sign"] > 0)
@@ -309,19 +310,21 @@ def cost(legs, lot, slippage):
     brokerage = 40.0 * len(legs)
     exchange = turnover * 0.0003503
     sebi = turnover * 0.000001
-    stt = (sell_entry + sell_exit) * 0.0015
+    entry_stt_rate = 0.001 if entry_date is None or pd.Timestamp(entry_date).date() < date(2026, 4, 1) else 0.0015
+    exit_stt_rate = 0.001 if exit_date is None or pd.Timestamp(exit_date).date() < date(2026, 4, 1) else 0.0015
+    stt = sell_entry * entry_stt_rate + sell_exit * exit_stt_rate
     stamp = (buy_entry + buy_exit) * 0.00003
     gst = 0.18 * (brokerage + exchange + sebi)
     slip = 2.0 * slippage * sum(leg["qty"] * lot for leg in legs)
     return brokerage + exchange + sebi + stt + stamp + gst + slip
 
 
-def settle(legs, lot, slippage):
+def settle(legs, lot, slippage, entry_date=None, exit_date=None):
     gross = sum(
         leg["sign"] * (leg["exit"] - leg["entry"]) * leg["qty"] * lot
         for leg in legs
     )
-    return gross - cost(legs, lot, slippage)
+    return gross - cost(legs, lot, slippage, entry_date=entry_date, exit_date=exit_date)
 
 
 def simulate_setup(con, setup, variant, slippage):
@@ -406,7 +409,7 @@ def simulate_setup(con, setup, variant, slippage):
                 return None
             ex[leg["name"]] = float(row.open_px)
             leg["exit"] = ex[leg["name"]]
-        pnl = settle(base_legs, lot, slippage)
+        pnl = settle(base_legs, lot, slippage, entry_date=entry_date, exit_date=(pre_stop_ts + pd.Timedelta(minutes=1)).date())
         return {"reason":"STOP_PRE_ADJUST","exit_ts":pre_stop_ts + pd.Timedelta(minutes=1),"net_pnl":pnl,"active_legs":4}
 
     wing_entries = {"wing_ce":float(wing_ce_row.open_px),"wing_pe":float(wing_pe_row.open_px)}
@@ -458,7 +461,7 @@ def simulate_setup(con, setup, variant, slippage):
     return {
         "reason":"STOP_POST_ADJUST" if stop_ts is not None else "PRE_EXPIRY_EXIT",
         "exit_ts":exit_signal,
-        "net_pnl":settle(legs, lot, slippage),
+        "net_pnl":settle(legs, lot, slippage, entry_date=entry_date, exit_date=exit_signal.date()),
         "active_legs":6,
     }
 
