@@ -43,3 +43,9 @@ Current runs:
 - Phase 11: 35972926200, queued.
 
 No strategy result is accepted yet.
+
+### 2026-09-24 — Latest execution frontier
+
+Phase 8 completed the base friction calculation successfully; its doubled-slippage stress calculation is still executing. Phase 9’s retry successfully resolved the Hugging Face transport error but was again terminated by a GitHub runner shutdown during base computation. Phase 10 then failed on one final schema omission (premium_ret3); v4 corrects it. Phase 11 remains queued.
+
+No strategy result is promoted or described as successful.
