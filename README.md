@@ -152,3 +152,7 @@ Phase 16 (`phase-16-iv-skew-tail-credit-v1`) is the current research frontier. I
 ## Phase 16 v2 execution frontier — 2026-09-24
 
 A clean authoritative execution ref is prepared on `phase-16-iv-skew-tail-credit-v2-exec`. It carries exact expiry propagation, 30/60-minute hold enforcement, timestamp-derived IST trading dates, outcome caching, realistic base/stress costs and the active-day ₹1,000 target gate. No Phase 16 P&L is accepted until the corrected v2 run and subsequent untouched walk-forward gate complete.
+
+## Phase 16 v2 schema correction — 2026-09-24
+
+Artist23 is an `expiry_type`-only preliminary source; it does not expose exact expiry dates. The Phase 16 validator has been corrected accordingly. Exact-expiry independent validation remains mandatory before promotion.
