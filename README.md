@@ -147,3 +147,8 @@ Research status: [docs/research_status.md](https://github.com/vishnuvcr/Daily-Op
 ## Current frontier sync — 2026-09-24
 
 Phase 16 (`phase-16-iv-skew-tail-credit-v1`) is the current research frontier. Its previous run `36021088602` failed before numerical computation because of a unit-test syntax defect. The dedicated branch has since been corrected for hold-window enforcement, deterministic nearest-future-expiry selection, CI cancellation behavior, and IST-derived trade dates. Corrected branch head: `893247ee787ac7703c53965f2400ec304810278a`. No Phase 16 P&L is accepted yet; base/stress numerical execution and the subsequent untouched walk-forward promotion gate remain pending.
+
+
+## Phase 16 v2 execution frontier — 2026-09-24
+
+A clean authoritative execution ref is prepared on `phase-16-iv-skew-tail-credit-v2-exec`. It carries exact expiry propagation, 30/60-minute hold enforcement, timestamp-derived IST trading dates, outcome caching, realistic base/stress costs and the active-day ₹1,000 target gate. No Phase 16 P&L is accepted until the corrected v2 run and subsequent untouched walk-forward gate complete.
