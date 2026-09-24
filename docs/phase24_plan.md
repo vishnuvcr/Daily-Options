@@ -13,7 +13,7 @@ Translate the user-supplied transcript summary of Equity Income's "Falcon Spread
 - Entry: preserve the source's expiry-relative distance. The old Thursday-expiry source entered on **Friday**; shifting the expiry day two calendar days earlier to Tuesday makes the current-rule entry **Wednesday**.
 - At entry, sell 5 near/current-week CE and 5 near/current-week PE at approximately 25 premium points each.
 - At entry, buy 3 next-week CE and 3 next-week PE at approximately the same 25-point premium zone.
-- Adjustment: the source's old Monday adjustment shifts two days earlier with the expiry change, giving **Friday adjustment** for current Tuesday expiry.
+- Adjustment: the source's old adjustment shifts two days earlier with the expiry change, giving **Thursday adjustment** for current Tuesday expiry.
 - Friday adjustment: buy 5 near-week CE one strike above the original short CE and 5 near-week PE one strike below the original short PE.
 - Exit: the source's old Wednesday exit shifts two days earlier, giving **Monday exit**, avoiding Tuesday 0-DTE.
 - Hard stop is mandatory; the supplied summary does not give a numeric threshold.
@@ -29,7 +29,7 @@ These are modelling choices, not claims about the video:
 - Hard-stop threshold: 0.50, 1.00, 1.50 × initial gross credit. Stop is evaluated on close-to-close mark-to-market and exits at the next minute open.
 - Entry signal uses the entry-session minute close; actual opening fills are taken from the next minute open, preventing look-ahead.
 - Adjustment wing purchase uses the adjustment-session signal minute close and the next minute open.
-- Timing is encoded by trading-session offsets from the actual weekly expiry: entry = expiry − 4 trading sessions; adjustment = expiry − 2 trading sessions; exit = expiry − 1 trading session. Thus Thursday-era contracts map to Friday/Monday/Wednesday, while current Tuesday-era contracts map to Wednesday/Friday/Monday.
+- Timing is encoded by trading-session offsets from the actual weekly expiry: entry = expiry − 4 trading sessions; adjustment = expiry − 3 trading sessions; exit = expiry − 1 trading session. Thus Thursday-era contracts map to Friday/Monday/Wednesday, while current Tuesday-era contracts map to Wednesday/Thursday/Monday.
 - One strike means one listed strike increment in the exact-expiry chain, not a hard-coded 50-point assumption.
 
 ## Frozen grid
