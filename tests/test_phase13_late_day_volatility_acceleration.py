@@ -84,3 +84,5 @@ def test_phase20_simulator_uses_input_risk_id_once():
     assert "RISK_PROFILES[risk_id]" in source
 
 # Phase 20 isolated workflow trigger checkpoint
+
+# Phase 20 simplified-workflow trigger checkpoint
