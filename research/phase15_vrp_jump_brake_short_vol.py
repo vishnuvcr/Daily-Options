@@ -233,22 +233,85 @@ def lot_size_for_trade_date(d):
     if d < pd.Timestamp('2026-01-06').date(): return 75
     return 65
 def simulate(signal,setup,bars,structure,stop_ratio,slippage):
-    if bars.empty:return None
-    entry_pkg=(setup['call_entry']+setup['put_entry']) if structure=='STRADDLE' else (setup['call_entry']+setup['put_entry']-setup['call_wing_entry']-setup['put_wing_entry'])
-    if entry_pkg<=0:return None
-    stop=entry_pkg*stop_ratio; target=entry_pkg*TARGET_RATIO; exit_ts=bars.datetime.iloc[-1]; reason='TIME'
-    for _,b in bars.iterrows():
-        if structure=='STRADDLE': worst=b.call_high+b.put_high; best=b.call_low+b.put_low
-        else: worst=b.call_high+b.put_high-b.call_wing_low-b.put_wing_low; best=b.call_low+b.put_low-b.call_wing_high-b.put_wing_high
-        if worst>=stop: exit_ts=b.datetime; reason='STOP'; break
-        if best<=target: exit_ts=b.datetime; reason='TARGET'; break
-    ex=bars[bars.datetime==exit_ts].iloc[-1]; lot=lot_size_for_trade_date(signal.trade_date)
-    cm=OptionCostModel()
-    if structure=='STRADDLE':
-        net=cm.short_straddle_net_pnl(setup['call_entry'],setup['put_entry'],float(ex.call_close),float(ex.put_close),lot_size=lot,slippage_points=slippage)
+    if bars.empty:
+        return None
+
+    entry_pkg = (
+        setup['call_entry'] + setup['put_entry']
+        if structure == 'STRADDLE'
+        else (
+            setup['call_entry'] + setup['put_entry']
+            - setup['call_wing_entry'] - setup['put_wing_entry']
+        )
+    )
+    if not np.isfinite(entry_pkg) or entry_pkg <= 0:
+        return None
+
+    stop_level = entry_pkg * stop_ratio
+    target_level = entry_pkg * TARGET_RATIO
+
+    if structure == 'STRADDLE':
+        high_series = bars['call_high'].to_numpy(dtype=float) + bars['put_high'].to_numpy(dtype=float)
+        low_series = bars['call_low'].to_numpy(dtype=float) + bars['put_low'].to_numpy(dtype=float)
     else:
-        net=cm.four_leg_defined_net_pnl(setup['call_entry'],setup['call_wing_entry'],setup['put_entry'],setup['put_wing_entry'],float(ex.call_close),float(ex.call_wing_close),float(ex.put_close),float(ex.put_wing_close),lot_size=lot,leg_signs=(-1,1,-1,1),slippage_points=slippage)
-    return {'trade_date':signal.trade_date,'signal_time':signal.datetime,'entry_time':setup['entry_time'],'exit_time':exit_ts,'expiry_type':signal.expiry_type,'structure':structure,'vrp':float(signal.vrp),'abs_ret15':float(signal.abs_ret15),'reason':reason,'net_pnl':float(net)}
+        high_series = (
+            bars['call_high'].to_numpy(dtype=float)
+            + bars['put_high'].to_numpy(dtype=float)
+            - bars['call_wing_low'].to_numpy(dtype=float)
+            - bars['put_wing_low'].to_numpy(dtype=float)
+        )
+        low_series = (
+            bars['call_low'].to_numpy(dtype=float)
+            + bars['put_low'].to_numpy(dtype=float)
+            - bars['call_wing_high'].to_numpy(dtype=float)
+            - bars['put_wing_high'].to_numpy(dtype=float)
+        )
+
+    stop_hits = np.flatnonzero(high_series >= stop_level)
+    target_hits = np.flatnonzero(low_series <= target_level)
+    stop_idx = int(stop_hits[0]) if len(stop_hits) else 10**9
+    target_idx = int(target_hits[0]) if len(target_hits) else 10**9
+
+    if stop_idx <= target_idx and stop_idx < 10**9:
+        exit_idx, reason = stop_idx, 'STOP'
+    elif target_idx < 10**9:
+        exit_idx, reason = target_idx, 'TARGET'
+    else:
+        exit_idx, reason = len(bars) - 1, 'TIME'
+
+    ex = bars.iloc[exit_idx]
+    lot = lot_size_for_trade_date(signal.trade_date)
+    cm = OptionCostModel()
+
+    if structure == 'STRADDLE':
+        net = cm.short_straddle_net_pnl(
+            setup['call_entry'], setup['put_entry'],
+            float(ex['call_close']), float(ex['put_close']),
+            lot_size=lot, slippage_points=slippage,
+        )
+    else:
+        net = cm.four_leg_defined_net_pnl(
+            setup['call_entry'], setup['call_wing_entry'],
+            setup['put_entry'], setup['put_wing_entry'],
+            float(ex['call_close']), float(ex['call_wing_close']),
+            float(ex['put_close']), float(ex['put_wing_close']),
+            lot_size=lot, leg_signs=(-1, 1, -1, 1),
+            slippage_points=slippage,
+        )
+
+    return {
+        'trade_date': signal.trade_date,
+        'signal_time': signal.datetime,
+        'entry_time': setup['entry_time'],
+        'exit_time': ex['datetime'],
+        'expiry_type': signal.expiry_type,
+        'structure': structure,
+        'vrp': float(signal.vrp),
+        'abs_ret15': float(signal.abs_ret15),
+        'reason': reason,
+        'entry_package': float(entry_pkg),
+        'net_pnl': float(net),
+    }
 
 def walk_forward(trades):
     if trades.empty:return pd.DataFrame()
