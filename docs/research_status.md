@@ -200,3 +200,11 @@ Next active frontier: intraday IV-skew / downside-tail repricing using defined-r
 Phase 15 clean rerun 36019644002 is the only accepted Phase 15 calculation. The earlier positive short-volatility shards were invalidated by E0145 because CALL/PUT sides were not included in the execution-leg join. The clean WEEK/MONTH rerun failed the target gate: WEEK best ₹30.82 base / -₹9.23 stress per active day; MONTH best -₹90.53 / -₹128.53; no ₹1,000-qualified cell. Phase 15 is retired.
 
 Phase 16 is now the active frontier: intraday IV-skew tail credit verticals, 288 fixed cells per expiry shard, using the same cost model and doubled-slippage stress. Latest run 36021088602 is executing unit tests/data setup; no Phase 16 P&L accepted.
+
+
+### 2026-09-24 — Phase 16 continuation checkpoint
+- Phase 15 is retired. Corrected execution-leg validation did not clear the target: WEEK best was ₹30.82 base / -₹9.23 stress; MONTH best was approximately ₹-90.53 base / ₹-128.53 stress. Earlier positive Phase 15 artifacts remain invalidated by E0145.
+- Phase 16 initial artifacts were invalid because the feature query filtered before the 15-minute lag and later produced zero trades from unnormalized execution joins. These were treated as implementation failures, not strategy evidence.
+- Phase 16 corrected feature run produced 3,626 WEEK / 3,517 MONTH feature rows, 4,861 / 4,863 executable setups and ~480k execution-window rows, proving data coverage. The zero-trade output was then traced to DATE/TIMESTAMP join normalization (E0156).
+- Phase 16 now caches execution outcomes by signal/side/width/hold/stop before mapping the 288 preregistered cells (E0157). Unit tests are required before numerical acceptance.
+- Authoritative latest Phase 16 run: 36030055443, commit 7eefb6034014353c84e26e077c14655bb1eb5028. It is currently queued for a GitHub runner; no numerical result from this corrected run is accepted yet.
