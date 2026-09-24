@@ -114,3 +114,12 @@ def test_ist_timestamp_normalization_removes_timezone_at_dataframe_boundary():
     src=inspect.getsource(mod.ist_ts)
     assert 'tz_convert("Asia/Kolkata")' in src
     assert 'tz_localize(None)' in src
+
+    
+def test_simulation_uses_setup_id_grouping():
+    from research import phase17_nifty_exact_expiry_premium_skew as mod
+    import inspect
+    src=inspect.getsource(mod.simulate)
+    assert 'setup_df["setup_id"]' in src
+    assert 'win.groupby("setup_id"' in src
+    assert 'CAST(o."timestamp" AS TIMESTAMP)>=l.entry_ts' in src
