@@ -125,7 +125,7 @@ def main(root:Path,out:Path):
         results["candidate_signal_ts"]=str(row.ts)
         results["selected_expiry_file"]=str(ef[1]) if ef else None
         if ef:
-            results["probe"]=probe_candidate(str(ef[1]),td,pd.Timestamp(row.ts),float(row.close))
+            results["probe"]=probe_candidate(str(ef[1]),td,pd.Timestamp(row.ts),float(row.close_px))
     (out/"phase17a_diagnostic.json").write_text(json.dumps(results,indent=2,default=str))
     (out/"phase17a_diagnostic.txt").write_text(json.dumps(results,indent=2,default=str))
     print(json.dumps(results,indent=2,default=str))
