@@ -30,7 +30,22 @@ Channel description identifies options selling/buying, risk-managed NIFTY/BankNI
 - “Set & Strike Weekly Options Method for Working People”: YouTube result published 2025-06-27.
 - “This Payoff Hits like a Missile”: transcript/indexed reconstruction published/analysed in 2026-09; secondary transcript source.
 
+## User-supplied video — identified
+
+### Falcon Spread — “Top Hedging Trick Public Won't Know”
+- YouTube URL: https://youtu.be/Cl5i-lWAzeo
+- Video title shown in the supplied screenshot: **Falcon Spread - Top Hedging Trick Public Won't Know**.
+- Channel: **Equity Income**.
+- Published date shown: **4 Jun 2025**.
+- Duration shown: **14:33**.
+- The description states that the method concerns options strategies with reward-to-risk after adjustment and scenarios intended to control risk for overnight gap-ups/down. This establishes the research hypothesis, not profitability.
+- Screenshot of the payoff interface confirms this is a multi-leg options structure with adjustment/hedging logic, but the exact leg construction and adjustment triggers are not sufficiently legible to encode without the video/transcript.
+- **Status: INCLUDED in Phase 23; exact-rule reconstruction pending.**
+- Priority: **high**, because it is a distinct named hedging structure and explicitly addresses gap risk.
+- Test requirement: reconstruct every leg, strike-selection rule, expiry, entry time, adjustment trigger, hedge trigger, exit rule and transaction sequence before numerical testing. No discretionary interpretation will be inserted.
+
 ## User-supplied video pending transcription
+
 
 - Exact URL: https://youtu.be/Cl5i-lWAzeo
 - Video ID: Cl5i-lWAzeo
