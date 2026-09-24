@@ -141,3 +141,15 @@ Corrected Phase 9 v6 computation completed all four shards successfully. Indepen
 - Global nested walk-forward: 16 windows, **0 positive**, 0 target windows; mean test-window net **-₹231.14** base and **-₹252.34** stress.
 
 Decision: Phase 9 is retired. The defined-risk regime credit-spread family is frozen; no further parameter tuning is permitted.
+
+## 2026-09-24 — Phase 11 v5e authoritative execution checkpoint
+
+- Authoritative branch: `phase-11-breakout-pullback-oi-v5e-authoritative`.
+- Workflow run: `35978104824`; research job: `107563265459`.
+- Unit tests: passed.
+- Cached research data acquisition: passed.
+- Base friction: in progress.
+- Stress friction and report generation: pending.
+- Accepted P&L: none.
+
+The isolated v5e concurrency group uses `cancel-in-progress: false`, so the earlier v5/v6 cancellation pattern is not being repeated. Phase 8, Phase 9 and Phase 10 remain frozen negative; Phase 12 remains parked.
