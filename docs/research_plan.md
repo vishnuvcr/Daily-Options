@@ -207,7 +207,7 @@ Phase 8A pre-registration:
 - Fixed contract at entry; next executable minute; no moving-ATM path selection.
 - Dynamic premium stop/target/trailing variants are frozen before formal test selection.
 - Base slippage 0.20 premium points per leg; stress 0.40.
-- 48 bounded variants; no post-result expansion.
+- 96 bounded variants (the Cartesian product of the declared dimensions); no post-result expansion.
 
 Promotion:
 - preliminary screen: mean active-trade-day net >= Rs 1,000/lot;
