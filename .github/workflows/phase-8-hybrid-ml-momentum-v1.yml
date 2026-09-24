@@ -81,3 +81,5 @@ jobs:
         with:
           name: phase8-hybrid-momentum
           path: reports/
+
+# research rerun trigger checkpoint
