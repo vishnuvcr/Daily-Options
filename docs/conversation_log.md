@@ -64,3 +64,7 @@ Phase 10 completed base and doubled-slippage stress execution. The best base res
 ### 2026-09-24 — Phase 12 preregistration
 
 After reviewing current/historical lead-lag evidence, a futures/derivative-versus-spot price-discovery family was preregistered as the next distinct mechanism. It is data-gated and does not assume futures permanently lead spot. No strategy result has been produced from Phase 12.
+
+### Phase 9 closure — 2026-09-24
+
+The corrected Phase 9 engine produced real trades after the earlier path-join defect was fixed. All 96 variants and 106,152 trades were independently aggregated from the four shard artifacts. Best base mean active-day net was -₹168.79/lot/day; stress -₹228.79; all 16 WFA windows were negative. The family is retired without retuning.
