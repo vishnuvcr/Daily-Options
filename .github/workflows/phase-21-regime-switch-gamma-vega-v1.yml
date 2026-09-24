@@ -2,6 +2,8 @@ name: Phase 21 - Regime Switch Gamma Vega
 
 on:
   workflow_dispatch:
+  push:
+    branches: [phase-21-regime-switch-gamma-vega-v1]
 
 concurrency:
   group: phase21-regime-switch-gamma-vega
