@@ -131,39 +131,71 @@ def load_candidate_spot(root):
     con = duckdb.connect()
     con.execute("SET TimeZone='Asia/Kolkata'")
     q = f"""
-      SELECT CAST(timestamp AS TIMESTAMP) ts,
-             CAST(trading_day AS DATE) trade_date,
-             CAST(close AS DOUBLE) spot
-      FROM read_parquet('{p}')
-      WHERE CAST(trading_day AS DATE) BETWEEN DATE '{START_DATE}' AND DATE '{END_DATE}'
-        AND EXTRACT(ISODOW FROM CAST(trading_day AS DATE))=5
-        AND CAST(CAST(timestamp AS TIMESTAMP) AS TIME) IN (
-          TIME '09:30:00',TIME '10:00:00',TIME '11:00:00',
-          TIME '13:00:00',TIME '14:00:00'
-        )
-        AND close > 0
-      ORDER BY trade_date, ts
+      WITH d AS (
+        SELECT DISTINCT
+          CAST(trading_day AS DATE) AS trade_date
+        FROM read_parquet('{p}')
+        WHERE CAST(trading_day AS DATE) BETWEEN DATE '{START_DATE}' AND DATE '{END_DATE}'
+      ),
+      r AS (
+        SELECT trade_date,
+               ROW_NUMBER() OVER (ORDER BY trade_date) AS session_no
+        FROM d
+      )
+      SELECT trade_date,
+             session_no
+      FROM r
+      ORDER BY trade_date
     """
-    x = con.execute(q).df()
+    sessions = con.execute(q).df()
+    if sessions.empty:
+        con.close()
+        return sessions
+    sessions["trade_date"] = pd.to_datetime(sessions["trade_date"]).dt.date
     con.close()
-    if x.empty:
-        return x
-    x["ts"] = pd.to_datetime(x.ts).dt.floor("min")
-    x["trade_date"] = pd.to_datetime(x.trade_date).dt.date
-    return x
+    return sessions
 
 
-def build_setup(con, root, spot_row, target, far_mode, files):
-    friday = spot_row.trade_date
-    chosen = next_two_expiries(files, friday)
+def build_setup(con, root, entry_row, target, far_mode, files):
+    entry_date = pd.Timestamp(entry_row.trade_date).date()
+    chosen = next_two_expiries(files, entry_date)
     if not chosen:
         return None
     (near_exp, near_path), (far_exp, far_path) = chosen
-    t = pd.Timestamp(spot_row.ts)
+
+    # Preserve the source strategy's time-to-expiry geometry across the NSE
+    # expiry-day change:
+    #   old Thursday regime: Friday entry -> Monday adjustment -> Wednesday exit
+    #   current Tuesday regime: Wednesday entry -> Friday adjustment -> Monday exit
+    # In trading-session offsets this is:
+    #   entry = expiry - 4 sessions
+    #   adjustment = expiry - 2 sessions
+    #   exit = expiry - 1 session
+    session_q = f"""
+      SELECT DISTINCT CAST(trading_day AS DATE) AS trade_date
+      FROM read_parquet('{root / "index" / "NIFTY.parquet"}')
+      WHERE CAST(trading_day AS DATE) <= DATE '{near_exp}'
+        AND CAST(trading_day AS DATE) >= DATE '{START_DATE}'
+      ORDER BY trade_date
+    """
+    session_df = con.execute(session_q).df()
+    session_dates = [pd.Timestamp(x).date() for x in session_df["trade_date"].tolist()]
+    expiry_date = pd.Timestamp(near_exp).date()
+    prior = [d for d in session_dates if d < expiry_date]
+    if len(prior) < 4:
+        return None
+    entry_expected = prior[-4]
+    adjust_date = prior[-2]
+    exit_date = prior[-1]
+    if entry_expected != entry_date:
+        return None
+
+    candidate_times = entry_row
+    t = pd.Timestamp(f"{entry_date} {candidate_times.entry_time}")
     fill_t = t + pd.Timedelta(minutes=1)
 
-    near = load_chain_minute(con, near_path, friday, t, fill_t)
-    far = load_chain_minute(con, far_path, friday, t, fill_t)
+    near = load_chain_minute(con, near_path, entry_date, t, fill_t)
+    far = load_chain_minute(con, far_path, entry_date, t, fill_t)
     if near.empty or far.empty:
         return None
 
@@ -201,9 +233,11 @@ def build_setup(con, root, spot_row, target, far_mode, files):
         return None
 
     return {
-        "trade_date": friday,
+        "trade_date": entry_date,
         "entry_ts": t,
         "entry_fill_ts": fill_t,
+        "adjust_date": adjust_date,
+        "exit_date": exit_date,
         "near_expiry": near_exp,
         "far_expiry": far_exp,
         "near_path": str(near_path),
@@ -291,53 +325,25 @@ def settle(legs, lot, slippage):
 
 
 def simulate_setup(con, setup, variant, slippage):
-    friday = setup["trade_date"]
+    entry_date = setup["trade_date"]
     near = Path(setup["near_path"])
     far = Path(setup["far_path"])
     lot = lot_size(setup["near_expiry"])
     start = setup["entry_fill_ts"]
-    # The source video predates the NSE expiry-day change. Current NIFTY weekly
-    # contracts expire Tuesday; the current-rule analogue is to adjust Monday
-    # and exit Monday before the Tuesday 0-DTE session. For historical validation,
-    # use the actual contract expiry and close on its immediately preceding trading
-    # day, so the backtest never fabricates a weekday-specific expiry.
-    date_q = f"""SELECT DISTINCT CAST(trading_day AS DATE) d
-                 FROM read_parquet('{near}')
-                 WHERE CAST(trading_day AS DATE) <= DATE '{setup["near_expiry"]}'
-                   AND CAST(timestamp AS TIMESTAMP) >= TIMESTAMP '{start}'
-                 ORDER BY d"""
-    date_df = con.execute(date_q).df()
-    if date_df.empty:
-        return None
-    available_dates = [pd.Timestamp(d).date() for d in date_df["d"].tolist()]
-    expiry_date = pd.Timestamp(setup["near_expiry"]).date()
-    pre_expiry = [d for d in available_dates if d < expiry_date]
-    if not pre_expiry:
-        return None
-    exit_date = max(pre_expiry)
+    adjust_date = setup["adjust_date"]
+    exit_date = setup["exit_date"]
     end = pd.Timestamp(f"{exit_date} 15:15:00")
-
-    # The current Tuesday-expiry regime has Monday as the pre-expiry session.
-    # The April-August 2025 Monday-expiry transition is not compatible with the
-    # source's Monday adjustment, so those setups are skipped below.
     initial = {
-        "short_ce": series(con, near, friday, setup["short_ce_strike"], "CE", start, end),
-        "short_pe": series(con, near, friday, setup["short_pe_strike"], "PE", start, end),
-        "far_ce": series(con, far, friday, setup["far_ce_strike"], "CE", start, end),
-        "far_pe": series(con, far, friday, setup["far_pe_strike"], "PE", start, end),
+        "short_ce": series(con, near, entry_date, setup["short_ce_strike"], "CE", start, end),
+        "short_pe": series(con, near, entry_date, setup["short_pe_strike"], "PE", start, end),
+        "far_ce": series(con, far, entry_date, setup["far_ce_strike"], "CE", start, end),
+        "far_pe": series(con, far, entry_date, setup["far_pe_strike"], "PE", start, end),
     }
     if any(v.empty for v in initial.values()):
         return None
 
-    mon = pd.Timestamp(friday) + pd.Timedelta(days=(7 - pd.Timestamp(friday).weekday()) % 7)
-    mon_signal = pd.Timestamp(f"{mon.date()} {variant.adjust_time}")
-    mon_exec = mon_signal + pd.Timedelta(minutes=1)
-    # Require the Monday adjustment to occur before the pre-expiry exit session.
-    # For current NIFTY Tuesday expiry this is exactly the intended Monday->Monday
-    # sequence. For historical Monday-expiry transition contracts, no valid
-    # Monday-before-expiry adjustment exists, so the setup is discarded.
-    if mon.date() > exit_date:
-        return None
+    adjust_signal = pd.Timestamp(f"{adjust_date} {variant.adjust_time}")
+    adjust_exec = adjust_signal + pd.Timedelta(minutes=1)
 
     # One listed strike outside the original short on the same weekly expiry.
     strike_q = f"""
@@ -355,13 +361,13 @@ def simulate_setup(con, setup, variant, slippage):
     wing_ce = float(ce_w[0])
     wing_pe = float(pe_w[-1])
 
-    wing_series_ce = series(con, near, mon.date(), wing_ce, "CE", mon_exec, end)
-    wing_series_pe = series(con, near, mon.date(), wing_pe, "PE", mon_exec, end)
+    wing_series_ce = series(con, near, adjust_date, wing_ce, "CE", adjust_exec, end)
+    wing_series_pe = series(con, near, adjust_date, wing_pe, "PE", adjust_exec, end)
     if wing_series_ce.empty or wing_series_pe.empty:
         return None
 
-    wing_ce_row = next_open(wing_series_ce, mon_exec)
-    wing_pe_row = next_open(wing_series_pe, mon_exec)
+    wing_ce_row = next_open(wing_series_ce, adjust_exec)
+    wing_pe_row = next_open(wing_series_pe, adjust_exec)
     if wing_ce_row is None or wing_pe_row is None:
         return None
 
@@ -378,7 +384,7 @@ def simulate_setup(con, setup, variant, slippage):
     combined = mark_panel(initial, tolerance_minutes=1)
     pre_stop_ts = None
     for row in combined.itertuples(index=False):
-        if row.ts < start or row.ts >= mon_signal:
+        if row.ts < start or row.ts >= adjust_signal:
             continue
         pnl_points = (
             setup["initial_credit"]
@@ -416,7 +422,7 @@ def simulate_setup(con, setup, variant, slippage):
         "wing_ce": wing_series_ce,
         "wing_pe": wing_series_pe,
     }, tolerance_minutes=1)
-    post = post[post.ts >= mon_exec].copy()
+    post = post[post.ts >= adjust_exec].copy()
     stop_ts = None
     for row in post.itertuples(index=False):
         pnl_points = (
@@ -469,11 +475,16 @@ def run(data: Path, out: Path, slippage: float):
     con.execute("SET TimeZone='Asia/Kolkata'")
     setups = {}
     for row in candidates.itertuples(index=False):
-        for target in TARGET_PREMIUMS:
-            for far_mode in FAR_MODES:
-                s = build_setup(con, data, row, target, far_mode, files)
-                if s:
-                    setups[(row.trade_date,row.ts,target,far_mode)] = s
+        for entry_time in ENTRY_TIMES:
+            row_with_time = type("EntryRow", (), {
+                "trade_date": row.trade_date,
+                "entry_time": entry_time,
+            })
+            for target in TARGET_PREMIUMS:
+                for far_mode in FAR_MODES:
+                    s = build_setup(con, data, row_with_time, target, far_mode, files)
+                    if s:
+                        setups[(row.trade_date, entry_time, target, far_mode)] = s
 
     rows = []
     errors = []
