@@ -61,10 +61,19 @@ jobs:
           LIMIT 200
           """
           x=con.execute(q).df()
+          Path('reports').mkdir(parents=True,exist_ok=True)
+          x.to_json('reports/phase15_alignment_probe.json',orient='records',date_format='iso')
           print(x.to_string(index=False))
           print("row_count_probe",len(x))
           con.close()
           PY
+
+      - name: Upload alignment probe
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase15-alignment-probe
+          path: reports/phase15_alignment_probe.json
+          if-no-files-found: error
 
       - name: Base friction
         run: PYTHONPATH=. python -m research.phase15_vrp_jump_brake_short_vol --data data/cache/hf_nifty_options/NIFTY --out reports/phase15-base --slippage 0.20
