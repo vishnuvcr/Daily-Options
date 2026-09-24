@@ -38,7 +38,7 @@ def expiry_for_day(files, trade_date):
     return min(fut,key=lambda x:x[0])
 
 def ist_ts(x):
-    return pd.to_datetime(x, utc=True).dt.tz_convert("Asia/Kolkata").dt.floor("min")
+    return pd.to_datetime(x, utc=True).dt.tz_convert("Asia/Kolkata").dt.tz_localize(None).dt.floor("min")
 
 def load_spot(root: Path):
     p=root/"index"/"NIFTY.parquet"
