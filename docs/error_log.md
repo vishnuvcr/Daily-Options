@@ -230,3 +230,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0166 | 2026-09-24 | Phase 17 pre-result | Internal PUT/CALL direction labels were compared directly to source PE/CE option_type labels during signal strike lookup | Would eliminate valid setups before simulation and could look like a zero-signal strategy failure | Map PUT→PE and CALL→CE explicitly and add a regression test | CLOSED — pre-result |
 
 | E0167 | 2026-09-24 | Phase 17 runtime SQL | DuckDB rejected `close` as an output alias in the exact-expiry option quote query after data acquisition | Both base/stress computations failed before simulation; no P&L produced | Rename the projected field to `close_px` and use that field consistently in signal skew calculations; add a regression test | CLOSED — pre-result |
+
+| E0168 | 2026-09-24 | Phase 17a diagnostic | Diagnostic spot query reused the reserved `close` alias and failed before inspecting option schema | Diagnostic result unavailable; no strategy/P&L impact | Rename diagnostic close projection to close_px | CLOSED — diagnostic-only |
