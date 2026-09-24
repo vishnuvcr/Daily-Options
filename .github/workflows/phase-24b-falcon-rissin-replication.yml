@@ -42,13 +42,13 @@ jobs:
         uses: actions/cache@v4
         with:
           path: data/cache/phase24_rissin
-          key: phase24b-rissin-78b1c54-nifty-2024-2026-v2
+          key: phase24b-rissin-8f7739c-nifty-2024-2026-v2
 
       - name: Acquire or reuse pinned Rissin NIFTY partitions
         run: |
           set -euo pipefail
           mkdir -p data/cache/phase24_rissin
-          python -c 'from huggingface_hub import hf_hub_download; r="rissin/nse-options-intraday"; rev="78b1c5468255d18cf492984bfe6fe4e3ac874d7c"; root="data/cache/phase24_rissin"; [print(hf_hub_download(repo_id=r,repo_type="dataset",revision=rev,filename=f,local_dir=root)) for f in ["upstox_intraday/NIFTY/NIFTY_2024.parquet","upstox_intraday/NIFTY/NIFTY_2025.parquet","upstox_intraday/NIFTY/NIFTY_2026.parquet"]]'
+          python -c 'from huggingface_hub import hf_hub_download; r="rissin/nse-options-intraday"; rev="8f7739cab3f38abdcbc6332a6d0a83e1341326e3"; root="data/cache/phase24_rissin"; [print(hf_hub_download(repo_id=r,repo_type="dataset",revision=rev,filename=f,local_dir=root)) for f in ["upstox_intraday/NIFTY/NIFTY_2024.parquet","upstox_intraday/NIFTY/NIFTY_2025.parquet","upstox_intraday/NIFTY/NIFTY_2026.parquet"]]'
           test -f data/cache/phase24_rissin/upstox_intraday/NIFTY/NIFTY_2024.parquet
           test -f data/cache/phase24_rissin/upstox_intraday/NIFTY/NIFTY_2025.parquet
           test -f data/cache/phase24_rissin/upstox_intraday/NIFTY/NIFTY_2026.parquet
