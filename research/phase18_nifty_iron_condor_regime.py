@@ -37,14 +37,14 @@ def load_spot(root):
     q=f"""
     WITH b AS (
       SELECT "timestamp" ts, CAST(trading_day AS DATE) trade_date,
-             CAST("close" AS DOUBLE) close
+             CAST("close" AS DOUBLE) spot_close
       FROM read_parquet('{p}')
       WHERE CAST(trading_day AS DATE) BETWEEN DATE '{START_DATE}' AND DATE '{END_DATE}'
         AND "close">0
     ),
     r AS (
-      SELECT *, close/LAG(close,10) OVER(PARTITION BY trade_date ORDER BY ts)-1 AS ret10,
-             close/LAG(close,1) OVER(PARTITION BY trade_date ORDER BY ts)-1 AS ret1
+      SELECT *, spot_close/LAG(spot_close,10) OVER(PARTITION BY trade_date ORDER BY ts)-1 AS ret10,
+             spot_close/LAG(spot_close,1) OVER(PARTITION BY trade_date ORDER BY ts)-1 AS ret1
       FROM b
     ),
     v AS (
