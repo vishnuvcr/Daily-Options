@@ -158,8 +158,8 @@ def load_exact_quotes(root, spot):
         FROM read_parquet('{path}')
         WHERE CAST(trading_day AS DATE) IN ({vals})
           AND "close" > 0
-          AND CAST("timestamp" AS TIME) >= TIME '14:30:00'
-          AND CAST("timestamp" AS TIME) <= TIME '15:03:00'
+          AND strftime("timestamp",'%H:%M:%S') >= '14:30:00'
+          AND strftime("timestamp",'%H:%M:%S') <= '15:03:00'
         """
         z = con.execute(q).df()
         if not z.empty:
