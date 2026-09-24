@@ -365,7 +365,7 @@ def simulate(entries: pd.DataFrame, root: Path, out_dir: Path, slippage: float) 
             SELECT
               e.variant_id, e.trade_date, e.leader, e.direction, e.expiry,
               e.entry_time, e.atm_strike, e.wing_strike,
-              e.long_entry, e.short_entry, e.hold_minutes, e.risk_id,
+              e.long_entry, e.short_entry, e.hold_minutes, e.risk_id, e.premium_ret3,
               r.local_ts, r.open, r.high, r.low, r.close, r.strike
             FROM entries_df e
             JOIN raw r
@@ -449,7 +449,7 @@ def simulate(entries: pd.DataFrame, root: Path, out_dir: Path, slippage: float) 
                     "wing_strike": wing_strike,
                     "entry_debit": debit,
                     "exit_debit": long_exit - short_exit,
-                    "premium_ret3": meta.premium_ret3,
+                    "premium_ret3": meta["premium_ret3"],
                     "net_pnl": net,
                     "exit_reason": reason,
                 }
