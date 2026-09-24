@@ -42,10 +42,10 @@ Pinned exact-expiry source: thetrademarkk/india-index-options-1m, revision 51ca5
 ## Costs and execution
 The research cost model uses:
 - Paytm Money brokerage: ₹20/order
-- NSE option-sale STT: 0.15%
+- NSE option-sale STT: date-aware: 0.10% through 2026-03-31 and 0.15% from 2026-04-01 onward.
 - stamp duty on buys: 0.003%
 - SEBI fee: 0.0001%
-- NSE option premium turnover: 0.03503%
+- NSE option premium transaction charge: 0.03503% of premium turnover (₹3,553 per crore total outflow from 2026-03-01, comprising ₹3,552 transaction charge + ₹0.01 IPFT contribution).
 - GST: 18% on brokerage + exchange + SEBI charges
 - Base slippage: 0.20 premium points per order
 - Stress slippage: 0.40 premium points per order
@@ -62,3 +62,7 @@ A preliminary positive result is not promoted. Any cell clearing the preliminary
 
 ## Phase status
 2026-09-25 — current-expiry translation corrected to expiry-relative session offsets: **Wednesday entry → Friday adjustment → Monday exit** for current Tuesday NIFTY expiry. Historical validation preserves the old Friday → Monday → Wednesday sequence for Thursday-expiry contracts automatically.
+
+### Current levy references
+- NSE STT schedule: https://www.nseindia.com/static/products-services/equity-derivatives-securities-transaction-tax
+- NSE transaction-charge circular (effective 2026-03-01): https://nsearchives.nseindia.com/content/circulars/FA73061.pdf
