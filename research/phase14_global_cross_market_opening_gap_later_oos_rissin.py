@@ -27,10 +27,11 @@ def frozen_signal_dates(features):
 
 def load_options(root,signals):
     if signals.empty: return pd.DataFrame()
-    dates=sorted({str(x) for x in signals.trade_date}); start=min(dates); end=max(dates)
+    dates=sorted({str(x) for x in signals.trade_date})
+    date_sql=",".join("'" + x + "'" for x in dates)
     glob=(root/'upstox_intraday'/'NIFTY'/'NIFTY_*.parquet').as_posix()
     con=duckdb.connect()
-    q=f"SELECT CAST(timestamp AS TIMESTAMPTZ) AT TIME ZONE 'UTC' AS datetime_utc, CAST(date AS DATE) AS trade_date, CAST(expiry AS DATE) AS expiry, CAST(strike AS DOUBLE) AS strike, CAST(option_type AS VARCHAR) AS option_type, CAST(open AS DOUBLE) AS open, CAST(high AS DOUBLE) AS high, CAST(low AS DOUBLE) AS low, CAST(close AS DOUBLE) AS close FROM read_parquet('{glob}',union_by_name=true) WHERE CAST(date AS DATE) BETWEEN DATE '2024-10-01' AND DATE '2026-06-30' AND underlying='NIFTY' AND granularity='1min' AND expiry IS NOT NULL AND close>0"
+    q=f"SELECT CAST(timestamp AS TIMESTAMPTZ) AT TIME ZONE 'UTC' AS datetime_utc, CAST(date AS DATE) AS trade_date, CAST(expiry AS DATE) AS expiry, CAST(strike AS DOUBLE) AS strike, CAST(option_type AS VARCHAR) AS option_type, CAST(open AS DOUBLE) AS open, CAST(high AS DOUBLE) AS high, CAST(low AS DOUBLE) AS low, CAST(close AS DOUBLE) AS close FROM read_parquet('{glob}',union_by_name=true) WHERE CAST(date AS DATE) IN ({date_sql}) AND underlying='NIFTY' AND granularity='1min' AND expiry IS NOT NULL AND close>0"
     x=con.execute(q).df(); con.close()
     if x.empty: return x
     x['trade_date']=pd.to_datetime(x['trade_date'],errors='coerce').dt.date
