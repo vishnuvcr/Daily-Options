@@ -295,3 +295,9 @@ The simulator now applies the NSE equity-options premium transaction charge date
 
 ## Phase 24 data coverage audit — 2026-09-25
 The corrected TradeMarkk Stress artifact is **data-limited**: 270 variants, but only 32 executable setups / 5 unique entry dates across the nominal 2021-07 to 2026-08 window. The apparent 18 target-qualified variants are single-trade or otherwise tiny-sample observations and are rejected as evidence. External dataset documentation also states that TradeMarkk option coverage is partial. The family is therefore moving to an independent minute-data validation source before any strategy conclusion.
+
+
+## Phase 24 execution coverage audit — 2026-09-25
+Run **36056063674** completed the Stress friction job successfully. The Stress artifact reports 270 preregistered variants but only **32 executable setups / 5 unique entry dates** (2023-12-15, 2025-06-13, 2025-12-17, 2026-03-18, 2026-06-29) and 288 trade records. The apparent 18 target-qualified cells are dominated by single-trade observations and are rejected as strategy evidence. The audit indicates the restored exact-expiry cache was under-covered for the nominal research window; data-acquisition completeness must be validated before accepting any Phase 24 P&L. Base friction is still running from the same ref and will be treated as non-evidentiary until the cache problem is corrected.
+
+Phase 24 next execution requirement: rebuild/reacquire a coverage-validated exact-expiry cache, then rerun the unchanged 270-cell grid. No parameter retuning is authorized from the sparse Stress leaderboard.
