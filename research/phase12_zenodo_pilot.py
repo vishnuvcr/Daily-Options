@@ -67,11 +67,29 @@ def _read_table(path: Path) -> pd.DataFrame:
     suffix = path.suffix.lower()
     if suffix in {".xlsx", ".xls"}:
         return pd.read_excel(path)
-    if suffix in {".txt", ".csv"}:
-        # Zenodo market/option files are headerless positional records.
-        # Reading with header=None preserves the first market minute.
-        return pd.read_csv(path, header=None, dtype=str, sep=",")
-    raise ValueError(f"unsupported table suffix: {suffix}")
+    if suffix not in {".txt", ".csv"}:
+        raise ValueError(f"unsupported table suffix: {suffix}")
+
+    raw = pd.read_csv(path, header=None, dtype=str, sep=",", on_bad_lines="skip")
+    if raw.empty:
+        return raw
+
+    first = raw.iloc[0].astype(str).str.strip().str.lower().tolist()
+    header_tokens = {"open", "high", "low", "close", "date", "time", "trade_date", "trade_time"}
+    if set(first) & header_tokens:
+        return pd.read_csv(path, sep=",", engine="python")
+
+    # Observed Zenodo raw schema:
+    # [symbol, trade_date, trade_time, open, high, low, close, volume, open_interest].
+    names = [
+        "symbol", "trade_date", "trade_time", "open", "high",
+        "low", "close", "volume", "open_interest"
+    ]
+    n = raw.shape[1]
+    if n < 7:
+        raise ValueError(f"unsupported headerless schema with {n} columns")
+    raw.columns = names[:n] if n <= len(names) else names + [f"extra_{i}" for i in range(n - len(names))]
+    return raw
 
 def _norm_cols(df: pd.DataFrame) -> dict[str, str]:
     return {str(c).strip().lower().replace(" ", "_").replace("-", "_"): c for c in df.columns}
