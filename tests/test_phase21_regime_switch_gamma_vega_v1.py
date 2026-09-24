@@ -5,3 +5,5 @@ def test_phase21_grid():
     v = variants()
     assert len(v) == 60
     assert {x['regime'] for x in v} == {'EXPANSION', 'CALM'}
+
+# Phase 21 execution trigger checkpoint
