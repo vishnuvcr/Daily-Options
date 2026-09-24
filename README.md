@@ -133,3 +133,12 @@ Phase 13 will use modern 1-minute NIFTY option data with a materially different 
 Phase 14 is now frozen after independent later-period validation of the exact selected rule: 12 executable trades, ₹352.05/lot mean active-day net at base friction and ₹322.05 under doubled slippage, with only one contributing calendar year. It is not promoted.
 
 Phase 15 is the active frontier. Run 36005428946 on branch phase-15-vrp-jump-brake-short-vol-v1 has passed tests, data acquisition and a timestamp/quote alignment probe; Base is currently running. No Phase 15 result is accepted yet.
+
+
+## Current research frontier — 2026-09-24
+
+Phase 15 has been retired after a clean rerun exposed and corrected a critical CALL/PUT execution-leg join defect (E0145). The corrected result did not reach the ₹1,000 net/active-lot/day target: WEEK best ₹30.82 base / -₹9.23 stress; MONTH best -₹90.53 / -₹128.53. Earlier positive Phase 15 artifacts are explicitly invalidated.
+
+Phase 16 is active on `phase-16-iv-skew-tail-credit-v1`: a preregistered IV-skew tail credit-vertical family using 288 cells per expiry shard, realistic Paytm Money/NSE costs and doubled slippage. Latest workflow: `36021088602`.
+
+Research status: [docs/research_status.md](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md) · [error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md) · [Phase 16 hypothesis](https://github.com/vishnuvcr/Daily-Options/blob/phase-16-iv-skew-tail-credit-v1/docs/phase16_hypothesis.md)
