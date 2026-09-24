@@ -235,7 +235,7 @@ def attach_contract_paths(signals: pd.DataFrame, root: Path) -> pd.DataFrame:
       WHERE close > 0 AND expiry_type IN ('WEEK','MONTH')
     ),
     ranked AS (
-      SELECT s.*, r.strike_price, r.local_ts,
+      SELECT s.*, r.strike_price, r.local_ts, r.open,
              ROW_NUMBER() OVER (
                PARTITION BY s.variant_id, s.trade_date
                ORDER BY ABS(r.strike_price - s.spot), r.local_ts
