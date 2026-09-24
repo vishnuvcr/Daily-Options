@@ -312,3 +312,11 @@ No candidate has passed promotion, so robustness and paper-shadow phases remain 
 - New mechanism: cross-index standardized relative strength + ATM option-premium confirmation, executed through defined-risk debit spreads.
 - 128 variants are pre-registered.
 - Public dataset is research-only because of its CC-BY-NC-4.0 license; any promoted result must be independently rerun on licensed/executable data.
+
+
+### 2026-09-24 — Step 11.1 Phase 11 preregistered
+- Created `phase-11-breakout-pullback-oi-v1`.
+- New mechanism: opening-range breakout followed by a tolerance-controlled pullback/reconfirmation, then ATM option OI/volume confirmation.
+- 64 variants are frozen before execution.
+- Source motivation is external BankNIFTY breakout-pullback research; its small sample is not validation.
+- Phase 11 will be executed only after the currently active Phase 8/9/10 result set is inspected.
