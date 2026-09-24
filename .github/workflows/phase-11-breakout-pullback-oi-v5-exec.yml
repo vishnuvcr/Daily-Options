@@ -93,18 +93,23 @@ jobs:
           done
 
           for YEAR in 2019 2020; do
-            find "data/cache/phase12_zenodo/options/$YEAR" -type f -name '*.zip' -print0 |
-            while IFS= read -r -d '' MONTH_ZIP; do
-              DEST="${MONTH_ZIP%.zip}"
-              if ! find "$DEST" -type f \( -name '*.xlsx' -o -name '*.xls' -o -name '*.csv' \) -print -quit 2>/dev/null | grep -q .; then
+            for PASS in 1 2 3 4; do
+              FOUND=0
+              while IFS= read -r -d '' MONTH_ZIP; do
+                FOUND=1
+                DEST="${MONTH_ZIP%.zip}"
                 mkdir -p "$DEST"
-                unzip -q "$MONTH_ZIP" -d "$DEST"
+                unzip -qo "$MONTH_ZIP" -d "$DEST"
+                mv "$MONTH_ZIP" "${MONTH_ZIP}.processed"
+              done < <(find "data/cache/phase12_zenodo/options/$YEAR" -type f -name '*.zip' -print0)
+              if [ "$FOUND" -eq 0 ]; then
+                break
               fi
             done
           done
 
-          find data/cache/phase12_zenodo/market -type f | head -20
-          find data/cache/phase12_zenodo/options -type f | head -20
+          find data/cache/phase12_zenodo/market -type f -print | sed -n '1,20p'
+          find data/cache/phase12_zenodo/options -type f -print | sed -n '1,20p'
 
       - name: Inspect Zenodo raw schemas
         run: |
@@ -113,7 +118,7 @@ jobs:
           echo "=== NIFTY_F1.csv ==="
           find data/cache/phase12_zenodo/market -type f -name 'NIFTY_F1.csv' -print -exec head -12 {} \;
           echo "=== Sample option files ==="
-          find data/cache/phase12_zenodo/options -type f \( -name '*.xlsx' -o -name '*.xls' -o -name '*.csv' \) | head -5
+          find data/cache/phase12_zenodo/options -type f \( -name '*.xlsx' -o -name '*.xls' -o -name '*.csv' -o -name '*.txt' \) -print | sed -n '1,5p'
 
       - name: Data and pilot metadata audit
         run: |
