@@ -25,6 +25,7 @@ def feature_query(root:Path)->str:
       SELECT CAST(datetime AS TIMESTAMP) AS datetime, CAST(date AS DATE) AS trade_date, CAST(expiry AS DATE) AS expiry, expiry_type, option_type, strike_type, CAST(strike_price AS DOUBLE) AS strike, CAST(spot AS DOUBLE) AS spot, CAST(iv AS DOUBLE) AS iv, CAST(close AS DOUBLE) AS close
       FROM read_parquet('{g}', union_by_name=true)
       WHERE close>0 AND strike_price>0 AND option_type IN ('CALL','PUT') AND expiry_type IN ('WEEK','MONTH')
+        AND CAST(expiry AS DATE) > CAST(date AS DATE)
     ),
     minute AS (
       SELECT datetime,trade_date,expiry,expiry_type,strike_type,MAX(spot) AS spot,
