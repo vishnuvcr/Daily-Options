@@ -297,3 +297,10 @@ No candidate has passed promotion, so robustness and paper-shadow phases remain 
 - New bounded mechanism: sell the opposite tail with a defined-risk credit spread only when trend and IV/RV regime filters agree.
 - 96 variants are pre-registered; strike identity is frozen at entry and all exits use the actual fixed contracts.
 - Base and doubled-slippage workflows will run on the pinned 34M-row option dataset.
+
+
+### 2026-09-24 — Step 9.2 Path bookkeeping correction
+- Initial run 35937031625 passed unit tests and dataset acquisition.
+- Numerical execution failed because `family` was not persisted in signal rows.
+- No Phase 9 strategy statistic was accepted.
+- Fixed the signal bookkeeping and logged E0059; the next push will rerun base/stress.
