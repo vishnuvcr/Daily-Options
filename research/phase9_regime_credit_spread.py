@@ -97,6 +97,7 @@ def build_signals(regime: pd.DataFrame) -> pd.DataFrame:
         x = x.sort_values(['trade_date','datetime']).drop_duplicates('trade_date', keep='first')
         x['entry_anchor'] = x['datetime'] + pd.Timedelta(minutes=1)
         x['variant_id'] = v.key
+        x['family'] = v.family
         x['hold_minutes'] = v.hold_minutes
         x['width_steps'] = v.width_steps
         x['exit_id'] = v.exit_id
