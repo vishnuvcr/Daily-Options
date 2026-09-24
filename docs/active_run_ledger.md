@@ -88,3 +88,7 @@ These are the first runs using exact branch-parent construction after E0078. No 
 - Numerical gate: FAIL. Family retired.
 - Archive commit: `ddda47a627f49660ce5b8c98551ecd7c84d1f7f0`.
 - No future tuning of Phase 10 is authorized; any further work must be a scientifically distinct phase.
+
+### Phase 9 v5/v6 correction — 2026-09-24
+- v5 run 35974727222 completed all four shards but produced 0 trades; shard logs showed 26,544 signals and 26,538 entries per shard. Investigation found the short and long legs were selected by expiry type rather than the same actual expiry date. v5 is NON-EVIDENTIARY and is not a strategy result.
+- v6 exact-parent commit 1694d95b2778aedb18581724317c71e91be44740 locks both legs to the next actual WEEK/MONTH expiry and carries that expiry into simulation. Run 35975773169 is queued.
