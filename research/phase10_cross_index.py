@@ -311,9 +311,9 @@ def select_entries(
                 {
                         "variant_id": variant_id,
                         "trade_date": trade_date,
-                        "leader": meta.leader,
-                        "direction": meta.direction,
-                        "expiry": meta.expiry,
+                        "leader": meta["leader"],
+                        "direction": meta["direction"],
+                        "expiry": meta["expiry"],
                         "entry_time": entry_ts,
                         "atm_strike": atm,
                         "wing_strike": wing,
