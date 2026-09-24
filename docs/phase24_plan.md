@@ -66,3 +66,6 @@ A preliminary positive result is not promoted. Any cell clearing the preliminary
 ### Current levy references
 - NSE STT schedule: https://www.nseindia.com/static/products-services/equity-derivatives-securities-transaction-tax
 - NSE transaction-charge circular (effective 2026-03-01): https://nsearchives.nseindia.com/content/circulars/FA73061.pdf
+
+## Data-integrity gate added after Phase 24 execution audit — 2026-09-25
+Before accepting any numerical result from the pinned source, the workflow must validate that the restored cache is complete enough for the preregistered research window. A cache is not considered valid merely because `index/NIFTY.parquet` and the `options/NIFTY` directory exist. The acquisition step must verify option-file/date coverage against the requested window (or a pinned manifest with an explicit expected date set) and reacquire missing data rather than silently reusing a partial cache. Cross-source validation is required when the primary source has material coverage gaps. Any result generated from an under-covered cache is non-evidentiary.
