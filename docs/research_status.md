@@ -86,3 +86,15 @@ Phase 8 v3 exact-ref run 35972809477 completed cleanly through unit tests, cache
 - Best base max drawdown: approximately -₹67,939 for the best-ranked variant.
 
 Decision: Phase 8 is retired at the preliminary gate. No walk-forward promotion is warranted because no variant is even positive at the preliminary cost-aware gate, and no parameter will be retuned around this negative result.
+## Phase 10 result — 2026-09-24
+
+Phase 10 v4 run 35973884459 completed cleanly through base, doubled-slippage stress and its embedded walk-forward evaluation.
+
+- 128 preregistered variants.
+- 10,752 executable trades.
+- Best base mean active-day net: -₹113.62/lot/day.
+- Best stress mean active-day net: -₹136.48/lot/day.
+- 0 preliminary target-qualified variants.
+- 3 WFA windows, 0 positive test windows, 0 target windows.
+
+Decision: Phase 10 is retired. No parameter retuning is permitted.
