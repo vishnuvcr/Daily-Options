@@ -228,7 +228,7 @@ def run(root,out,slippage,expiry):
 
     outcome_rows=[]
     setup_index=setup_df.set_index(['trade_date','entry_time','expiry_type','side','width'])
-    for key,u in setup_df.iterrows():
+    for key,u in setup_index.iterrows():
         d,et,ex,side,width=key
         q=win[(win.trade_date==d)&(win.entry_time==et)&(win.expiry_type==ex)&(win.side==side)&(win.short_strike==u.short_strike)&(win.wing_strike==u.wing_strike)]
         if q.empty: continue
