@@ -62,7 +62,7 @@ def inspect_file(path):
     times=con.execute(f"""
       SELECT MIN(CAST(timestamp AS TIMESTAMP)) min_ts,
              MAX(CAST(timestamp AS TIMESTAMP)) max_ts,
-             COUNT(*) rows
+             COUNT(*) AS row_count
       FROM read_parquet('{path}')
     """).df()
     con.close()
