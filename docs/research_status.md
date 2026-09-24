@@ -214,3 +214,8 @@ Phase 17 is now the active family: exact-expiry NIFTY premium-skew plus option-f
 The exact-expiry source audit proved that option timestamps are timezone-aware and the first clean Phase 17 run's zero-trade result was therefore non-evidentiary. Phase 17a corrects timezone-preserving joins, next-minute open entry construction, PE/CE mapping, and hold/stop variant assignment without changing the 384-cell hypothesis.
 
 Current Phase 17a branch: `phase-17a-timezone-aligned-exec-v1`.
+
+
+## 2026-09-24 — Phase 17c launch
+
+Phase 17 exact-minute execution produced zero setups because option rows are sparse by strike/minute. Phase 17c preserves the entire 384-cell hypothesis and changes only the pre-specified execution feasibility rule: earliest common short/wing quote within 3 minutes after the signal, using next available OPENs. Numerical result: PENDING.
