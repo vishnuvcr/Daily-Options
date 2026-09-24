@@ -26,7 +26,7 @@ IV_RV_MIN = 1.10
 
 def open_db() -> duckdb.DuckDBPyConnection:
     Path('/tmp/phase9_duckdb').mkdir(parents=True, exist_ok=True)
-    con = open_db()
+    con = duckdb.connect()
     con.execute("PRAGMA threads=2")
     con.execute("PRAGMA memory_limit='3GB'")
     con.execute("PRAGMA preserve_insertion_order=false")
@@ -185,60 +185,122 @@ def select_entries(signals: pd.DataFrame, root: Path) -> pd.DataFrame:
 def simulate(entries: pd.DataFrame, root: Path, out_dir: Path, slippage_points: float) -> pd.DataFrame:
     if entries.empty:
         return pd.DataFrame()
-    con = duckdb.connect()
+    con = open_db()
     con.register('entries_df', entries)
     glob = parquet_glob(root)
     sql = f'''
     WITH raw AS (
-      SELECT CAST(datetime AS TIMESTAMPTZ) AS ts_utc, CAST(date AS DATE) AS trade_date, expiry_type, option_type,
-             CAST(strike_price AS DOUBLE) AS strike, CAST(open AS DOUBLE) AS open, CAST(high AS DOUBLE) AS high,
-             CAST(low AS DOUBLE) AS low, CAST(close AS DOUBLE) AS close
+      SELECT
+        CAST(datetime AS TIMESTAMPTZ) AS ts_utc,
+        CAST(date AS DATE) AS trade_date,
+        expiry_type,
+        option_type,
+        CAST(strike_price AS DOUBLE) AS strike,
+        CAST(open AS DOUBLE) AS open,
+        CAST(high AS DOUBLE) AS high,
+        CAST(low AS DOUBLE) AS low,
+        CAST(close AS DOUBLE) AS close
       FROM read_parquet('{glob}', union_by_name=true)
       WHERE close > 0 AND expiry_type IN ('WEEK','MONTH')
     )
-    SELECT e.*, r.ts_utc + INTERVAL '5 hours 30 minutes' AS local_ts, r.strike, r.open, r.high, r.low, r.close
-    FROM entries_df e JOIN raw r
-      ON r.trade_date=e.trade_date AND r.expiry_type=e.expiry_type AND r.option_type=e.option_type
-     AND r.strike IN (e.strike,e.long_strike)
-     AND r.ts_utc + INTERVAL '5 hours 30 minutes' BETWEEN e.entry_time_local AND e.entry_time_local + e.hold_minutes * INTERVAL '1 minute'
-    ORDER BY e.variant_id,e.trade_date,r.strike,r.ts_utc
+    SELECT
+      e.variant_id, e.family, e.trade_date, e.entry_time_local,
+      e.hold_minutes, e.exit_id, e.strike AS short_strike, e.long_strike,
+      s.ts_utc + INTERVAL '5 hours 30 minutes' AS local_ts,
+      s.open AS short_open, s.high AS short_high, s.low AS short_low, s.close AS short_close,
+      l.open AS long_open, l.high AS long_high, l.low AS long_low, l.close AS long_close
+    FROM entries_df e
+    JOIN raw s
+      ON s.trade_date=e.trade_date
+     AND s.expiry_type=e.expiry_type
+     AND s.option_type=e.option_type
+     AND s.strike=e.strike
+     AND s.ts_utc + INTERVAL '5 hours 30 minutes' BETWEEN e.entry_time_local
+         AND e.entry_time_local + e.hold_minutes * INTERVAL '1 minute'
+    JOIN raw l
+      ON l.trade_date=e.trade_date
+     AND l.expiry_type=e.expiry_type
+     AND l.option_type=e.option_type
+     AND l.strike=e.long_strike
+     AND l.ts_utc=s.ts_utc
+    ORDER BY e.variant_id, e.trade_date, local_ts
     '''
     path = con.execute(sql).df()
     con.close()
     if path.empty:
         return pd.DataFrame()
+
     path['local_ts'] = pd.to_datetime(path['local_ts'])
+    path['entry_time_local'] = pd.to_datetime(path['entry_time_local'])
     cm = OptionCostModel()
     results = []
-    for (variant_id, trade_date), g in path.groupby(['variant_id','trade_date'], sort=False):
-        meta = g.iloc[0]
-        grid = g.pivot_table(index='local_ts', columns='strike', values=['open','high','low','close'], aggfunc='last').sort_index()
-        sk, lk = float(meta.strike), float(meta.long_strike)
-        if sk not in grid['close'].columns or lk not in grid['close'].columns:
+
+    for (variant_id, trade_date), g in path.groupby(['variant_id', 'trade_date'], sort=False):
+        g = g.sort_values('local_ts')
+        first = g.iloc[0]
+        entry_t = pd.Timestamp(first.entry_time_local)
+        if not np.isfinite(float(first.short_open)) or not np.isfinite(float(first.long_open)):
             continue
-        entry_t = pd.Timestamp(meta.entry_time_local)
-        er = grid.loc[grid.index == entry_t]
-        if er.empty: er = grid.iloc[[0]]
-        er = er.iloc[0]
-        short_entry = float(er[('open',sk)]); long_entry = float(er[('open',lk)])
+        short_entry = float(first.short_open)
+        long_entry = float(first.long_open)
         credit = short_entry - long_entry
-        if credit <= 0: continue
-        prof = EXIT_PROFILES[int(meta.exit_id)]
+        if credit <= 0:
+            continue
+
+        prof = EXIT_PROFILES[int(first.exit_id)]
         stop_value = credit * prof['stop_mult']
-        target_buyback = credit * (1-prof['target_capture'])
-        short_exit = float(grid[('close',sk)].iloc[-1]); long_exit = float(grid[('close',lk)].iloc[-1])
-        exit_ts = grid.index[-1]; reason='TIME'
-        for ts,row in grid.iterrows():
-            sh=float(row[('high',sk)]); sl=float(row[('low',sk)]); lh=float(row[('high',lk)]); ll=float(row[('low',lk)])
-            buyback_high = sh-ll; buyback_low=sl-lh
+        target_buyback = credit * (1 - prof['target_capture'])
+        short_exit = float(g.iloc[-1].short_close)
+        long_exit = float(g.iloc[-1].long_close)
+        exit_ts = pd.Timestamp(g.iloc[-1].local_ts)
+        reason = 'TIME'
+
+        for _, bar in g.iterrows():
+            sh = float(bar.short_high)
+            sl = float(bar.short_low)
+            lh = float(bar.long_high)
+            ll = float(bar.long_low)
+            buyback_high = sh - ll
+            buyback_low = sl - lh
             if buyback_high >= stop_value:
-                short_exit=sh; long_exit=ll; exit_ts=ts; reason='STOP'; break
+                short_exit = sh
+                long_exit = ll
+                exit_ts = pd.Timestamp(bar.local_ts)
+                reason = 'STOP'
+                break
             if buyback_low <= target_buyback:
-                short_exit=sl; long_exit=lh; exit_ts=ts; reason='TARGET'; break
-        net=cm.vertical_credit_spread_net_pnl(short_entry,long_entry,short_exit,long_exit,nifty_lot_size(trade_date),1,slippage_points)
-        results.append({'variant_id':variant_id,'family':meta.family,'trade_date':trade_date,'entry_time':entry_t,'exit_time':exit_ts,'short_strike':sk,'long_strike':lk,'credit':credit,'buyback':short_exit-long_exit,'exit_reason':reason,'net_pnl':net})
-    out=pd.DataFrame(results)
-    out_dir.mkdir(parents=True,exist_ok=True); out.to_csv(out_dir/'phase9_trades.csv',index=False)
+                short_exit = sl
+                long_exit = lh
+                exit_ts = pd.Timestamp(bar.local_ts)
+                reason = 'TARGET'
+                break
+
+        net = cm.vertical_credit_spread_net_pnl(
+            short_entry,
+            long_entry,
+            short_exit,
+            long_exit,
+            nifty_lot_size(trade_date),
+            1,
+            slippage_points,
+        )
+        results.append({
+            'variant_id': variant_id,
+            'family': first.family,
+            'trade_date': trade_date,
+            'entry_time': entry_t,
+            'exit_time': exit_ts,
+            'short_strike': float(first.short_strike),
+            'long_strike': float(first.long_strike),
+            'credit': credit,
+            'buyback': short_exit - long_exit,
+            'exit_reason': reason,
+            'net_pnl': net,
+        })
+
+    out = pd.DataFrame(results)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out.to_csv(out_dir / 'phase9_trades.csv', index=False)
     return out
 
 def leaderboard(trades: pd.DataFrame) -> pd.DataFrame:
