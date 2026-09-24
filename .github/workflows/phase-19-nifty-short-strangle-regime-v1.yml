@@ -6,7 +6,7 @@ on:
     branches: [phase-19-nifty-short-strangle-regime-v1]
 
 concurrency:
-  group: phase19-short-strangle
+  group: phase19-short-strangle-e0192
   cancel-in-progress: false
 
 jobs:
