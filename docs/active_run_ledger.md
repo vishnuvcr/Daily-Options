@@ -68,3 +68,8 @@ These are the first runs using exact branch-parent construction after E0078. No 
 - Phase 8 v4 branch corrected in-place to exact-parent commit `ccfa4605d8dc3702bdab0a4f1091c0e78857a2be`, parent `96947e1`.
 - The prior contaminated test commit `5792cb6` is retained only as an audit artifact; it is not the execution ref.
 - The corrected v4 ref should now trigger the formal-gate workflow from the repository's push/PR workflow.
+
+### Phase 8 closure
+- Run 35972809477 / commit 4c660571 completed successfully.
+- Base and doubled-slippage stress both failed the preliminary target gate.
+- Phase 8 is frozen negative and retired. No further tuning from this family is permitted.
