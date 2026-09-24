@@ -37,3 +37,10 @@ def test_source_primary_premium_is_in_frozen_grid():
     v = variant_grid()
     assert any(x.target_premium == 25.0 for x in v)
     assert any(x.far_mode == 'DIAGONAL_PREMIUM' for x in v)
+
+
+def test_series_loader_uses_timestamp_range_not_trading_day_filter():
+    from research.phase24_falcon_spread import series
+    src = inspect.getsource(series)
+    assert "CAST(trading_day AS DATE)" not in src
+    assert "BETWEEN TIMESTAMP" in src
