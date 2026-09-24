@@ -241,7 +241,7 @@ def select_entries(
             )
             SELECT
               c.variant_id, c.trade_date, c.local_ts AS signal_ts,
-              c.entry_anchor, c.direction, c.expiry, c.leader_spot,
+              c.entry_anchor, c.leader, c.direction, c.expiry, c.leader_spot,
               c.width_steps, c.hold_minutes, c.risk_id,
               r.option_side, r.strike, r.local_ts, r.close
             FROM chosen_df c
@@ -438,11 +438,11 @@ def simulate(entries: pd.DataFrame, root: Path, out_dir: Path, slippage: float) 
                 {
                     "variant_id": meta.variant_id,
                     "trade_date": meta.trade_date,
-                    "leader": meta.leader,
-                    "direction": meta.direction,
+                    "leader": meta["leader"],
+                    "direction": meta["direction"],
                     "entry_time": meta.entry_time,
                     "exit_time": exit_ts,
-                    "expiry": meta.expiry,
+                    "expiry": meta["expiry"],
                     "atm_strike": atm_strike,
                     "wing_strike": wing_strike,
                     "entry_debit": debit,
