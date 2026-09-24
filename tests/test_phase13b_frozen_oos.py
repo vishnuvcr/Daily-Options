@@ -5,3 +5,4 @@ def test_frozen_rule_constants():
     assert Z_THRESHOLD == 1.5
     assert RV_PERCENTILE == 80.0
     assert HOLD_MINUTES == 10
+# frozen-oos trigger checkpoint 2026-09-24
