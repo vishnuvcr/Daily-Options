@@ -337,25 +337,27 @@ def simulate_setup(con, setup, variant, slippage):
     adjust_date = setup["adjust_date"]
     exit_date = setup["exit_date"]
     end = pd.Timestamp(f"{exit_date} 15:15:00")
-    initial = {
-        "short_ce": series(con, near, entry_date, setup["short_ce_strike"], "CE", start, end),
-        "short_pe": series(con, near, entry_date, setup["short_pe_strike"], "PE", start, end),
-        "far_ce": series(con, far, entry_date, setup["far_ce_strike"], "CE", start, end),
-        "far_pe": series(con, far, entry_date, setup["far_pe_strike"], "PE", start, end),
-    }
+    cache = setup.setdefault("_cache", {})
+
+    if "initial" not in cache:
+        cache["initial"] = {
+            "short_ce": series(con, near, entry_date, setup["short_ce_strike"], "CE", start, end),
+            "short_pe": series(con, near, entry_date, setup["short_pe_strike"], "PE", start, end),
+            "far_ce": series(con, far, entry_date, setup["far_ce_strike"], "CE", start, end),
+            "far_pe": series(con, far, entry_date, setup["far_pe_strike"], "PE", start, end),
+        }
+    initial = cache["initial"]
     if any(v.empty for v in initial.values()):
         return None
 
-    adjust_signal = pd.Timestamp(f"{adjust_date} {variant.adjust_time}")
-    adjust_exec = adjust_signal + pd.Timedelta(minutes=1)
-
-    # One listed strike outside the original short on the same weekly expiry.
-    strike_q = f"""
-      SELECT DISTINCT CAST(strike AS DOUBLE) strike, UPPER(CAST(option_type AS VARCHAR)) option_type
-      FROM read_parquet('{near}')
-      WHERE CAST(trading_day AS DATE)=DATE '{entry_date}'
-    """
-    strikes = con.execute(strike_q).df()
+    if "strikes" not in cache:
+        strike_q = f"""
+          SELECT DISTINCT CAST(strike AS DOUBLE) strike, UPPER(CAST(option_type AS VARCHAR)) option_type
+          FROM read_parquet('{near}')
+          WHERE CAST(trading_day AS DATE)=DATE '{entry_date}'
+        """
+        cache["strikes"] = con.execute(strike_q).df()
+    strikes = cache["strikes"]
     ce = np.sort(strikes.loc[strikes.option_type=="CE","strike"].unique())
     pe = np.sort(strikes.loc[strikes.option_type=="PE","strike"].unique())
     ce_w = ce[ce > setup["short_ce_strike"]]
@@ -365,15 +367,24 @@ def simulate_setup(con, setup, variant, slippage):
     wing_ce = float(ce_w[0])
     wing_pe = float(pe_w[-1])
 
-    wing_series_ce = series(con, near, adjust_date, wing_ce, "CE", adjust_exec, end)
-    wing_series_pe = series(con, near, adjust_date, wing_pe, "PE", adjust_exec, end)
-    if wing_series_ce.empty or wing_series_pe.empty:
-        return None
+    adjust_signal = pd.Timestamp(f"{adjust_date} {variant.adjust_time}")
+    adjust_exec = adjust_signal + pd.Timedelta(minutes=1)
 
-    wing_ce_row = next_open(wing_series_ce, adjust_exec)
-    wing_pe_row = next_open(wing_series_pe, adjust_exec)
-    if wing_ce_row is None or wing_pe_row is None:
-        return None
+    if "pre_panel" not in cache:
+        cache["pre_panel"] = mark_panel(initial, tolerance_minutes=1)
+    combined = cache["pre_panel"]
+    pre_stop_ts = None
+    for row in combined.itertuples(index=False):
+        if row.ts < start or row.ts >= adjust_signal:
+            continue
+        pnl_points = (
+            setup["initial_credit"]
+            - 5*row.short_ce - 5*row.short_pe
+            + 3*row.far_ce + 3*row.far_pe
+        )
+        if pnl_points <= -variant.stop_multiple * setup["initial_credit"]:
+            pre_stop_ts = row.ts
+            break
 
     base_legs = [
         {"name":"short_ce","entry":setup["short_ce_entry"],"exit":None,"sign":-1,"qty":5},
@@ -382,53 +393,53 @@ def simulate_setup(con, setup, variant, slippage):
         {"name":"far_pe","entry":setup["far_pe_entry"],"exit":None,"sign":1,"qty":3},
     ]
 
-    # Pre-adjustment stop, evaluated on close MTM and executed at the next available open.
-    # One-minute quote series can have occasional missing bars, so use backward as-of
-    # alignment with a fixed one-minute tolerance; never use a future quote.
-    combined = mark_panel(initial, tolerance_minutes=1)
-    pre_stop_ts = None
-    for row in combined.itertuples(index=False):
-        if row.ts < start or row.ts >= adjust_signal:
-            continue
-        pnl_points = (
-            setup["initial_credit"]
-            - 5*getattr(row,"short_ce")
-            - 5*getattr(row,"short_pe")
-            + 3*getattr(row,"far_ce")
-            + 3*getattr(row,"far_pe")
-        )
-        if pnl_points <= -variant.stop_multiple * setup["initial_credit"]:
-            pre_stop_ts = row.ts
-            break
-
     if pre_stop_ts is not None:
-        ex = {}
         for leg in base_legs:
-            s = initial[leg["name"]]
-            row = next_open(s, pre_stop_ts + pd.Timedelta(minutes=1))
+            row = next_open(initial[leg["name"]], pre_stop_ts + pd.Timedelta(minutes=1))
             if row is None:
                 return None
-            ex[leg["name"]] = float(row.open_px)
-            leg["exit"] = ex[leg["name"]]
-        pnl = settle(base_legs, lot, slippage, entry_date=entry_date, exit_date=(pre_stop_ts + pd.Timedelta(minutes=1)).date())
-        return {"reason":"STOP_PRE_ADJUST","exit_ts":pre_stop_ts + pd.Timedelta(minutes=1),"net_pnl":pnl,"active_legs":4}
+            leg["exit"] = float(row.open_px)
+        exit_ts = pre_stop_ts + pd.Timedelta(minutes=1)
+        pnl = settle(base_legs, lot, slippage, entry_date=entry_date, exit_date=exit_ts.date())
+        return {"reason":"STOP_PRE_ADJUST","exit_ts":exit_ts,"net_pnl":pnl,"active_legs":4}
 
-    wing_entries = {"wing_ce":float(wing_ce_row.open_px),"wing_pe":float(wing_pe_row.open_px)}
+    adjust_key = (variant.adjust_time, wing_ce, wing_pe)
+    adjustments = cache.setdefault("adjustments", {})
+    if adjust_key not in adjustments:
+        wing_series_ce = series(con, near, adjust_date, wing_ce, "CE", adjust_exec, end)
+        wing_series_pe = series(con, near, adjust_date, wing_pe, "PE", adjust_exec, end)
+        if wing_series_ce.empty or wing_series_pe.empty:
+            return None
+        wing_ce_row = next_open(wing_series_ce, adjust_exec)
+        wing_pe_row = next_open(wing_series_pe, adjust_exec)
+        if wing_ce_row is None or wing_pe_row is None:
+            return None
+        post = mark_panel({
+            "short_ce": initial["short_ce"],
+            "short_pe": initial["short_pe"],
+            "far_ce": initial["far_ce"],
+            "far_pe": initial["far_pe"],
+            "wing_ce": wing_series_ce,
+            "wing_pe": wing_series_pe,
+        }, tolerance_minutes=1)
+        adjustments[adjust_key] = {
+            "wing_series_ce": wing_series_ce,
+            "wing_series_pe": wing_series_pe,
+            "wing_ce_entry": float(wing_ce_row.open_px),
+            "wing_pe_entry": float(wing_pe_row.open_px),
+            "post": post[post.ts >= adjust_exec].copy(),
+        }
+    adj = adjustments[adjust_key]
+    wing_series_ce = adj["wing_series_ce"]
+    wing_series_pe = adj["wing_series_pe"]
+    wing_entries = {"wing_ce":adj["wing_ce_entry"],"wing_pe":adj["wing_pe_entry"]}
+
     legs = base_legs + [
         {"name":"wing_ce","entry":wing_entries["wing_ce"],"exit":None,"sign":1,"qty":5},
         {"name":"wing_pe","entry":wing_entries["wing_pe"],"exit":None,"sign":1,"qty":5},
     ]
-    post = mark_panel({
-        "short_ce": initial["short_ce"],
-        "short_pe": initial["short_pe"],
-        "far_ce": initial["far_ce"],
-        "far_pe": initial["far_pe"],
-        "wing_ce": wing_series_ce,
-        "wing_pe": wing_series_pe,
-    }, tolerance_minutes=1)
-    post = post[post.ts >= adjust_exec].copy()
     stop_ts = None
-    for row in post.itertuples(index=False):
+    for row in adj["post"].itertuples(index=False):
         pnl_points = (
             setup["initial_credit"]
             - 5*row.short_ce - 5*row.short_pe
@@ -440,16 +451,10 @@ def simulate_setup(con, setup, variant, slippage):
             stop_ts = row.ts
             break
 
-    # Exit on the last available pre-expiry session. Under today's NIFTY
-    # Tuesday expiry this is Monday, avoiding 0-DTE Tuesday exposure.
     exit_signal = stop_ts if stop_ts is not None else pd.Timestamp(f"{exit_date} 15:15:00")
     exit_from = exit_signal + pd.Timedelta(minutes=1)
     for leg in legs:
-        s = (
-            wing_series_ce if leg["name"]=="wing_ce"
-            else wing_series_pe if leg["name"]=="wing_pe"
-            else initial[leg["name"]]
-        )
+        s = (wing_series_ce if leg["name"]=="wing_ce" else wing_series_pe if leg["name"]=="wing_pe" else initial[leg["name"]])
         row = next_open(s, exit_from)
         if row is None:
             z = s[s.ts <= exit_signal].tail(1)
@@ -465,7 +470,6 @@ def simulate_setup(con, setup, variant, slippage):
         "net_pnl":settle(legs, lot, slippage, entry_date=entry_date, exit_date=exit_signal.date()),
         "active_legs":6,
     }
-
 
 def run(data: Path, out: Path, slippage: float):
     out.mkdir(parents=True, exist_ok=True)
