@@ -200,3 +200,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0146 | 2026-09-24 | Phase 16 unit tests | Generated Python contained escaped quotation marks inside a variant-id f-string, causing SyntaxError during test collection | No market data or P&L stage ran | Replace with a normal Python f-string; require unit-test pass before data acquisition | CLOSED — pre-result |
 
 | E0147 | 2026-09-24 | Phase 16 unit tests | First f-string correction did not replace the exact escaped source line, so the residual `f\\"...` syntax error remained in the branch | No numerical stage ran | Replace the source line directly and require import/unit-test success before data access | CLOSED — pre-result |
+
+| E0148 | 2026-09-24 | Phase 16 feature loading | `x.ist_time = ...` assigned a DataFrame attribute rather than a column; subsequent sort on `ist_time` raised KeyError before any P&L | No numerical result accepted | Use explicit `x['ist_time']` column assignment and rerun Base/Stress | CLOSED — pre-result |
