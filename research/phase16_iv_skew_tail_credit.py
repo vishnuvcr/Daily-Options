@@ -226,35 +226,58 @@ def run(root,out,slippage,expiry):
     setup_df['expiry_type']=setup_df['expiry_type'].astype(str)
     setup_df['side']=setup_df['side'].astype(str)
 
+    outcome_rows=[]
+    setup_index=setup_df.set_index(['trade_date','entry_time','expiry_type','side','width'])
+    for key,u in setup_df.iterrows():
+        d,et,ex,side,width=key
+        q=win[(win.trade_date==d)&(win.entry_time==et)&(win.expiry_type==ex)&(win.side==side)&(win.short_strike==u.short_strike)&(win.wing_strike==u.wing_strike)]
+        if q.empty: continue
+        a=q[q.strike==u.short_strike][['datetime','high','low','close_px']].rename(columns={'high':'shigh','low':'slow','close_px':'sclose'})
+        b=q[q.strike==u.wing_strike][['datetime','high','low','close_px']].rename(columns={'high':'whigh','low':'wlow','close_px':'wclose'})
+        m=a.merge(b,on='datetime').sort_values('datetime')
+        if m.empty: continue
+        for hold in HOLDS:
+            mm=m[m.datetime<=et+pd.Timedelta(minutes=hold)]
+            if mm.empty: continue
+            hi=mm.shigh-mm.wlow
+            lo=mm.slow-mm.whigh
+            for stop in STOPS:
+                stopv=u.credit*stop
+                target=u.credit*TARGET_RATIO
+                si=np.flatnonzero(hi>=stopv)
+                ti=np.flatnonzero(lo<=target)
+                si=int(si[0]) if len(si) else 10**9
+                ti=int(ti[0]) if len(ti) else 10**9
+                if si<=ti and si<10**9: ix,reason=si,'STOP'
+                elif ti<10**9: ix,reason=ti,'TARGET'
+                else: ix,reason=len(mm)-1,'TIME'
+                exrow=mm.iloc[ix]
+                net=OptionCostModel().vertical_credit_spread_net_pnl(float(u.short_entry),float(u.wing_entry),float(exrow.sclose),float(exrow.wclose),lot(d),slippage_points=slippage)
+                outcome_rows.append({
+                    'trade_date':d,'datetime':et-pd.Timedelta(minutes=1),'expiry_type':ex,
+                    'side':side,'width':width,'hold':hold,'stop':stop,
+                    'net_pnl':net,'reason':reason,'entry_credit':float(u.credit)
+                })
+    outcomes=pd.DataFrame(outcome_rows)
+
     rows=[]
-    for _,v in pd.DataFrame(vs).iterrows():
-        ss=signals(feat,v)
-        for _,r in ss.iterrows():
-            et=pd.Timestamp(r.datetime)+pd.Timedelta(minutes=1)
-            setup=setup_df[(setup_df.trade_date==r.trade_date)&(setup_df.entry_time==et)&(setup_df.expiry==r.expiry)&(setup_df.expiry_type==r.expiry_type)&(setup_df.side==v.side)&(setup_df.width==v.width)]
-            if setup.empty: continue
-            u=setup.iloc[0]
-            q=win[(win.trade_date==r.trade_date)&(win.entry_time==et)&(win.expiry==u.expiry)&(win.expiry_type==r.expiry_type)&(win.side==v.side)&(win.short_strike==u.short_strike)&(win.wing_strike==u.wing_strike)]
-            if q.empty: continue
-            a=q[q.strike==u.short_strike][['datetime','high','low','close_px']].rename(columns={'high':'shigh','low':'slow','close_px':'sclose'})
-            b=q[q.strike==u.wing_strike][['datetime','high','low','close_px']].rename(columns={'high':'whigh','low':'wlow','close_px':'wclose'})
-            m=a.merge(b,on='datetime').sort_values('datetime')
-            m=clip_hold_window(m, et, v.hold)
-            if m.empty: continue
-            stop=u.credit*v.stop
-            target=u.credit*TARGET_RATIO
-            hi=m.shigh-m.wlow
-            lo=m.slow-m.whigh
-            si=np.flatnonzero(hi>=stop)
-            ti=np.flatnonzero(lo<=target)
-            si=int(si[0]) if len(si) else 10**9
-            ti=int(ti[0]) if len(ti) else 10**9
-            if si<=ti and si<10**9: ix,reason=si,'STOP'
-            elif ti<10**9: ix,reason=ti,'TARGET'
-            else: ix,reason=len(m)-1,'TIME'
-            ex=m.iloc[ix]
-            net=OptionCostModel().vertical_credit_spread_net_pnl(float(u.short_entry),float(u.wing_entry),float(ex.sclose),float(ex.wclose),lot(r.trade_date),slippage_points=slippage)
-            rows.append({'trade_date':r.trade_date,'variant_id':f"{v.entry_time}|z{v.z}|j{v.jump}|w{v.width}|{v.side}|h{v.hold}|s{v.stop}",'net_pnl':net,'reason':reason,'skew_z':float(r.skew_z),'entry_credit':float(u.credit)})
+    if not outcomes.empty:
+        outcomes['signal_datetime']=pd.to_datetime(outcomes['datetime'])
+        for v in vs:
+            ss=signals(feat,v).copy()
+            if ss.empty: continue
+            keycols=['trade_date','datetime','expiry_type']
+            oo=outcomes[
+                outcomes.side.eq(v['side']) &
+                outcomes.width.eq(v['width']) &
+                outcomes.hold.eq(v['hold']) &
+                outcomes.stop.eq(v['stop'])
+            ]
+            if oo.empty: continue
+            merged=ss.merge(oo,on=keycols,how='inner')
+            if not merged.empty:
+                merged['variant_id']=f"{v['entry_time']}|z{v['z']}|j{v['jump']}|w{v['width']}|{v['side']}|h{v['hold']}|s{v['stop']}"
+                rows.append(merged[['trade_date','variant_id','net_pnl','reason','skew_z','entry_credit']])
 
     t=pd.DataFrame(rows)
     t.to_csv(out/'phase16_trades.csv',index=False)
