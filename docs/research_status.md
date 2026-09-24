@@ -72,3 +72,17 @@ No P&L has been accepted from these runs yet. Exact-parent Git-data commits are 
 - Phase 11 v3 run 35972926200 remains queued.
 
 No strategy has cleared the Rs 1,000/lot/day promotion gate.
+
+## Phase 8 result — 2026-09-24
+
+Phase 8 v3 exact-ref run 35972809477 completed cleanly through unit tests, cached data acquisition, base friction and doubled-slippage stress.
+
+- 96 preregistered variants.
+- 107,460 executable trades.
+- Best base mean all-day net: -₹6.13/lot/day.
+- Best doubled-slippage mean all-day net: -₹36.13/lot/day.
+- Target-qualified variants: 0/96.
+- Best base profit factor: 0.988.
+- Best base max drawdown: approximately -₹67,939 for the best-ranked variant.
+
+Decision: Phase 8 is retired at the preliminary gate. No walk-forward promotion is warranted because no variant is even positive at the preliminary cost-aware gate, and no parameter will be retuned around this negative result.
