@@ -92,3 +92,9 @@ These are the first runs using exact branch-parent construction after E0078. No 
 ### Phase 9 v5/v6 correction — 2026-09-24
 - v5 run 35974727222 completed all four shards but produced 0 trades; shard logs showed 26,544 signals and 26,538 entries per shard. Investigation found the short and long legs were selected by expiry type rather than the same actual expiry date. v5 is NON-EVIDENTIARY and is not a strategy result.
 - v6 exact-parent commit 1694d95b2778aedb18581724317c71e91be44740 locks both legs to the next actual WEEK/MONTH expiry and carries that expiry into simulation. Run 35975773169 is queued.
+
+### Phase 12 parked research branch
+- Branch: phase-12-derivative-lead-options-v1
+- PR: #20
+- Commit currently holds a manual data-gate workflow only.
+- It is not being executed while Phases 9 and 11 are active.
