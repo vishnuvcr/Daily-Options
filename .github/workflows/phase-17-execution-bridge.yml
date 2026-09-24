@@ -14,7 +14,7 @@ on:
       - ".github/workflows/phase-17-execution-bridge.yml"
 
 concurrency:
-  group: phase17-execution-v2
+  group: phase17-execution-v3
   cancel-in-progress: false
 
 jobs:
@@ -30,7 +30,7 @@ jobs:
       - name: Checkout Phase 17
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.phase_ref || github.event.pull_request.head.sha }}
+          ref: ${{ inputs.phase_ref || github.event.pull_request.head.sha || 'ddccef2660816db4a518e65d37c29051eb04aaf9' }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
