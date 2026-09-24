@@ -63,3 +63,12 @@ Fresh corrected workflows:
 - Phase 11 v3 run 35972926200: queued after PR-triggered workflow creation.
 
 No P&L has been accepted from these runs yet. Exact-parent Git-data commits are now used for execution refs.
+
+## 2026-09-24 execution frontier
+
+- Phase 8 v3 run 35972809477: unit tests and data acquisition passed; base friction completed successfully; stress friction remains in progress.
+- Phase 9 v4 retry run 35973446515: unit tests and data acquisition passed; base computation again cancelled by runner shutdown. No P&L accepted.
+- Phase 10 v4 run 35973884459: corrected premium propagation; currently in progress after dependency installation. No P&L accepted.
+- Phase 11 v3 run 35972926200 remains queued.
+
+No strategy has cleared the Rs 1,000/lot/day promotion gate.
