@@ -291,3 +291,7 @@ The simulator now caches repeated per-setup option series and mark panels across
 
 ## Phase 24 cost-model correction — NSE March 2026 transaction charges
 The simulator now applies the NSE equity-options premium transaction charge date-wise: 0.03503% before 2026-03-01 and approximately 0.0355299% from 2026-03-01, in addition to date-aware STT. The pending prior run is superseded by the new correction.
+
+
+## Phase 24 data coverage audit — 2026-09-25
+The corrected TradeMarkk Stress artifact is **data-limited**: 270 variants, but only 32 executable setups / 5 unique entry dates across the nominal 2021-07 to 2026-08 window. The apparent 18 target-qualified variants are single-trade or otherwise tiny-sample observations and are rejected as evidence. External dataset documentation also states that TradeMarkk option coverage is partial. The family is therefore moving to an independent minute-data validation source before any strategy conclusion.
