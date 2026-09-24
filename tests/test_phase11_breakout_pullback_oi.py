@@ -37,3 +37,5 @@ def test_put_wing_is_nearest_lower_strike():
     atm = 48600.0
     lower = sorted([s for s in strikes if s < atm])
     assert lower[-1] == 48500.0
+
+# PR synchronization checkpoint
