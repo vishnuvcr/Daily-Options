@@ -298,6 +298,8 @@ def run(root:Path,out:Path,slippage:float):
             )
             m=trades[
                 (trades.setup_key==setup_key)&
+                (trades.short_offset==v.short_offset)&
+                (trades.wing_width==v.wing_width)&
                 (trades.hold==v.hold)&
                 (trades.stop==v.stop)
             ].copy()
