@@ -305,3 +305,7 @@ Phase 24 next execution requirement: rebuild/reacquire a coverage-validated exac
 
 ## Phase 24 v2 independent-source launch — 2026-09-25
 TradeMarkk v1 is classified data-limited and its apparent Stress winners are rejected. The frozen Falcon strategy is now being evaluated on Rissin/Upstox 1-minute NIFTY option data at immutable revision c97e450a27e945983519cda2bc24301afa7efac1. Current timing is Wednesday entry → Thursday adjustment → Monday pre-expiry exit. Latest v2 workflow run: 36057664349, queued Base and Stress; no v2 P&L is accepted yet.
+
+
+## Phase 24 v2 source correction — 2026-09-25
+Rissin revision c97e450 exposed auto-converted default/train shards rather than the documented upstox_intraday/NIFTY yearly Parquet paths, so runs 1/2 failed before simulation. The v2 workflow is now pinned to immutable revision 78b1c5468255d18cf492984bfe6fe4e3ac874d7c, which contains the raw upstox_intraday/NIFTY files. No P&L was produced by the failed runs.
