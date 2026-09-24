@@ -25,3 +25,19 @@ def test_required_files_sql_is_duckdb_list():
         assert sql_list.startswith("[")
         assert sql_list.endswith("]")
         assert "'WEEK/ATM_CE.parquet'" in sql_list or "ATM_CE.parquet" in sql_list
+
+
+def test_required_files_feature_only_uses_four_atm_files():
+    from pathlib import Path
+    from research.phase15_vrp_jump_brake_short_vol import required_files_sql
+    import tempfile
+    with tempfile.TemporaryDirectory() as td:
+        root=Path(td)
+        for expiry in ("WEEK","MONTH"):
+            (root/expiry).mkdir(parents=True,exist_ok=True)
+            for name in ("ATM_CE.parquet","ATM_PE.parquet","ATM+2_CE.parquet","ATM+2_PE.parquet","ATM-2_CE.parquet","ATM-2_PE.parquet"):
+                (root/expiry/name).write_bytes(b"")
+        q=required_files_sql(root, feature_only=True)
+        assert "ATM_CE.parquet" in q and "ATM_PE.parquet" in q
+        assert "ATM+2_CE.parquet" not in q
+        assert "ATM-2_PE.parquet" not in q
