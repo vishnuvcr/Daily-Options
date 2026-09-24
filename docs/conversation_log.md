@@ -27,3 +27,19 @@ Continue the bounded search under the revised stopping criterion: do not end the
 
 ### Research integrity decision
 No P&L result from a failed or incomplete run is accepted. No parameter has been selected from a test period. Engineering corrections are applied before interpreting results, without changing the preregistered hypothesis families or numerical parameter grids.
+
+### 2026-09-24 — Fresh corrected executions
+
+The first fresh reruns still executed stale branch refs, exposing:
+- Phase 8 missing `r.open` in the ranked SQL projection.
+- Phase 10 missing `c.leader` in the candidate projection.
+
+A branch-provenance issue in the GitHub file-update path was also identified: some commits were not advancing the intended branch ref. This was closed by constructing exact-parent blob/tree/commit objects and creating immutable execution branches.
+
+Current runs:
+- Phase 8: 35972809477, base running.
+- Phase 9: 35972822793, base running.
+- Phase 10: 35972869077, base running.
+- Phase 11: 35972926200, queued.
+
+No strategy result is accepted yet.
