@@ -219,3 +219,8 @@ Current Phase 17a branch: `phase-17a-timezone-aligned-exec-v1`.
 ## 2026-09-24 — Phase 17c launch
 
 Phase 17 exact-minute execution produced zero setups because option rows are sparse by strike/minute. Phase 17c preserves the entire 384-cell hypothesis and changes only the pre-specified execution feasibility rule: earliest common short/wing quote within 3 minutes after the signal, using next available OPENs. Numerical result: PENDING.
+
+
+## 2026-09-24 — Phase 17c v2 authoritative launch
+
+The Phase 17c v2 branch is now execution-ready. It preserves the 384-cell Phase 17 family and the pre-registered earliest-common-entry rule with a 3-minute hard maximum delay. The option quote loader now actually retrieves the full 0–3 minute signal window required by that rule.
