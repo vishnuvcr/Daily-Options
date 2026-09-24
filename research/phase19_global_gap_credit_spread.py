@@ -400,7 +400,11 @@ def simulate(root: Path, entries: pd.DataFrame, out: Path, slippage: float) -> p
             "net_pnl": net
         })
 
-    return pd.DataFrame(outcomes)
+    outcomes_df = pd.DataFrame(outcomes)
+    if outcomes_df.empty:
+        return pd.DataFrame()
+    join_cols = ["trade_date","entry_ts","expiry","side","short_strike","wing_strike","hold","stop"]
+    return entries.merge(outcomes_df, on=join_cols, how="inner")
 
 
 def leaderboard(trades: pd.DataFrame) -> pd.DataFrame:
