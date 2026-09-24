@@ -93,3 +93,5 @@ The three active research families have not yet produced an accepted strategy re
 [Detailed active-run ledger](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/active_run_ledger.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md) · [Research status](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md)
 
 - Phase 11 is now executable on its dedicated branch: 64 pre-registered BANKNIFTY breakout-pullback/OI-confirmation variants, with base/stress slippage and walk-forward gates. A pre-run option-side selection defect was fixed before accepting any result.
+
+- Phase 11 v2 / PR #12 corrects nearest-wing selection for PUT debit spreads before any P&L is accepted; the original Phase 11 PR #11 is retained as audit history.
