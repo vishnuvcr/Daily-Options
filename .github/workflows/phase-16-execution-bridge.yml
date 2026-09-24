@@ -1,0 +1,61 @@
+name: Phase 16 - Execution Bridge
+
+on:
+  workflow_dispatch:
+    inputs:
+      phase_ref:
+        description: "Exact Phase 16 commit to execute"
+        required: true
+        default: "7184701da6973db896ddf97c2079faf6c73c0014"
+  push:
+    paths:
+      - ".github/workflows/phase-16-execution-bridge.yml"
+
+concurrency:
+  group: phase16-execution-bridge
+  cancel-in-progress: false
+
+jobs:
+  research:
+    strategy:
+      fail-fast: false
+      matrix:
+        expiry: [WEEK, MONTH]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout Phase 16 ref
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.phase_ref || '7184701da6973db896ddf97c2079faf6c73c0014' }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pandas numpy pyarrow duckdb huggingface_hub pytest
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_phase16_iv_skew_tail_credit.py
+      - name: Cache Artist23
+        uses: actions/cache@v4
+        with:
+          path: data/cache/hf_nifty_options
+          key: phase16-artist23-45e0a04-v3
+      - name: Acquire or reuse dataset
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/hf_nifty_options
+          if ! find data/cache/hf_nifty_options -type f -name '*.parquet' -print -quit | grep -q .; then
+            python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='artist-23/nifty-options-data',repo_type='dataset',revision='45e0a04',local_dir='data/cache/hf_nifty_options',allow_patterns=['NIFTY/**/*.parquet'])"
+          fi
+      - name: Base friction
+        run: PYTHONPATH=. python -m research.phase16_iv_skew_tail_credit --data data/cache/hf_nifty_options/NIFTY --out reports/${{ matrix.expiry }}/base --slippage 0.20 --expiry-type ${{ matrix.expiry }}
+      - name: Stress friction
+        run: PYTHONPATH=. python -m research.phase16_iv_skew_tail_credit --data data/cache/hf_nifty_options/NIFTY --out reports/${{ matrix.expiry }}/stress --slippage 0.40 --expiry-type ${{ matrix.expiry }}
+      - name: Upload research artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase16-bridge-${{ matrix.expiry }}
+          path: reports/
+      - name: Record execution ref
+        run: echo "Phase 16 executed at 7184701da6973db896ddf97c2079faf6c73c0014" >> "$GITHUB_STEP_SUMMARY"
