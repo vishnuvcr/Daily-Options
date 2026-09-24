@@ -94,3 +94,5 @@ jobs:
           path: reports/phase19_v3/
 
 # authoritative rerun trigger
+
+# stale-run supersession checkpoint
