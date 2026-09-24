@@ -1,5 +1,5 @@
 from __future__ import annotations
-import argparse, json, math
+import argparse, json
 from pathlib import Path
 import duckdb
 import numpy as np
@@ -40,6 +40,7 @@ def expiry_for_day(files, trade_date):
 def load_spot(root: Path):
     p=root/"index"/"NIFTY.parquet"
     con=duckdb.connect()
+    con.execute("SET TimeZone='Asia/Kolkata'")
     q=f"""
     WITH b AS (
       SELECT CAST(timestamp AS TIMESTAMP) AS ts,
@@ -48,21 +49,34 @@ def load_spot(root: Path):
       FROM read_parquet('{p}')
       WHERE CAST(trading_day AS DATE) BETWEEN DATE '{START_DATE}' AND DATE '{END_DATE}'
         AND close>0
-    ), r AS (
+    ),
+    r AS (
       SELECT *,
              close/LAG(close,1) OVER(PARTITION BY trade_date ORDER BY ts)-1 AS ret1,
-             close/LAG(close,10) OVER(PARTITION BY trade_date ORDER BY ts)-1 AS ret10,
-             STDDEV_SAMP(close/LAG(close,1) OVER(PARTITION BY trade_date ORDER BY ts)-1)
-               OVER(PARTITION BY trade_date ORDER BY ts ROWS BETWEEN 19 PRECEDING AND CURRENT ROW) AS rv20
+             close/LAG(close,10) OVER(PARTITION BY trade_date ORDER BY ts)-1 AS ret10
       FROM b
+    ),
+    v AS (
+      SELECT *,
+             STDDEV_SAMP(ret1) OVER(
+               PARTITION BY trade_date ORDER BY ts ROWS BETWEEN 19 PRECEDING AND CURRENT ROW
+             ) AS rv20
+      FROM r
+    ),
+    z AS (
+      SELECT *,
+             rv20/NULLIF(
+               AVG(rv20) OVER(
+                 PARTITION BY trade_date ORDER BY ts ROWS BETWEEN 119 PRECEDING AND CURRENT ROW
+               ),0
+             ) AS rv_ratio
+      FROM v
     )
-    SELECT * EXCLUDE(ret1),
-           rv20/NULLIF(
-             AVG(rv20) OVER(PARTITION BY trade_date ORDER BY ts ROWS BETWEEN 119 PRECEDING AND CURRENT ROW),0
-           ) AS rv_ratio
-    FROM r
+    SELECT trade_date,ts,close,ret10,rv20,rv_ratio
+    FROM z
     WHERE ret10 IS NOT NULL
       AND rv20 IS NOT NULL
+      AND rv_ratio IS NOT NULL
       AND CAST(ts AS TIME) IN (
         TIME '14:30:00',TIME '14:45:00',TIME '15:00:00'
       )
@@ -123,6 +137,7 @@ def load_option_quotes(root, signals):
     wanted=signals[["trade_date","ts","close"]].drop_duplicates().copy()
     wanted["entry_ts"]=wanted["ts"]+pd.Timedelta(minutes=1)
     con=duckdb.connect()
+    con.execute("SET TimeZone='Asia/Kolkata'")
     con.register("wanted",wanted)
     chunks=[]
     for expiry_date,path in sorted(set(chosen.values()), key=lambda x:x[0]):
@@ -154,7 +169,7 @@ def load_option_quotes(root, signals):
 
 def build_setups(signal_df, quotes):
     setups=[]
-    signal_keys=signal_df[["trade_date","ts","close","variant_id"]].drop_duplicates()
+    signal_keys=signal_df[["trade_date","ts","close","ret10","rv_ratio"]].drop_duplicates()
     if quotes.empty: return pd.DataFrame()
     for (d,ts),g in quotes.groupby(["trade_date","ts"],sort=False):
         meta=signal_keys[(signal_keys.trade_date==d)&(signal_keys.ts==ts)]
@@ -192,12 +207,22 @@ def build_setups(signal_df, quotes):
                 vol_imb=(float(cross_put.iloc[0].volume)-float(cross_call.iloc[0].volume))/max(1e-9,float(cross_put.iloc[0].volume)+float(cross_call.iloc[0].volume))
                 oi_imb=(float(cross_put.iloc[0].oi)-float(cross_call.iloc[0].oi))/max(1e-9,float(cross_put.iloc[0].oi)+float(cross_call.iloc[0].oi))
                 setups.append({
-                    "trade_date":d,"ts":ts,"entry_ts":ts+pd.Timedelta(minutes=1),
-                    "expiry":sigp.iloc[0]["expiry"],"side":side,"width":width,
-                    "short_strike":short_strike,"wing_strike":wing_strike,
-                    "short_signal":p,"wing_signal":w,"skew":skew,
-                    "vol_imb":vol_imb,"oi_imb":oi_imb,
-                    "spot_ret10":float(sig.ret10),"rv_ratio":float(sig.rv_ratio)
+                    "trade_date":d,
+                    "ts":ts,
+                    "entry_ts":ts+pd.Timedelta(minutes=1),
+                    "expiry":sigp.iloc[0]["expiry"],
+                    "side":side,
+                    "width":width,
+                    "short_strike":short_strike,
+                    "wing_strike":wing_strike,
+                    "short_entry":se,
+                    "wing_entry":we,
+                    "entry_credit":credit,
+                    "skew":skew,
+                    "vol_imb":vol_imb,
+                    "oi_imb":oi_imb,
+                    "spot_ret10":float(sig.ret10),
+                    "rv_ratio":float(sig.rv_ratio)
                 })
     return pd.DataFrame(setups)
 
@@ -234,12 +259,12 @@ def simulate(root, setups, out, slippage):
     if setups.empty:return pd.DataFrame()
     max_hold=max(HOLDS)
     files={d:path for d,path in expiry_files(root)}
-    legs=set()
-    for _,r in setups.iterrows():
-        legs.add((r.trade_date,r.entry_ts.date(),r.expiry,r.side,r.short_strike,r.wing_strike))
-    chunks=[]
     con=duckdb.connect()
-    con.register("legs",pd.DataFrame(list(legs),columns=["trade_date","entry_day","expiry","side","short_strike","wing_strike"]))
+    con.execute("SET TimeZone='Asia/Kolkata'")
+    legs_df=setups[[
+        "trade_date","entry_ts","expiry","side","short_strike","wing_strike"
+    ]].drop_duplicates().copy()
+    con.register("legs",legs_df)
     for expiry_date,path in sorted(files.items()):
         active=con.execute("SELECT COUNT(*) FROM legs WHERE expiry=?", [expiry_date]).fetchone()[0]
         if not active: continue
@@ -255,10 +280,10 @@ def simulate(root, setups, out, slippage):
         JOIN legs l
           ON l.expiry=DATE '{expiry_date}'
          AND CAST(o.trading_day AS DATE)=l.trade_date
-         AND o.option_type=l.side
+         AND o.option_type=(CASE WHEN l.side='PUT' THEN 'PE' ELSE 'CE' END)
          AND CAST(o.strike AS DOUBLE) IN(l.short_strike,l.wing_strike)
-         AND CAST(o.timestamp AS TIMESTAMP)>=CAST(l.trade_date AS TIMESTAMP)
-         AND CAST(o.timestamp AS TIMESTAMP)<=CAST(l.trade_date AS TIMESTAMP)+INTERVAL '23 hours 59 minutes'
+         AND CAST(o.timestamp AS TIMESTAMP)>=l.entry_ts
+         AND CAST(o.timestamp AS TIMESTAMP)<=l.entry_ts+INTERVAL '30 minutes'
         WHERE o.close>0
         """
         z=con.execute(q).df()
@@ -291,7 +316,7 @@ def simulate(root, setups, out, slippage):
                 else:ix,reason=len(mm)-1,"TIME"
                 er=mm.iloc[ix]
                 net=OptionCostModel().vertical_credit_spread_net_pnl(
-                    float(r.short_signal),float(r.wing_signal),
+                    float(r.short_entry),float(r.wing_entry),
                     float(er.sclose),float(er.wclose),lot(r.trade_date),
                     slippage_points=slippage
                 )
@@ -299,7 +324,8 @@ def simulate(root, setups, out, slippage):
                     "trade_date":r.trade_date,"ts":r.ts,"expiry":r.expiry,
                     "side":r.side,"width":r.width,"hold":hold,"stop":stop,
                     "net_pnl":net,"reason":reason,"skew":r.skew,"vol_imb":r.vol_imb,
-                    "oi_imb":r.oi_imb,"entry_credit":float(r.short_signal-r.wing_signal)
+                    "oi_imb":r.oi_imb,"entry_credit":float(r.entry_credit),
+                    "short_strike":float(r.short_strike),"wing_strike":float(r.wing_strike)
                 })
     t=pd.DataFrame(trades)
     if t.empty:return t
@@ -326,7 +352,7 @@ def summarize(trades, signal_count, slippage, out):
     day=trades.groupby(["variant_id","trade_date"]).net_pnl.sum().reset_index()
     ad=day.groupby("variant_id").net_pnl.mean().rename("mean_active_day_net")
     board=board.merge(ad,on="variant_id")
-    board["profit_factor"]=board.groupby("variant_id").net_pnl if False else 0.0
+    # profit factor is computed from the grouped trade P&L before storing the board
     board["target_qualified"]=board.mean_active_day_net>=1000
     board=board.sort_values("mean_active_day_net",ascending=False)
     board.to_csv(out/"phase17_leaderboard.csv",index=False)
@@ -349,8 +375,7 @@ def run(root:Path,out:Path,slippage:float):
     spot=load_spot(root)
     if spot.empty: raise RuntimeError("No NIFTY index rows")
     variants=variant_grid()
-    candidates=signal_candidates(spot,variants)
-    # Quote loading is done for every candidate timestamp once; variant filtering happens only after exact expiry/option pressure is known.
+    candidates=spot[["trade_date","ts","close","ret10","rv_ratio"]].drop_duplicates().copy()
     q=load_option_quotes(root,candidates)
     if q.empty: raise RuntimeError("No exact-expiry option quote rows for candidate timestamps")
     setups=build_setups(candidates,q)
