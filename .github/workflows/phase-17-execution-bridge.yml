@@ -1,0 +1,68 @@
+name: Phase 17 - Execution Bridge
+
+on:
+  workflow_dispatch:
+    inputs:
+      phase_ref:
+        description: "Exact Phase 17 commit to execute"
+        required: true
+        default: "d75ad917516099e34d71d9057d89d1cad7269643"
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: phase17-execution
+  cancel-in-progress: false
+
+jobs:
+  research:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.ref == 'phase-17-nifty-exact-expiry-premium-skew-v1'
+    strategy:
+      fail-fast: false
+      matrix:
+        friction: [base, stress]
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout Phase 17
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.phase_ref || github.event.pull_request.head.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pandas numpy pyarrow duckdb huggingface_hub pytest
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_phase17_nifty_exact_expiry_premium_skew.py
+      - name: Cache TradeMarkk NIFTY data
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase17_trademarkk
+          key: phase17-trademarkk-51ca58c-v1
+      - name: Acquire or reuse exact-expiry NIFTY data
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase17_trademarkk
+          if [ ! -f data/cache/phase17_trademarkk/index/NIFTY.parquet ]; then
+            for attempt in 1 2 3 4; do
+              python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="thetrademarkk/india-index-options-1m",repo_type="dataset",revision="51ca58c",local_dir="data/cache/phase17_trademarkk",allow_patterns=["index/NIFTY.parquet","options/NIFTY/*.parquet"])' && break
+              if [ "$attempt" -eq 4 ]; then exit 1; fi
+              sleep $((attempt*15))
+            done
+          fi
+      - name: Run selected friction
+        env:
+          SLIP: ${{ matrix.friction == 'base' && '0.20' || '0.40' }}
+          LABEL: ${{ matrix.friction }}
+        run: |
+          PYTHONPATH=. python -m research.phase17_nifty_exact_expiry_premium_skew \
+            --data data/cache/phase17_trademarkk \
+            --out reports/$LABEL \
+            --slippage "$SLIP"
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase17-bridge-${{ matrix.friction }}
+          path: reports/
