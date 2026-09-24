@@ -202,3 +202,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0147 | 2026-09-24 | Phase 16 unit tests | First f-string correction did not replace the exact escaped source line, so the residual `f\\"...` syntax error remained in the branch | No numerical stage ran | Replace the source line directly and require import/unit-test success before data access | CLOSED — pre-result |
 
 | E0148 | 2026-09-24 | Phase 16 feature loading | `x.ist_time = ...` assigned a DataFrame attribute rather than a column; subsequent sort on `ist_time` raised KeyError before any P&L | No numerical result accepted | Use explicit `x['ist_time']` column assignment and rerun Base/Stress | CLOSED — pre-result |
+
+| E0149 | 2026-09-24 | Phase 16 entry query | DuckDB rejected `close` as an output alias in the entry-quote query before simulation | No P&L accepted | Rename the projected close field to `close_px` and use the exact field consistently in downstream selection | CLOSED — pre-result |
