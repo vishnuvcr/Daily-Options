@@ -18,18 +18,34 @@ def expiry_files(root: Path):
 def inspect_file(path: Path):
     con=duckdb.connect()
     con.execute("SET TimeZone='Asia/Kolkata'")
-    p=str(path)
-    sample=con.execute(f"SELECT * FROM read_parquet('{p}') LIMIT 10").df()
-    schema=con.execute(f"DESCRIBE SELECT * FROM read_parquet('{p}')").df()
-    option_types=con.execute(
-        f"SELECT DISTINCT CAST(option_type AS VARCHAR) AS option_type FROM read_parquet('{p}') ORDER BY 1"
-    ).df()
-    time_range=con.execute(
-        f'SELECT MIN("timestamp") AS min_ts, MAX("timestamp") AS max_ts, COUNT(*) AS row_count FROM read_parquet('{p}')'
-    ).df()
-    trading_days=con.execute(
-        f"SELECT MIN(CAST(trading_day AS DATE)) AS min_day, MAX(CAST(trading_day AS DATE)) AS max_day FROM read_parquet('{p}')"
-    ).df()
+    p=str(path).replace("'", "''")
+    sample=con.execute(f"""
+        SELECT *
+        FROM read_parquet('{p}')
+        LIMIT 10
+    """).df()
+    schema=con.execute(f"""
+        DESCRIBE SELECT *
+        FROM read_parquet('{p}')
+    """).df()
+    option_types=con.execute(f"""
+        SELECT DISTINCT CAST(option_type AS VARCHAR) AS option_type
+        FROM read_parquet('{p}')
+        ORDER BY 1
+    """).df()
+    time_range=con.execute(f"""
+        SELECT
+          MIN("timestamp") AS min_ts,
+          MAX("timestamp") AS max_ts,
+          COUNT(*) AS row_count
+        FROM read_parquet('{p}')
+    """).df()
+    trading_days=con.execute(f"""
+        SELECT
+          MIN(CAST(trading_day AS DATE)) AS min_day,
+          MAX(CAST(trading_day AS DATE)) AS max_day
+        FROM read_parquet('{p}')
+    """).df()
     con.close()
     return {
         "sample_columns": sample.columns.tolist(),
@@ -41,11 +57,10 @@ def inspect_file(path: Path):
     }
 
 def probe_file(path: Path, trade_date):
-    p=str(path)
     con=duckdb.connect()
     con.execute("SET TimeZone='Asia/Kolkata'")
-    rows=con.execute(
-        f"""
+    p=str(path).replace("'", "''")
+    rows=con.execute(f"""
         SELECT
           "timestamp" AS ts,
           CAST(trading_day AS DATE) AS trade_date,
@@ -58,14 +73,14 @@ def probe_file(path: Path, trade_date):
         FROM read_parquet('{p}')
         WHERE CAST(trading_day AS DATE)=DATE '{trade_date}'
           AND CAST("timestamp" AS TIME) IN (
-            TIME '14:30:00', TIME '14:31:00', TIME '14:45:00',
-            TIME '14:46:00', TIME '15:00:00', TIME '15:01:00'
+            TIME '14:30:00', TIME '14:31:00',
+            TIME '14:45:00', TIME '14:46:00',
+            TIME '15:00:00', TIME '15:01:00'
           )
           AND "close" > 0
         ORDER BY "timestamp", strike
         LIMIT 80
-        """
-    ).df()
+    """).df()
     con.close()
     return {
         "trade_date": str(trade_date),
@@ -92,8 +107,8 @@ def main(root: Path, out: Path):
         "first_file": str(first_path),
         "last_file": str(last_path),
         "first_file_inspection": inspect_file(first_path),
+        "first_file_probe": probe_file(first_path, first_date),
     }
-    result["first_file_probe"]=probe_file(first_path, first_date)
     (out/"phase17a_diagnostic.json").write_text(json.dumps(result,indent=2,default=str))
     (out/"phase17a_diagnostic.txt").write_text(json.dumps(result,indent=2,default=str))
     print(json.dumps(result,indent=2,default=str))
