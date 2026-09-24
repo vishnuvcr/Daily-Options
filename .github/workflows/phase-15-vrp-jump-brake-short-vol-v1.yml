@@ -14,6 +14,10 @@ concurrency:
 
 jobs:
   research:
+    strategy:
+      fail-fast: false
+      matrix:
+        expiry: [WEEK, MONTH]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,49 +43,73 @@ jobs:
           test -d data/cache/hf_nifty_options/NIFTY
       - name: Lightweight timestamp and quote alignment probe
         run: |
-          python - <<'PY'
-          from pathlib import Path
-          import duckdb, json
-          root=Path('data/cache/hf_nifty_options/NIFTY')
-          g=(root/'**'/'*.parquet').as_posix()
-          con=duckdb.connect()
-          q=f"""
-          SELECT
-            CAST(date AS DATE) AS date_field,
-            STRFTIME(CAST(datetime AS TIMESTAMP) + INTERVAL '5 hours 30 minutes','%H:%M:%S') AS ist_time,
-            expiry_type,
-            strike_type,
-            option_type,
-            COUNT(*) AS rows
-          FROM read_parquet('{g}', union_by_name=true)
-          WHERE close>0
-            AND STRFTIME(CAST(datetime AS TIMESTAMP) + INTERVAL '5 hours 30 minutes','%H:%M:%S') IN ('09:30:00','09:31:00','10:00:00','10:01:00','10:30:00','10:31:00')
-          GROUP BY ALL
-          ORDER BY date_field,ist_time,expiry_type,strike_type,option_type
-          LIMIT 200
-          """
-          x=con.execute(q).df()
-          Path('reports').mkdir(parents=True,exist_ok=True)
-          x.to_json('reports/phase15_alignment_probe.json',orient='records',date_format='iso')
-          print(x.to_string(index=False))
-          print("row_count_probe",len(x))
-          con.close()
-          PY
-
-      - name: Upload alignment probe
-        uses: actions/upload-artifact@v4
-        with:
-          name: phase15-alignment-probe
-          path: reports/phase15_alignment_probe.json
-          if-no-files-found: error
-
+          set -euo pipefail
+          mkdir -p reports
+          python -c "from pathlib import Path; import duckdb, json; root=Path('data/cache/hf_nifty_options/NIFTY'); expiry='${{ matrix.expiry }}'; files=[str(root/expiry/f) for f in ['ATM_CE.parquet','ATM_PE.parquet','ATM+2_CE.parquet','ATM+2_PE.parquet','ATM-2_CE.parquet','ATM-2_PE.parquet']]; con=duckdb.connect(); q=f'''SELECT datetime,date,expiry_type,strike_type,option_type,COUNT(*) n FROM read_parquet({json.dumps(files)}, union_by_name=true) WHERE STRFTIME(CAST(datetime AS TIMESTAMP)+INTERVAL '5 hours 30 minutes','%H:%M:%S') IN ('09:31:00','10:01:00','10:31:00') GROUP BY ALL ORDER BY datetime LIMIT 200'''; rows=con.execute(q).fetchall(); con.close(); Path(f'reports/phase15_alignment_probe_${{ matrix.expiry }}.json').write_text(json.dumps([tuple(map(str,r)) for r in rows],indent=2)); print('expiry',expiry,'rows',len(rows)); raise SystemExit('alignment probe found no rows') if not rows else None"
       - name: Base friction
-        run: PYTHONPATH=. python -m research.phase15_vrp_jump_brake_short_vol --data data/cache/hf_nifty_options/NIFTY --out reports/phase15-base --slippage 0.20
+        run: PYTHONPATH=. python -m research.phase15_vrp_jump_brake_short_vol --data data/cache/hf_nifty_options/NIFTY --out reports/${{ matrix.expiry }}/base --slippage 0.20 --expiry-type ${{ matrix.expiry }}
       - name: Stress friction
-        run: PYTHONPATH=. python -m research.phase15_vrp_jump_brake_short_vol --data data/cache/hf_nifty_options/NIFTY --out reports/phase15-stress --slippage 0.40
-      - name: Upload reports
+        run: PYTHONPATH=. python -m research.phase15_vrp_jump_brake_short_vol --data data/cache/hf_nifty_options/NIFTY --out reports/${{ matrix.expiry }}/stress --slippage 0.40 --expiry-type ${{ matrix.expiry }}
+      - name: Upload shard report
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: phase15-vrp-jump-brake-short-vol-v1
+          name: phase15-shard-${{ matrix.expiry }}
           path: reports/
+
+  reduce:
+    needs: research
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install reducer dependencies
+        run: pip install pandas numpy
+      - name: Download shard artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: phase15-shard-*
+          merge-multiple: false
+          path: shard_artifacts
+      - name: Aggregate shards
+        run: |
+          set -euo pipefail
+          mkdir -p reports/phase15-global
+          python - <<'PY'
+          from pathlib import Path
+          import json, pandas as pd
+          from research.phase15_vrp_jump_brake_short_vol import walk_forward
+
+          root=Path('shard_artifacts')
+          for fric in ('base','stress'):
+              parts=[]
+              for expiry in ('WEEK','MONTH'):
+                  p=root/f'phase15-shard-{expiry}'/expiry/fric/'phase15_trades.csv'
+                  if p.exists():
+                      parts.append(pd.read_csv(p))
+              trades=pd.concat(parts,ignore_index=True) if parts else pd.DataFrame()
+              out=Path('reports/phase15-global')
+              if trades.empty:
+                  summary={'trade_rows':0,'variants':288,'gate':'NO_TRADES','friction':fric}
+                  (out/f'phase15_{fric}_summary.json').write_text(json.dumps(summary,indent=2))
+                  continue
+              rows=[]
+              total_days=trades.trade_date.nunique()
+              for vid,g in trades.groupby('variant_id'):
+                  d=g.groupby('trade_date').net_pnl.sum(); wins=g.loc[g.net_pnl>0,'net_pnl'].sum(); losses=-g.loc[g.net_pnl<0,'net_pnl'].sum()
+                  rows.append({'variant_id':vid,'trades':len(g),'active_days':len(d),'mean_active_day_net':float(d.mean()),'mean_all_day_net':float(d.sum()/max(1,total_days)),'win_rate':float((g.net_pnl>0).mean()),'profit_factor':float(wins/max(1e-9,losses)),'max_drawdown':float((d.cumsum()-d.cumsum().cummax()).min()),'total_net':float(g.net_pnl.sum())})
+              board=pd.DataFrame(rows).sort_values('mean_all_day_net',ascending=False); board.to_csv(out/f'phase15_{fric}_leaderboard.csv',index=False)
+              wf=walk_forward(trades); wf.to_csv(out/f'phase15_{fric}_walk_forward.csv',index=False)
+              summary={'friction':fric,'variants':288,'trade_rows':int(len(trades)),'positive_variants':int((board.mean_all_day_net>0).sum()),'target_qualified_prelim':int((board.mean_all_day_net>=1000).sum()),'best':board.iloc[0].to_dict(),'walk_forward_windows':int(len(wf)),'positive_test_windows':int((wf.test_mean>0).sum()) if not wf.empty else 0,'target_test_windows':int((wf.test_mean>=1000).sum()) if not wf.empty else 0,'mean_test_window_net':float(wf.test_mean.mean()) if not wf.empty else None,'gate':'PASS_PRELIMINARY' if (board.iloc[0].mean_all_day_net>=1000 and not wf.empty and (wf.test_mean>=1000).any()) else 'FAIL_PRELIMINARY'}
+              (out/f'phase15_{fric}_summary.json').write_text(json.dumps(summary,indent=2,default=str)); trades.to_csv(out/f'phase15_{fric}_trades_all.csv',index=False)
+          payload={fric:json.loads((Path('reports/phase15-global')/f'phase15_{fric}_summary.json').read_text()) for fric in ('base','stress')}
+          (Path('reports/phase15-global')/'phase15_decision_summary.json').write_text(json.dumps(payload,indent=2,default=str)); print(json.dumps(payload,indent=2,default=str))
+          PY
+      - name: Upload global report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase15-global-result
+          path: reports/phase15-global/
