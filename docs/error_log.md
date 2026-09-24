@@ -176,3 +176,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0145 | 2026-09-24 | Phase 15 runtime architecture | Single Base execution remained active too long even after file and signal-window pruning | No P&L accepted from single-run executions | Partition the exact 288 cells into 144 WEEK + 144 MONTH shards and aggregate trade records globally; no strategy rule changes | CLOSED — shard optimization |
 
 | E0146 | 2026-09-24 | Phase 15 shard probe | WEEK and MONTH probes found valid rows but the Python one-liner used a conditional exit that attempted to raise a null value, failing both shards before Base | No P&L accepted; probe itself was valid | Replace with an explicit empty-row conditional and rerun the same sharded experiment | CLOSED — pre-result |
+
+| E0147 | 2026-09-24 | Phase 15 shard probe | Attempt to embed a compound `if` statement inside a Python `-c` one-liner caused SyntaxError in both WEEK and MONTH probes | No Base/P&L stage ran; the probe itself had already verified 200 rows per shard | Make the alignment probe diagnostic-only and remove the invalid one-line compound statement | CLOSED — pre-result |
