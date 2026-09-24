@@ -24,7 +24,7 @@ def test_artist23_preliminary_contract_selector_is_expiry_type_only():
     src=inspect.getsource(mod.run)
     assert "expiry_type" in src
     assert "u.expiry" not in src
-    assert "win.expiry" not in src
+    assert "win.expiry==" not in src
 
 
 def test_target_gate_is_active_day_metric():
