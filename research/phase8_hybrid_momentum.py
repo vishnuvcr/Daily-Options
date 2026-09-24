@@ -253,6 +253,8 @@ def attach_contract_paths(signals: pd.DataFrame, root: Path) -> pd.DataFrame:
     con.close()
     if entries.empty:
         return entries
+    if "open" not in entries.columns:
+        raise ValueError("Phase 8 executable-entry query must include option open price")
     entries["entry_time_local"] = pd.to_datetime(entries["local_ts"])
     entries["entry_price"] = pd.to_numeric(entries["open"], errors="coerce")
     entries = entries.loc[entries["entry_price"].gt(0)].copy()
