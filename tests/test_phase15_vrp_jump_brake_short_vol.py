@@ -56,3 +56,28 @@ def test_select_signals_uses_ist_time():
     f=pd.DataFrame([{'trade_date':pd.Timestamp('2020-01-02').date(),'datetime':pd.Timestamp('2020-01-02 04:00:00'),'expiry_type':'WEEK','spot':100.0,'vrp':1.0,'abs_ret15':0.001}])
     y=select_signals(f,v)
     assert len(y)==1
+
+
+def test_vectorized_simulation_returns_trade():
+    import pandas as pd
+    from research.phase15_vrp_jump_brake_short_vol import simulate
+    signal=pd.Series({
+        'trade_date':pd.Timestamp('2020-01-02').date(),
+        'datetime':pd.Timestamp('2020-01-02 04:00:00'),
+        'expiry_type':'WEEK','vrp':2.0,'abs_ret15':0.001})
+    setup={
+        'entry_time':pd.Timestamp('2020-01-02 04:01:00'),
+        'call_strike':100.0,'put_strike':100.0,
+        'call_entry':50.0,'put_entry':50.0,
+        'call_wing_strike':105.0,'put_wing_strike':95.0,
+        'call_wing_entry':20.0,'put_wing_entry':20.0}
+    bars=pd.DataFrame({
+        'datetime':[pd.Timestamp('2020-01-02 04:01:00'),pd.Timestamp('2020-01-02 04:02:00')],
+        'call_high':[50.0,55.0],'put_high':[50.0,55.0],
+        'call_low':[45.0,45.0],'put_low':[45.0,45.0],
+        'call_close':[48.0,52.0],'put_close':[48.0,52.0],
+        'call_wing_high':[20.0,22.0],'put_wing_high':[20.0,22.0],
+        'call_wing_low':[18.0,18.0],'put_wing_low':[18.0,18.0],
+        'call_wing_close':[19.0,21.0],'put_wing_close':[19.0,21.0]})
+    out=simulate(signal,setup,bars,'STRADDLE',1.3,0.20)
+    assert out is not None
