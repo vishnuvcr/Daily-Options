@@ -65,7 +65,47 @@ def summarize(trades,slippage):
     return {'frozen_rule':True,'global_z':FROZEN_GLOBAL_Z,'gap_threshold':FROZEN_GAP_THRESHOLD,'mode':'FADE','signal_time':FROZEN_SIGNAL_TIME,'structure':'LONG','expiry_mode':'MONTH','hold':FROZEN_HOLD,'risk':FROZEN_RISK,'validation_start':str(VALIDATION_START),'validation_end':str(VALIDATION_END),'lot_size':LOT_SIZE,'trades':int(len(trades)),'active_days':int(len(daily)),'mean_active_day_net':mean_active,'median_active_day_net':float(daily.median()),'mean_calendar_day_net':float(daily.sum()/max(1,(VALIDATION_END-VALIDATION_START).days+1)),'win_rate':float((trades.net_pnl>0).mean()),'profit_factor':float(trades.loc[trades.net_pnl>0,'net_pnl'].sum()/max(1e-9,-trades.loc[trades.net_pnl<0,'net_pnl'].sum())),'max_drawdown':float((daily.cumsum()-daily.cumsum().cummax()).min()),'target_mean':bool(mean_active>=1000),'positive_years':int(positive_years),'years':years,'gate':gate,'slippage_points_per_leg':slippage}
 
 def run(root,global_root,out,slippage):
-    spot=load_later_spot(root); gd=load_global_data(global_root); features=build_features(spot,gd); features=features[(features.trade_date>=VALIDATION_START)&(features.trade_date<=VALIDATION_END)].copy(); signals=frozen_signal_dates(features); options=load_month_option_rows(root,signals); trades=simulate(signals,options,slippage); out.mkdir(parents=True,exist_ok=True); trades.to_csv(out/'phase14_later_oos_trades.csv',index=False); s=summarize(trades,slippage); (out/'phase14_later_oos_summary.json').write_text(json.dumps(s,indent=2,default=str)); print(json.dumps(s,indent=2,default=str)); return s
+    spot=load_later_spot(root)
+    gd=load_global_data(global_root)
+    features=build_features(spot,gd)
+    features=features[(features.trade_date>=VALIDATION_START)&(features.trade_date<=VALIDATION_END)].copy()
+    signals=frozen_signal_dates(features)
+    options=load_month_option_rows(root,signals)
+
+    diagnostic = {
+        "spot_rows": int(len(spot)),
+        "feature_rows": int(len(features)),
+        "frozen_signal_days": int(len(signals)),
+        "option_rows_loaded": int(len(options)),
+        "signal_days_with_option_rows": 0,
+        "signal_days_with_atm_at_signal_timestamp": 0,
+        "signal_days_with_post_entry_atm_bars": 0,
+    }
+
+    if not signals.empty and not options.empty:
+        for rec in signals.itertuples(index=False):
+            day_opts = options[(options.trade_date == rec.trade_date) & (options.option_type == rec.direction)]
+            if day_opts.empty:
+                continue
+            diagnostic["signal_days_with_option_rows"] += 1
+            at_signal = day_opts[(day_opts.datetime == pd.Timestamp(rec.signal_time)) & (day_opts.strike_type == "ATM")]
+            if at_signal.empty:
+                continue
+            diagnostic["signal_days_with_atm_at_signal_timestamp"] += 1
+            strike = float(at_signal.sort_values("strike_price").iloc[0].strike_price)
+            entry = pd.Timestamp(rec.entry_time)
+            post = day_opts[(day_opts.strike_price == strike) & (day_opts.datetime >= entry) & (day_opts.datetime <= entry + pd.Timedelta(minutes=FROZEN_HOLD))]
+            if not post.empty:
+                diagnostic["signal_days_with_post_entry_atm_bars"] += 1
+
+    trades=simulate(signals,options,slippage)
+    out.mkdir(parents=True,exist_ok=True)
+    trades.to_csv(out/'phase14_later_oos_trades.csv',index=False)
+    s=summarize(trades,slippage)
+    s["diagnostic"]=diagnostic
+    (out/'phase14_later_oos_summary.json').write_text(json.dumps(s,indent=2,default=str))
+    print(json.dumps(s,indent=2,default=str))
+    return s
 
 if __name__=='__main__':
     ap=argparse.ArgumentParser(); ap.add_argument('--root',type=Path,required=True); ap.add_argument('--global-root',type=Path,required=True); ap.add_argument('--out',type=Path,required=True); ap.add_argument('--slippage',type=float,default=0.20); a=ap.parse_args(); run(a.root,a.global_root,a.out,a.slippage)
