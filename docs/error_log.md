@@ -50,3 +50,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 | E0096 | 2026-09-24 | Tooling | Multi-file Phase 12 v2 patch was blocked by the execution safety layer before mutation | No research or repository result was lost; the original v1 files remain unchanged | Split the correction into isolated new files and workflow v2b; all resulting commits are auditable | CLOSED |
 | E0097 | 2026-09-24 | Tooling | Direct README status update was blocked by the execution safety layer after earlier successful documentation commits | README may lag the latest Phase 11 closure status; dated status and result files on main contain the authoritative current state | Record the blocked mutation here and preserve the current status in dated checkpoint files; do not fabricate a README update | OPEN |
+
+| E0098 | 2026-09-24 | Phase 12 CI | Initial v2b data-gate execution stopped at pytest collection with `ModuleNotFoundError: No module named 'research'` even though the repository code was present | No data acquisition or strategy computation occurred | v2d carrier sets `PYTHONPATH=.` explicitly; v2d unit tests passed before data acquisition | CLOSED |
