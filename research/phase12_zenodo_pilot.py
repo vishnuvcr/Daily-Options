@@ -260,7 +260,7 @@ def _last_thursday(year: int, month: int) -> pd.Timestamp:
 def discover_option_manifest(root: Path) -> pd.DataFrame:
     rows = []
     for p in root.rglob("*"):
-        if not p.is_file() or p.suffix.lower() not in {".csv", ".xlsx", ".xls"}:
+        if not p.is_file() or p.suffix.lower() not in {".csv", ".txt", ".xlsx", ".xls"}:
             continue
         stem = re.sub(r"[^A-Za-z0-9]", "", p.stem).upper()
         m = re.search(r"(\d{4,6})(CE|PE)$", stem)
