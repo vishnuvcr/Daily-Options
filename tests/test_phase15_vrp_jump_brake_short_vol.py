@@ -47,3 +47,12 @@ def test_expiry_shards_have_equal_cell_counts():
     g=variant_grid()
     assert sum(x['expiry_type']=='WEEK' for x in g)==144
     assert sum(x['expiry_type']=='MONTH' for x in g)==144
+
+
+def test_select_signals_uses_ist_time():
+    import pandas as pd
+    from research.phase15_vrp_jump_brake_short_vol import select_signals, variant_grid
+    v=[x for x in variant_grid() if x['expiry_type']=='WEEK' and x['entry_time']=='09:30:00' and x['vrp_threshold']==0.0 and x['jump_max']==0.0040 and x['structure']=='STRADDLE' and x['hold_minutes']==30 and x['stop_ratio']==1.30][0]
+    f=pd.DataFrame([{'trade_date':pd.Timestamp('2020-01-02').date(),'datetime':pd.Timestamp('2020-01-02 04:00:00'),'expiry_type':'WEEK','spot':100.0,'vrp':1.0,'abs_ret15':0.001}])
+    y=select_signals(f,v)
+    assert len(y)==1
