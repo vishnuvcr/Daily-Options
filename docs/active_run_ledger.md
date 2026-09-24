@@ -122,3 +122,8 @@ This is the sole authoritative Phase 11 execution at this checkpoint. No competi
 | 17 | phase-17-nifty-exact-expiry-premium-skew-v1 | READY / NOT YET RUN | No |
 
 Phase 17 uses exact-expiry NIFTY option files, a frozen 384-cell grid, base/stress slippage ₹0.20/₹0.40 per leg, and the ₹1,000 active-day target gate. Later walk-forward and independent holdout validation remain mandatory.
+
+
+## Phase 18 v2 isolated execution
+
+Superseded Phase 18 runs were cancelled before job creation after branch updates. The authoritative v2 execution branch is `phase-18-nifty-iron-condor-regime-v2` with a unique concurrency group. No Phase 18 P&L is accepted until this isolated run completes Base and Stress.
