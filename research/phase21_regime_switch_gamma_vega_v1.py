@@ -211,7 +211,7 @@ def wfa(trades):
     return pd.DataFrame(rows)
 
 def run(data,global_root,out,slip):
-    out.mkdir(parents=True,exist_ok=True); spot=load_spot(data); reg=regime_table(data,global_root); q=load_exact_quotes(data,spot); setups=build_entries(data,spot,q,reg); trades=simulate(data,setups,slip); b=board(trades); wf=wfa(trades)
+    out.mkdir(parents=True,exist_ok=True); spot=load_spot(data); reg=regime_table(data,global_root); q=load_phase21_quotes(data,spot); setups=build_entries(data,spot,q,reg); trades=simulate(data,setups,slip); b=board(trades); wf=wfa(trades)
     b.to_csv(out/"phase21_leaderboard.csv",index=False); wf.to_csv(out/"phase21_walk_forward.csv",index=False)
     s=dict(phase=21,variants=len(variants()),setups=len(setups),trades=len(trades),expansion_trades=int((trades.regime=="EXPANSION").sum()) if not trades.empty else 0,calm_trades=int((trades.regime=="CALM").sum()) if not trades.empty else 0,target_qualified=int((b.mean_active_day_net>=1000).sum()) if not b.empty else 0,best=b.iloc[0].to_dict() if not b.empty else None,wfa_windows=len(wf),target_test_windows=int((wf.test_mean>=1000).sum()) if not wf.empty else 0,mean_test_window_net=float(wf.test_mean.mean()) if not wf.empty else None,slippage=slip)
     (out/"phase21_summary.json").write_text(json.dumps(s,indent=2,default=str)); print(json.dumps(s,indent=2,default=str))
