@@ -74,7 +74,7 @@ def load_entry_quotes(root,signals):
     out=con.execute(q).df(); con.close(); return out
 def pick_setup(entry_quotes,signal):
     ts=pd.Timestamp(signal.datetime)+pd.Timedelta(minutes=1)
-    e=entry_quotes[(entry_quotes.trade_date==signal.trade_date)&(entry_quotes.expiry_type==signal.expiry_type)&(entry_quotes.expiry==signal.expiry)&(entry_quotes.datetime==ts)]
+    e=entry_quotes[(entry_quotes.trade_date==signal.trade_date)&(entry_quotes.expiry_type==signal.expiry_type)&(entry_quotes.datetime==ts)]
     if e.empty: return None
     d={}
     for side in ('CALL','PUT'):
@@ -86,7 +86,7 @@ def pick_setup(entry_quotes,signal):
 
 def build_window(entry_quotes,signal,setup,hold):
     end=setup['entry_time']+pd.Timedelta(minutes=hold)
-    q=entry_quotes[(entry_quotes.trade_date==signal.trade_date)&(entry_quotes.expiry_type==signal.expiry_type)&(entry_quotes.expiry==signal.expiry)&(entry_quotes.datetime>=setup['entry_time'])&(entry_quotes.datetime<=end)]
+    q=entry_quotes[(entry_quotes.trade_date==signal.trade_date)&(entry_quotes.expiry_type==signal.expiry_type)&(entry_quotes.datetime>=setup['entry_time'])&(entry_quotes.datetime<=end)]
     frames=[]
     for name,strike,side in [('call',setup['call_strike'],'CALL'),('put',setup['put_strike'],'PUT'),('call_wing',setup['call_wing_strike'],'CALL'),('put_wing',setup['put_wing_strike'],'PUT')]:
         x=q[(q.option_type==side)&(q.strike==strike)][['datetime','open','high','low','close']].copy()
@@ -118,7 +118,7 @@ def simulate(signal,setup,bars,structure,stop_ratio,slippage):
         net=cm.short_straddle_net_pnl(setup['call_entry'],setup['put_entry'],float(ex.call_close),float(ex.put_close),lot_size=lot,slippage_points=slippage)
     else:
         net=cm.four_leg_defined_net_pnl(setup['call_entry'],setup['call_wing_entry'],setup['put_entry'],setup['put_wing_entry'],float(ex.call_close),float(ex.call_wing_close),float(ex.put_close),float(ex.put_wing_close),lot_size=lot,leg_signs=(-1,1,-1,1),slippage_points=slippage)
-    return {'trade_date':signal.trade_date,'signal_time':signal.datetime,'entry_time':setup['entry_time'],'exit_time':exit_ts,'expiry_type':signal.expiry_type,'expiry':signal.expiry,'structure':structure,'vrp':float(signal.vrp),'abs_ret15':float(signal.abs_ret15),'reason':reason,'net_pnl':float(net)}
+    return {'trade_date':signal.trade_date,'signal_time':signal.datetime,'entry_time':setup['entry_time'],'exit_time':exit_ts,'expiry_type':signal.expiry_type,'structure':structure,'vrp':float(signal.vrp),'abs_ret15':float(signal.abs_ret15),'reason':reason,'net_pnl':float(net)}
 
 def walk_forward(trades):
     if trades.empty:return pd.DataFrame()
