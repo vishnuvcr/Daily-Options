@@ -21,3 +21,13 @@ def test_credit_spread_gross_direction():
     cm = OptionCostModel()
     pnl = cm.vertical_credit_spread_net_pnl(30, 10, 15, 5, lot_size=65, slippage_points=0.0)
     assert pnl > 0
+
+
+def test_variant_shards_cover_all_variants():
+    from research.phase9_regime_credit_spread import variant_grid, variant_keys_for_shard
+    all_keys = set()
+    for shard in range(4):
+        keys = variant_keys_for_shard(shard, 4)
+        assert not all_keys.intersection(keys)
+        all_keys.update(keys)
+    assert all_keys == {v.key for v in variant_grid()}

@@ -1,0 +1,100 @@
+name: Phase 9 v5 - Sharded Regime Credit Spread
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - phase-9-regime-credit-spread-v5-sharded
+    paths:
+      - "research/phase9_regime_credit_spread.py"
+      - "research/phase9_aggregate.py"
+      - "tests/test_phase9_regime_credit_spread.py"
+      - ".github/workflows/phase-9-regime-credit-spread-v5-sharded.yml"
+      - "research/cost_model.py"
+      - "research/contracts.py"
+
+concurrency:
+  group: phase9-regime-credit-spread-v5
+  cancel-in-progress: false
+
+jobs:
+  shard:
+    name: shard-${{ matrix.shard }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pandas numpy pyarrow duckdb pytest huggingface_hub pytz
+      - name: Unit tests
+        run: pytest -q tests/test_phase9_regime_credit_spread.py
+      - uses: actions/cache@v4
+        with:
+          path: data/cache/hf_nifty_options
+          key: nifty-options-artist23-45e0a04-v1
+          restore-keys: phase3g-artist23-45e0a04-v1
+      - name: Acquire or reuse pinned option dataset
+        run: |
+          mkdir -p data/cache/hf_nifty_options
+          if ! find data/cache/hf_nifty_options -type f -name '*.parquet' -print -quit | grep -q .; then
+            ok=0
+            for attempt in 1 2 3 4; do
+              echo "HF snapshot attempt $attempt/4"
+              if python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="artist-23/nifty-options-data", repo_type="dataset", revision="45e0a04", local_dir="data/cache/hf_nifty_options", allow_patterns=["NIFTY/**/*.parquet", "NIFTY/**"])'; then
+                ok=1
+                break
+              fi
+              sleep $((attempt * 10))
+            done
+            test "$ok" -eq 1
+          fi
+          test -d data/cache/hf_nifty_options/NIFTY
+      - name: Base shard
+        run: |
+          python -u -m research.phase9_regime_credit_spread             --data data/cache/hf_nifty_options/NIFTY             --out reports/base/shard-${{ matrix.shard }}             --slippage 0.20             --shard-index ${{ matrix.shard }} --shard-count 4
+      - name: Stress shard
+        run: |
+          python -u -m research.phase9_regime_credit_spread             --data data/cache/hf_nifty_options/NIFTY             --out reports/stress/shard-${{ matrix.shard }}             --slippage 0.40             --shard-index ${{ matrix.shard }} --shard-count 4
+      - name: Prepare shard artifact
+        run: |
+          mkdir -p artifact
+          cp reports/base/shard-${{ matrix.shard }}/phase9_trades.csv artifact/base_shard_${{ matrix.shard }}_trades.csv
+          cp reports/stress/shard-${{ matrix.shard }}/phase9_trades.csv artifact/stress_shard_${{ matrix.shard }}_trades.csv
+      - uses: actions/upload-artifact@v4
+        with:
+          name: phase9-shard-${{ matrix.shard }}
+          path: artifact/
+
+  aggregate:
+    needs: shard
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pandas numpy pytest
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: phase9-shard-*
+          path: downloads
+          merge-multiple: true
+      - name: Aggregate base and stress
+        run: python research/phase9_aggregate.py --downloads downloads --out reports
+      - name: Upload aggregate reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase9-sharded-aggregate
+          path: reports/

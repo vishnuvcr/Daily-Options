@@ -97,9 +97,16 @@ def load_regime_series(root: Path) -> pd.DataFrame:
     df['bear_regime'] = (df['ema20'] < df['ema50']) & (df['ret5'] < 0) & (df['iv_rv'] >= IV_RV_MIN)
     return df
 
-def build_signals(regime: pd.DataFrame) -> pd.DataFrame:
+def variant_keys_for_shard(shard_index: int, shard_count: int) -> set[str]:
+    if shard_count < 1 or shard_index < 0 or shard_index >= shard_count:
+        raise ValueError('invalid shard index/count')
+    return {v.key for i, v in enumerate(variant_grid()) if i % shard_count == shard_index}
+
+def build_signals(regime: pd.DataFrame, allowed_variants: set[str] | None = None) -> pd.DataFrame:
     rows = []
     for v in variant_grid():
+        if allowed_variants is not None and v.key not in allowed_variants:
+            continue
         x = regime.loc[regime['datetime'].dt.strftime('%H:%M:%S').ge(v.entry_time)].copy()
         x = x.loc[x['bull_regime'] if v.family == 'BULL_PUT' else x['bear_regime']].copy()
         if x.empty:
@@ -264,14 +271,24 @@ def walk_forward(trades: pd.DataFrame) -> tuple[pd.DataFrame,dict]:
     if wf.empty: return wf,{'walk_forward_windows':0,'positive_test_windows':0,'target_windows':0,'mean_test_window_net':None,'gate':'FAIL_PRELIMINARY'}
     return wf,{'walk_forward_windows':int(len(wf)),'positive_test_windows':int((wf.test_mean>0).sum()),'target_windows':int((wf.test_mean>=1000).sum()),'mean_test_window_net':float(wf.test_mean.mean()),'median_test_window_net':float(wf.test_mean.median()),'gate':'PASS_PRELIMINARY' if wf.test_mean.mean()>0 and (wf.test_mean>=1000).any() else 'FAIL_PRELIMINARY'}
 
-def run(root:Path,out:Path,slippage:float)->dict:
-    regime=load_regime_series(root); signals=build_signals(regime); out.mkdir(parents=True,exist_ok=True)
+def run(root:Path,out:Path,slippage:float,shard_index:int=0,shard_count:int=1)->dict:
+    regime=load_regime_series(root)
+    allowed=variant_keys_for_shard(shard_index, shard_count)
+    signals=build_signals(regime, allowed)
+    out.mkdir(parents=True,exist_ok=True)
     signals.to_csv(out/'phase9_signals.csv',index=False); entries=select_entries(signals,root); entries.to_csv(out/'phase9_entries.csv',index=False); trades=simulate(entries,root,out,slippage)
     board=leaderboard(trades); board.to_csv(out/'phase9_leaderboard.csv',index=False); wf,wfs=walk_forward(trades); wf.to_csv(out/'phase9_walk_forward.csv',index=False)
-    summary={'variants_preregistered':len(variant_grid()),'signals':int(len(signals)),'entries':int(len(entries)),'trades':int(len(trades)),'target_qualified_prelim':int((board.mean_active_day_net>=1000).sum()) if not board.empty else 0,'slippage_points':slippage,'best':board.iloc[0].to_dict() if not board.empty else None,'walk_forward':wfs}
+    summary={'variants_preregistered':len(variant_grid()),'signals':int(len(signals)),'entries':int(len(entries)),'trades':int(len(trades)),'target_qualified_prelim':int((board.mean_active_day_net>=1000).sum()) if not board.empty else 0,'slippage_points':slippage,'best':board.iloc[0].to_dict() if not board.empty else None,'walk_forward':wfs,'shard_index':shard_index,'shard_count':shard_count}
     (out/'phase9_summary.json').write_text(json.dumps(summary,indent=2,default=str)); print(json.dumps(summary,indent=2,default=str)); return summary
 
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument('--data',type=Path,required=True); ap.add_argument('--out',type=Path,required=True); ap.add_argument('--slippage',type=float,default=0.20); a=ap.parse_args(); run(a.data,a.out,a.slippage)
+    ap=argparse.ArgumentParser()
+    ap.add_argument('--data',type=Path,required=True)
+    ap.add_argument('--out',type=Path,required=True)
+    ap.add_argument('--slippage',type=float,default=0.20)
+    ap.add_argument('--shard-index',type=int,default=0)
+    ap.add_argument('--shard-count',type=int,default=1)
+    a=ap.parse_args()
+    run(a.data,a.out,a.slippage,a.shard_index,a.shard_count)
 
 if __name__=='__main__': main()
