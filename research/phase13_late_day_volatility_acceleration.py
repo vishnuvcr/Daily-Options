@@ -227,7 +227,8 @@ def simulate(entries: pd.DataFrame, slippage: float, out: Path) -> pd.DataFrame:
     rows = []
     for rec in unique.itertuples(index=False):
         entry_iso = str(rec.entry_time)
-        if rec.wing_path:
+        is_spread = isinstance(rec.wing_path, str) and bool(rec.wing_path)
+        if is_spread:
             bars = _spread_window(rec.atm_path, rec.wing_path, entry_iso, rec.hold_minutes)
         else:
             bars = _window_bars(rec.atm_path, entry_iso, rec.hold_minutes)
@@ -235,7 +236,7 @@ def simulate(entries: pd.DataFrame, slippage: float, out: Path) -> pd.DataFrame:
             continue
 
         first = bars.iloc[0]
-        if rec.wing_path:
+        if is_spread:
             entry_px = float(first["open_a"] - first["open_b"])
         else:
             entry_px = float(first["open"])
@@ -250,7 +251,7 @@ def simulate(entries: pd.DataFrame, slippage: float, out: Path) -> pd.DataFrame:
             reason = "TIME"
 
             for _, bar in bars.iterrows():
-                if rec.wing_path:
+                if is_spread:
                     high = float(bar["high_a"] - bar["low_b"])
                     low = float(bar["low_a"] - bar["high_b"])
                     close = float(bar["close_a"] - bar["close_b"])
@@ -269,12 +270,12 @@ def simulate(entries: pd.DataFrame, slippage: float, out: Path) -> pd.DataFrame:
                     break
 
             ex = bars[bars["datetime"] == exit_ts].iloc[-1]
-            if rec.wing_path:
+            if is_spread:
                 exit_px = float(ex["close_a"] - ex["close_b"])
             else:
                 exit_px = float(ex["close"])
 
-            if rec.wing_path:
+            if is_spread:
                 net = cm.vertical_debit_spread_net_pnl(
                     float(first["open_a"]),
                     float(first["open_b"]),
