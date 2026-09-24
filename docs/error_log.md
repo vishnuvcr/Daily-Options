@@ -47,3 +47,5 @@
 | E0057 | 2026-09-24 | Phase 8 | Preregistered Phase 8 description said 48 variants, but the explicit Cartesian product contains 96 | Unit-test gate stopped before data acquisition; no numerical statistic was generated | Corrected the preregistration, tests and documentation to 96 variants before any market-data execution | CLOSED |
 
 | E0058 | 2026-09-24 | Phase 8 | Option entry rows were selected correctly but the selected open price was not persisted as `entry_price` before path simulation | Base run failed after reading the full 34M-row cache; no P&L statistic was produced | Persist and validate `entry_price` during contract-path selection, then rerun base/stress | FIXED |
+
+| E0062 | 2026-09-24 | Phase 8 | Entry-selection SQL omitted option `open`, while the Python stage attempted to persist it as `entry_price` | Base run failed before any P&L statistic | Include `open` in the executable-entry query and rerun base/stress | FIXED |
