@@ -265,7 +265,7 @@ def run(root,out,slippage,expiry):
             merged=ss.merge(oo,on=keycols,how='inner')
             if not merged.empty:
                 merged['variant_id']=f"{v['entry_time']}|z{v['z']}|j{v['jump']}|w{v['width']}|{v['side']}|h{v['hold']}|s{v['stop']}"
-                rows.append(merged[['trade_date','variant_id','net_pnl','reason','skew_z','entry_credit']])
+                rows.extend(merged[['trade_date','variant_id','net_pnl','reason','skew_z','entry_credit']].to_dict('records'))
 
     t=pd.DataFrame(rows)
     t.to_csv(out/'phase16_trades.csv',index=False)
