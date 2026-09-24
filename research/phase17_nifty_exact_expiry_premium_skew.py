@@ -14,6 +14,7 @@ WIDTHS=(1,2)
 HOLDS=(15,30)
 STOPS=(1.25,1.50)
 TARGET_RATIO=0.50
+MAX_ENTRY_DELAY_MINUTES=3
 START_DATE="2021-05-27"
 END_DATE="2026-08-04"
 
@@ -175,12 +176,9 @@ def build_setups(spot, quotes):
     rows=[]
     for (d,ts),sig_meta in spot.groupby(["trade_date","ts"],sort=False):
         sig_meta=sig_meta.iloc[0]
-        q=quotes[(quotes.trade_date==d)&(quotes.ts.isin([ts,ts+pd.Timedelta(minutes=1)]))]
-        if q.empty:
-            continue
+        q=quotes[(quotes.trade_date==d)&(quotes.ts>=ts)&(quotes.ts<=ts+pd.Timedelta(minutes=MAX_ENTRY_DELAY_MINUTES))]
         sig=q[q.ts==ts]
-        ent=q[q.ts==ts+pd.Timedelta(minutes=1)]
-        if sig.empty or ent.empty:
+        if sig.empty:
             continue
         strikes=np.sort(sig.strike.dropna().unique())
         if len(strikes)<7:
@@ -190,45 +188,66 @@ def build_setups(spot, quotes):
         call2_i=atm_i+2
         if put2_i<0 or call2_i>=len(strikes):
             continue
-        put2=float(strikes[put2_i])
-        call2=float(strikes[call2_i])
-        put_sig=sig[(sig.option_type=="PE")&(sig.strike==put2)].head(1)
-        call_sig=sig[(sig.option_type=="CE")&(sig.strike==call2)].head(1)
+
+        put_sig=sig[(sig.option_type=="PE")&(sig.strike==float(strikes[put2_i]))].head(1)
+        call_sig=sig[(sig.option_type=="CE")&(sig.strike==float(strikes[call2_i]))].head(1)
         if put_sig.empty or call_sig.empty:
             continue
+
         pclose=float(put_sig.iloc[0].close_px)
         cclose=float(call_sig.iloc[0].close_px)
         denom=max(1e-9,pclose+cclose)
         skew=(pclose-cclose)/denom
+
         pvol=float(put_sig.iloc[0].volume)
         cvol=float(call_sig.iloc[0].volume)
         vol_imb=(pvol-cvol)/max(1e-9,pvol+cvol)
+
         poi=float(put_sig.iloc[0].oi) if pd.notna(put_sig.iloc[0].oi) else 0.0
         coi=float(call_sig.iloc[0].oi) if pd.notna(call_sig.iloc[0].oi) else 0.0
         oi_imb=(poi-coi)/max(1e-9,poi+coi)
+
         expiry=put_sig.iloc[0].expiry
+
         for side in ("PUT","CALL"):
             short_i=put2_i if side=="PUT" else call2_i
             option_code="PE" if side=="PUT" else "CE"
+
             for width in WIDTHS:
                 wing_i=short_i-width if side=="PUT" else short_i+width
                 if wing_i<0 or wing_i>=len(strikes):
                     continue
+
                 short_strike=float(strikes[short_i])
                 wing_strike=float(strikes[wing_i])
-                short_q=ent[(ent.option_type==option_code)&(ent.strike==short_strike)].head(1)
-                wing_q=ent[(ent.option_type==option_code)&(ent.strike==wing_strike)].head(1)
+
+                short_q=q[(q.option_type==option_code)&(q.strike==short_strike)&(q.ts>ts)]
+                wing_q=q[(q.option_type==option_code)&(q.strike==wing_strike)&(q.ts>ts)]
+
                 if short_q.empty or wing_q.empty:
                     continue
-                short_entry=float(short_q.iloc[0].open_px)
-                wing_entry=float(wing_q.iloc[0].open_px)
+
+                common=sorted(set(short_q.ts).intersection(set(wing_q.ts)))
+                if not common:
+                    continue
+
+                entry_ts=min(common)
+                short_row=short_q[short_q.ts==entry_ts].head(1)
+                wing_row=wing_q[wing_q.ts==entry_ts].head(1)
+                if short_row.empty or wing_row.empty:
+                    continue
+
+                short_entry=float(short_row.iloc[0].open_px)
+                wing_entry=float(wing_row.iloc[0].open_px)
                 credit=short_entry-wing_entry
                 if credit<=0:
                     continue
+
                 rows.append({
                     "trade_date":d,
                     "ts":ts,
-                    "entry_ts":ts+pd.Timedelta(minutes=1),
+                    "entry_ts":entry_ts,
+                    "entry_delay_min":float((entry_ts-ts).total_seconds()/60.0),
                     "expiry":expiry,
                     "side":side,
                     "width":width,
