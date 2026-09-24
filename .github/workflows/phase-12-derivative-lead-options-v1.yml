@@ -1,0 +1,115 @@
+name: Phase 12 - Derivative Lead/Lag Data Gate
+
+on:
+  workflow_dispatch:
+
+jobs:
+  data_gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pandas pyarrow numpy openchart pytest
+
+      - name: Unit tests
+        run: pytest -q tests/test_phase12_derivative_lead_options.py
+
+      - name: Prepare caches
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/cache/phase12_futures
+            data/cache/hf_nifty_options
+          key: phase12-derivative-lead-v1
+
+      - name: Build a bounded futures cache
+        run: |
+          mkdir -p data/cache/phase12_futures
+          python - <<'PY'
+          from datetime import datetime
+          from pathlib import Path
+          import pandas as pd
+          import re
+          from openchart import NSEData
+          nse = NSEData()
+          out = Path("data/cache/phase12_futures")
+          out.mkdir(parents=True, exist_ok=True)
+          symbols = [
+              "NIFTY25JANFUT","NIFTY25FEBFUT","NIFTY25MARFUT","NIFTY25APRFUT",
+              "NIFTY25MAYFUT","NIFTY25JUNFUT","NIFTY25JULFUT","NIFTY25AUGFUT",
+              "NIFTY25SEPFUT","NIFTY25OCTFUT","NIFTY25NOVFUT","NIFTY25DECFUT",
+              "NIFTY26JANFUT","NIFTY26FEBFUT","NIFTY26MARFUT"
+          ]
+          for symbol in symbols:
+              p = out / f"{symbol}.parquet"
+              if p.exists():
+                  continue
+              df = nse.historical(symbol, "FO", datetime(2025,1,1), datetime(2026,3,1), "1m")
+              if df is None or len(df) == 0:
+                  continue
+              x = df.reset_index()
+              x.columns = [str(c).lower() for c in x.columns]
+              x = x.rename(columns={"timestamp":"datetime"})
+              if "datetime" not in x.columns:
+                  x = x.rename(columns={x.columns[0]:"datetime"})
+              m = re.match(r"NIFTY(\\d{2})([A-Z]{3})FUT$", symbol)
+              if not m:
+                  continue
+              year = 2000 + int(m.group(1))
+              month = pd.Timestamp(f"{year}-{m.group(2)}-01").month
+              x["contract_year"] = year
+              x["contract_month"] = month
+              x["contract_month_key"] = year * 100 + month
+              x.to_parquet(p, index=False)
+          files = list(out.glob("*.parquet"))
+          print("cached_future_files", len(files))
+          if not files:
+              raise SystemExit("No futures history was downloaded")
+          PY
+
+      - name: Reuse pinned option/spot cache
+        run: |
+          mkdir -p data/cache/hf_nifty_options
+          if ! find data/cache/hf_nifty_options -type f -name '*.parquet' -print -quit | grep -q .; then
+            python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="artist-23/nifty-options-data", repo_type="dataset", revision="45e0a04", local_dir="data/cache/hf_nifty_options", allow_patterns=["NIFTY/**/*.parquet","NIFTY/**"])'
+          fi
+          test -d data/cache/hf_nifty_options/NIFTY
+
+      - name: Data gate
+        run: |
+          python - <<'PY'
+          import pandas as pd
+          from pathlib import Path
+          from research.phase12_derivative_lead_options import data_gate
+          import duckdb
+          futures = pd.concat([pd.read_parquet(p) for p in Path("data/cache/phase12_futures").glob("*.parquet")], ignore_index=True)
+          if "contract_month_key" not in futures.columns:
+              raise SystemExit("Missing contract-month key")
+          futures["expiry"] = pd.to_datetime(futures["contract_year"].astype(str) + "-" + futures["contract_month"].astype(str) + "-01").dt.date
+          con = duckdb.connect()
+          source = "data/cache/hf_nifty_options/NIFTY/**/*.parquet"
+          spot = con.execute(f"""
+          SELECT DISTINCT datetime, CAST(spot AS DOUBLE) AS spot_close
+          FROM read_parquet('{source}', union_by_name=true)
+          WHERE spot > 0
+          ORDER BY datetime
+          """).df()
+          con.close()
+          print(data_gate(futures, spot))
+          spot.to_parquet("data/cache/phase12_spot.parquet", index=False)
+          futures.to_parquet("data/cache/phase12_futures.parquet", index=False)
+          PY
+
+      - name: Run lead-feature preliminary screen
+        run: |
+          python -m research.phase12_derivative_lead_options             --futures data/cache/phase12_futures.parquet             --spot data/cache/phase12_spot.parquet             --out reports/phase12-data-gate
+
+      - name: Upload data-gate report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase12-derivative-lead-data-gate
+          path: reports/phase12-data-gate
