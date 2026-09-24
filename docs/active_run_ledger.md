@@ -48,3 +48,13 @@ The prior Phase 2/3/3F/3G/3H/3I results remain frozen and are not being retuned 
 | 11 | phase-11-breakout-pullback-oi-v2 / PR #12 | Corrected nearest-wing execution; fresh execution pending |
 
 Phase 11 original PR #11 is retained as the first implementation audit trail; v2 is the corrected execution branch.
+
+### Exact execution runs — 2026-09-24 08:02 UTC
+| Phase | Execution branch | Commit | Workflow run | Job | Status |
+|---|---|---|---:|---:|---|
+| 8 v3 | phase-8-hybrid-ml-momentum-v3-exec | 4c660571 | 35972809477 | 107546216455 | base friction running |
+| 9 v2 | phase-9-regime-credit-spread-v2-exec | 7068c2c0 | 35972822793 | 107546261010 | base friction running |
+| 10 v2 | phase-10-cross-index-1m-v2-exec | 40436f5e | 35972869077 | 107546412046 | base friction running |
+| 11 v3 | phase-11-breakout-pullback-oi-v3-exec | e5f495c1 | 35972926200 | — | queued |
+
+These are the first runs using exact branch-parent construction after E0078. No numerical result is accepted until base, stress, and untouched WFA gates are complete.
