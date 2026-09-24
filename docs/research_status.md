@@ -274,3 +274,12 @@ No candidate has passed promotion, so robustness and paper-shadow phases remain 
 - Created `phase-7-manuscript` and added the final manuscript, data-gap assessment, final summary JSON and two figures.
 - No further parameter mining is authorized on the current public close-based datasets.
 - Next valid restart condition: a fresh data-quality gate using higher-fidelity synchronized executable market data.
+
+
+### 2026-09-24 — Step 8.1 User-directed continuation
+- User explicitly changed the stopping rule: the study continues until a reproducible strategy reaches the Rs 1,000 net/lot/day target.
+- Created branch `phase-8-hybrid-ml-momentum-v1`.
+- External hypothesis source reviewed: public `dhruvYadavjii/AI-trader`, which reports a NIFTY tick-replay system combining EMA/RSI/VWAP, option-premium confirmation, regime filtering and dynamic/RL exits. The published sample is short and is not accepted as validation.
+- Paytm Money historical API documentation was verified as a future data-upgrade path and reports 1-minute NSE cash/F&O historical OHLC/volume/OI from 2017, including contract-wise options and futures.
+- Phase 8A will test the external mechanism on the pinned public option dataset with explicit leakage and cost controls before any ML extension.
+- Promotion target remains Rs 1,000 net per active lot per trading day; exhaustion of one public dataset no longer closes the research program.
