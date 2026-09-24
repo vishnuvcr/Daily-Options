@@ -41,3 +41,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 | E0093 | 2026-09-24 | Tooling | A repository status-update script failed with a JavaScript syntax error caused by unescaped backticks inside a template literal | No repository mutation and no research impact | Rewrote the update script using connector-correct arguments and non-conflicting string construction | CLOSED |
 | E0094 | 2026-09-24 | Phase 11 monitoring | Live job-log endpoint returned `BlobNotFound` while run 35978104824 remained in progress | No P&L impact; no partial log was available | Treat workflow step state as authoritative during execution and wait for downloadable artifacts only after job completion | CLOSED |
+
+| E0093 | 2026-09-24 | Tooling | A repository status-update script failed with a JavaScript syntax error caused by unescaped backticks inside a template literal | No repository mutation and no research impact | Rewrote the update script using connector-correct arguments and non-conflicting string construction | CLOSED |
+| E0094 | 2026-09-24 | Phase 11 monitoring | Live job-log endpoint returned BlobNotFound while run 35978104824 remained in progress | No P&L impact; no partial log was available | Treat workflow step state as authoritative during execution and inspect downloadable artifacts after job completion | CLOSED |
