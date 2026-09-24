@@ -13,7 +13,8 @@ def expiry_files(root):
     return out
 
 def nearest(files,d):
-    fut=[x for x in files if x[0]>=d]
+    td=pd.Timestamp(d).date()
+    fut=[x for x in files if x[0]>=td]
     return min(fut,key=lambda x:x[0]) if fut else None
 
 def load_spot(root):
