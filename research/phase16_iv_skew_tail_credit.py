@@ -26,7 +26,7 @@ def feature_query(root, expiry_type):
     return f'''
     WITH b AS (
       SELECT CAST(datetime AS TIMESTAMP) datetime,
-             CAST(date AS DATE) trade_date,
+             CAST(CAST(datetime AS TIMESTAMP)+INTERVAL '5 hours 30 minutes' AS DATE) trade_date,
              CAST(expiry AS DATE) expiry,
              expiry_type,
              option_type,

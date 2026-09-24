@@ -120,3 +120,8 @@ Phase 16 remains **PRE-RESULT**. Run 36021088602 failed at unit-test collection 
 A second implementation audit of corrected head ef9435df found three additional validity issues before rerunning: the 30-minute hold cells were not actually limited to 30 minutes (E0157); nearest actual expiry was not carried deterministically through feature/entry/window selection (E0158); and the workflow could cancel a prior computation on a new push (E0159).
 
 These are now corrected on the same Phase 16 branch. The research grid, thresholds, entry times, stop/target ratios, side definitions, slippage levels and cost model are unchanged. The next run is the first eligible numerical validation; no prior Phase 16 P&L is accepted.
+
+
+## 2026-09-24 — Phase 16 timestamp provenance correction
+
+Before numerical execution, Phase 16 was additionally corrected to derive trading date from the option timestamp +5:30 IST rather than the dataset's separate date field (E0160). This follows the previously validated Artist23 timestamp-alignment finding in Phase 15. The strategy grid and economic assumptions remain unchanged; no P&L is accepted from earlier Phase 16 implementations.

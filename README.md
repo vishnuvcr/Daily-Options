@@ -113,3 +113,6 @@ Phase 10 is retired after complete base/stress + walk-forward validation: best b
 ## Phase 16 integrity correction — 2026-09-24
 
 The active Phase 16 IV-skew tail-credit family remains **pre-result**. Run 36021088602 failed during unit-test collection, so it generated no numerical evidence. Before the next run, an implementation audit identified and corrected hold-window enforcement, deterministic nearest-future-expiry selection, and CI cancellation behavior. The 288-cell preregistered grid and cost/slippage assumptions are unchanged. No Phase 16 P&L is accepted until the corrected branch passes tests and completes both base and stress runs.
+
+
+Phase 16 pre-run integrity was extended to derive trading dates directly from UTC timestamps converted to IST, avoiding the dataset's separate session-date field. No Phase 16 numerical result is accepted from the superseded implementation.
