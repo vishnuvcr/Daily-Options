@@ -147,3 +147,12 @@ Research status: [docs/research_status.md](https://github.com/vishnuvcr/Daily-Op
 ## Current frontier sync — 2026-09-24
 
 Phase 16 (`phase-16-iv-skew-tail-credit-v1`) is the current research frontier. Its previous run `36021088602` failed before numerical computation because of a unit-test syntax defect. The dedicated branch has since been corrected for hold-window enforcement, deterministic nearest-future-expiry selection, CI cancellation behavior, and IST-derived trade dates. Corrected branch head: `893247ee787ac7703c53965f2400ec304810278a`. No Phase 16 P&L is accepted yet; base/stress numerical execution and the subsequent untouched walk-forward promotion gate remain pending.
+
+
+## Current research frontier — Phase 17 (2026-09-24)
+
+Phase 16 is classified DATA-LIMITED because the pinned Artist23 source lacks the actual expiry and IV fields required by its preregistered hypothesis; no Phase 16 P&L is accepted.
+
+Phase 17 is the active exact-expiry NIFTY family: premium-skew + option volume/OI pressure + spot-momentum confirmation, expressed as defined-risk credit spreads. It uses TradeMarkk revision 51ca58c, where NIFTY options are partitioned by exact expiry-date files and expose strike, option type, OHLCV and OI. The frozen tournament contains 384 variants with base/stress slippage of ₹0.20/₹0.40 per leg.
+
+[Phase 17 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-17-nifty-exact-expiry-premium-skew-v1/docs/phase17_plan.md) · [Phase 17 status](https://github.com/vishnuvcr/Daily-Options/blob/phase-17-nifty-exact-expiry-premium-skew-v1/docs/research_status.md) · [Phase 17 workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-17-nifty-exact-expiry-premium-skew-v1/.github/workflows/phase-17-nifty-exact-expiry-premium-skew-v1.yml)
