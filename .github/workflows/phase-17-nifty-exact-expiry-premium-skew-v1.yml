@@ -4,6 +4,8 @@ on:
   workflow_dispatch:
   push:
     branches: [phase-17-nifty-exact-expiry-premium-skew-v1]
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 concurrency:
   group: phase17-premium-skew
