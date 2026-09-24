@@ -254,7 +254,9 @@ def attach_contract_paths(signals: pd.DataFrame, root: Path) -> pd.DataFrame:
     if entries.empty:
         return entries
     entries["entry_time_local"] = pd.to_datetime(entries["local_ts"])
-    return entries.rename(columns={"open":"entry_price"})
+    entries["entry_price"] = pd.to_numeric(entries["open"], errors="coerce")
+    entries = entries.loc[entries["entry_price"].gt(0)].copy()
+    return entries
 
 
 def simulate_paths(entries: pd.DataFrame, root: Path, out_dir: Path, slippage: float) -> pd.DataFrame:
