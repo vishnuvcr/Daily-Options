@@ -1,0 +1,148 @@
+name: Phase 12 - Derivative Lead/Lag Data Gate v2b
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - phase-12-derivative-lead-options-v2-data-gate
+    paths:
+      - ".github/workflows/phase-12-derivative-lead-options-v2b.yml"
+      - "research/phase12_derivative_lead_options_v2.py"
+      - "tests/test_phase12_derivative_lead_options_v2.py"
+
+concurrency:
+  group: phase12-derivative-lead-v2c
+  cancel-in-progress: false
+
+jobs:
+  data_gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pandas pyarrow numpy duckdb pytest openchart pytz huggingface_hub
+      - name: Unit tests
+        run: pytest -q tests/test_phase12_derivative_lead_options_v2.py
+      - name: Prepare caches
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/cache/phase12_market
+            data/cache/phase12_futures
+          key: phase12-derivative-lead-v2-market-v1
+      - name: Reuse pinned NIFTY index/option cache
+        run: |
+          mkdir -p data/cache/phase12_market
+          if ! find data/cache/phase12_market -type f -name '*.parquet' -print -quit | grep -q .; then
+            python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="thetrademarkk/india-index-options-1m", repo_type="dataset", local_dir="data/cache/phase12_market", allow_patterns=["index/NIFTY.parquet","options/NIFTY/*.parquet"])'
+          fi
+          test -f data/cache/phase12_market/index/NIFTY.parquet
+      - name: Build exact monthly expiry calendar
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import duckdb
+          out = Path("data/cache/phase12_market")
+          src = (out / "options" / "NIFTY" / "*.parquet").as_posix()
+          con = duckdb.connect()
+          x = con.execute(f"""
+          SELECT CAST(expiry AS DATE) AS expiry
+          FROM read_parquet('{src}', union_by_name=true)
+          WHERE expiry IS NOT NULL
+          GROUP BY 1 ORDER BY 1
+          """).df()
+          con.close()
+          x["month"] = x["expiry"].astype(str).str.slice(0,7)
+          monthly = x.groupby("month", as_index=False)["expiry"].max()
+          monthly = monthly[(monthly["month"] >= "2021-01") & (monthly["month"] <= "2026-06")]
+          if len(monthly) < 50:
+              raise SystemExit(f"Insufficient monthly expiry coverage: {len(monthly)}")
+          monthly.to_csv(out / "nifty_monthly_expiry_calendar.csv", index=False)
+          print(monthly.to_string(index=False))
+          PY
+      - name: Build exact-expiry futures cache
+        run: |
+          python - <<'PY'
+          from datetime import datetime, timedelta
+          from pathlib import Path
+          import pandas as pd
+          from openchart import NSEData
+
+          root = Path("data/cache/phase12_market")
+          exp = pd.read_csv(root / "nifty_monthly_expiry_calendar.csv", parse_dates=["expiry"])
+          out = Path("data/cache/phase12_futures")
+          out.mkdir(parents=True, exist_ok=True)
+          nse = NSEData()
+          failures = []
+
+          for _, row in exp.iterrows():
+              expiry = row["expiry"].date()
+              symbol = f"NIFTY{expiry.strftime('%y%b').upper()}FUT"
+              p = out / f"{symbol}.parquet"
+              if p.exists():
+                  continue
+              try:
+                  start = max(expiry - timedelta(days=95), datetime(2021,1,1).date())
+                  end = expiry + timedelta(days=1)
+                  df = nse.historical(symbol, "FO", datetime.combine(start, datetime.min.time()), datetime.combine(end, datetime.min.time()), "1m")
+                  if df is None or len(df) == 0:
+                      failures.append(symbol)
+                      continue
+                  z = df.reset_index()
+                  z.columns = [str(c).lower() for c in z.columns]
+                  if "timestamp" in z.columns:
+                      z = z.rename(columns={"timestamp":"datetime"})
+                  if "datetime" not in z.columns:
+                      z = z.rename(columns={z.columns[0]:"datetime"})
+                  z["expiry"] = pd.Timestamp(expiry)
+                  z.to_parquet(p, index=False)
+              except Exception as exc:
+                  failures.append(f"{symbol}:{type(exc).__name__}:{exc}")
+
+          files = list(out.glob("*.parquet"))
+          print("cached_future_files", len(files))
+          print("failures", len(failures), failures[:10])
+          if len(files) < 50:
+              raise SystemExit("Fewer than 50 exact-expiry NIFTY futures contracts were cached")
+          (root / "futures_failures.txt").write_text("\n".join(failures))
+          PY
+      - name: Build normalized spot/futures inputs and enforce data gate
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import duckdb, pandas as pd
+          from research.phase12_derivative_lead_options_v2 import data_gate
+
+          root = Path("data/cache/phase12_market")
+          con = duckdb.connect()
+          spot = con.execute("""
+          SELECT DISTINCT CAST(timestamp AS TIMESTAMP) AS datetime, CAST(close AS DOUBLE) AS spot_close
+          FROM read_parquet('data/cache/phase12_market/index/NIFTY.parquet', union_by_name=true)
+          WHERE close > 0 ORDER BY datetime
+          """).df()
+          con.close()
+
+          fut = pd.concat([pd.read_parquet(p) for p in Path("data/cache/phase12_futures").glob("*.parquet")], ignore_index=True)
+          gate = data_gate(fut, spot)
+          print(gate)
+          spot.to_parquet("data/cache/phase12_spot.parquet", index=False)
+          fut.to_parquet("data/cache/phase12_futures.parquet", index=False)
+          (root / "data_gate.json").write_text(pd.Series(gate).to_json(indent=2))
+          if gate["gate"] != "PASS":
+              raise SystemExit("Phase 12 data gate failed")
+          PY
+      - name: Run lead-feature preliminary screen
+        run: |
+          python -m research.phase12_derivative_lead_options_v2             --futures data/cache/phase12_futures.parquet             --spot data/cache/phase12_spot.parquet             --out reports/phase12-data-gate
+      - name: Upload data-gate report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase12-derivative-lead-data-gate-v2b
+          path: reports/phase12-data-gate
