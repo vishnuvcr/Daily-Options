@@ -8,6 +8,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import yfinance as yf
 
 from research.cost_model import OptionCostModel
 from research.phase10_contracts import index_option_lot_size
@@ -28,6 +29,8 @@ RISK_PROFILES = (
     {"stop_pct": 0.30, "target_pct": 0.60},
     {"stop_pct": 0.50, "target_pct": 1.00},
 )
+GLOBAL_Z_THRESHOLD = 0.5
+GAP_THRESHOLD = 0.0075
 
 
 @dataclass(frozen=True)
@@ -214,112 +217,176 @@ def _spread_window(a: str, b: str, entry_iso: str, hold: int) -> pd.DataFrame:
     return da.merge(db, on="datetime", how="inner").sort_values("datetime")
 
 
+
+def _load_global_series(root: Path, name: str, symbol: str) -> pd.DataFrame:
+    root.mkdir(parents=True, exist_ok=True)
+    p = root / f"{name}.csv"
+    if not p.exists() or p.stat().st_size < 100:
+        df = yf.download(symbol, start="2018-01-01", end="2021-01-01", auto_adjust=False, progress=False)
+        if df.empty:
+            raise RuntimeError(f"No global data for {symbol}")
+        if hasattr(df.columns, "levels"):
+            if "Close" not in df.columns.get_level_values(0):
+                raise RuntimeError(f"No Close for {symbol}")
+            df = df["Close"]
+            if hasattr(df, "columns"):
+                df = df.iloc[:, 0]
+        else:
+            df = df["Close"]
+        df.rename("Close").reset_index().to_csv(p, index=False)
+
+    x = pd.read_csv(p)
+    x["date"] = pd.to_datetime(x["Date"], errors="coerce").dt.date
+    x["close"] = pd.to_numeric(x["Close"], errors="coerce")
+    x = x.dropna(subset=["date", "close"]).sort_values("date").drop_duplicates("date", keep="last")
+    x["ret"] = x["close"].pct_change()
+    mean = x["ret"].shift(1).rolling(20, min_periods=10).mean()
+    std = x["ret"].shift(1).rolling(20, min_periods=10).std()
+    x["z"] = (x["ret"] - mean) / std.replace(0, np.nan)
+    return x[["date", "z"]].dropna()
+
+
+def _previous_global_z(df: pd.DataFrame, dates: pd.Series) -> pd.Series:
+    left = pd.DataFrame({"date": pd.to_datetime(dates)})
+    right = df.copy()
+    right["date"] = pd.to_datetime(right["date"])
+    m = pd.merge_asof(
+        left.sort_values("date"),
+        right.sort_values("date"),
+        on="date",
+        direction="backward",
+        allow_exact_matches=False,
+    )
+    return m["z"].to_numpy()
+
+
+def global_gate_table(spot: pd.DataFrame, root: Path) -> pd.DataFrame:
+    x = spot[["datetime", "spot_close"]].copy().sort_values("datetime")
+    local = pd.to_datetime(x["datetime"], utc=True).dt.tz_convert("Asia/Kolkata").dt.tz_localize(None)
+    x["trade_date"] = local.dt.date
+    daily = (
+        x.groupby("trade_date", sort=True)
+        .agg(day_open=("spot_close", "first"), day_close=("spot_close", "last"))
+        .reset_index()
+    )
+    daily["prev_close"] = daily["day_close"].shift(1)
+    daily["gap_return"] = daily["day_open"] / daily["prev_close"] - 1.0
+
+    sp = _load_global_series(root, "SP500", "^GSPC")
+    nq = _load_global_series(root, "NASDAQ", "^IXIC")
+    nk = _load_global_series(root, "NIKKEI", "^N225")
+
+    daily["z_sp500"] = _previous_global_z(sp, daily["trade_date"])
+    daily["z_nasdaq"] = _previous_global_z(nq, daily["trade_date"])
+    daily["z_nikkei"] = _previous_global_z(nk, daily["trade_date"])
+    daily["global3_z"] = daily[["z_sp500", "z_nasdaq", "z_nikkei"]].mean(axis=1)
+    daily["pass_gate"] = (
+        daily["global3_z"].abs().ge(GLOBAL_Z_THRESHOLD)
+        & daily["gap_return"].abs().ge(GAP_THRESHOLD)
+    )
+    return daily
+
 def simulate(entries: pd.DataFrame, slippage: float, out: Path) -> pd.DataFrame:
     if entries.empty:
         return pd.DataFrame()
 
     cm = OptionCostModel()
-    unique = entries[
-        ["trade_date", "entry_time", "expiry", "side", "atm_strike", "wing_strike",
-         "atm_path", "wing_path", "spot", "hold_minutes", "risk_id"]
-    ].drop_duplicates()
+    keys = [
+        "trade_date", "entry_time", "expiry", "side", "atm_strike", "wing_strike",
+        "atm_path", "wing_path", "spot", "hold_minutes", "risk_id"
+    ]
+    unique = entries[keys].drop_duplicates()
 
     rows = []
     for rec in unique.itertuples(index=False):
         entry_iso = str(rec.entry_time)
         is_spread = isinstance(rec.wing_path, str) and bool(rec.wing_path)
-        if is_spread:
-            bars = _spread_window(rec.atm_path, rec.wing_path, entry_iso, rec.hold_minutes)
-        else:
-            bars = _window_bars(rec.atm_path, entry_iso, rec.hold_minutes)
+        bars = (
+            _spread_window(rec.atm_path, rec.wing_path, entry_iso, rec.hold_minutes)
+            if is_spread
+            else _window_bars(rec.atm_path, entry_iso, rec.hold_minutes)
+        )
         if bars.empty:
             continue
 
         first = bars.iloc[0]
-        if is_spread:
-            entry_px = float(first["open_a"] - first["open_b"])
-        else:
-            entry_px = float(first["open"])
-
+        entry_px = (
+            float(first["open_a"] - first["open_b"])
+            if is_spread
+            else float(first["open"])
+        )
         if entry_px <= 0:
             continue
 
-        for risk_id, prof in enumerate(RISK_PROFILES):
-            stop_level = entry_px * (1 - prof["stop_pct"])
-            target_level = entry_px * (1 + prof["target_pct"])
-            exit_ts = bars["datetime"].iloc[-1]
-            reason = "TIME"
+        risk_id = int(rec.risk_id)
+        prof = RISK_PROFILES[risk_id]
+        stop_level = entry_px * (1 - prof["stop_pct"])
+        target_level = entry_px * (1 + prof["target_pct"])
+        exit_ts = bars["datetime"].iloc[-1]
+        reason = "TIME"
 
-            for _, bar in bars.iterrows():
-                if is_spread:
-                    high = float(bar["high_a"] - bar["low_b"])
-                    low = float(bar["low_a"] - bar["high_b"])
-                    close = float(bar["close_a"] - bar["close_b"])
-                else:
-                    high = float(bar["high"])
-                    low = float(bar["low"])
-                    close = float(bar["close"])
+        for _, bar in bars.iterrows():
+            high = (
+                float(bar["high_a"] - bar["low_b"])
+                if is_spread
+                else float(bar["high"])
+            )
+            low = (
+                float(bar["low_a"] - bar["high_b"])
+                if is_spread
+                else float(bar["low"])
+            )
+            if low <= stop_level:
+                exit_ts = bar["datetime"]
+                reason = "STOP"
+                break
+            if high >= target_level:
+                exit_ts = bar["datetime"]
+                reason = "TARGET"
+                break
 
-                if low <= stop_level:
-                    exit_ts = bar["datetime"]
-                    reason = "STOP"
-                    break
-                if high >= target_level:
-                    exit_ts = bar["datetime"]
-                    reason = "TARGET"
-                    break
+        ex = bars[bars["datetime"] == exit_ts].iloc[-1]
+        lot = index_option_lot_size("NIFTY", rec.expiry)
 
-            ex = bars[bars["datetime"] == exit_ts].iloc[-1]
-            if is_spread:
-                exit_px = float(ex["close_a"] - ex["close_b"])
-            else:
-                exit_px = float(ex["close"])
+        if is_spread:
+            net = cm.vertical_debit_spread_net_pnl(
+                float(first["open_a"]),
+                float(first["open_b"]),
+                float(ex["close_a"]),
+                float(ex["close_b"]),
+                lot_size=lot,
+                qty=1,
+                slippage_points=slippage,
+            )
+            exit_px = float(ex["close_a"] - ex["close_b"])
+        else:
+            net = cm.net_pnl(
+                float(first["open"]),
+                float(ex["close"]),
+                qty=1,
+                lot_size=lot,
+                slippage_points=slippage,
+            )
+            exit_px = float(ex["close"])
 
-            if is_spread:
-                net = cm.vertical_debit_spread_net_pnl(
-                    float(first["open_a"]),
-                    float(first["open_b"]),
-                    float(ex["close_a"]),
-                    float(ex["close_b"]),
-                    lot_size=index_option_lot_size("NIFTY", rec.expiry),
-                    qty=1,
-                    slippage_points=slippage,
-                )
-            else:
-                # One-leg option P&L with the same cost model through a synthetic
-                # zero-short vertical. The net is explicitly one long option leg.
-                net = cm.net_pnl(
-                    float(first["open"]),
-                    float(ex["close"]),
-                    qty=1,
-                    lot_size=index_option_lot_size("NIFTY", rec.expiry),
-                    slippage_points=slippage,
-                )
+        rows.append({
+            **rec._asdict(),
+            "exit_time": exit_ts,
+            "reason": reason,
+            "entry_premium": entry_px,
+            "exit_premium": exit_px,
+            "net_pnl": net,
+        })
 
-            rows.append({
-                **rec._asdict(),
-                "risk_id": risk_id,
-                "exit_time": exit_ts,
-                "reason": reason,
-                "entry_premium": entry_px,
-                "exit_premium": exit_px,
-                "net_pnl": net,
-            })
-
-    setup = pd.DataFrame(rows)
     trades = entries.merge(
-        setup,
-        on=[
-            "trade_date", "entry_time", "expiry", "side", "atm_strike", "wing_strike",
-            "atm_path", "wing_path", "spot", "hold_minutes", "risk_id"
-        ],
+        pd.DataFrame(rows),
+        on=keys,
         how="inner",
         suffixes=("", "_sim"),
     )
     out.mkdir(parents=True, exist_ok=True)
     trades.to_csv(out / "phase13_trades.csv", index=False)
     return trades
-
 
 def leaderboard(trades: pd.DataFrame) -> pd.DataFrame:
     if trades.empty:
@@ -397,11 +464,20 @@ def walk_forward(trades: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def run(root: Path, out: Path, slippage: float) -> dict:
-    futures, spot = load_zenodo_market(root / "market")
+def run(root: Path, out: Path, slippage: float, global_root: Path | None = None) -> dict:
+    out.mkdir(parents=True, exist_ok=True)
+    _, spot = load_zenodo_market(root / "market")
     features = _feature_table(spot)
     manifest = discover_option_manifest(root / "options")
     entries = build_entries(features, manifest)
+
+    gate_days = None
+    if global_root is not None:
+        gate = global_gate_table(spot, global_root)
+        gate_days = int(gate["pass_gate"].sum())
+        entries = entries.merge(gate[["trade_date", "pass_gate"]], on="trade_date", how="inner")
+        entries = entries[entries["pass_gate"]].drop(columns=["pass_gate"])
+
     trades = simulate(entries, slippage, out)
     board = leaderboard(trades)
     board.to_csv(out / "phase13_leaderboard.csv", index=False)
@@ -420,19 +496,22 @@ def run(root: Path, out: Path, slippage: float) -> dict:
         "mean_test_window_net": float(wf.test_mean.mean()) if not wf.empty else None,
         "slippage_points_per_leg": slippage,
         "source": "Zenodo 10899828, 2019-2020 pilot",
+        "global_gate_z_threshold": GLOBAL_Z_THRESHOLD if global_root is not None else None,
+        "global_gate_gap_threshold": GAP_THRESHOLD if global_root is not None else None,
+        "global_gate_days": gate_days,
     }
     (out / "phase13_summary.json").write_text(json.dumps(summary, indent=2, default=str))
     print(json.dumps(summary, indent=2, default=str))
     return summary
-
 
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--slippage", type=float, default=0.20)
+    ap.add_argument("--global-root", type=Path, default=None)
     args = ap.parse_args()
-    run(args.root, args.out, args.slippage)
+    run(args.root, args.out, args.slippage, args.global_root)
 
 
 if __name__ == "__main__":
