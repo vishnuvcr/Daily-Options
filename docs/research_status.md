@@ -254,3 +254,10 @@ Run 36051595562 completed successfully through tests and data acquisition but pr
 Corrected run 36052354346 removed that filter but still returned 52 setups and 0 trades in Stress. E0226 identified exact-timestamp intersection across multiple option legs as a likely sparse-quote blocker for stop marking. The correction replaces exact inner joins with fixed one-minute backward-asof alignment only, without future quotes.
 
 The newest corrected code is committed on phase-24-falcon-spread-backtest-v1. Runs triggered by the latest correction are queued/active; no Falcon P&L is accepted until a clean corrected run completes.
+## Phase 24 current-expiry correction — 2026-09-25
+
+User clarification: the Falcon video is an older Thursday-expiry-era strategy. Current NIFTY weekly contracts expire Tuesday. NSE's June 25, 2025 circular revised NIFTY weekly expiry from Thursday to Tuesday for new contracts expiring on/after September 1, 2025; current NSE contract specifications list Tuesday as the weekly expiry day. citeturn431147search15turn431147search2
+
+Phase 24 has therefore been corrected so the source's old "close by Wednesday to avoid Thursday 0-DTE" rule becomes **close on Monday before Tuesday expiry** for the current regime. Historical validation is expiry-aware: the exit session is the actual trading session immediately preceding each contract's expiry; Monday-expiry transition contracts are skipped because the source's Monday adjustment cannot occur before a Monday expiry.
+
+The previously running Phase 24 computation using the old Wednesday timeout is superseded and will not be used for P&L. The new timing correction will be validated by the next clean Base/Stress run before any performance conclusion is accepted.
