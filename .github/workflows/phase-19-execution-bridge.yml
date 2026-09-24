@@ -3,7 +3,7 @@ name: Phase 19 Execution Bridge
 on:
   workflow_dispatch:
   push:
-    branches: [phase-19-global-gap-credit-spread-v1]
+    branches: [phase-19-global-gap-credit-spread-v1, phase-19-global-gap-credit-spread-exec-v3]
 
 concurrency:
   group: phase19-execution-bridge
@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: phase-19-global-gap-credit-spread-v1
+          ref: ${{ github.ref_name }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
