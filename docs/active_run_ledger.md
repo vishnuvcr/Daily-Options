@@ -77,3 +77,8 @@ These are the first runs using exact branch-parent construction after E0078. No 
 - Run 35973884459 / commit 89df76fd completed base, stress and WFA.
 - Best base mean all-day net -₹113.62/lot/day; stress -₹136.48; WFA mean test-window net -₹122.39.
 - Phase 10 is frozen negative and retired.
+### Current frontier refresh
+- Phase 8: retired negative after run 35972809477; no further compute.
+- Phase 10: retired negative after run 35973884459; no further compute.
+- Phase 9 v5 sharded run 35974727222: four shards active in base computation.
+- Phase 11 v4 exact-parent commit fd3625b: run 35975025996 queued under isolated concurrency group; no result yet.
