@@ -290,3 +290,10 @@ No candidate has passed promotion, so robustness and paper-shadow phases remain 
 - No Phase 8 numerical result was produced or accepted from that run.
 - Corrected the preregistration/test/documentation to 96 bounded variants.
 - New run 35936795905 is executing on the corrected branch; data and P&L remain unaccepted until the run completes successfully.
+
+
+### 2026-09-24 — Step 9.1 Phase 9 initiated
+- Created `phase-9-regime-credit-spread-v1`.
+- New bounded mechanism: sell the opposite tail with a defined-risk credit spread only when trend and IV/RV regime filters agree.
+- 96 variants are pre-registered; strike identity is frozen at entry and all exits use the actual fixed contracts.
+- Base and doubled-slippage workflows will run on the pinned 34M-row option dataset.
