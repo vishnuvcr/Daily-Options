@@ -192,3 +192,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0148 | 2026-09-24 | Phase 15 runtime | Corrected run's inner `iterrows()` traversal over every option bar remained CPU-bound and the runner stopped updating timestamps for several minutes | No P&L accepted from the stalled run | Replace row-wise stop/target traversal with NumPy vectorized hit detection over the same bars; add a simulation regression test | CLOSED — runtime optimization |
 
 | E0149 | 2026-09-24 | Phase 15 reducer | Final reducer for run 36012314061 omitted duckdb and failed before aggregation, even though both WEEK/MONTH shards completed Base and Stress successfully | No shard/P&L data lost; reduction only | Launch reducer-only workflow with duckdb installed against existing run 36012314061 | CLOSED — reducer tooling |
+
+| E0144 | 2026-09-24 | Phase 15 reducer | Completed WEEK/MONTH shard jobs succeeded, but the reducer job failed because `duckdb` was omitted from reducer dependencies | No shard P&L affected; global result not produced | Added a reducer-only workflow pinned to completed run 36012314061 and installed `duckdb`; no shard rerun required | CLOSED |
