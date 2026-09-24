@@ -296,9 +296,30 @@ def simulate_setup(con, setup, variant, slippage):
     far = Path(setup["far_path"])
     lot = lot_size(setup["near_expiry"])
     start = setup["entry_fill_ts"]
-    end = pd.Timestamp(f"{friday}") + pd.Timedelta(days=5) + pd.Timedelta(hours=15, minutes=15)
+    # The source video predates the NSE expiry-day change. Current NIFTY weekly
+    # contracts expire Tuesday; the current-rule analogue is to adjust Monday
+    # and exit Monday before the Tuesday 0-DTE session. For historical validation,
+    # use the actual contract expiry and close on its immediately preceding trading
+    # day, so the backtest never fabricates a weekday-specific expiry.
+    date_q = f"""SELECT DISTINCT CAST(trading_day AS DATE) d
+                 FROM read_parquet('{near}')
+                 WHERE CAST(trading_day AS DATE) <= DATE '{setup["near_expiry"]}'
+                   AND CAST(timestamp AS TIMESTAMP) >= TIMESTAMP '{start}'
+                 ORDER BY d"""
+    date_df = con.execute(date_q).df()
+    if date_df.empty:
+        return None
+    available_dates = [pd.Timestamp(d).date() for d in date_df["d"].tolist()]
+    expiry_date = pd.Timestamp(setup["near_expiry"]).date()
+    pre_expiry = [d for d in available_dates if d < expiry_date]
+    if not pre_expiry:
+        return None
+    exit_date = max(pre_expiry)
+    end = pd.Timestamp(f"{exit_date} 15:15:00")
 
-    # Build the observable Friday-to-Wednesday price series for the four initial legs.
+    # The current Tuesday-expiry regime has Monday as the pre-expiry session.
+    # The April-August 2025 Monday-expiry transition is not compatible with the
+    # source's Monday adjustment, so those setups are skipped below.
     initial = {
         "short_ce": series(con, near, friday, setup["short_ce_strike"], "CE", start, end),
         "short_pe": series(con, near, friday, setup["short_pe_strike"], "PE", start, end),
@@ -308,11 +329,15 @@ def simulate_setup(con, setup, variant, slippage):
     if any(v.empty for v in initial.values()):
         return None
 
-    mon = friday + pd.Timedelta(days=(7 - pd.Timestamp(friday).weekday()) % 7)
-    if pd.Timestamp(mon).weekday() != 0:
-        mon = pd.Timestamp(friday) + pd.Timedelta(days=3)
+    mon = pd.Timestamp(friday) + pd.Timedelta(days=(7 - pd.Timestamp(friday).weekday()) % 7)
     mon_signal = pd.Timestamp(f"{mon.date()} {variant.adjust_time}")
     mon_exec = mon_signal + pd.Timedelta(minutes=1)
+    # Require the Monday adjustment to occur before the pre-expiry exit session.
+    # For current NIFTY Tuesday expiry this is exactly the intended Monday->Monday
+    # sequence. For historical Monday-expiry transition contracts, no valid
+    # Monday-before-expiry adjustment exists, so the setup is discarded.
+    if mon.date() >= exit_date:
+        return None
 
     # One listed strike outside the original short on the same weekly expiry.
     strike_q = f"""
@@ -405,8 +430,9 @@ def simulate_setup(con, setup, variant, slippage):
             stop_ts = row.ts
             break
 
-    wed = pd.Timestamp(mon) + pd.Timedelta(days=2)
-    exit_signal = stop_ts if stop_ts is not None else pd.Timestamp(f"{wed.date()} 15:15:00")
+    # Exit on the last available pre-expiry session. Under today's NIFTY
+    # Tuesday expiry this is Monday, avoiding 0-DTE Tuesday exposure.
+    exit_signal = stop_ts if stop_ts is not None else pd.Timestamp(f"{exit_date} 15:15:00")
     exit_from = exit_signal + pd.Timedelta(minutes=1)
     for leg in legs:
         s = (
