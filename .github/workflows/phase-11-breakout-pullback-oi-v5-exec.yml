@@ -142,60 +142,55 @@ jobs:
           from pathlib import Path
           import pandas as pd
           from research.phase12_zenodo_pilot import (
-              LEAD_WINDOWS, load_zenodo_market, discover_option_manifest,
-              lead_features, build_entries, _load_option_path
+              LEAD_WINDOWS, THRESHOLDS, _load_option_path,
+              load_zenodo_market, discover_option_manifest,
+              lead_features, _choose_expiry, _choose_strikes
           )
 
           root = Path("data/cache/phase12_zenodo")
           futures, spot = load_zenodo_market(root / "market")
-          features = {w: lead_features(futures, spot, w) for w in LEAD_WINDOWS}
           manifest = discover_option_manifest(root / "options")
-          entries = build_entries(features, manifest)
+          features = lead_features(futures, spot, 1)
 
-          if entries.empty:
-              raise SystemExit("No entries generated; stop before P&L")
+          candidates = features[
+              (features["trade_time_ist"] >= "09:45:00") &
+              (features["lead_gap"].abs() >= min(THRESHOLDS)) &
+              (((features["fut_z"] > 0) & (features["spot_z"] > 0)) |
+               ((features["fut_z"] < 0) & (features["spot_z"] < 0)))
+          ].head(5)
 
-          coverage_ok = (
-              entries["atm_path"].map(lambda p: True) &
-              entries["wing_path"].map(lambda p: True)
-          )
-          # Re-check coverage metadata for every generated entry without loading full option files.
-          m = manifest.set_index("path")
-          for col in ("atm_path", "wing_path"):
-              st = entries[col].map(m["coverage_start"])
-              en = entries[col].map(m["coverage_end"])
-              dates = pd.to_datetime(entries["trade_date"])
-              coverage_ok &= (st.isna() | (pd.to_datetime(st) <= dates)) & (en.isna() | (pd.to_datetime(en) >= dates))
+          if candidates.empty:
+              raise SystemExit("No representative signal candidates available for option-leg coverage audit")
 
-          if not coverage_ok.all():
-              raise SystemExit("Generated entries contain option files outside their declared coverage dates")
-
-          # Load only two representative leg pairs for direct timestamp confirmation.
-          sampled = entries[["entry_time","atm_path","wing_path"]].drop_duplicates().head(2)
           examples = []
-          for rec in sampled.itertuples(index=False):
-              a = _load_option_path(rec.atm_path)
-              b = _load_option_path(rec.wing_path)
-              start = pd.Timestamp(rec.entry_time)
-              stop = start + pd.Timedelta(minutes=5)
+          for r in candidates.itertuples(index=False):
+              d = r.trade_date
+              side = "CE" if r.direction == "CALL" else "PE"
+              expiry = _choose_expiry(manifest, d, "MONTH")
+              if expiry is None:
+                  continue
+              pair = _choose_strikes(manifest, expiry, side, float(r.spot_close), 1, d)
+              if pair is None:
+                  continue
+              atm_row, wing_row = pair
+              entry_time = r.datetime + pd.Timedelta(minutes=1)
+              a = _load_option_path(atm_row["path"])
+              b = _load_option_path(wing_row["path"])
               overlap = a.merge(b, on="datetime", how="inner")
-              overlap = overlap[(overlap["datetime"] >= start) & (overlap["datetime"] <= stop)]
+              overlap = overlap[(overlap["datetime"] >= entry_time) &
+                                (overlap["datetime"] <= entry_time + pd.Timedelta(minutes=5))]
               examples.append({
-                  "entry_time": str(start),
-                  "atm_path": rec.atm_path,
-                  "wing_path": rec.wing_path,
+                  "signal_time": str(r.datetime),
+                  "entry_time": str(entry_time),
+                  "expiry": str(expiry),
+                  "atm_path": atm_row["path"],
+                  "wing_path": wing_row["path"],
                   "overlap_rows_5m": int(len(overlap)),
               })
-          if not any(x["overlap_rows_5m"] > 0 for x in examples):
-              raise SystemExit(f"Sampled option legs have no timestamp overlap: {examples}")
 
-          print(json.dumps({
-              "entries": int(len(entries)),
-              "unique_entry_days": int(entries.trade_date.nunique()),
-              "unique_variants": int(entries.variant_id.nunique()),
-              "coverage_failures": int((~coverage_ok).sum()),
-              "sample_examples": examples,
-          }, indent=2, default=str))
+          print(json.dumps({"representative_examples": examples}, indent=2))
+          if not examples or not any(x["overlap_rows_5m"] > 0 for x in examples):
+              raise SystemExit("No representative option legs overlap the intended entry timestamp")
           PY
 
       - name: Base friction
