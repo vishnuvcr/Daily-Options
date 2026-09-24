@@ -113,3 +113,15 @@ def test_lead_features_use_ist_entry_clock():
     out = lead_features(futures, spot, 1)
     assert out.iloc[-1]["trade_time_ist"] == "09:15:00"
     assert out.iloc[-1]["trade_time_utc"] == "03:45:00"
+
+
+def test_option_manifest_accepts_ce_space_strike_filename(tmp_path):
+    from research.phase12_zenodo_pilot import discover_option_manifest
+    root = tmp_path / "options" / "2019" / "January 2019" / "January" / "TXT 19-12-18 to 31-01-19 (Expiry Day)"
+    root.mkdir(parents=True)
+    p = root / "CE 10500.txt"
+    p.write_text("2019/01/01,09:16,100,101,99,100.5,10,20\n")
+    m = discover_option_manifest(tmp_path / "options")
+    assert len(m) == 1
+    assert float(m.iloc[0]["strike"]) == 10500.0
+    assert m.iloc[0]["option_type"] == "CE"
