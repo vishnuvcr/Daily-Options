@@ -162,6 +162,8 @@ def build_setups(spot,quotes):
     return pd.DataFrame(rows)
 
 def filter_setups(setups):
+    if setups.empty:
+        return pd.DataFrame()
     out=[]
     for v in variant_grid():
         s=setups[
