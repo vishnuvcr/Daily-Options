@@ -111,3 +111,15 @@ Phase 10 (cross-index relative-strength debit spreads) is **RETIRED** after a co
 - No result-based retuning was performed.
 
 Phase 10 result archive: `reports/phase10/` on `phase-10-cross-index-1m-v4-exec`.
+
+## 2026-09-24 — Phase 13.1 launch
+
+Phase 13.1 is the frozen later-period OOS validation of the exact Phase 13 leading rule. The dedicated branch is `phase-13b-frozen-oos-2021-2025`.
+
+- Frozen rule: `w10|z1.5|vp80|14:45:00|LONG|MONTH|h10|r0`.
+- Validation period: 2021-01-01 through 2025-12-31.
+- Dataset: `artist-23/nifty-options-data`, pinned revision `45e0a04`.
+- Base/stress slippage: 0.20 / 0.40 premium points per leg.
+- Manual workflow is enabled; cancellation is disabled to protect the long-running validation.
+- No parameter optimization or result-driven retuning is permitted.
+- Current state: PRE-VALIDATION — workflow triggered by the CI-control/provenance commit; no P&L accepted yet.
