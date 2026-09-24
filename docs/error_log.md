@@ -260,3 +260,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0234 | 2026-09-25 | Phase 24 cost model | NSE revised equity-options transaction charges effective 2026-03-01; static 0.03503% would understate post-March-2026 costs | No performance from the affected run is accepted | Added date-aware premium transaction rate: 0.03503% before 2026-03-01 and 0.0355299% from 2026-03-01 | CLOSED — rerun required |
 
 | E0235 | 2026-09-25 | Phase 24 NSE charge code | A scripted source edit inserted a literal \\n sequence into the Python source, causing import-time SyntaxError in run 36055733265 | No P&L generated or accepted | Replaced the literal escape with an actual line break and rerun unit tests before numerical execution | CLOSED — before P&L |
+
+| E0236 | 2026-09-25 | Phase 24 syntax | Run 36055890141 failed during test collection because the transaction-charge edit contained a literal newline escape in Python source | No P&L generated | Replace literal escape with a real newline and rerun tests before simulation | CLOSED — before P&L |
