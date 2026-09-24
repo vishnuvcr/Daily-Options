@@ -47,3 +47,5 @@
 | E0057 | 2026-09-24 | Phase 8 | Preregistered Phase 8 description said 48 variants, but the explicit Cartesian product contains 96 | Unit-test gate stopped before data acquisition; no numerical statistic was generated | Corrected the preregistration, tests and documentation to 96 variants before any market-data execution | CLOSED |
 
 | E0059 | 2026-09-24 | Phase 9 | Signal construction did not persist the variant family label, causing the first numerical run to fail before entry selection | No Phase 9 P&L statistic was produced | Persist `family` in each signal row and rerun base/stress | FIXED |
+
+| E0060 | 2026-09-24 | Phase 10 | Initial draft could materialize a full option-symbol dataset in pandas and generated both spread widths for each width-specific variant | Would be too expensive and would silently mismatch the preregistered variant identity | Replaced full-table materialization with DuckDB signal joins and bound wing selection to the variant's registered width | FIXED |
