@@ -186,3 +186,10 @@ Next step: independent later-period validation of that exact frozen rule on the 
 Phase 14 later-OOS validation of the frozen global-cross-market opening-gap rule is now closed. On the independent Rissin 1-minute NIFTY option source (run 36000863530), the exact frozen rule produced 12 executable trades across 17 signal days. Base mean active-day net was ₹352.05/lot; doubled-slippage stress was ₹322.05/lot. Only 2025 contributed trades, so the result did not satisfy the multi-year/100-trade promotion gate. Phase 14 is frozen and retired; no parameter retuning is authorized.
 
 Phase 15 VRP + jump-brake short-volatility is the active frontier. Authoritative run 36005428946 on branch phase-15-vrp-jump-brake-short-vol-v1 has passed tests, pinned data acquisition and the lightweight timestamp/quote alignment probe; Base friction remains in progress. No Phase 15 P&L is accepted until Base, stress, walk-forward and independent later-source validation are complete.
+
+
+## 2026-09-24 — Phase 15 final result
+
+Phase 15 clean rerun 36019644002 invalidated the earlier spectacular short-volatility result after fixing E0145 (CALL/PUT leg contamination). Clean WEEK base best was ₹30.82/lot/day and stress -₹9.23; MONTH base -₹90.53 and stress -₹128.53. No target-qualified cell or walk-forward test window reached ₹1,000/lot/day. Combined nested WFA mean test-window net was approximately -₹9.85 base and -₹29.28 stress. Phase 15 is retired without retuning.
+
+Next active frontier: intraday IV-skew / downside-tail repricing using defined-risk structures and the same fixed-cost/walk-forward framework.
