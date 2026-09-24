@@ -152,6 +152,7 @@ def build_setups(spot,quotes):
                   "trade_date":d,"ts":ts,"entry_ts":entry_ts,
                   "entry_delay_min":float((entry_ts-ts).total_seconds()/60),
                   "expiry":sig.iloc[0].expiry,
+                  "short_offset":so,"wing_width":ww,
                   "put_short":put_short,"put_wing":put_wing,
                   "call_short":call_short,"call_wing":call_wing,
                   "put_short_entry":vals["put_short"],"put_wing_entry":vals["put_wing"],
@@ -165,6 +166,8 @@ def filter_setups(setups):
     for v in variant_grid():
         s=setups[
           (setups.ts.dt.strftime("%H:%M:%S")==v["entry_time"])&
+          (setups.short_offset==v["short_offset"])&
+          (setups.wing_width==v["wing_width"])&
           (setups.spot_ret10.abs()<=v["abs_ret"])&
           (setups.rv_ratio<=v["rv_max"])
         ].copy()
@@ -251,6 +254,7 @@ def simulate(root,filtered,slippage):
                 out.append({
                   "setup_id":int(sid),"setup_key":r.setup_key,
                   "trade_date":r.trade_date,"ts":r.ts,"expiry":r.expiry,
+                  "short_offset":int(r.short_offset),"wing_width":int(r.wing_width),
                   "hold":hold,"stop":stop,"entry_credit":float(r.entry_credit),
                   "entry_delay_min":float(r.entry_delay_min),"net_pnl":pnl,"reason":reason
                 })
