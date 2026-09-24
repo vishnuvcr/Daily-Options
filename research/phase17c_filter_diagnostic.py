@@ -10,7 +10,8 @@ def run(root: Path, out: Path):
     out.mkdir(parents=True, exist_ok=True)
     spot=load_spot(root)
     variants=variant_grid()
-    quotes=load_option_quotes(root, spot[["trade_date","ts","close"]].drop_duplicates())
+    signal_frame=spot.rename(columns={"spot_close":"close"})
+    quotes=load_option_quotes(root, signal_frame[["trade_date","ts","close"]].drop_duplicates())
     setups=build_setups(spot, quotes)
 
     counts=[]
