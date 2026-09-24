@@ -79,3 +79,8 @@ A live-log read returned a GitHub `BlobNotFound` response while the jobs remaine
 ## 2026-09-25 — Phase 19 v2 runtime correction
 
 The stalled Phase 19 execution was not treated as strategy evidence. E0197 was found during a static audit: execution simulation still keyed rows on the dataset `trading_day` instead of the corrected UTC→IST timestamp-derived trade date. A v2 branch was created with unchanged strategy parameters, timestamp-safe execution joins, vectorized exit selection, exact cost-model equivalence tests, and the same Base/Stress friction settings. Latest run `36043078139` has passed v2 unit tests; Stress is acquiring/reusing data and Base is queued.
+
+
+## 2026-09-25 — Phase 19 v3 authoritative execution
+
+After the v1 friction stall and v2 runner contention, an isolated Phase 19 v3 branch was created. It retains the frozen short-strangle parameters and corrected timestamp-derived option trade-date logic, uses clean output directories, and runs Base then Stress in one authoritative job. Latest run `36043694480`: tests/data acquisition passed; Base friction is executing. No numerical result is yet accepted.
