@@ -4,7 +4,7 @@
 Validate the frozen Phase 24 Falcon Spread rules on an independent intraday source after the pinned TradeMarkk source proved too sparse to support inference.
 
 ## Source and evidence
-Primary independent source: rissin/nse-options-intraday, immutable revision c97e450a27e945983519cda2bc24301afa7efac1.
+Primary independent source: rissin/nse-options-intraday, immutable revision 78b1c5468255d18cf492984bfe6fe4e3ac874d7c.
 The dataset documentation states that its upstox_intraday track contains 1-minute NIFTY/BANKNIFTY/SENSEX data from October 2024 onward, with explicit expiry, strike, option_type, OHLC and IST timestamps. citeturn840136search3turn792835search0
 The current NSE specification says NIFTY 50 weekly options expire every Tuesday; a Tuesday trading holiday moves expiry to the previous trading day. citeturn840136search1turn840136search2
 
