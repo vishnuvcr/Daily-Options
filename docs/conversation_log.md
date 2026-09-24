@@ -77,3 +77,8 @@
 - Phase 8 and Phase 9 corrected workflows are executing.
 - Phase 10 was opened as a distinct data-upgrade hypothesis using a public 1-minute NIFTY/BANKNIFTY option-chain source.
 - The mechanism is cross-index relative-strength leadership, not another single-index indicator permutation.
+
+
+## 2026-09-24 — Phase 11 preregistration
+- A materially distinct breakout-pullback continuation family was preregistered while Phases 8-10 are executing.
+- No Phase 11 numerical result exists yet.
