@@ -232,3 +232,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0167 | 2026-09-24 | Phase 17 runtime SQL | DuckDB rejected `close` as an output alias in the exact-expiry option quote query after data acquisition | Both base/stress computations failed before simulation; no P&L produced | Rename the projected field to `close_px` and use that field consistently in signal skew calculations; add a regression test | CLOSED — pre-result |
 
 | E0168 | 2026-09-24 | Phase 17a diagnostic | Diagnostic spot query reused the reserved `close` alias and failed before inspecting option schema | Diagnostic result unavailable; no strategy/P&L impact | Rename diagnostic close projection to close_px | CLOSED — diagnostic-only |
+
+| E0169 | 2026-09-24 | Phase 17a diagnostic | Diagnostic CTE renamed the spot close field to close_px but a later window expression still referenced close | Diagnostic stopped before option schema inspection; no strategy/P&L impact | Propagate close_px through the diagnostic CTE and output | CLOSED — diagnostic-only |
