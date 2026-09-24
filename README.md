@@ -4,7 +4,7 @@ Research program for discovering and validating an intraday NSE options strategy
 
 ## Current status — 2026-09-24
 
-**Final synthesis is now active.** The bounded exploratory program is closed without a promotion candidate.
+**Phase 8 is active.** The user-directed stopping rule now requires continued research until a reproducible Rs 1,000 net/lot/day strategy clears the formal validation gate.
 
 | Phase | Branch | Status |
 |---|---|---|
@@ -19,9 +19,11 @@ Research program for discovering and validating an intraday NSE options strategy
 | 3I | phase-3i-opening-false-break-reversion | COMPLETE — FAIL_PRELIMINARY; RETIRED |
 | 5 | phase-5-robustness | BLOCKED — no candidate passed validation |
 | 6 | phase-6-paper-shadow | BLOCKED |
-| 7 | phase-7-manuscript | ACTIVE — FINAL SYNTHESIS |
+| 7 | phase-7-manuscript | COMPLETE — SYNTHESIS CHECKPOINT |
+| 8 | phase-8-hybrid-ml-momentum-v1 | ACTIVE — 96-variant CI RUN 35936795905 |
 
-## Final exploratory result
+## Frozen Phase 3 evidence
+
 
 Canonical Phase 3I run: 35919447949.
 
@@ -36,13 +38,14 @@ Canonical Phase 3I run: 35919447949.
 - Stress mean test-window net: -Rs 1,686.99/lot.
 - Final decision: retire the exploratory family and stop further parameter mining on the current public close-based datasets.
 
-## Strongest historical near-miss
+## Phase 8 target
 
-The intraday ATM short-straddle produced a preliminary mean near Rs 233/day, but nested Phase 4 validation reversed that result: 432 parameter variants, 22 selected test windows, 8 positive selected test windows, 0 target-qualified windows, and mean selected test-window net -Rs 64.23/lot.
+Phase 8 is testing a materially different mechanism: regime-aware NIFTY momentum/mean reversion plus ATM option-premium confirmation with dynamic exits. The corrected pre-registered grid contains 96 variants. Run 35936795905 is currently executing; no P&L result is accepted yet.
 
-## Final documents
+## Active research documents
 
-- [Final manuscript](docs/final_manuscript.md)
+- [Phase 8 hypothesis](docs/phase8_hypothesis.md)
+- [Final manuscript checkpoint](docs/final_manuscript.md)
 - [Data-gap assessment](docs/data_gap_assessment.md)
 - [Research plan](docs/research_plan.md)
 - [Research status](docs/research_status.md)
@@ -58,6 +61,6 @@ Research default remains Rs 20 per executed order, 0.15% option-sale STT from 20
 
 ## Next step
 
-Do not enlarge the existing strategy grids. A new phase should start only after a fresh data-quality gate passes for executable bid/ask, synchronized primary-index/futures/options data and the other data gaps documented in docs/data_gap_assessment.md.
+Phase 8 runs first on the pinned public option dataset. Regardless of its outcome, the overall study continues under the updated Rs 1,000 target until a candidate clears formal out-of-sample and cost-aware validation. Better synchronized/executable data remains the next upgrade path.
 
 This project is research, not a promise of guaranteed profit. The target is treated as a falsifiable hypothesis.
