@@ -29,7 +29,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install dependencies
-        run: pip install pandas numpy pyarrow duckdb pytest huggingface_hub
+        run: pip install pandas numpy pyarrow duckdb pytest huggingface_hub pytz
       - name: Unit tests
         run: pytest -q tests/test_phase10_cross_index.py
       - uses: actions/cache@v4
