@@ -55,3 +55,5 @@
 | E0063 | 2026-09-24 | Phase 10 | Variant-width loop rewrite left an indentation error in entry construction | Unit-test gate failed before data acquisition; no strategy statistic was produced | Normalize the width-selection block to the variant-bound single-width path and rerun | FIXED |
 
 | E0064 | 2026-09-24 | Phase 10 | First indentation correction did not cover the full entry block; unit test still failed at line 304 | No data acquisition or P&L was executed | Replaced the entire width-specific entry block with normalized indentation before the next rerun | FIXED |
+
+| E0066 | 2026-09-24 | Phase 10-CI | DuckDB timestamp handling required `pytz`, which the workflow dependency set omitted | Base run failed in the data gate before any strategy execution | Add `pytz` to the workflow and rerun unchanged research | FIXED |
