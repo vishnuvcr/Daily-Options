@@ -271,3 +271,7 @@ No P&L from the earlier incorrect timing implementation is accepted.
 
 ## Phase 24 execution status — 2026-09-25
 The expiry-relative timing correction is implemented as Wednesday entry → Friday adjustment → Monday exit for current Tuesday-expiry NIFTY. A legacy `friday` variable defect in the strike-universe query was found and fixed before accepting any P&L. Latest workflow run 36054000774 (run 16) is currently pending on GitHub Actions; no Phase 24 performance result is accepted yet.
+
+
+## Phase 24 CI recovery — 2026-09-25
+A stale pre-fix simulation run was holding the workflow concurrency group. CI was changed to cancel stale Phase 24 runs, and the corrected head is now queued as run **36054572240**. No performance result has been accepted from the cancelled/stale runs.
