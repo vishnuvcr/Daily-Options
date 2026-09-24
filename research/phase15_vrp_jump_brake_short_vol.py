@@ -65,23 +65,24 @@ def select_signals(features,variant):
 def load_entry_quotes(root,signals):
     if signals.empty:
         return pd.DataFrame()
-    s=signals[['trade_date','expiry_type','datetime']].drop_duplicates().copy()
-    s['entry_time']=s['datetime']+pd.Timedelta(minutes=1)
     con=duckdb.connect()
-    con.register('setups',s[['trade_date','expiry_type','entry_time']])
     g=parquet_glob(root)
     q=f'''
-    SELECT CAST(o.datetime AS TIMESTAMP) AS datetime, CAST(o.date AS DATE) AS trade_date,
-           o.expiry_type, o.option_type, o.strike_type,
+    SELECT CAST(o.datetime AS TIMESTAMP) AS datetime,
+           CAST(o.date AS DATE) AS trade_date,
+           o.expiry_type,
+           o.option_type,
+           o.strike_type,
            CAST(o.strike_price AS DOUBLE) AS strike,
-           CAST(o.open AS DOUBLE) AS open, CAST(o.high AS DOUBLE) AS high,
-           CAST(o.low AS DOUBLE) AS low, CAST(o.close AS DOUBLE) AS close
+           CAST(o.open AS DOUBLE) AS open,
+           CAST(o.high AS DOUBLE) AS high,
+           CAST(o.low AS DOUBLE) AS low,
+           CAST(o.close AS DOUBLE) AS close
     FROM read_parquet('{g}', union_by_name=true) o
-    JOIN setups s
-      ON CAST(o.date AS DATE)=s.trade_date
-     AND o.expiry_type=s.expiry_type
-     AND CAST(o.datetime AS TIMESTAMP)=s.entry_time
-    WHERE o.close>0 AND o.option_type IN ('CALL','PUT')
+    WHERE o.close>0
+      AND o.option_type IN ('CALL','PUT')
+      AND STRFTIME(CAST(o.datetime AS TIMESTAMP) + INTERVAL '5 hours 30 minutes','%H:%M:%S')
+          IN ('09:31:00','10:01:00','10:31:00')
     '''
     out=con.execute(q).df()
     con.close()
