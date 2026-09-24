@@ -118,3 +118,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0121 | 2026-09-24 | Phase 14 preregistration | The fixed dimensions multiply to 768 cells, not 384 | Unit test caught the arithmetic error before any data/P&L run | Corrected hypothesis and test count to 768 without changing any dimension | CLOSED — pre-result |
 
 | E0122 | 2026-09-24 | Phase 13b data-layout | Artist-23 NIFTY parquet files are partitioned under `NIFTY/MONTH/*.parquet`, not directly under `NIFTY/*.parquet`; the dataset itself downloaded successfully | No frozen-rule validation P&L was computed | Corrected both the engine glob and Hugging Face allow-pattern to the actual monthly partition | CLOSED — pre-validation |
+
+| E0123 | 2026-09-24 | Phase 13b frozen OOS query | DuckDB failed in `load_option_window()` with `BinderException` around source `expiry` inside the UNION query; no validation P&L was computed | Base/stress validation blocked before simulation | Replaced UNION with one explicit `raw` subquery, qualified source columns, and `TRY_CAST(raw.expiry AS DATE)`; added a parquet regression test | CLOSED — pre-validation |
