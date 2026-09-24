@@ -369,13 +369,17 @@ def _choose_strikes(manifest: pd.DataFrame, expiry, side: str, spot: float, widt
         return None
     return a.iloc[0], w.iloc[0]
 
-def _merge_leg_bars(path_a: str, path_b: str, entry_time: pd.Timestamp, max_hold: int) -> pd.DataFrame:
+@lru_cache(maxsize=2048)
+def _load_merged_paths(path_a: str, path_b: str) -> pd.DataFrame:
     a = _load_option_path(path_a).rename(columns={"open":"open_a","high":"high_a","low":"low_a","close":"close_a"})
     b = _load_option_path(path_b).rename(columns={"open":"open_b","high":"high_b","low":"low_b","close":"close_b"})
-    end = entry_time + pd.Timedelta(minutes=max_hold)
-    a = a[(a["datetime"] >= entry_time) & (a["datetime"] <= end)]
-    b = b[(b["datetime"] >= entry_time) & (b["datetime"] <= end)]
     return a.merge(b, on="datetime", how="inner").sort_values("datetime")
+
+
+def _merge_leg_bars(path_a: str, path_b: str, entry_time: pd.Timestamp, max_hold: int) -> pd.DataFrame:
+    bars = _load_merged_paths(path_a, path_b)
+    end = entry_time + pd.Timedelta(minutes=max_hold)
+    return bars[(bars["datetime"] >= entry_time) & (bars["datetime"] <= end)].copy()
 
 def build_entries(features_by_window: dict[int, pd.DataFrame], manifest: pd.DataFrame) -> pd.DataFrame:
     rows = []
@@ -422,47 +426,68 @@ def build_entries(features_by_window: dict[int, pd.DataFrame], manifest: pd.Data
 def simulate_unique(entries: pd.DataFrame, out: Path, slippage: float) -> pd.DataFrame:
     if entries.empty:
         return pd.DataFrame()
+
     cm = OptionCostModel()
-    unique = entries[["variant_id","trade_date","entry_time","direction","expiry","side","atm_strike","wing_strike","atm_path","wing_path","spot"]].drop_duplicates()
+    setup_cols = [
+        "trade_date", "entry_time", "direction", "expiry", "side",
+        "atm_strike", "wing_strike", "atm_path", "wing_path", "spot"
+    ]
+
+    # The same executable setup can be produced by multiple signal variants.
+    # Simulate the setup once, then join its exact P&L back to every variant,
+    # hold and risk cell that generated it.
+    unique_setups = entries[setup_cols].drop_duplicates()
     rows = []
-    for rec in unique.itertuples(index=False):
+
+    for rec in unique_setups.itertuples(index=False):
         bars = _merge_leg_bars(rec.atm_path, rec.wing_path, pd.Timestamp(rec.entry_time), 30)
         if bars.empty:
             continue
+
         first = bars.iloc[0]
         long_entry = float(first["open_a"])
         short_entry = float(first["open_b"])
         debit = long_entry - short_entry
         if debit <= 0:
             continue
+
         for hold in HOLDS:
             slice_ = bars[bars["datetime"] <= pd.Timestamp(rec.entry_time) + pd.Timedelta(minutes=hold)]
             if slice_.empty:
                 continue
+
             for risk_id, prof in enumerate(RISK_PROFILES):
                 stop_level = debit * (1 - prof["stop_pct"])
                 target_level = debit * (1 + prof["target_pct"])
                 exit_ts = slice_["datetime"].iloc[-1]
                 reason = "TIME"
-                for _, b in slice_.iterrows():
-                    spread_high = float(b["high_a"] - b["low_b"])
-                    spread_low = float(b["low_a"] - b["high_b"])
+
+                for _, bar in slice_.iterrows():
+                    spread_high = float(bar["high_a"] - bar["low_b"])
+                    spread_low = float(bar["low_a"] - bar["high_b"])
                     if spread_low <= stop_level:
-                        exit_ts = b["datetime"]
+                        exit_ts = bar["datetime"]
                         reason = "STOP"
                         break
                     if spread_high >= target_level:
-                        exit_ts = b["datetime"]
+                        exit_ts = bar["datetime"]
                         reason = "TARGET"
                         break
+
                 ex = slice_.loc[slice_["datetime"] == exit_ts].iloc[-1]
                 long_exit = float(ex["close_a"])
                 short_exit = float(ex["close_b"])
+
                 net = cm.vertical_debit_spread_net_pnl(
-                    long_entry, short_entry, long_exit, short_exit,
+                    long_entry,
+                    short_entry,
+                    long_exit,
+                    short_exit,
                     lot_size=index_option_lot_size("NIFTY", rec.expiry),
-                    qty=1, slippage_points=slippage
+                    qty=1,
+                    slippage_points=slippage,
                 )
+
                 rows.append({
                     **rec._asdict(),
                     "hold_minutes": hold,
@@ -473,7 +498,18 @@ def simulate_unique(entries: pd.DataFrame, out: Path, slippage: float) -> pd.Dat
                     "exit_debit": long_exit - short_exit,
                     "net_pnl": net,
                 })
-    trades = pd.DataFrame(rows)
+
+    setup_pnl = pd.DataFrame(rows)
+    if setup_pnl.empty:
+        trades = pd.DataFrame()
+    else:
+        trades = entries.merge(
+            setup_pnl,
+            on=setup_cols + ["hold_minutes", "risk_id"],
+            how="inner",
+            suffixes=("", "_sim"),
+        )
+
     out.mkdir(parents=True, exist_ok=True)
     trades.to_csv(out / "phase12_zenodo_trades.csv", index=False)
     return trades
