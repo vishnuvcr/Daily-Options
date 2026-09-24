@@ -8,3 +8,7 @@
 | E0004 | 2026-09-23 | 0 | Paytm Money current pricing page renders some trading-charge values dynamically | Static text does not expose all charges | Pin statutory/exchange components from authoritative sources and keep broker items configurable | OPEN |
 
 Every subsequent error gets a new row. Fixes are never silently discarded.
+
+| E0067 | 2026-09-24 | Phase 8 v2 | Run 35937700542 still executed an older/insufficient executable-entry query and raised `KeyError: 'open'` at entry-price persistence | No P&L produced | Current branch query includes `open`; added an explicit schema guard and triggered a fresh branch commit | OPEN — awaiting fresh workflow |
+| E0068 | 2026-09-24 | Phase 9 | Run 35937112092 attempt 3 was cancelled by the GitHub runner shutdown signal during base computation | No P&L produced | Re-ran the cancelled job; fresh attempt is now executing base friction | OPEN |
+| E0069 | 2026-09-24 | Phase 10 | Run 35937773719 raised `AttributeError: 'Series' object has no attribute 'leader'` during entry construction | No P&L produced | Replaced attribute access with explicit Series key access and committed the fix | OPEN — awaiting fresh workflow |
