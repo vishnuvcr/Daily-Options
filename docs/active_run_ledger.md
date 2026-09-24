@@ -73,3 +73,7 @@ These are the first runs using exact branch-parent construction after E0078. No 
 - Run 35972809477 / commit 4c660571 completed successfully.
 - Base and doubled-slippage stress both failed the preliminary target gate.
 - Phase 8 is frozen negative and retired. No further tuning from this family is permitted.
+### Phase 10 closure
+- Run 35973884459 / commit 89df76fd completed base, stress and WFA.
+- Best base mean all-day net -₹113.62/lot/day; stress -₹136.48; WFA mean test-window net -₹122.39.
+- Phase 10 is frozen negative and retired.
