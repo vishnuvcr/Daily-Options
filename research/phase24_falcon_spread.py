@@ -246,6 +246,26 @@ def next_open(s, after_ts):
     return None if z.empty else z.iloc[0]
 
 
+def mark_panel(series_map, tolerance_minutes=1):
+    """Build a leakage-safe common mark panel using backward as-of joins only."""
+    base = None
+    for name, s in series_map.items():
+        z = s[["ts", "close_px"]].rename(columns={"close_px": name}).sort_values("ts")
+        if base is None:
+            base = z
+        else:
+            base = pd.merge_asof(
+                base.sort_values("ts"),
+                z,
+                on="ts",
+                direction="backward",
+                tolerance=pd.Timedelta(minutes=tolerance_minutes),
+            )
+    if base is None:
+        return pd.DataFrame()
+    return base.dropna().sort_values("ts")
+
+
 def cost(legs, lot, slippage):
     turnover = sum((leg["entry"] + leg["exit"]) * leg["qty"] * lot for leg in legs)
     sell_entry = sum(leg["entry"] * leg["qty"] * lot for leg in legs if leg["sign"] < 0)
@@ -328,10 +348,9 @@ def simulate_setup(con, setup, variant, slippage):
     ]
 
     # Pre-adjustment stop, evaluated on close MTM and executed at the next available open.
-    combined = None
-    for name, s in initial.items():
-        z = s[["ts","close_px"]].rename(columns={"close_px":name})
-        combined = z if combined is None else combined.merge(z, on="ts", how="inner")
+    # One-minute quote series can have occasional missing bars, so use backward as-of
+    # alignment with a fixed one-minute tolerance; never use a future quote.
+    combined = mark_panel(initial, tolerance_minutes=1)
     pre_stop_ts = None
     for row in combined.itertuples(index=False):
         if row.ts < start or row.ts >= mon_signal:
@@ -364,14 +383,14 @@ def simulate_setup(con, setup, variant, slippage):
         {"name":"wing_ce","entry":wing_entries["wing_ce"],"exit":None,"sign":1,"qty":5},
         {"name":"wing_pe","entry":wing_entries["wing_pe"],"exit":None,"sign":1,"qty":5},
     ]
-    wing_map = (
-        wing_series_ce[["ts","close_px"]].rename(columns={"close_px":"wing_ce"})
-        .merge(
-            wing_series_pe[["ts","close_px"]].rename(columns={"close_px":"wing_pe"}),
-            on="ts", how="inner"
-        )
-    )
-    post = combined.merge(wing_map,on="ts",how="inner")
+    post = mark_panel({
+        "short_ce": initial["short_ce"],
+        "short_pe": initial["short_pe"],
+        "far_ce": initial["far_ce"],
+        "far_pe": initial["far_pe"],
+        "wing_ce": wing_series_ce,
+        "wing_pe": wing_series_pe,
+    }, tolerance_minutes=1)
     post = post[post.ts >= mon_exec].copy()
     stop_ts = None
     for row in post.itertuples(index=False):
