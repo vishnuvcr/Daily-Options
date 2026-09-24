@@ -6,7 +6,7 @@ on:
       phase_ref:
         description: "Exact Phase 17 commit to execute"
         required: true
-        default: "e8adc6e6ad4e17671f360bf4c8e69476668ab214"
+        default: "879f83dac687c84f9a577e769dc938fd1382fd1"
   pull_request:
     types: [opened, synchronize, reopened]
   push:
@@ -14,12 +14,12 @@ on:
       - ".github/workflows/phase-17-execution-bridge.yml"
 
 concurrency:
-  group: phase17-execution-v4
+  group: phase17-execution-v5
   cancel-in-progress: false
 
 jobs:
   research:
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.ref == 'phase-17-nifty-exact-expiry-premium-skew-v1'
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.ref == 'phase-17-nifty-exact-expiry-premium-skew-v1' || github.event.pull_request.head.ref == 'phase-17c-executable-entry-v1'
     strategy:
       fail-fast: false
       matrix:
@@ -30,7 +30,7 @@ jobs:
       - name: Checkout Phase 17
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.phase_ref || github.event.pull_request.head.sha || 'e8adc6e6ad4e17671f360bf4c8e69476668ab214' }}
+          ref: ${{ inputs.phase_ref || github.event.pull_request.head.sha || '879f83dac687c84f9a577e769dc938fd1382fd1' }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
