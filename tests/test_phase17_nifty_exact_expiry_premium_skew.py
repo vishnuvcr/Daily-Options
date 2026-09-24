@@ -47,3 +47,10 @@ def test_no_undefined_entry_variables_in_setup_builder():
     assert "short_entry" in src
     assert "wing_entry" in src
     assert "credit = short_entry - wing_entry" in src
+
+
+def test_variant_assignment_includes_hold_and_stop():
+    from research import phase17_nifty_exact_expiry_premium_skew as mod
+    src = inspect.getsource(mod.run)
+    assert "trades.hold.eq(v.hold)" in src
+    assert "trades.stop.eq(v.stop)" in src
