@@ -345,6 +345,98 @@ def simulate_paths(entries: pd.DataFrame, root: Path, out_dir: Path, slippage: f
     return out
 
 
+
+def walk_forward(trades: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
+    if trades.empty:
+        return pd.DataFrame(), {
+            "walk_forward_windows": 0,
+            "positive_test_windows": 0,
+            "target_windows": 0,
+            "mean_test_window_net": None,
+            "median_test_window_net": None,
+            "gate": "NO_TRADES",
+        }
+    x = trades.copy()
+    x["trade_date"] = pd.to_datetime(x["trade_date"]).dt.date
+    dates = sorted(x["trade_date"].unique())
+    train_len, val_len, embargo, test_len, step = 180, 60, 5, 60, 60
+    rows = []
+    start = 0
+    while start + train_len + val_len + embargo + test_len <= len(dates):
+        train_dates = set(dates[start : start + train_len])
+        val_dates = set(dates[start + train_len : start + train_len + val_len])
+        test_dates = set(
+            dates[
+                start + train_len + val_len + embargo :
+                start + train_len + val_len + embargo + test_len
+            ]
+        )
+        train = x[x["trade_date"].isin(train_dates)]
+        val = x[x["trade_date"].isin(val_dates)]
+        test = x[x["trade_date"].isin(test_dates)]
+
+        train_scores = []
+        for variant, g in train.groupby("variant_id", sort=False):
+            if g["trade_date"].nunique() >= 8:
+                daily = g.groupby("trade_date")["net_pnl"].sum()
+                train_scores.append((variant, float(daily.mean())))
+        train_scores.sort(key=lambda z: z[1], reverse=True)
+
+        val_scores = []
+        for variant, _ in train_scores[:12]:
+            g = val[val["variant_id"].eq(variant)]
+            if g["trade_date"].nunique() >= 5:
+                daily = g.groupby("trade_date")["net_pnl"].sum()
+                val_scores.append((variant, float(daily.mean())))
+        if not val_scores:
+            start += step
+            continue
+
+        val_scores.sort(key=lambda z: z[1], reverse=True)
+        selected = val_scores[0][0]
+        tg = test[test["variant_id"].eq(selected)]
+        if tg.empty:
+            start += step
+            continue
+        daily = tg.groupby("trade_date")["net_pnl"].sum()
+        rows.append(
+            {
+                "test_start": str(min(test_dates)),
+                "test_end": str(max(test_dates)),
+                "selected_variant": selected,
+                "validation_mean": float(val_scores[0][1]),
+                "test_mean": float(daily.mean()),
+                "test_median": float(daily.median()),
+                "positive_day_rate": float((daily > 0).mean()),
+                "test_trade_days": int(daily.size),
+            }
+        )
+        start += step
+
+    wf = pd.DataFrame(rows)
+    if wf.empty:
+        return wf, {
+            "walk_forward_windows": 0,
+            "positive_test_windows": 0,
+            "target_windows": 0,
+            "mean_test_window_net": None,
+            "median_test_window_net": None,
+            "gate": "FAIL_FORMAL",
+        }
+
+    mean_test = float(wf["test_mean"].mean())
+    target_windows = int((wf["test_mean"] >= 1000).sum())
+    return wf, {
+        "walk_forward_windows": int(len(wf)),
+        "positive_test_windows": int((wf["test_mean"] > 0).sum()),
+        "target_windows": target_windows,
+        "mean_test_window_net": mean_test,
+        "median_test_window_net": float(wf["test_mean"].median()),
+        "gate": "PASS_FORMAL"
+        if mean_test > 0 and target_windows >= 1
+        else "FAIL_FORMAL",
+    }
+
 def summarize(trades: pd.DataFrame, features: pd.DataFrame, out_dir: Path, slippage: float) -> dict:
     out_dir.mkdir(parents=True,exist_ok=True)
     if trades.empty:
@@ -380,13 +472,17 @@ def summarize(trades: pd.DataFrame, features: pd.DataFrame, out_dir: Path, slipp
     board.to_csv(out_dir/"phase8_leaderboard.csv",index=False)
 
     best=board.iloc[0].to_dict()
+    wf, wfs = walk_forward(trades)
+    wf.to_csv(out_dir/"phase8_walk_forward.csv", index=False)
     summary={
         "trades":int(len(trades)),
         "variants":int(len(board)),
         "target_qualified_variants":int((board["mean_active_day_net"]>=1000).sum()),
         "best":best,
         "slippage_points":slippage,
-        "preliminary_gate":"PASS_PRELIMINARY" if (board["mean_active_day_net"]>=1000).any() else "FAIL_PRELIMINARY"
+        "preliminary_gate":"PASS_PRELIMINARY" if (board["mean_active_day_net"]>=1000).any() else "FAIL_PRELIMINARY",
+        "walk_forward":wfs,
+        "formal_gate": wfs["gate"],
     }
     (out_dir/"phase8_summary.json").write_text(json.dumps(summary,indent=2,default=str))
     return summary
