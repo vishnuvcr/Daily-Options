@@ -6,6 +6,7 @@ from research.phase12_zenodo_pilot import (
     data_gate,
     _last_thursday,
     _utc_naive,
+    load_zenodo_market,
 )
 
 
@@ -39,3 +40,16 @@ def test_risk_profiles_fixed():
     )
 
 # helper-dependency trigger checkpoint 2026-09-24
+
+
+def test_zenodo_known_market_filenames(tmp_path):
+    market = tmp_path / "market" / "2019"
+    market.mkdir(parents=True)
+    rows = "Trade Date,Trade Time,Open,High,Low,Close,Volume\n2019-01-02,09:15:00,100,101,99,100.5,10\n2019-01-02,09:16:00,100.5,101.5,100,101,12\n"
+    (market / "NIFTY.csv").write_text(rows)
+    (market / "NIFTY_F1.csv").write_text(rows)
+    futures, spot = load_zenodo_market(tmp_path / "market")
+    assert len(futures) == 2
+    assert len(spot) == 2
+    assert "futures_close" in futures.columns
+    assert "spot_close" in spot.columns
