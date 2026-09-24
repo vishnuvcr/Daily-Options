@@ -58,3 +58,8 @@ Phase 11 original PR #11 is retained as the first implementation audit trail; v2
 | 11 v3 | phase-11-breakout-pullback-oi-v3-exec | e5f495c1 | 35972926200 | — | queued |
 
 These are the first runs using exact branch-parent construction after E0078. No numerical result is accepted until base, stress, and untouched WFA gates are complete.
+
+### Additional execution fixes — 2026-09-24
+- Phase 10 v3 execution branch phase-10-cross-index-1m-v3-exec, commit 2a2619d8, run 35973399377: tests passed; data acquisition in progress at last check.
+- Phase 9 v4 memory-safe/retry branch phase-9-regime-credit-spread-v4-retry, commit bb74dffe, run 35973446515: dependency installation/data acquisition in progress at last check.
+- Phase 11 v3 run 35972926200 remains queued.
