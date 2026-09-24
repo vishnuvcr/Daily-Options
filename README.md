@@ -108,3 +108,22 @@ The next accepted candidate must still clear the unchanged ₹1,000 net/active-l
 ## Latest completed research result — Phase 10
 
 Phase 10 is retired after complete base/stress + walk-forward validation: best base ₹-113.62/lot/day, best stress ₹-136.48/lot/day, and no positive untouched WFA window. Result reports are archived under `reports/phase10/` on the Phase 10 execution branch. The active search continues through the remaining preregistered families and the next distinct phase only if required.
+
+## Phase 13.1 — frozen later-period OOS validation (2026-09-24)
+
+Branch: `phase-13b-frozen-oos-2021-2025`.
+
+Frozen Phase 13 rule:
+`w10|z1.5|vp80|14:45:00|LONG|MONTH|h10|r0`.
+
+Validation window: 2021-01-01 through 2025-12-31.
+
+Dataset: `artist-23/nifty-options-data`, revision `45e0a04`.
+
+Base/stress slippage: 0.20 / 0.40 premium points per leg.
+
+Phase 13.1 forbids parameter optimization and result-driven narrowing. The validator now deterministically selects the nearest future monthly expiry per signal and holds that expiry constant through the execution window. Unit coverage was added for this invariant.
+
+Current state: PRE-VALIDATION. No Phase 13.1 P&L is accepted until the GitHub Actions base and stress artifacts complete.
+
+Reference: [Phase 13.1 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-13b-frozen-oos-2021-2025/docs/phase13_1_plan.md) · [Phase 13.1 validator](https://github.com/vishnuvcr/Daily-Options/blob/phase-13b-frozen-oos-2021-2025/research/phase13b_frozen_oos.py) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/phase-13b-frozen-oos-2021-2025/docs/error_log.md)
