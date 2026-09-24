@@ -207,3 +207,8 @@ Phase 16 is now the active frontier: intraday IV-skew tail credit verticals, 288
 Phase 16 is DATA-LIMITED on Artist23: the source lacks actual expiry and IV fields required by its preregistered hypothesis. No Phase 16 P&L is accepted.
 
 Phase 17 is now the active family: exact-expiry NIFTY premium-skew plus option-flow pressure using TradeMarkk 1-minute data. Branch: phase-17-nifty-exact-expiry-premium-skew-v1. Grid: 384 fixed variants. Data revision: 51ca58c. Numerical result: PENDING.
+
+
+## 2026-09-24 — Phase 17 v1 invalidation and v2 launch
+
+The clean-looking v1 run `36033082279` is **NON-EVIDENTIARY**: both base and stress produced zero trades because of an option-code mapping defect plus undefined setup-entry variables (E0166). Phase 17 remains the active research family. The corrected v2 branch uses TradeMarkk exact-expiry files, source-native CE/PE codes, next-minute open entry premiums, exact-expiry execution windows, and the unchanged 384-cell frozen grid.
