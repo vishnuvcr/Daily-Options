@@ -128,7 +128,7 @@ Complete manuscript with methods, provenance, results, uncertainty, limitations 
 
 ## 7. Continue/stop logic
 
-The search is open-ended within the scientific phases but not unbounded. A research family is retired after repeated OOS/cost/robustness failure. A new branch is created for a materially new hypothesis. The program terminates with either a strategy that clears promotion gates or a reproducible negative/near-miss result plus the highest-value next hypothesis.
+The search is now outcome-driven rather than time-boxed. The program continues through new scientifically distinct phases until a candidate clears the Rs 1,000 net per active lot per trading day promotion gate, or until a genuinely material external constraint makes further research impossible. Each family remains bounded and pre-registered; failure terminates that family, not the overall program.
 
 ## 8. Final deliverables
 
@@ -189,3 +189,30 @@ Phase 3H found no tradable option-price lead-lag edge. The next bounded family r
 - Promotion requires positive net OOS expectancy and at least one untouched test window >= Rs 1,000/lot/day. A negative family is retired without enlargement.
 
 This is intended as the last Phase 3 exploratory family before final synthesis/data-gap assessment unless a completely new independent historical data source becomes available.
+
+
+## 12. User-directed continuation amendment — Rs 1,000/lot target
+
+The user changed the program stopping rule on 2026-09-24: the study continues until a reproducible strategy reaches the Rs 1,000 net per active lot per trading day target under out-of-sample validation and realistic costs.
+
+### Phase 8 — Hybrid momentum / option-premium confirmation
+
+A public NIFTY tick-replay research system was reviewed as an external hypothesis source. Its published mechanism combines EMA/RSI/VWAP trend features, option-premium confirmation, regime filters and dynamic exits. Its published March-April 2026 sample is short, so it is treated only as a hypothesis source, not as validation.
+
+Paytm Money's historical-data API documentation was also identified as a potential higher-history data path; the documentation states that its historical API provides 1-minute OHLC/volume/OI for NSE cash/F&O from 1 January 2017, including contract-wise NSE options and futures.
+
+Phase 8A pre-registration:
+- Trend continuation: EMA structure + RSI + short-horizon underlying momentum + option-premium confirmation.
+- Mean reversion: only in weak-trend/volatility-extreme regimes.
+- Fixed contract at entry; next executable minute; no moving-ATM path selection.
+- Dynamic premium stop/target/trailing variants are frozen before formal test selection.
+- Base slippage 0.20 premium points per leg; stress 0.40.
+- 48 bounded variants; no post-result expansion.
+
+Promotion:
+- preliminary screen: mean active-trade-day net >= Rs 1,000/lot;
+- formal promotion: positive OOS expectancy, at least one untouched test window >= Rs 1,000/lot/day, and no materially negative stress failure.
+
+Phase 8B may add an ML probability filter only after the rule-based mechanism shows a credible but unstable edge. Feature model target: next 15-minute NIFTY move >= +0.10% / <= -0.10%, using chronological train/validation/test splits only.
+
+A future authenticated-data adapter will support Paytm Money historical data without storing credentials in the repository.
