@@ -121,3 +121,7 @@ This is the sole authoritative Phase 11 execution at this checkpoint. No competi
 | 16 v2 | phase-16-iv-skew-tail-credit-v2-exec | Phase 16 - Execution Bridge / v2 | `9608dcf41ca06354f846347c614a6f08dd794a65` | READY FOR CI | No |
 
 The v2 run uses pinned Artist23 revision `45e0a04`, base/stress slippage ₹0.20/₹0.40 per leg, exact expiry propagation, exact 30/60-minute holds, outcome caching and the ₹1,000 active-day target gate. v1 P&L remains non-evidentiary.
+
+## Phase 16 v2 — schema-correct execution ref
+
+Superseded Base run `36030857048` failed in both shards at the feature SQL because Artist23 has no `expiry` column (E0165). The corrected authoritative preliminary ref is `65528f8e6012f1a9dfed15150d5ee1a3e557c6d7`. No P&L from the failed run is accepted.
