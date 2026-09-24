@@ -56,3 +56,24 @@ Candidate historical intraday sources include the 2017-2020 Zenodo NIFTY one-min
 ## Important interpretation
 
 The Rs 1,000/day number is a research target, not an assumed outcome. The repository will only promote a candidate after it survives realistic costs, OOS validation, robustness tests and execution-quality checks.
+
+
+## Active research continuation — 2026-09-24
+
+The user has changed the global stopping rule: the research continues until a reproducible strategy clears the Rs 1,000 net per active lot per trading day target under realistic costs and untouched out-of-sample validation.
+
+Active bounded families:
+- Phase 8 — phase-8-hybrid-ml-momentum-v2: hybrid NIFTY momentum/mean-reversion + ATM option confirmation, 96 pre-registered variants.
+- Phase 9 — phase-9-regime-credit-spread-v1: regime-filtered bull-put/bear-call defined-risk credit spreads, 96 pre-registered variants.
+- Phase 10 — phase-10-cross-index-1m-v1: NIFTY/BANKNIFTY relative-strength leadership + option confirmation using the public 1-minute index/options dataset, 128 pre-registered variants.
+
+No result from these active runs is accepted yet. Earlier Phase 3/4 results remain frozen historical evidence and are not being silently retuned.
+
+Known active run heads:
+- Phase 8 v2: run 35937700542 — base numerical stage active.
+- Phase 9: run 35937112092 — base numerical stage active on attempt 3.
+- Phase 10: run 35937773719 — data acquisition/base stage active after the pytz dependency correction.
+
+The promotion gate remains unchanged: positive net OOS expectancy; at least one untouched test window >= Rs 1,000/lot/day; realistic brokerage/statutory/exchange charges; base and doubled slippage reported; and no test-period parameter selection.
+
+A preliminary backtest is never treated as a promoted strategy.
