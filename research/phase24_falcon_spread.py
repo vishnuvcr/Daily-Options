@@ -166,10 +166,10 @@ def build_setup(con, root, entry_row, target, far_mode, files):
     # Preserve the source strategy's time-to-expiry geometry across the NSE
     # expiry-day change:
     #   old Thursday regime: Friday entry -> Monday adjustment -> Wednesday exit
-    #   current Tuesday regime: Wednesday entry -> Friday adjustment -> Monday exit
+    #   current Tuesday regime: Wednesday entry -> Thursday adjustment -> Monday exit
     # In trading-session offsets this is:
     #   entry = expiry - 4 sessions
-    #   adjustment = expiry - 2 sessions
+    #   adjustment = expiry - 3 sessions
     #   exit = expiry - 1 session
     session_q = f"""
       SELECT DISTINCT CAST(trading_day AS DATE) AS trade_date
@@ -185,7 +185,7 @@ def build_setup(con, root, entry_row, target, far_mode, files):
     if len(prior) < 4:
         return None
     entry_expected = prior[-4]
-    adjust_date = prior[-2]
+    adjust_date = prior[-3]
     exit_date = prior[-1]
     if entry_expected != entry_date:
         return None
