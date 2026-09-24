@@ -31,7 +31,7 @@ def load_month_option_rows(root, signal_days):
     if signal_days.empty: return pd.DataFrame()
     g=parquet_glob(root); start=min(signal_days.trade_date); end=max(signal_days.trade_date)
     con=duckdb.connect()
-    q=f"SELECT CAST(datetime AS TIMESTAMP) datetime, CAST(date AS DATE) trade_date, CAST(open AS DOUBLE) open, CAST(high AS DOUBLE) high, CAST(low AS DOUBLE) low, CAST(close AS DOUBLE) close, CAST(strike_price AS DOUBLE) strike_price, CAST(option_type AS VARCHAR) option_type, CAST(strike_type AS VARCHAR) strike_type FROM read_parquet('{g}', union_by_name=true) WHERE date BETWEEN DATE '{start}' AND DATE '{end}' AND expiry_type='MONTH' AND close>0 AND option_type IN ('CALL','PUT')"
+    q=f"SELECT CAST(datetime AS TIMESTAMP) datetime, CAST(date AS DATE) trade_date, CAST(open AS DOUBLE) open, CAST(high AS DOUBLE) high, CAST(low AS DOUBLE) low, CAST(close AS DOUBLE) AS close_px, CAST(strike_price AS DOUBLE) strike_price, CAST(option_type AS VARCHAR) option_type, CAST(strike_type AS VARCHAR) strike_type FROM read_parquet('{g}', union_by_name=true) WHERE date BETWEEN DATE '{start}' AND DATE '{end}' AND expiry_type='MONTH' AND close>0 AND option_type IN ('CALL','PUT')"
     x=con.execute(q).df(); con.close(); return x
 
 def simulate(signals, options, slippage):
