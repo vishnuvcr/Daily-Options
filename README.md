@@ -79,3 +79,15 @@ The promotion gate remains unchanged: positive net OOS expectancy; at least one 
 A preliminary backtest is never treated as a promoted strategy.
 
 - Phase 11 preregistered: breakout-pullback continuation with ATM option OI/volume confirmation, 64 variants; held until needed after Phases 8-10.
+
+
+## Current continuation checkpoint — 2026-09-24
+
+The three active research families have not yet produced an accepted strategy result.
+
+- Phase 8 v2: run 35937700542 failed with E0067; latest branch commit 7f1ed0b explicitly guards the executable `open` entry column and requires a fresh rerun.
+- Phase 9: the previous runner-cancelled attempt was retried; current job 107543124203 is executing base friction.
+- Phase 10: run 35937773719 failed with E0069; latest branch commit 7558c90 fixes pandas Series key access and requires a fresh rerun.
+- Phase 11 is preregistered but not launched yet.
+
+[Detailed active-run ledger](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/active_run_ledger.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md) · [Research status](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md)
