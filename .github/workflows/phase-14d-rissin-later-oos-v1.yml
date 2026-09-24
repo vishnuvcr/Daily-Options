@@ -1,0 +1,88 @@
+name: Phase 14d - Rissin Later OOS Validation
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+  push:
+    branches:
+      - phase-14-global-cross-market-opening-gap-later-oos-rissin-v1
+
+concurrency:
+  group: phase14d-rissin-oos-v1
+  cancel-in-progress: true
+
+jobs:
+  validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install pandas numpy pyarrow duckdb pytest huggingface_hub yfinance
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_phase14_global_cross_market_opening_gap_later_oos_rissin.py
+
+      - name: Prepare option/index cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/cache/phase14d_rissin
+            data/cache/phase14d_index
+            data/cache/phase14d_global
+          key: phase14d-rissin-78b1c546-trademarkk-0f4800e-v1
+
+      - name: Download Rissin NIFTY intraday 2024-2026
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase14d_rissin
+          python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='rissin/nse-options-intraday', repo_type='dataset', revision='78b1c5468255d18cf492984bfe6fe4e3ac874d7c', local_dir='data/cache/phase14d_rissin', allow_patterns=['upstox_intraday/NIFTY/NIFTY_2024.parquet','upstox_intraday/NIFTY/NIFTY_2025.parquet','upstox_intraday/NIFTY/NIFTY_2026.parquet'])"
+          find data/cache/phase14d_rissin/upstox_intraday/NIFTY -type f -name '*.parquet' -print
+
+      - name: Download NIFTY index
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase14d_index
+          python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='thetrademarkk/india-index-options-1m', repo_type='dataset', revision='0f4800e', local_dir='data/cache/phase14d_index', allow_patterns=['index/NIFTY.parquet'])"
+          test -s data/cache/phase14d_index/index/NIFTY.parquet
+
+      - name: Acquire global daily closes
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase14d_global
+          python - <<'PY'
+          from pathlib import Path
+          import yfinance as yf
+          out=Path('data/cache/phase14d_global')
+          for name,sym in {'SP500':'^GSPC','NASDAQ':'^IXIC','NIKKEI':'^N225'}.items():
+              p=out/f'{name}.csv'
+              if p.exists() and p.stat().st_size>100:
+                  continue
+              df=yf.download(sym,start='2024-07-01',end='2026-07-02',auto_adjust=False,progress=False)
+              if df.empty: raise SystemExit(f'no data for {sym}')
+              if hasattr(df.columns,'levels'):
+                  df=df['Close']
+                  if hasattr(df,'columns'): df=df.iloc[:,0]
+              df.rename('Close').reset_index().to_csv(p,index=False)
+          PY
+
+      - name: Base Rissin OOS
+        run: PYTHONPATH=. python -m research.phase14_global_cross_market_opening_gap_later_oos_rissin --root data/cache/phase14d_index --global-root data/cache/phase14d_global --out reports/phase14d-base --slippage 0.20
+
+      - name: Stress Rissin OOS
+        run: PYTHONPATH=. python -m research.phase14_global_cross_market_opening_gap_later_oos_rissin --root data/cache/phase14d_rissin --global-root data/cache/phase14d_global --out reports/phase14d-stress --slippage 0.40
+
+      - name: Correct Rissin runner inputs and execute
+        run: |
+          set -euo pipefail
+          PYTHONPATH=. python -m research.phase14_global_cross_market_opening_gap_later_oos_rissin --root data/cache/phase14d_rissin --global-root data/cache/phase14d_global --out reports/phase14d-base-correct --slippage 0.20
+          PYTHONPATH=. python -m research.phase14_global_cross_market_opening_gap_later_oos_rissin --root data/cache/phase14d_rissin --global-root data/cache/phase14d_global --out reports/phase14d-stress-correct --slippage 0.40
+
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase14d-rissin-later-oos-v1
+          path: reports/
