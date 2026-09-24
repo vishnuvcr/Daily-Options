@@ -32,7 +32,7 @@ PUT conditions are symmetric.
 
 ### Grid
 
-48 variants:
+96 variants:
 - 2 families;
 - 2 signal-start times;
 - WEEK/MONTH expiry;
