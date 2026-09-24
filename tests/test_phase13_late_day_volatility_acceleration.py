@@ -32,3 +32,13 @@ def test_signal_requires_late_day_time():
     })
     v = variant_grid()[0]
     assert _signal_rows(row, v).empty
+
+
+def test_long_option_uses_two_order_cost_model():
+    from research.cost_model import OptionCostModel
+    cm = OptionCostModel()
+    one_leg = cm.net_pnl(100.0, 120.0, qty=1, lot_size=75, slippage_points=0.20)
+    four_leg_zero_short = cm.vertical_debit_spread_net_pnl(
+        100.0, 0.0, 120.0, 0.0, lot_size=75, qty=1, slippage_points=0.20
+    )
+    assert one_leg > four_leg_zero_short
