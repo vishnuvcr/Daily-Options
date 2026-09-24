@@ -68,3 +68,5 @@ def test_long_option_nan_wing_path_is_not_treated_as_spread():
     import numpy as np
     assert bool(np.nan) is True
     assert not (pd.notna(float("nan")) and str(float("nan")).strip().lower() not in {"", "nan", "none"})
+
+# fast Phase 20 audit trigger checkpoint
