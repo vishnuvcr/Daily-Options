@@ -200,3 +200,8 @@ Next active frontier: intraday IV-skew / downside-tail repricing using defined-r
 Phase 15 clean rerun 36019644002 is the only accepted Phase 15 calculation. The earlier positive short-volatility shards were invalidated by E0145 because CALL/PUT sides were not included in the execution-leg join. The clean WEEK/MONTH rerun failed the target gate: WEEK best ₹30.82 base / -₹9.23 stress per active day; MONTH best -₹90.53 / -₹128.53; no ₹1,000-qualified cell. Phase 15 is retired.
 
 Phase 16 is now the active frontier: intraday IV-skew tail credit verticals, 288 fixed cells per expiry shard, using the same cost model and doubled-slippage stress. Latest run 36021088602 is executing unit tests/data setup; no Phase 16 P&L accepted.
+
+
+## 2026-09-24 — Phase 16 v2 execution-ready checkpoint
+
+The authoritative Phase 16 execution ref is `phase-16-iv-skew-tail-credit-v2-exec`. It is based on latest main and carries the outcome-cache optimization plus exact-expiry propagation, 30/60-minute hold enforcement, timestamp-derived IST dates, realistic base/stress costs and the active-day target gate. No Phase 16 P&L is accepted yet. The next eligible evidence is the corrected v2 CI run, followed by untouched walk-forward validation.
