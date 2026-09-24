@@ -44,3 +44,6 @@ At least one configuration must be positive after full costs, remain positive un
 
 ## 2026-09-24 pre-run source verification
 The upstream TradeMarkk dataset tree shows NIFTY option files named by exact expiry date, such as 2021-05-27.parquet and successive weekly expiry files. The dataset card reports exact expiry/strike/option-type fields plus OHLCV/OI, making it suitable for this phase's contract-selection requirement.
+
+
+Execution bridge: .github/workflows/phase-17-execution-bridge.yml on main, scoped to this Phase 17 branch/PR.
