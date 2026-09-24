@@ -79,7 +79,6 @@ def simulate(root: Path, unique_setups: pd.DataFrame, slippage: float) -> pd.Dat
             "put_entry",
             "call_entry",
             "entry_credit",
-            "short_offset",
         ]
     ].drop_duplicates()
     con.register("legs", legs)
@@ -105,6 +104,7 @@ def simulate(root: Path, unique_setups: pd.DataFrame, slippage: float) -> pd.Dat
             l.put_entry,
             l.call_entry,
             l.entry_credit,
+            l.short_offset,
             CAST(o."timestamp" AS TIMESTAMP) AS ts_local,
             CAST(CAST(o."timestamp" AS TIMESTAMP) AS DATE) AS option_trade_date,
             CAST(o.strike AS DOUBLE) AS strike,
@@ -263,6 +263,7 @@ def simulate(root: Path, unique_setups: pd.DataFrame, slippage: float) -> pd.Dat
             "expiry",
             "hold_min",
             "stop_mult",
+            "short_offset",
             "put_strike",
             "call_strike",
             "put_entry",
