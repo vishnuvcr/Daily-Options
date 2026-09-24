@@ -336,7 +336,7 @@ def simulate_setup(con, setup, variant, slippage):
     # For current NIFTY Tuesday expiry this is exactly the intended Monday->Monday
     # sequence. For historical Monday-expiry transition contracts, no valid
     # Monday-before-expiry adjustment exists, so the setup is discarded.
-    if mon.date() >= exit_date:
+    if mon.date() > exit_date:
         return None
 
     # One listed strike outside the original short on the same weekly expiry.
@@ -450,7 +450,7 @@ def simulate_setup(con, setup, variant, slippage):
             leg["exit"] = float(row.open_px)
 
     return {
-        "reason":"STOP_POST_ADJUST" if stop_ts is not None else "WEDNESDAY_EXIT",
+        "reason":"STOP_POST_ADJUST" if stop_ts is not None else "PRE_EXPIRY_EXIT",
         "exit_ts":exit_signal,
         "net_pnl":settle(legs, lot, slippage),
         "active_legs":6,
