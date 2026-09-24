@@ -98,3 +98,16 @@ Phase 10 v4 run 35973884459 completed cleanly through base, doubled-slippage str
 - 3 WFA windows, 0 positive test windows, 0 target windows.
 
 Decision: Phase 10 is retired. No parameter retuning is permitted.
+
+## Phase 10 final decision — 2026-09-24
+
+Phase 10 (cross-index relative-strength debit spreads) is **RETIRED** after a complete base + doubled-slippage stress run.
+
+- 128 variants preregistered; 64 produced trades.
+- Best base mean active-day net: ₹-113.62/lot/day.
+- Best stress mean active-day net: ₹-136.48/lot/day.
+- Base WFA: 0/3 positive, 0/3 target; mean test-window net ₹-122.39.
+- Stress WFA: 0/3 positive, 0/3 target; mean test-window net ₹-138.27.
+- No result-based retuning was performed.
+
+Phase 10 result archive: `reports/phase10/` on `phase-10-cross-index-1m-v4-exec`.
