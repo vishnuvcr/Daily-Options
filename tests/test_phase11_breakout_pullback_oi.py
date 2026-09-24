@@ -36,4 +36,4 @@ def test_put_wing_is_nearest_lower_strike():
     strikes = [48600.0, 48500.0, 48400.0]
     atm = 48600.0
     lower = sorted([s for s in strikes if s < atm])
-    assert lower[0] == 48500.0
+    assert lower[-1] == 48500.0
