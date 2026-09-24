@@ -321,7 +321,7 @@ def select_entries(signals: pd.DataFrame, root: Path) -> pd.DataFrame:
         ).fetchdf()
         if wing_df.empty:
             continue
-        wing = float(wing_df.iloc[0]["strike"] if e["direction"] == "CALL" else wing_df.iloc[-1]["strike"])
+        wing = float(wing_df.iloc[0]["strike"])
         q = con.execute(
             f"""
             SELECT CAST(strike AS DOUBLE) AS strike, CAST(open AS DOUBLE) AS open
