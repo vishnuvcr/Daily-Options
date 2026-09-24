@@ -33,3 +33,5 @@ The prior Phase 2/3/3F/3G/3H/3I results remain frozen and are not being retuned 
 - Phase 10: failure E0069 reproduced from run 35937773719; corrected branch commit 7558c90... was pushed. Fresh CI result not yet exposed through the GitHub connector.
 - Phase 11 remains preregistered and deliberately not launched until the corrected Phase 8-10 runs are inspected, avoiding unnecessary compute and premature family selection.
 
+
+- Phase 11: implementation commits 2c9e442, 379c853, 8bfcfe9, 2178adc, then side-selection fix 1b6314c. CI is now triggered from the corrected branch; no result is accepted yet.
