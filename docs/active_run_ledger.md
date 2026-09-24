@@ -82,3 +82,9 @@ These are the first runs using exact branch-parent construction after E0078. No 
 - Phase 10: retired negative after run 35973884459; no further compute.
 - Phase 9 v5 sharded run 35974727222: four shards active in base computation.
 - Phase 11 v4 exact-parent commit fd3625b: run 35975025996 queued under isolated concurrency group; no result yet.
+
+### Phase 10 completion — 2026-09-24
+- Run `35973884459` completed successfully from commit `89df76f`.
+- Numerical gate: FAIL. Family retired.
+- Archive commit: `ddda47a627f49660ce5b8c98551ecd7c84d1f7f0`.
+- No future tuning of Phase 10 is authorized; any further work must be a scientifically distinct phase.
