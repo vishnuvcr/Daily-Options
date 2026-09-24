@@ -30,5 +30,12 @@ Channel description identifies options selling/buying, risk-managed NIFTY/BankNI
 - “Set & Strike Weekly Options Method for Working People”: YouTube result published 2025-06-27.
 - “This Payoff Hits like a Missile”: transcript/indexed reconstruction published/analysed in 2026-09; secondary transcript source.
 
+## User-supplied video pending transcription
+
+- Exact URL: https://youtu.be/Cl5i-lWAzeo
+- Video ID: Cl5i-lWAzeo
+- Status: **Not yet classified**. The public web index did not return reliable title/transcript metadata for this exact ID, and the repository catalogue does not contain the ID yet.
+- Research action: keep this URL in the Phase 23 source queue and classify the strategy once reliable video metadata/transcript is available. No strategy claim is inferred from the URL alone.
+
 ## Evidence rule
 Descriptions and transcripts can specify a hypothesis. They do not establish profitability. Any numerical result must come from the repository's reproducible backtest pipeline with realistic costs and out-of-sample validation.
