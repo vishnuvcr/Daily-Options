@@ -39,18 +39,26 @@ jobs:
           from research.phase15_vrp_jump_brake_short_vol import walk_forward
 
           root=Path('shard_artifacts')
-          for fric in ('base','stress'):
-              parts=[]
-              for expiry in ('WEEK','MONTH'):
-                  p=root/f'phase15-shard-{expiry}'/expiry/fric/'phase15_trades.csv'
-                  if p.exists():
-                      parts.append(pd.read_csv(p))
-              trades=pd.concat(parts,ignore_index=True) if parts else pd.DataFrame()
-              out=Path('reports/phase15-global')
+          trade_files=list(root.rglob('phase15_trades.csv'))
+          print('discovered_trade_files', [str(p) for p in trade_files])
+
+          by_friction={'base':[],'stress':[]}
+          for p in trade_files:
+              parts=p.parts
+              fric=None
+              if 'base' in parts: fric='base'
+              elif 'stress' in parts: fric='stress'
+              if fric:
+                  by_friction[fric].append(pd.read_csv(p))
+
+          out=Path('reports/phase15-global')
+          for fric,frames in by_friction.items():
+              trades=pd.concat(frames,ignore_index=True) if frames else pd.DataFrame()
               if trades.empty:
                   summary={'trade_rows':0,'variants':288,'gate':'NO_TRADES','friction':fric}
                   (out/f'phase15_{fric}_summary.json').write_text(json.dumps(summary,indent=2))
                   continue
+
               rows=[]
               total_days=trades.trade_date.nunique()
               for vid,g in trades.groupby('variant_id'):
@@ -58,7 +66,9 @@ jobs:
                   wins=g.loc[g.net_pnl>0,'net_pnl'].sum()
                   losses=-g.loc[g.net_pnl<0,'net_pnl'].sum()
                   rows.append({
-                      'variant_id':vid,'trades':len(g),'active_days':len(d),
+                      'variant_id':vid,
+                      'trades':len(g),
+                      'active_days':len(d),
                       'mean_active_day_net':float(d.mean()),
                       'mean_all_day_net':float(d.sum()/max(1,total_days)),
                       'win_rate':float((g.net_pnl>0).mean()),
@@ -66,24 +76,29 @@ jobs:
                       'max_drawdown':float((d.cumsum()-d.cumsum().cummax()).min()),
                       'total_net':float(g.net_pnl.sum())
                   })
+
               board=pd.DataFrame(rows).sort_values('mean_all_day_net',ascending=False)
               board.to_csv(out/f'phase15_{fric}_leaderboard.csv',index=False)
-              wf=walk_forward(trades)
-              wf.to_csv(out/f'phase15_{fric}_walk_forward.csv',index=False)
+              wfdf=walk_forward(trades)
+              wfdf.to_csv(out/f'phase15_{fric}_walk_forward.csv',index=False)
               summary={
-                  'friction':fric,'variants':288,'trade_rows':int(len(trades)),
+                  'friction':fric,
+                  'variants':288,
+                  'trade_rows':int(len(trades)),
                   'positive_variants':int((board.mean_all_day_net>0).sum()),
                   'target_qualified_prelim':int((board.mean_all_day_net>=1000).sum()),
                   'best':board.iloc[0].to_dict(),
-                  'walk_forward_windows':int(len(wf)),
-                  'positive_test_windows':int((wf.test_mean>0).sum()) if not wf.empty else 0,
-                  'target_test_windows':int((wf.test_mean>=1000).sum()) if not wf.empty else 0,
-                  'mean_test_window_net':float(wf.test_mean.mean()) if not wf.empty else None,
-                  'gate':'PASS_PRELIMINARY' if (board.iloc[0].mean_all_day_net>=1000 and not wf.empty and (wf.test_mean>=1000).any()) else 'FAIL_PRELIMINARY'
+                  'walk_forward_windows':int(len(wfdf)),
+                  'positive_test_windows':int((wfdf.test_mean>0).sum()) if not wfdf.empty else 0,
+                  'target_test_windows':int((wfdf.test_mean>=1000).sum()) if not wfdf.empty else 0,
+                  'mean_test_window_net':float(wfdf.test_mean.mean()) if not wfdf.empty else None,
+                  'gate':'PASS_PRELIMINARY' if (board.iloc[0].mean_all_day_net>=1000 and not wfdf.empty and (wfdf.test_mean>=1000).any()) else 'FAIL_PRELIMINARY'
               }
               (out/f'phase15_{fric}_summary.json').write_text(json.dumps(summary,indent=2,default=str))
-          payload={f:json.loads((Path('reports/phase15-global')/f'phase15_{f}_summary.json').read_text()) for f in ('base','stress')}
-          (Path('reports/phase15-global')/'phase15_decision_summary.json').write_text(json.dumps(payload,indent=2,default=str))
+              trades.to_csv(out/f'phase15_{fric}_trades_all.csv',index=False)
+
+          payload={fric:json.loads((out/f'phase15_{fric}_summary.json').read_text()) for fric in ('base','stress')}
+          (out/'phase15_decision_summary.json').write_text(json.dumps(payload,indent=2,default=str))
           print(json.dumps(payload,indent=2,default=str))
           PY
       - name: Upload repaired global report
