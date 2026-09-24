@@ -39,7 +39,7 @@ def load_features(root,expiry):
     con=duckdb.connect(); x=con.execute(q).df(); con.close()
     if x.empty:return x
     x.trade_date=pd.to_datetime(x.trade_date).dt.date; x.datetime=pd.to_datetime(x.datetime)
-    x.ist_time=(x.datetime+pd.Timedelta(hours=5,minutes=30)).dt.strftime('%H:%M:%S')
+    x['ist_time']=(x['datetime']+pd.Timedelta(hours=5,minutes=30)).dt.strftime('%H:%M:%S')
     x=x.sort_values(['ist_time','trade_date','datetime'])
     g=x.groupby('ist_time')
     x['skew_mean']=g.skew_iv.transform(lambda s:s.shift(1).rolling(20,min_periods=10).mean())
