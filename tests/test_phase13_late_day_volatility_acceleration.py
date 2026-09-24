@@ -68,3 +68,17 @@ def test_long_option_nan_wing_path_is_not_treated_as_spread():
     import numpy as np
     assert bool(np.nan) is True
     assert not (pd.notna(float("nan")) and str(float("nan")).strip().lower() not in {"", "nan", "none"})
+
+
+def test_phase20_gate_constants_are_frozen():
+    from research.phase13_late_day_volatility_acceleration import GLOBAL_Z_THRESHOLD, GAP_THRESHOLD
+    assert GLOBAL_Z_THRESHOLD == 0.5
+    assert GAP_THRESHOLD == 0.0075
+
+
+def test_phase20_simulator_uses_input_risk_id_once():
+    import inspect
+    from research.phase13_late_day_volatility_acceleration import simulate
+    source = inspect.getsource(simulate)
+    assert "enumerate(RISK_PROFILES)" not in source
+    assert "RISK_PROFILES[risk_id]" in source
