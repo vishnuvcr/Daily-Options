@@ -238,3 +238,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0170 | 2026-09-24 | Phase 17a diagnostic | Candidate spot row was renamed close→close_px but probe invocation still accessed row.close | Diagnostic stopped after schema inspection and before candidate option probe | Use row.close_px | CLOSED — diagnostic-only |
 
 | E0171 | 2026-09-24 | Phase 17a diagnostic | Repeated nested/aliased DuckDB probe queries generated multiple reserved-alias failures before schema inspection completed | Delayed the zero-trade root-cause diagnosis; no strategy/P&L impact | Replaced the diagnostic with direct DESCRIBE/DISTINCT/timestamp probes using non-reserved aliases and no nested window logic | CLOSED — diagnostic-only |
+
+| E0172 | 2026-09-24 | Phase 17a diagnostic | The simplified direct schema probe contained nested single-quote syntax in a Python f-string | Diagnostic failed before reading the option schema; no strategy/P&L impact | Rebuilt the probe using triple-quoted f-strings and escaped parquet paths | CLOSED — diagnostic-only |
