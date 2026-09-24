@@ -49,3 +49,7 @@ No strategy result is accepted yet.
 Phase 8 completed the base friction calculation successfully; its doubled-slippage stress calculation is still executing. Phase 9’s retry successfully resolved the Hugging Face transport error but was again terminated by a GitHub runner shutdown during base computation. Phase 10 then failed on one final schema omission (premium_ret3); v4 corrects it. Phase 11 remains queued.
 
 No strategy result is promoted or described as successful.
+
+### Phase 8 closure — 2026-09-24
+
+The first clean exact-ref Phase 8 run completed base and stress. Across all 96 preregistered variants, none reached ₹1,000 net/active lot/day. The best base mean all-day net was -₹6.13 and stress was -₹36.13. The family is retired without WFA promotion or test-period retuning.
