@@ -211,8 +211,10 @@ def lead_features(futures: pd.DataFrame, spot: pd.DataFrame, window: int) -> pd.
     x["spot_z"] = sr / sv.replace(0, np.nan)
     x["lead_gap"] = x["fut_z"] - x["spot_z"]
     x["direction"] = np.where(x["fut_z"] > 0, "CALL", np.where(x["fut_z"] < 0, "PUT", ""))
-    x["trade_date"] = x["datetime"].dt.date
-    x["trade_time"] = x["datetime"].dt.strftime("%H:%M:%S")
+    local = x["datetime"].dt.tz_localize("UTC").dt.tz_convert("Asia/Kolkata")
+    x["trade_date"] = local.dt.date
+    x["trade_time_ist"] = local.dt.strftime("%H:%M:%S")
+    x["trade_time_utc"] = x["datetime"].dt.strftime("%H:%M:%S")
     return x
 
 def _parse_expiry(parts: tuple[str, ...]) -> pd.Timestamp | None:
@@ -322,7 +324,7 @@ def build_entries(features_by_window: dict[int, pd.DataFrame], manifest: pd.Data
     rows = []
     for v in variant_grid():
         x = features_by_window[v.lead_window]
-        x = x[(x["trade_time"] >= v.entry_time)].copy()
+        x = x[(x["trade_time_ist"] >= v.entry_time)].copy()
         x = x[(x["lead_gap"].abs() >= v.threshold)]
         x = x[((x["fut_z"] > 0) & (x["spot_z"] > 0)) | ((x["fut_z"] < 0) & (x["spot_z"] < 0))]
         for d, day in x.groupby("trade_date", sort=True):
