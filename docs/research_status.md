@@ -268,3 +268,6 @@ Correct current-rule geometry is now **Wednesday entry → Friday adjustment →
 The simulator no longer hard-codes weekdays for the strategy mechanics. It derives the event sessions from the actual contract expiry using trading-session offsets: entry = expiry − 4 sessions; adjustment = expiry − 2 sessions; exit = expiry − 1 session. This preserves the source geometry across the historical Thursday-to-Tuesday expiry transition.
 
 No P&L from the earlier incorrect timing implementation is accepted.
+
+## Phase 24 execution status — 2026-09-25
+The expiry-relative timing correction is implemented as Wednesday entry → Friday adjustment → Monday exit for current Tuesday-expiry NIFTY. A legacy `friday` variable defect in the strike-universe query was found and fixed before accepting any P&L. Latest workflow run 36054000774 (run 16) is currently pending on GitHub Actions; no Phase 24 performance result is accepted yet.
