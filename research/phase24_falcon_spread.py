@@ -349,7 +349,7 @@ def simulate_setup(con, setup, variant, slippage):
     strike_q = f"""
       SELECT DISTINCT CAST(strike AS DOUBLE) strike, UPPER(CAST(option_type AS VARCHAR)) option_type
       FROM read_parquet('{near}')
-      WHERE CAST(trading_day AS DATE)=DATE '{friday}'
+      WHERE CAST(trading_day AS DATE)=DATE '{entry_date}'
     """
     strikes = con.execute(strike_q).df()
     ce = np.sort(strikes.loc[strikes.option_type=="CE","strike"].unique())
