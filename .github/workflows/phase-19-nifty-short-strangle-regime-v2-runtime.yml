@@ -52,16 +52,16 @@ jobs:
           fi
       - name: Run friction
         env:
-          SLIP: \${{ matrix.friction == 'base' && '0.20' || '0.40' }}
-          LABEL: \${{ matrix.friction }}
+          SLIP: ${{ matrix.friction == 'base' && '0.20' || '0.40' }}
+          LABEL: ${{ matrix.friction }}
         run: |
           PYTHONPATH=. python -m research.phase19_nifty_short_strangle_regime_v2 \
             --data data/cache/phase19_trademarkk \
-            --out reports/\${{ matrix.friction }} \
+            --out reports/${{ matrix.friction }} \
             --slippage "$SLIP"
       - name: Upload results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: phase19-short-strangle-v2-\${{ matrix.friction }}
+          name: phase19-short-strangle-v2-${{ matrix.friction }}
           path: reports/
