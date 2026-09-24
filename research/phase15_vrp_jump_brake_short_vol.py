@@ -210,13 +210,21 @@ def bars_from_long_window(window_rows,key,hold):
     if q.empty:return pd.DataFrame()
     wide=q.pivot_table(index='datetime',columns='leg',values=['open','high','low','close'],aggfunc='last').reset_index()
     if wide.empty:return pd.DataFrame()
-    colmap={}
-    for metric in ('open','high','low','close'):
-        for leg in ('call','put','call_wing','put_wing'):
-            colmap[(metric,leg)]=f'{leg}_{metric}'
-    wide.columns=[colmap.get(c,c) if isinstance(c,tuple) else c for c in wide.columns]
+    cols=[]
+    for c in wide.columns:
+        if isinstance(c,tuple):
+            if c[0]=='datetime' or c[1]=='':
+                cols.append('datetime')
+            else:
+                cols.append(f'{c[1]}_{c[0]}')
+        else:
+            cols.append(str(c))
+    wide.columns=cols
     needed=['datetime','call_open','call_high','call_low','call_close','put_open','put_high','put_low','put_close','call_wing_open','call_wing_high','call_wing_low','call_wing_close','put_wing_open','put_wing_high','put_wing_low','put_wing_close']
-    return wide[[c for c in needed if c in wide.columns]].sort_values('datetime')
+    missing=[c for c in needed if c not in wide.columns]
+    if missing:
+        return pd.DataFrame()
+    return wide[needed].sort_values('datetime')
 
 def lot_size_for_trade_date(d):
     d=pd.Timestamp(d).date()
