@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   research:
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.ref == 'phase-17-nifty-exact-expiry-premium-skew-v1' || github.event.pull_request.head.ref == 'phase-17c-executable-entry-v1'
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.ref == 'phase-17-nifty-exact-expiry-premium-skew-v1' || github.event.pull_request.head.ref == 'phase-17c-executable-entry-v1' || github.event.pull_request.head.ref == 'phase-17-exact-expiry-premium-skew-v2-exec'
     strategy:
       fail-fast: false
       matrix:
