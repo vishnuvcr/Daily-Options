@@ -31,10 +31,7 @@ jobs:
         run: |
           mkdir -p data/cache/phase13b_artist23
           if [ ! -d data/cache/phase13b_artist23/NIFTY ]; then
-            python - <<PY
-            from huggingface_hub import snapshot_download
-            snapshot_download(repo_id='artist-23/nifty-options-data', repo_type='dataset', local_dir='data/cache/phase13b_artist23', allow_patterns=['NIFTY/*.parquet'])
-            PY
+            python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='artist-23/nifty-options-data', repo_type='dataset', local_dir='data/cache/phase13b_artist23', allow_patterns=['NIFTY/*.parquet'])"
           fi
           find data/cache/phase13b_artist23/NIFTY -type f -name '*.parquet' -print | sed -n '1,20p'
       - name: Base frozen validation
