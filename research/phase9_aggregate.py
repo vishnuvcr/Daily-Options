@@ -13,7 +13,7 @@ def aggregate_downloads(download_root: Path, out_root: Path) -> dict:
     out_root.mkdir(parents=True, exist_ok=True)
     summary = {}
     for friction, slippage in (("base", 0.20), ("stress", 0.40)):
-        files = sorted(download_root.glob(f"{friction}_shard_*_trades.csv"))
+        files = sorted(download_root.rglob(f"{friction}_shard_*_trades.csv"))
         frames = [pd.read_csv(p) for p in files]
         trades = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
         friction_dir = out_root / f"phase9-{friction}"
