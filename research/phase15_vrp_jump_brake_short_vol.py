@@ -16,10 +16,31 @@ TARGET_RATIO=0.50
 TARGET=1000.0
 VARIANT_COUNT=len(ENTRY_TIMES)*len(VRP_THRESHOLDS)*len(JUMP_MAX)*len(STRUCTURES)*len(EXPIRY_TYPES)*len(HOLDS)*len(STOP_RATIOS)
 
-def parquet_glob(root:Path)->str: return (root/'**'/'*.parquet').as_posix()
+def parquet_glob(root: Path, expiry_type: str | None = None) -> str:
+    if expiry_type:
+        return (root / expiry_type / "*.parquet").as_posix()
+    return (root / "**" / "*.parquet").as_posix()
+
+
+def required_files_sql(root: Path) -> str:
+    paths = []
+    for expiry_type in EXPIRY_TYPES:
+        folder = root / expiry_type
+        for name in (
+            "ATM_CE.parquet","ATM_PE.parquet",
+            "ATM+2_CE.parquet","ATM+2_PE.parquet",
+            "ATM-2_CE.parquet","ATM-2_PE.parquet",
+        ):
+            p = folder / name
+            paths.append(str(p))
+    existing = [p for p in paths if Path(p).exists()]
+    if len(existing) != len(paths):
+        missing = sorted(set(paths) - set(existing))
+        raise FileNotFoundError("Missing required Phase 15 strike files: " + ", ".join(missing))
+    return "[" + ",".join(repr(p) for p in existing) + "]"
 
 def feature_query(root:Path)->str:
-    g=parquet_glob(root); times=','.join(repr(x) for x in ENTRY_TIMES)
+    g=required_files_sql(root); times=','.join(repr(x) for x in ENTRY_TIMES)
     return f'''
     WITH base AS (
       SELECT CAST(datetime AS TIMESTAMP) AS datetime, CAST(date AS DATE) AS trade_date, expiry_type, option_type, strike_type, CAST(spot AS DOUBLE) AS spot, CAST(iv AS DOUBLE) AS iv, CAST(close AS DOUBLE) AS close
@@ -71,7 +92,7 @@ def load_entry_quotes(root,signals):
     con = duckdb.connect()
     con.register('wanted', wanted[['trade_date','expiry_type','entry_time']])
 
-    g = parquet_glob(root)
+    g = required_files_sql(root)
     q = f'''
     SELECT
       CAST(o.datetime AS TIMESTAMP) AS datetime,
@@ -116,7 +137,7 @@ def load_execution_windows(root,setup_rows,max_hold=60):
             })
     leg_df=pd.DataFrame(legs).drop_duplicates()
     con.register('legs',leg_df)
-    g=parquet_glob(root)
+    g=required_files_sql(root)
     q=f'''
     SELECT CAST(o.datetime AS TIMESTAMP) AS datetime,
            o.expiry_type,
