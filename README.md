@@ -179,3 +179,16 @@ The active corrected runtime is **Phase 19 v2** on `phase-19-nifty-short-strangl
 ## Phase 13 integrity correction — 2026-09-25
 
 A retrospective audit found that the authoritative Phase 13 Base/Stress trade artifacts contained exact two-for-one duplicates caused by the simulator expanding both risk profiles after `risk_id` was already part of the unique setup key. The published ₹285.45/₹225.45 near-miss is therefore invalid. Exact-deduplication recomputation gives a best full-sample mean active-day net of **₹142.72 base / ₹112.72 stress**, with 0 target-qualified cells and corrected nested-WFA mean test-window net of **₹121.82 base / ₹91.82 stress**. Phase 13 remains non-promoted; no tuning is authorized.
+
+## Phase 24 / 24b current frontier — 2026-09-25
+
+Phase 24 Falcon Spread primary-source execution is **data-limited** and its sparse TradeMarkk artifact is rejected as evidence: only 5 unique executable entry dates were present across the nominal research window.
+
+Phase 24b is the independent replication on the Rissin/Upstox 1-minute NIFTY source. The frozen 270-cell grid, current Tuesday-expiry geometry (**Wednesday entry → Thursday adjustment → Monday exit**), Paytm Money/NSE cost model, base/stress slippage and no-retuning rule are unchanged.
+
+- [Phase 24b plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-24-falcon-spread-rissin-replication-v1/docs/phase24b_plan.md)
+- [Phase 24b data manifest](https://github.com/vishnuvcr/Daily-Options/blob/phase-24-falcon-spread-rissin-replication-v1/docs/data_manifests/phase24b_rissin.md)
+- [Phase 24b workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-24-falcon-spread-rissin-replication-v1/.github/workflows/phase-24b-falcon-rissin-replication.yml)
+- [Phase 24b code](https://github.com/vishnuvcr/Daily-Options/blob/phase-24-falcon-spread-rissin-replication-v1/research/phase24_falcon_rissin_replication.py)
+
+Rissin source history was checked before execution. Commit `8f7739cab3f38abdcbc6332a6d0a83e1341326e3` explicitly adds the NIFTY 2026 intraday partition, so the replication is pinned to that exact revision. No Phase 24b P&L is accepted until its content-based coverage gate and both friction runs complete.
