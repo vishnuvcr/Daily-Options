@@ -1,0 +1,74 @@
+name: Phase 17c v2 - Executable Entry Exact-Expiry
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [phase-17c-exact-expiry-v2]
+
+concurrency:
+  group: phase17c-executable-v2
+  cancel-in-progress: false
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-17c-exact-expiry-v2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pandas numpy pyarrow duckdb huggingface_hub pytest
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_phase17_nifty_exact_expiry_premium_skew.py
+      - name: Cache TradeMarkk data
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase17_trademarkk
+          key: phase17-trademarkk-51ca58c-v2
+          restore-keys: |
+            phase17-trademarkk-51ca58c-
+      - name: Acquire or reuse data
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase17_trademarkk
+          if [ ! -f data/cache/phase17_trademarkk/index/NIFTY.parquet ]; then
+            for attempt in 1 2 3 4; do
+              python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="thetrademarkk/india-index-options-1m",repo_type="dataset",revision="51ca58c",local_dir="data/cache/phase17_trademarkk",allow_patterns=["index/NIFTY.parquet","options/NIFTY/*.parquet"])' && break
+              if [ "$attempt" -eq 4 ]; then exit 1; fi
+              sleep $((attempt*15))
+            done
+          fi
+      - name: Base friction
+        run: |
+          PYTHONPATH=. python -m research.phase17_nifty_exact_expiry_premium_skew             --data data/cache/phase17_trademarkk             --out reports/base             --slippage 0.20
+      - name: Stress friction
+        run: |
+          PYTHONPATH=. python -m research.phase17_nifty_exact_expiry_premium_skew             --data data/cache/phase17_trademarkk             --out reports/stress             --slippage 0.40
+      - name: Decision summary
+        run: |
+          python - <<'PY'
+import json
+from pathlib import Path
+b=json.loads(Path("reports/base/phase17_summary.json").read_text())
+s=json.loads(Path("reports/stress/phase17_summary.json").read_text())
+d={
+  "phase":"17c-v2",
+  "base":b,
+  "stress":s,
+  "base_target_qualified":b.get("target_qualified",0),
+  "stress_target_qualified":s.get("target_qualified",0),
+  "decision":"PRELIMINARY_TARGET_PASS" if b.get("target_qualified",0)>0 and s.get("target_qualified",0)>0 else "PRELIMINARY_TARGET_FAIL_OR_DATA_LIMITED"
+}
+Path("reports/phase17c_decision.json").write_text(json.dumps(d,indent=2))
+print(json.dumps(d,indent=2))
+PY
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase17c-v2-executable-entry
+          path: reports/
