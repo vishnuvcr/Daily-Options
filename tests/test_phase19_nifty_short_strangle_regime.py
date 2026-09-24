@@ -42,8 +42,8 @@ def test_spot_alias_is_normalized():
 
 def test_exact_quote_loader_uses_direct_local_time_window():
     src=inspect.getsource(mod.load_exact_quotes)
-    assert "CAST(\"timestamp\" AS TIME) >= TIME '14:30:00'" in src
-    assert "CAST(\"timestamp\" AS TIME) <= TIME '15:03:00'" in src
+    assert 'strftime("timestamp",\'%H:%M:%S\') >= \'14:30:00\'' in src
+    assert 'strftime("timestamp",\'%H:%M:%S\') <= \'15:03:00\'' in src
 
 
 def test_direct_quote_window_uses_timezone_safe_strftime():
