@@ -108,3 +108,7 @@ The next accepted candidate must still clear the unchanged ₹1,000 net/active-l
 ## Latest completed research result — Phase 10
 
 Phase 10 is retired after complete base/stress + walk-forward validation: best base ₹-113.62/lot/day, best stress ₹-136.48/lot/day, and no positive untouched WFA window. Result reports are archived under `reports/phase10/` on the Phase 10 execution branch. The active search continues through the remaining preregistered families and the next distinct phase only if required.
+
+
+### Phase 12 parked frontier — 2026-09-24
+A data-gated derivative-versus-spot lead/lag hypothesis is preregistered in [PR #20](https://github.com/vishnuvcr/Daily-Options/pull/20). It is intentionally parked while Phases 9 and 11 complete. No Phase 12 trading result exists.
