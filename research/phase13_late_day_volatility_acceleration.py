@@ -426,6 +426,104 @@ def run(root: Path, out: Path, slippage: float) -> dict:
     return summary
 
 
+
+def _fast_global_series(root: Path, name: str, symbol: str) -> pd.DataFrame:
+    root.mkdir(parents=True, exist_ok=True)
+    p = root / f"{name}.csv"
+    if not p.exists() or p.stat().st_size < 100:
+        df = yf.download(symbol, start="2018-01-01", end="2021-01-01", auto_adjust=False, progress=False)
+        if df.empty:
+            raise RuntimeError(f"No global data for {symbol}")
+        if hasattr(df.columns, "levels"):
+            if "Close" not in df.columns.get_level_values(0):
+                raise RuntimeError(f"No Close for {symbol}")
+            df = df["Close"]
+            if hasattr(df, "columns"):
+                df = df.iloc[:, 0]
+        else:
+            df = df["Close"]
+        df.rename("Close").reset_index().to_csv(p, index=False)
+    x = pd.read_csv(p)
+    x["date"] = pd.to_datetime(x["Date"], errors="coerce").dt.date
+    x["close"] = pd.to_numeric(x["Close"], errors="coerce")
+    x = x.dropna(subset=["date", "close"]).sort_values("date").drop_duplicates("date", keep="last")
+    x["ret"] = x["close"].pct_change()
+    mean = x["ret"].shift(1).rolling(20, min_periods=10).mean()
+    std = x["ret"].shift(1).rolling(20, min_periods=10).std()
+    x["z"] = (x["ret"] - mean) / std.replace(0, np.nan)
+    return x[["date", "z"]].dropna()
+
+
+def _fast_gate(global_root: Path) -> pd.DataFrame:
+    n = yf.download("^NSEI", start="2018-01-01", end="2021-01-01", auto_adjust=False, progress=False)
+    if n.empty:
+        raise RuntimeError("No NIFTY daily data")
+    if hasattr(n.columns, "levels"):
+        op = n["Open"]
+        cl = n["Close"]
+        if hasattr(op, "columns"):
+            op = op.iloc[:, 0]
+        if hasattr(cl, "columns"):
+            cl = cl.iloc[:, 0]
+        n = pd.DataFrame({"open": op, "close": cl})
+    else:
+        n = n[["Open", "Close"]].rename(columns={"Open": "open", "Close": "close"})
+    n["date"] = pd.to_datetime(n.index).date
+    n = n.reset_index(drop=True)[["date", "open", "close"]].dropna().sort_values("date")
+    n["prev_close"] = n["close"].shift(1)
+    n["gap"] = n["open"] / n["prev_close"] - 1.0
+
+    sp = _fast_global_series(global_root, "SP500", "^GSPC")
+    nq = _fast_global_series(global_root, "NASDAQ", "^IXIC")
+    nk = _fast_global_series(global_root, "NIKKEI", "^N225")
+
+    def last_before(df):
+        left = pd.DataFrame({"date": pd.to_datetime(n["date"])})
+        right = df.copy()
+        right["date"] = pd.to_datetime(right["date"])
+        return pd.merge_asof(
+            left.sort_values("date"), right.sort_values("date"),
+            on="date", direction="backward", allow_exact_matches=False
+        )["z"].to_numpy()
+
+    n["z_sp"] = last_before(sp)
+    n["z_nq"] = last_before(nq)
+    n["z_nk"] = last_before(nk)
+    n["global3_z"] = n[["z_sp", "z_nq", "z_nk"]].mean(axis=1)
+    n["pass_gate"] = n["global3_z"].abs().ge(0.5) & n["gap"].abs().ge(0.0075)
+    return n[["date", "pass_gate", "gap", "global3_z"]]
+
+
+def fast_audit(artifact_dir: Path, global_root: Path, out: Path) -> dict:
+    gate = _fast_gate(global_root)
+    out.mkdir(parents=True, exist_ok=True)
+    summary = {}
+    for label in ("base", "stress"):
+        p = artifact_dir / f"phase13-{label}" / "phase13_trades.csv"
+        trades = pd.read_csv(p).drop_duplicates()
+        trades["trade_date"] = pd.to_datetime(trades["trade_date"]).dt.date
+        x = trades.merge(gate, left_on="trade_date", right_on="date", how="inner")
+        x = x[x["pass_gate"]].copy()
+        board = leaderboard(x)
+        board.to_csv(out / f"phase20_{label}_leaderboard.csv", index=False)
+        wf = walk_forward(x)
+        wf.to_csv(out / f"phase20_{label}_walk_forward.csv", index=False)
+        summary[label] = {
+            "trades": int(len(x)),
+            "eligible_days": int(x["trade_date"].nunique()) if not x.empty else 0,
+            "target_qualified": int((board.mean_active_day_net >= 1000).sum()) if not board.empty else 0,
+            "positive_variants": int((board.mean_active_day_net > 0).sum()) if not board.empty else 0,
+            "best": board.iloc[0].to_dict() if not board.empty else None,
+            "walk_forward_windows": int(len(wf)),
+            "positive_test_windows": int((wf.test_mean > 0).sum()) if not wf.empty else 0,
+            "target_test_windows": int((wf.test_mean >= 1000).sum()) if not wf.empty else 0,
+            "mean_test_window_net": float(wf.test_mean.mean()) if not wf.empty else None,
+            "gate_days": int(gate["pass_gate"].sum()),
+        }
+    (out / "phase20_fast_audit_summary.json").write_text(json.dumps(summary, indent=2, default=str))
+    return summary
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", type=Path, required=True)
