@@ -55,3 +55,24 @@ def test_zenodo_known_market_filenames(tmp_path):
     assert "spot_close" in spot.columns
 
 # concurrency-fix trigger checkpoint 2026-09-24
+
+
+def test_headerless_zenodo_market_row_preserves_first_record(tmp_path):
+    market = tmp_path / "market"
+    market.mkdir(parents=True)
+    raw = "NIFTY,2019/01/01,09:16,10884.1,10885.3,10872.3,10874.5,0,0\nNIFTY,2019/01/01,09:17,10874.1,10879.2,10874.1,10874.9,0,0\n"
+    p = market / "NIFTY.csv"
+    p.write_text(raw)
+    from research.phase12_zenodo_pilot import _standardize_ohlc, _read_table
+    out = _standardize_ohlc(_read_table(p))
+    assert len(out) == 2
+    assert float(out.iloc[0]["close"]) == 10874.5
+
+
+def test_headerless_zenodo_option_row_parses_ohlc(tmp_path):
+    p = tmp_path / "CE 10500.txt"
+    p.write_text("2019/01/01,09:16,120.5,121.0,120.0,120.8,100,200\n")
+    from research.phase12_zenodo_pilot import _standardize_ohlc, _read_table
+    out = _standardize_ohlc(_read_table(p))
+    assert len(out) == 1
+    assert float(out.iloc[0]["close"]) == 120.8
