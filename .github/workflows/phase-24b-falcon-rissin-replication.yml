@@ -2,6 +2,7 @@ name: Phase 24b - Falcon Spread Rissin replication
 
 on:
   workflow_dispatch:
+  pull_request:
   push:
     paths:
       - "docs/phase24b_plan.md"
