@@ -95,6 +95,7 @@ def load_zenodo_market(root: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
     files = [p for p in root.rglob("*") if p.is_file() and p.suffix.lower() in {".csv", ".xlsx", ".xls"}]
     futures, spots = [], []
     for p in files:
+        name = p.name.upper()
         stem = re.sub(r"[^A-Za-z0-9]", "", p.stem).upper()
         try:
             df = _standardize_ohlc(_read_table(p))
@@ -102,9 +103,9 @@ def load_zenodo_market(root: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
             continue
         if df.empty:
             continue
-        if "NIFTYF1" in stem or "F1" in stem:
+        if name == "NIFTY_F1.CSV" or "NIFTYF1" in stem or stem.endswith("F1"):
             futures.append(df)
-        elif "NIFTY" in stem and "F1" not in stem:
+        elif name == "NIFTY.CSV" or (stem.startswith("NIFTY") and "F1" not in stem):
             spots.append(df)
     if not futures or not spots:
         raise RuntimeError(f"Unable to discover NIFTY_F1 and spot files. futures={len(futures)} spots={len(spots)}")
