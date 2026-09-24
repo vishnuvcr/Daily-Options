@@ -55,7 +55,7 @@ def load_spot(root):
       SELECT *, rv20/NULLIF(AVG(rv20) OVER(PARTITION BY trade_date ORDER BY ts ROWS BETWEEN 119 PRECEDING AND CURRENT ROW),0) AS rv_ratio
       FROM v
     )
-    SELECT trade_date,ts,close,ret10,rv_ratio
+    SELECT trade_date,ts,spot_close,ret10,rv_ratio
     FROM z
     WHERE ret10 IS NOT NULL AND rv_ratio IS NOT NULL
       AND strftime(ts,'%H:%M:%S') IN ('14:30:00','14:45:00','15:00:00')
