@@ -46,7 +46,10 @@ def feature_query(root:Path)->str:
     WITH base AS (
       SELECT CAST(datetime AS TIMESTAMP) AS datetime, CAST(date AS DATE) AS trade_date, expiry_type, option_type, strike_type, CAST(spot AS DOUBLE) AS spot, CAST(iv AS DOUBLE) AS iv, CAST(close AS DOUBLE) AS close
       FROM read_parquet({g}, union_by_name=true)
-      WHERE close>0 AND option_type IN ('CALL','PUT') AND expiry_type IN ('WEEK','MONTH')
+      WHERE close>0
+        AND option_type IN ('CALL','PUT')
+        AND expiry_type IN ('WEEK','MONTH')
+        AND STRFTIME(CAST(datetime AS TIMESTAMP) + INTERVAL '5 hours 30 minutes','%H:%M:%S') BETWEEN '09:00:00' AND '10:30:00'
     ),
     minute AS (
       SELECT datetime,trade_date,expiry_type,strike_type,MAX(spot) AS spot,
