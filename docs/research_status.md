@@ -219,3 +219,8 @@ No parameter retuning has been performed after E0195.
 ## 2026-09-25 — Phase 19 v2 runtime supersession
 
 The original Phase 19 corrected run `36042015205` is non-evidentiary after remaining in the friction step without artifacts. A static audit found E0197: the simulator still used the dataset `trading_day` field even after E0195 had established timestamp-derived IST `trade_date` as the authoritative key. Phase 19 v2 on `phase-19-nifty-short-strangle-regime-v2-runtime` preserves the frozen 144-cell grid and cost model, fixes the execution-date join, vectorizes exit-event calculation and performs exact cost-equivalence testing. Latest v2 run: `36043078139`; Stress has started cached-data acquisition and Base is queued. No P&L is accepted.
+
+
+## 2026-09-25 — Phase 19 v3 authoritative execution
+
+A clean Phase 19 v3 branch `phase-19-nifty-short-strangle-regime-v3-authoritative` was created to eliminate stale-run contention and report contamination. The frozen 144-cell short-strangle rule, exact-expiry dataset revision, cost model, Base slippage ₹0.20 and Stress slippage ₹0.40 are unchanged. The workflow cleans its output directory, runs unit tests, then Base and Stress sequentially and uploads only fresh Phase 19 evidence. Latest run: `36043694480`; tests and cached-data acquisition passed and Base friction is currently executing. No P&L has been accepted.
