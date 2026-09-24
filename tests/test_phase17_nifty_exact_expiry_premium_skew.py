@@ -18,3 +18,19 @@ def test_active_day_target_metric_in_source():
     src=inspect.getsource(__import__("research.phase17_nifty_exact_expiry_premium_skew",fromlist=["run"]))
     assert "mean_active_day_net" in src
     assert ">=1000" in src
+
+    
+def test_simulation_uses_entry_timestamp_window_and_entry_premium():
+    from research import phase17_nifty_exact_expiry_premium_skew as mod
+    import inspect
+    src=inspect.getsource(mod.simulate)
+    assert "l.entry_ts" in src
+    assert "float(r.short_entry)" in src
+    assert "float(r.wing_entry)" in src
+
+def test_spot_features_do_not_nest_window_functions():
+    from research import phase17_nifty_exact_expiry_premium_skew as mod
+    import inspect
+    src=inspect.getsource(mod.load_spot)
+    assert "STDDEV_SAMP(ret1) OVER" in src
+    assert "AVG(rv20) OVER" in src
