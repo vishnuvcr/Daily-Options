@@ -21,7 +21,7 @@ def test_load_option_window_handles_expiry_column(tmp_path):
     p = tmp_path / "sample.parquet"
     df = pd.DataFrame({
         "datetime": pd.to_datetime(["2021-01-04 09:16:00", "2021-01-04 09:17:00"]),
-        "date": pd.to_datetime(["2021-01-04", "2021-01-04"]).date,
+        "date": [pd.Timestamp("2021-01-04").date(), pd.Timestamp("2021-01-04").date()],
         "option_type": ["CALL", "CALL"],
         "expiry": ["2021-01-28", "2021-01-28"],
         "strike_price": [100.0, 100.0],
