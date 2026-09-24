@@ -80,20 +80,11 @@ jobs:
         run: PYTHONPATH=. python -m research.phase13_late_day_volatility_acceleration --root data/cache/phase12_zenodo --out reports/phase13-stress --slippage 0.40
       - name: Decision summary
         if: always()
+        shell: bash
         run: |
+          set -euo pipefail
           mkdir -p reports
-          python - <<'PY
-          import json
-          from pathlib import Path
-          payload = {
-              "base": json.loads(Path("reports/phase13-base/phase13_summary.json").read_text())
-              if Path("reports/phase13-base/phase13_summary.json").exists() else {},
-              "stress": json.loads(Path("reports/phase13-stress/phase13_summary.json").read_text())
-              if Path("reports/phase13-stress/phase13_summary.json").exists() else {},
-          }
-          Path("reports/phase13_decision_summary.json").write_text(json.dumps(payload, indent=2, default=str))
-          print(json.dumps(payload, indent=2, default=str))
-          PY
+          python -c 'import json; from pathlib import Path; b=Path("reports/phase13-base/phase13_summary.json"); s=Path("reports/phase13-stress/phase13_summary.json"); payload={"base":json.loads(b.read_text()) if b.exists() else {},"stress":json.loads(s.read_text()) if s.exists() else {}}; Path("reports/phase13_decision_summary.json").write_text(json.dumps(payload, indent=2, default=str)); print(json.dumps(payload, indent=2, default=str))'
       - name: Upload reports
         uses: actions/upload-artifact@v4
         if: always()
