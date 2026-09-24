@@ -214,3 +214,8 @@ Phase 17 is now the active family: exact-expiry NIFTY premium-skew plus option-f
 The exact-expiry source audit proved that option timestamps are timezone-aware and the first clean Phase 17 run's zero-trade result was therefore non-evidentiary. Phase 17a corrects timezone-preserving joins, next-minute open entry construction, PE/CE mapping, and hold/stop variant assignment without changing the 384-cell hypothesis.
 
 Current Phase 17a branch: `phase-17a-timezone-aligned-exec-v1`.
+
+
+## 2026-09-24 — Phase 17c v2 execution-feasibility gate
+
+Phase 17c is now the authoritative feasibility gate for exact-minute option entry. It tests only earliest common short/wing quote availability within 3 minutes after each unchanged Phase 17 signal. It does not alter the frozen signal, skew, RV, flow, width, hold, stop or target parameters.
