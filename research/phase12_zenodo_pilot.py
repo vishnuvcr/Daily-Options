@@ -384,11 +384,37 @@ def _merge_leg_bars(path_a: str, path_b: str, entry_time: pd.Timestamp, max_hold
 def build_entries(features_by_window: dict[int, pd.DataFrame], manifest: pd.DataFrame) -> pd.DataFrame:
     rows = []
     expiry_cache: dict[tuple[object, str], object] = {}
-    strike_cache: dict[tuple[object, object, str], tuple[object, object] | None] = {}
+    eligible_cache: dict[tuple[object, object, str], pd.DataFrame] = {}
+
+    def select_pair(eligible: pd.DataFrame, spot: float, width_steps: int):
+        if eligible.empty:
+            return None
+        strikes = np.sort(eligible["strike"].unique())
+        if len(strikes) < width_steps + 1:
+            return None
+        atm = float(strikes[np.argmin(np.abs(strikes - spot))])
+        side = str(eligible["option_type"].iloc[0])
+        if side == "CE":
+            higher = strikes[strikes > atm]
+            if len(higher) < width_steps:
+                return None
+            wing = float(higher[width_steps - 1])
+        else:
+            lower = strikes[strikes < atm]
+            if len(lower) < width_steps:
+                return None
+            wing = float(lower[-width_steps])
+        a = eligible[eligible["strike"] == atm].sort_values("path")
+        w = eligible[eligible["strike"] == wing].sort_values("path")
+        if a.empty or w.empty:
+            return None
+        return a.iloc[0], w.iloc[0]
+
+    cov = _coverage_columns(manifest)
 
     for v in variant_grid():
         x = features_by_window[v.lead_window]
-        x = x[(x["trade_time_ist"] >= v.entry_time)].copy()
+        x = x[(x["trade_time_ist"] >= v.entry_time)]
         x = x[(x["lead_gap"].abs() >= v.threshold)]
         x = x[((x["fut_z"] > 0) & (x["spot_z"] > 0)) | ((x["fut_z"] < 0) & (x["spot_z"] < 0))]
 
@@ -399,27 +425,19 @@ def build_entries(features_by_window: dict[int, pd.DataFrame], manifest: pd.Data
 
             expiry_key = (d, v.expiry_mode)
             if expiry_key not in expiry_cache:
-                expiry_cache[expiry_key] = _choose_expiry(manifest, d, v.expiry_mode)
+                expiry_cache[expiry_key] = _choose_expiry(cov, d, v.expiry_mode)
             expiry = expiry_cache[expiry_key]
             if expiry is None:
                 continue
 
             side = "CE" if r["direction"] == "CALL" else "PE"
-            strike_key = (d, expiry, side)
-            if strike_key not in strike_cache:
-                strike_cache[strike_key] = _choose_strikes(
-                    manifest, expiry, side, float(r["spot_close"]), v.width_steps, d
-                )
-
-            pair = strike_cache[strike_key]
-            if pair is None:
-                continue
-
-            # Width selection is the only variant-specific part of the cached strike universe.
-            if v.width_steps == 1:
-                pair = _choose_strikes(manifest, expiry, side, float(r["spot_close"]), 1, d)
-            else:
-                pair = _choose_strikes(manifest, expiry, side, float(r["spot_close"]), v.width_steps, d)
+            eligible_key = (d, expiry, side)
+            if eligible_key not in eligible_cache:
+                eligible = cov[(cov["expiry"] == expiry) & (cov["option_type"] == side)].copy()
+                eligible = eligible[eligible["coverage_start"].isna() | (eligible["coverage_start"] <= d)]
+                eligible = eligible[eligible["coverage_end"].isna() | (eligible["coverage_end"] >= d)]
+                eligible_cache[eligible_key] = eligible
+            pair = select_pair(eligible_cache[eligible_key], float(r["spot_close"]), v.width_steps)
             if pair is None:
                 continue
 
