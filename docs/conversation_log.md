@@ -71,3 +71,9 @@
 - Phase 8 hybrid momentum is still running its corrected CI screen.
 - A parallel, materially distinct Phase 9 was opened to test regime-filtered defined-risk credit spreads.
 - The new family is pre-registered at 96 variants and does not reuse the retired naked short-straddle specification.
+
+
+## 2026-09-24 — Phase 10 initialization
+- Phase 8 and Phase 9 corrected workflows are executing.
+- Phase 10 was opened as a distinct data-upgrade hypothesis using a public 1-minute NIFTY/BANKNIFTY option-chain source.
+- The mechanism is cross-index relative-strength leadership, not another single-index indicator permutation.
