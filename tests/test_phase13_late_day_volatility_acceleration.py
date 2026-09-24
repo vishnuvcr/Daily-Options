@@ -6,7 +6,7 @@ from research.phase13_late_day_volatility_acceleration import (
 
 
 def test_variant_count():
-    assert len(variant_grid()) == 192
+    assert len(variant_grid()) == 384
 
 
 def test_feature_barrier_uses_ist():
