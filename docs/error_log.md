@@ -224,3 +224,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0157 | 2026-09-24 | Phase 16 runtime | Corrected joins created valid setups/windows but variant evaluation still repeated DataFrame filtering for ~31k signals across 288 cells, causing the runner to stop advancing | No P&L accepted from the stalled run | Compute each unique signal/side/width/hold/stop outcome once, then merge those outcomes into the 288 pre-registered variants | CLOSED — runtime optimization |
 
 | E0158 | 2026-09-24 | Phase 16 optimization patch | First outcome-cache implementation created a composite index but accidentally iterated the unindexed DataFrame, which would have broken key unpacking | No run accepted; corrected before execution | Iterate the composite setup index explicitly and rerun tests | CLOSED — pre-result |
+
+| E0199 | 2026-09-24 | Phase 19 execution infrastructure | The first Phase 19 execution branches predated the branch-aware main bridge, causing zero-job workflow failures | No strategy computation was performed | Rebuilt exec-v3 from current main and made the bridge dynamically check out the pushed Phase 19 branch | CLOSED — infrastructure |
