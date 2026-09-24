@@ -205,3 +205,7 @@ Phase 16 is now the active frontier: intraday IV-skew tail credit verticals, 288
 ## 2026-09-24 — Phase 16 v2 execution-ready checkpoint
 
 The authoritative Phase 16 execution ref is `phase-16-iv-skew-tail-credit-v2-exec`. It is based on latest main and carries the outcome-cache optimization plus exact-expiry propagation, 30/60-minute hold enforcement, timestamp-derived IST dates, realistic base/stress costs and the active-day target gate. No Phase 16 P&L is accepted yet. The next eligible evidence is the corrected v2 CI run, followed by untouched walk-forward validation.
+
+## 2026-09-24 — Phase 16 v2 schema correction
+
+The Artist23 pinned source was confirmed to expose `expiry_type` but not exact expiry dates. E0165 removes the invalid exact-expiry assumptions from the preliminary engine. Artist23 results will remain non-promotable until an independent source with actual expiry dates validates the frozen rule.
