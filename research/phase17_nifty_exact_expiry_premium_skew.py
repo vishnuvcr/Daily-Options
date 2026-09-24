@@ -542,6 +542,8 @@ def run(root: Path, out: Path, slippage: float):
             & trades.expiry.eq(v.expiry)
             & trades.side.eq(v.side)
             & trades.width.eq(v.width)
+            & trades.hold.eq(v.hold)
+            & trades.stop.eq(v.stop)
             & trades.short_strike.eq(v.short_strike)
             & trades.wing_strike.eq(v.wing_strike)
         )
