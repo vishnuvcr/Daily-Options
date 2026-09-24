@@ -97,7 +97,7 @@ def run(root,out,slippage,expiry):
             elif ti<10**9: ix,reason=ti,'TARGET'
             else: ix,reason=len(m)-1,'TIME'
             ex=m.iloc[ix]; net=OptionCostModel().vertical_credit_spread_net_pnl(float(short.open),float(wing.open),float(ex.sclose),float(ex.wclose),lot(r.trade_date),slippage_points=slippage)
-            rows.append({'trade_date':r.trade_date,'variant_id':f\"{v['entry_time']}|z{v['z']}|j{v['jump']}|w{v['width']}|{side}|h{v['hold']}|s{v['stop']}\",'net_pnl':net,'reason':reason,'skew_z':float(r.skew_z),'entry_credit':credit})
+            rows.append({'trade_date': r.trade_date, 'variant_id': f"{v['entry_time']}|z{v['z']}|j{v['jump']}|w{v['width']}|{side}|h{v['hold']}|s{v['stop']}", 'net_pnl': net, 'reason': reason, 'skew_z': float(r.skew_z), 'entry_credit': credit})
     t=pd.DataFrame(rows); out.mkdir(parents=True,exist_ok=True); t.to_csv(out/'phase16_trades.csv',index=False)
     board=[]
     if not t.empty:
