@@ -36,7 +36,7 @@ def feature_query(root, expiry_type):
       FROM read_parquet({g}, union_by_name=true)
       WHERE close>0 AND iv BETWEEN 0 AND 300
         AND expiry IS NOT NULL
-        AND CAST(expiry AS DATE) >= CAST(date AS DATE)
+        AND CAST(expiry AS DATE) >= CAST(CAST(datetime AS TIMESTAMP)+INTERVAL '5 hours 30 minutes' AS DATE)
         AND STRFTIME(CAST(datetime AS TIMESTAMP)+INTERVAL '5 hours 30 minutes','%H:%M:%S')
             BETWEEN '09:30:00' AND '10:30:00'
     ),

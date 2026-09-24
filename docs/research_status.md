@@ -125,3 +125,8 @@ These are now corrected on the same Phase 16 branch. The research grid, threshol
 ## 2026-09-24 — Phase 16 timestamp provenance correction
 
 Before numerical execution, Phase 16 was additionally corrected to derive trading date from the option timestamp +5:30 IST rather than the dataset's separate date field (E0160). This follows the previously validated Artist23 timestamp-alignment finding in Phase 15. The strategy grid and economic assumptions remain unchanged; no P&L is accepted from earlier Phase 16 implementations.
+
+
+## 2026-09-24 — Phase 16 final pre-execution audit
+
+A residual dependency on the Artist23 session-date field was found in the expiry-validity predicate after E0160. E0161 removes it and the regression test now verifies the predicate is timestamp-derived. The Phase 16 rule and grid remain unchanged.

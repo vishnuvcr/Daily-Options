@@ -13,3 +13,5 @@ def test_feature_query_derives_trade_date_from_ist_timestamp(tmp_path):
     q=feature_query(tmp_path,"WEEK")
     assert "CAST(CAST(datetime AS TIMESTAMP)+INTERVAL '5 hours 30 minutes' AS DATE) trade_date" in q
     assert "CAST(date AS DATE) trade_date" not in q
+    assert "CAST(expiry AS DATE) >= CAST(date AS DATE)" not in q
+    assert "CAST(expiry AS DATE) >= CAST(CAST(datetime AS TIMESTAMP)+INTERVAL '5 hours 30 minutes' AS DATE)" in q
