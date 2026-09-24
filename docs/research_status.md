@@ -215,3 +215,7 @@ Phase 16 is now the active frontier: intraday IV-skew tail credit verticals, 288
 The corrected Phase 19 run `36042015205` on `phase-19-nifty-short-strangle-regime-v1` (head `2ed269eb2bc875671c818f5cde2707e0a97e4499`) is active. Both Base and Stress jobs passed unit tests and exact-expiry data acquisition and are currently executing the friction calculation. The run remains non-evidentiary until both jobs complete and the frozen 144-cell leaderboard, trade count, active-day net P&L, stress result and later-period validation gates are reviewed.
 
 No parameter retuning has been performed after E0195.
+
+## 2026-09-25 — Phase 19 v2 runtime supersession
+
+The original Phase 19 corrected run `36042015205` is non-evidentiary after remaining in the friction step without artifacts. A static audit found E0197: the simulator still used the dataset `trading_day` field even after E0195 had established timestamp-derived IST `trade_date` as the authoritative key. Phase 19 v2 on `phase-19-nifty-short-strangle-regime-v2-runtime` preserves the frozen 144-cell grid and cost model, fixes the execution-date join, vectorizes exit-event calculation and performs exact cost-equivalence testing. Latest v2 run: `36043078139`; Stress has started cached-data acquisition and Base is queued. No P&L is accepted.
