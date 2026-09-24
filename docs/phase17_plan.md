@@ -40,3 +40,7 @@ No Phase 17 preliminary result is promoted without untouched walk-forward valida
 
 ## Promotion gate
 At least one configuration must be positive after full costs, remain positive under doubled slippage, reach ₹1,000 net per active lot per active trading day in an untouched test window, have sufficient trade/calendar coverage, and show no single tiny cluster dominating performance.
+
+
+## 2026-09-24 pre-run source verification
+The upstream TradeMarkk dataset tree shows NIFTY option files named by exact expiry date, such as 2021-05-27.parquet and successive weekly expiry files. The dataset card reports exact expiry/strike/option-type fields plus OHLCV/OI, making it suitable for this phase's contract-selection requirement.
