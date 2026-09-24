@@ -1,0 +1,93 @@
+name: Phase 15 - Reducer Repair From Completed Shards
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - phase-15-reducer-repair
+
+concurrency:
+  group: phase15-reducer-repair
+  cancel-in-progress: true
+
+jobs:
+  reduce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install reducer dependencies
+        run: pip install pandas numpy duckdb
+      - name: Download completed shard artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: phase15-shard-*
+          merge-multiple: false
+          path: shard_artifacts
+          repository: vishnuvcr/Daily-Options
+          run-id: 36012314061
+      - name: Aggregate WEEK and MONTH shards
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p reports/phase15-global
+          python - <<'PY'
+          from pathlib import Path
+          import json, pandas as pd
+          from research.phase15_vrp_jump_brake_short_vol import walk_forward
+
+          root=Path('shard_artifacts')
+          for fric in ('base','stress'):
+              parts=[]
+              for expiry in ('WEEK','MONTH'):
+                  p=root/f'phase15-shard-{expiry}'/expiry/fric/'phase15_trades.csv'
+                  if p.exists():
+                      parts.append(pd.read_csv(p))
+              trades=pd.concat(parts,ignore_index=True) if parts else pd.DataFrame()
+              out=Path('reports/phase15-global')
+              if trades.empty:
+                  summary={'trade_rows':0,'variants':288,'gate':'NO_TRADES','friction':fric}
+                  (out/f'phase15_{fric}_summary.json').write_text(json.dumps(summary,indent=2))
+                  continue
+              rows=[]
+              total_days=trades.trade_date.nunique()
+              for vid,g in trades.groupby('variant_id'):
+                  d=g.groupby('trade_date').net_pnl.sum()
+                  wins=g.loc[g.net_pnl>0,'net_pnl'].sum()
+                  losses=-g.loc[g.net_pnl<0,'net_pnl'].sum()
+                  rows.append({
+                      'variant_id':vid,'trades':len(g),'active_days':len(d),
+                      'mean_active_day_net':float(d.mean()),
+                      'mean_all_day_net':float(d.sum()/max(1,total_days)),
+                      'win_rate':float((g.net_pnl>0).mean()),
+                      'profit_factor':float(wins/max(1e-9,losses)),
+                      'max_drawdown':float((d.cumsum()-d.cumsum().cummax()).min()),
+                      'total_net':float(g.net_pnl.sum())
+                  })
+              board=pd.DataFrame(rows).sort_values('mean_all_day_net',ascending=False)
+              board.to_csv(out/f'phase15_{fric}_leaderboard.csv',index=False)
+              wf=walk_forward(trades)
+              wf.to_csv(out/f'phase15_{fric}_walk_forward.csv',index=False)
+              summary={
+                  'friction':fric,'variants':288,'trade_rows':int(len(trades)),
+                  'positive_variants':int((board.mean_all_day_net>0).sum()),
+                  'target_qualified_prelim':int((board.mean_all_day_net>=1000).sum()),
+                  'best':board.iloc[0].to_dict(),
+                  'walk_forward_windows':int(len(wf)),
+                  'positive_test_windows':int((wf.test_mean>0).sum()) if not wf.empty else 0,
+                  'target_test_windows':int((wf.test_mean>=1000).sum()) if not wf.empty else 0,
+                  'mean_test_window_net':float(wf.test_mean.mean()) if not wf.empty else None,
+                  'gate':'PASS_PRELIMINARY' if (board.iloc[0].mean_all_day_net>=1000 and not wf.empty and (wf.test_mean>=1000).any()) else 'FAIL_PRELIMINARY'
+              }
+              (out/f'phase15_{fric}_summary.json').write_text(json.dumps(summary,indent=2,default=str))
+          payload={f:json.loads((Path('reports/phase15-global')/f'phase15_{f}_summary.json').read_text()) for f in ('base','stress')}
+          (Path('reports/phase15-global')/'phase15_decision_summary.json').write_text(json.dumps(payload,indent=2,default=str))
+          print(json.dumps(payload,indent=2,default=str))
+          PY
+      - name: Upload repaired global report
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase15-repaired-global-result
+          path: reports/phase15-global/
