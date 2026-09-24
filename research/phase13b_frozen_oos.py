@@ -86,7 +86,15 @@ def simulate(signals: pd.DataFrame, options: pd.DataFrame, slippage: float) -> p
     for r in signals.itertuples(index=False):
         entry = pd.Timestamp(r.datetime) + pd.Timedelta(minutes=1)
         end = entry + pd.Timedelta(minutes=HOLD_MINUTES)
-        x = options[(options.trade_date == r.trade_date) & (options.datetime >= entry) & (options.datetime <= end)].sort_values('datetime')
+        x0 = options[(options.trade_date == r.trade_date) & (options.datetime >= entry) & (options.datetime <= end)].copy()
+        if x0.empty:
+            continue
+        expiry_dates = pd.to_datetime(x0['expiry'], errors='coerce').dropna().dt.date
+        future_expiries = sorted({d for d in expiry_dates if d >= r.trade_date})
+        if not future_expiries:
+            continue
+        selected_expiry = future_expiries[0]
+        x = x0[pd.to_datetime(x0['expiry'], errors='coerce').dt.date == selected_expiry].sort_values('datetime')
         if x.empty:
             continue
         first = x.iloc[0]
