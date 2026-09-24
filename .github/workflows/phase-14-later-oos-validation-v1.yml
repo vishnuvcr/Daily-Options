@@ -1,0 +1,71 @@
+name: Phase 14b - Later OOS Validation
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [phase-14-global-cross-market-opening-gap-later-oos-v1]
+concurrency:
+  group: phase14-later-oos-v1
+  cancel-in-progress: true
+jobs:
+  validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Install dependencies
+        run: pip install pandas numpy pyarrow duckdb pytest huggingface_hub yfinance
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_phase14_global_cross_market_opening_gap_later_oos.py
+      - name: Prepare option-data cache
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase14_later_oos
+          key: phase14-later-oos-options-artist23-45e0a04-v1
+      - name: Prepare global cache
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase14_later_global
+          key: phase14-later-global-2021-2024-v1
+      - name: Download pinned option data
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase14_later_oos
+          if [ ! -d data/cache/phase14_later_oos/NIFTY/MONTH ]; then
+            python - <<'PY'
+            from huggingface_hub import snapshot_download
+            snapshot_download(repo_id='artist-23/nifty-options-data', repo_type='dataset', revision='45e0a04', local_dir='data/cache/phase14_later_oos', allow_patterns=['NIFTY/MONTH/**'])
+            PY
+          fi
+          find data/cache/phase14_later_oos/NIFTY/MONTH -type f -name '*.parquet' | sed -n '1,10p'
+      - name: Acquire global data
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase14_later_global
+          python - <<'PY'
+          from pathlib import Path
+          import yfinance as yf
+          tickers={'SP500':'^GSPC','NASDAQ':'^IXIC','NIKKEI':'^N225'}
+          out=Path('data/cache/phase14_later_global')
+          for name,sym in tickers.items():
+              p=out/f'{name}.csv'
+              if p.exists() and p.stat().st_size>100: continue
+              df=yf.download(sym,start='2020-07-01',end='2024-04-02',auto_adjust=False,progress=False)
+              if df.empty: raise SystemExit(f'no data for {sym}')
+              if hasattr(df.columns,'levels'):
+                  df=df['Close']
+                  if hasattr(df,'columns'): df=df.iloc[:,0]
+              df.rename('Close').reset_index().to_csv(p,index=False)
+          PY
+      - name: Base later OOS
+        run: PYTHONPATH=. python -m research.phase14_global_cross_market_opening_gap_later_oos --root data/cache/phase14_later_oos --global-root data/cache/phase14_later_global --out reports/phase14-later-base --slippage 0.20
+      - name: Stress later OOS
+        run: PYTHONPATH=. python -m research.phase14_global_cross_market_opening_gap_later_oos --root data/cache/phase14_later_oos --global-root data/cache/phase14_later_global --out reports/phase14-later-stress --slippage 0.40
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase14-later-oos-validation-v1
+          path: reports/
