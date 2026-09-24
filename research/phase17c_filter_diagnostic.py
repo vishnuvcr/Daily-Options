@@ -10,7 +10,7 @@ def run(root: Path, out: Path):
     out.mkdir(parents=True, exist_ok=True)
     spot=load_spot(root)
     variants=variant_grid()
-    quotes=load_option_quotes(root, spot[["trade_date","ts"]].drop_duplicates())
+    quotes=load_option_quotes(root, spot[["trade_date","ts","close"]].drop_duplicates())
     setups=build_setups(spot, quotes)
 
     counts=[]
