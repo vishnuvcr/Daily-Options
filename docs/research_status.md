@@ -36,3 +36,14 @@ Status: candidate sources only; independent validation pending Phase 1.
 
 ## Next action
 Create phase-1-data-foundation with data manifests, download adapters, schema validation, cached sample datasets and automated quality checks.
+
+
+## Continuation checkpoint — 2026-09-24
+
+### Execution findings
+- Phase 8 v2 run 35937700542: tests/data acquisition passed, base computation failed on missing `open` in the executable-entry result. Current branch commit 7f1ed0b adds an explicit guard and preserves the intended option-open entry-price model.
+- Phase 9 run 35937112092: attempt 3 is currently running the base numerical stage after an infrastructure cancellation of the prior attempt.
+- Phase 10 run 35937773719: tests/data acquisition passed, base computation failed on pandas Series attribute access (`meta.leader`). Current branch commit 7558c90 replaces this with key-based access.
+
+### Research integrity
+No P&L from these failed runs is accepted. No parameter set was promoted or retuned from test-period results.
