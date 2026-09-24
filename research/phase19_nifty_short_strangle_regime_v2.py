@@ -73,11 +73,13 @@ def simulate(root: Path, unique_setups: pd.DataFrame, slippage: float) -> pd.Dat
             "signal_ts",
             "entry_ts",
             "expiry",
+            "short_offset",
             "put_strike",
             "call_strike",
             "put_entry",
             "call_entry",
             "entry_credit",
+            "short_offset",
         ]
     ].drop_duplicates()
     con.register("legs", legs)
@@ -132,6 +134,7 @@ def simulate(root: Path, unique_setups: pd.DataFrame, slippage: float) -> pd.Dat
             MAX(put_entry) AS put_entry,
             MAX(call_entry) AS call_entry,
             MAX(entry_credit) AS entry_credit,
+            MAX(short_offset) AS short_offset,
             ts_local,
             MAX(CASE WHEN option_type='PE' THEN high_px END) AS phigh,
             MAX(CASE WHEN option_type='PE' THEN low_px END) AS plow,
@@ -212,6 +215,7 @@ def simulate(root: Path, unique_setups: pd.DataFrame, slippage: float) -> pd.Dat
           w.put_entry,
           w.call_entry,
           w.entry_credit,
+          w.short_offset,
           w.put_strike,
           w.call_strike,
           w.ts_local AS exit_ts,
