@@ -291,3 +291,41 @@ For each index compute 5-minute return, 15-minute return and rolling intraday vo
 
 ### License constraint
 The public 1-minute dataset is CC-BY-NC-4.0, so even a successful result cannot be treated as a live-deployment data license. Promotion requires independent rerun on licensed/executable Paytm Money/NSE data.
+
+## 15. Phase 11 — Breakout/pullback continuation with option-flow confirmation
+
+### Research question
+Can an opening-range breakout that survives a quantified pullback and reclaims the breakout level generate a net intraday option edge when ATM option OI/volume confirmation agrees?
+
+### Rationale
+A recent public BankNIFTY scalping study describes breakout-and-pullback entries with VWAP and volume/OI confirmation, using very short holding periods and strict risk control. The source has a small sample and is not accepted as validation; it is only a mechanism source.
+
+### Pre-registration
+64 variants:
+- opening range: 5 / 15 minutes;
+- breakout excursion: 0.05% / 0.10%;
+- pullback tolerance: 0.02% / 0.05%;
+- entry clock: 09:45 / 10:00 IST;
+- maximum hold: 15 / 30 minutes;
+- exit profile: stop 20% or 30% of debit with target 50% or 80% of debit.
+
+Fixed spread width: 1 strike step. Underlying: BANKNIFTY. The signal's first qualifying event per day/variant is used.
+
+### Signal
+Bullish:
+1. spot closes above opening-range high by the excursion;
+2. later trades back within the pullback tolerance of the breakout level;
+3. closes back above the level;
+4. ATM call volume/OI confirmation is positive versus the corresponding put.
+
+Bearish is symmetric.
+
+### Execution
+Next executable minute after re-confirmation. Contract expiry and strikes are selected at entry and frozen. Defined-risk call/put debit spread. Stop/target collision resolves in favor of the stop.
+
+### Costs
+Repository brokerage/statutory/exchange cost model; date-aware BANKNIFTY lot sizes; 0.20 and 0.40 premium-point slippage runs.
+
+### Promotion
+Preliminary mean active-day net >= Rs 1,000/lot.
+Formal promotion requires untouched OOS positive expectancy, at least one untouched test window >= Rs 1,000/lot/day, and stress-cost survival.
