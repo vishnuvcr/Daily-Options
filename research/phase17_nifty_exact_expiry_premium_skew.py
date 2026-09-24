@@ -277,12 +277,18 @@ def lot(d):
 def simulate(root, unique_setups, out, slippage):
     if unique_setups.empty:
         return pd.DataFrame()
+
     files=dict(expiry_files(root))
+    setup_df=unique_setups.reset_index(drop=True).copy()
+    setup_df["setup_id"]=np.arange(len(setup_df),dtype=np.int64)
+
     con=duckdb.connect()
     con.execute("SET TimeZone='Asia/Kolkata'")
-    con.register("legs",unique_setups[[
-        "trade_date","entry_ts","expiry","side","short_strike","wing_strike"
-    ]].drop_duplicates())
+    legs=setup_df[[
+        "setup_id","trade_date","entry_ts","expiry","side","short_strike","wing_strike"
+    ]].drop_duplicates()
+    con.register("legs",legs)
+
     chunks=[]
     for expiry_date,path in sorted(files.items()):
         active=int(con.execute("SELECT COUNT(*) FROM legs WHERE expiry=?", [expiry_date]).fetchone()[0])
@@ -290,7 +296,8 @@ def simulate(root, unique_setups, out, slippage):
             continue
         q=f"""
         SELECT
-          o."timestamp" AS ts,
+          l.setup_id,
+          CAST(o."timestamp" AS TIMESTAMP) AS ts_local,
           CAST(o.trading_day AS DATE) AS trade_date,
           CAST(o.strike AS DOUBLE) AS strike,
           CAST(o.option_type AS VARCHAR) AS option_type,
@@ -303,34 +310,27 @@ def simulate(root, unique_setups, out, slippage):
          AND CAST(o.trading_day AS DATE)=l.trade_date
          AND o.option_type=(CASE WHEN l.side='PUT' THEN 'PE' ELSE 'CE' END)
          AND CAST(o.strike AS DOUBLE) IN(l.short_strike,l.wing_strike)
-         AND o."timestamp">=l.entry_ts
-         AND o."timestamp"<=l.entry_ts+INTERVAL '30 minutes'
+         AND CAST(o."timestamp" AS TIMESTAMP)>=l.entry_ts
+         AND CAST(o."timestamp" AS TIMESTAMP)<=l.entry_ts+INTERVAL '30 minutes'
         WHERE o."close">0
         """
         z=con.execute(q).df()
         if not z.empty:
-            z["ts"]=ist_ts(z["ts"])
+            z["ts"]=pd.to_datetime(z["ts"]).dt.floor("min")
             z["expiry"]=expiry_date
             chunks.append(z)
     con.close()
+
     if not chunks:
         return pd.DataFrame()
+
     win=pd.concat(chunks,ignore_index=True)
+    setup_lookup=setup_df.set_index("setup_id")
+
     trades=[]
-    for _,r in unique_setups.drop_duplicates([
-        "trade_date","entry_ts","expiry","side","width","short_strike","wing_strike"
-    ]).iterrows():
-        option_code="PE" if r.side=="PUT" else "CE"
-        q=win[
-            (win.trade_date==r.trade_date)&
-            (win.expiry==r.expiry)&
-            (win.option_type==option_code)&
-            (win.strike.isin([r.short_strike,r.wing_strike]))&
-            (win.ts>=r.entry_ts)&
-            (win.ts<=r.entry_ts+pd.Timedelta(minutes=max(HOLDS)))
-        ]
-        if q.empty:
-            continue
+    for setup_id,q in win.groupby("setup_id",sort=False):
+        r=setup_lookup.loc[setup_id]
+        q=q[q.trade_date==r.trade_date]
         a=q[q.strike==r.short_strike][["ts","high","low","close_px"]].rename(
             columns={"high":"shigh","low":"slow","close_px":"sclose"}
         )
@@ -340,12 +340,14 @@ def simulate(root, unique_setups, out, slippage):
         m=a.merge(b,on="ts").sort_values("ts")
         if m.empty:
             continue
+
         for hold in HOLDS:
             mm=m[m.ts<=r.entry_ts+pd.Timedelta(minutes=hold)]
             if mm.empty:
                 continue
             hi=mm.shigh-mm.wlow
             lo=mm.slow-mm.whigh
+
             for stop in STOPS:
                 stopv=float(r.entry_credit)*stop
                 target=float(r.entry_credit)*TARGET_RATIO
@@ -353,19 +355,25 @@ def simulate(root, unique_setups, out, slippage):
                 ti=np.flatnonzero(lo<=target)
                 si=int(si[0]) if len(si) else 10**9
                 ti=int(ti[0]) if len(ti) else 10**9
+
                 if si<=ti and si<10**9:
                     ix,reason=si,"STOP"
                 elif ti<10**9:
                     ix,reason=ti,"TARGET"
                 else:
                     ix,reason=len(mm)-1,"TIME"
+
                 er=mm.iloc[ix]
                 net=OptionCostModel().vertical_credit_spread_net_pnl(
-                    float(r.short_entry),float(r.wing_entry),
-                    float(er.sclose),float(er.wclose),
-                    lot(r.trade_date),slippage_points=slippage
+                    float(r.short_entry),
+                    float(r.wing_entry),
+                    float(er.sclose),
+                    float(er.wclose),
+                    lot(r.trade_date),
+                    slippage_points=slippage
                 )
                 trades.append({
+                    "setup_id":int(setup_id),
                     "trade_date":r.trade_date,
                     "ts":r.ts,
                     "expiry":r.expiry,
@@ -379,6 +387,7 @@ def simulate(root, unique_setups, out, slippage):
                     "reason":reason,
                     "entry_credit":float(r.entry_credit)
                 })
+
     return pd.DataFrame(trades)
 
 def summarize(trades, signal_count, slippage, out):
