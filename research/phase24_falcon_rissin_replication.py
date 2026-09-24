@@ -185,7 +185,12 @@ def load_entry_chain(con, files, trade_date, start_ts, end_ts, expiry_dates):
         AND close > 0
       ORDER BY ts, expiry, strike, option_type
     """
-    return con.execute(q).df()
+    x = con.execute(q).df()
+    if x.empty:
+        return x
+    x["ts"] = pd.to_datetime(x["ts"]).dt.floor("min")
+    x["expiry"] = pd.to_datetime(x["expiry"]).dt.date
+    return x
 
 
 def load_series(con, files, expiry, strike, side, start_ts, end_ts):
