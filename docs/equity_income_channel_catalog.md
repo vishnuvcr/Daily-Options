@@ -30,27 +30,33 @@ Channel description identifies options selling/buying, risk-managed NIFTY/BankNI
 - “Set & Strike Weekly Options Method for Working People”: YouTube result published 2025-06-27.
 - “This Payoff Hits like a Missile”: transcript/indexed reconstruction published/analysed in 2026-09; secondary transcript source.
 
-## User-supplied video — identified
+## User-supplied video — formalized from transcript
 
 ### Falcon Spread — “Top Hedging Trick Public Won't Know”
 - YouTube URL: https://youtu.be/Cl5i-lWAzeo
-- Video title shown in the supplied screenshot: **Falcon Spread - Top Hedging Trick Public Won't Know**.
+- Video title: **Falcon Spread - Top Hedging Trick Public Won't Know**.
 - Channel: **Equity Income**.
-- Published date shown: **4 Jun 2025**.
-- Duration shown: **14:33**.
-- The description states that the method concerns options strategies with reward-to-risk after adjustment and scenarios intended to control risk for overnight gap-ups/down. This establishes the research hypothesis, not profitability.
-- Screenshot of the payoff interface confirms this is a multi-leg options structure with adjustment/hedging logic, but the exact leg construction and adjustment triggers are not sufficiently legible to encode without the video/transcript.
-- **Status: INCLUDED in Phase 23; exact-rule reconstruction pending.**
-- Priority: **high**, because it is a distinct named hedging structure and explicitly addresses gap risk.
-- Test requirement: reconstruct every leg, strike-selection rule, expiry, entry time, adjustment trigger, hedge trigger, exit rule and transaction sequence before numerical testing. No discretionary interpretation will be inserted.
+- Published: **4 Jun 2025**.
+- Duration: **14:33**.
 
-## User-supplied video pending transcription
+#### Source-derived strategy rules supplied by the user
+1. **Friday initial entry:** open a 5:3 ratio/diagonal strangle for the new weekly cycle. Sell 5 lots of the near/current-week CE and 5 lots of the near/current-week PE, targeting about **25 premium points per short leg**. Buy 3 lots of next-week CE and 3 lots of next-week PE, targeting about **25 premium points per long leg**.
+2. **Monday defensive conversion:** after initial weekend/early-week decay, buy 5 lots of the near-week CE one strike above the original short CE strike and buy 5 lots of the near-week PE one strike below the original short PE strike. This caps the near-week short-call and short-put tails while retaining the 3-lot next-week long options.
+3. **Risk control:** use a hard stop; the user-supplied transcript summary does not specify the hard-stop threshold numerically, so the backtest must preregister a finite threshold grid rather than invent a value.
+4. **Time-out:** close the whole structure by **Wednesday** and do not hold into Thursday/0-DTE expiry.
+5. **Premium discipline:** the source emphasizes the approximately **25-point premium zone** and warns against materially tightening the strangle by selling much richer/closer premiums such as 50 points.
+6. **Economic intent:** capture weekend/early-week theta while reducing the left/right tail exposure after Monday's adjustment. This is a hypothesis, not evidence of profitability.
 
+#### Formalization choices that are not claimed as source facts
+- Friday signal time is not specified in the supplied transcript summary. Phase 24 will therefore test a small preregistered Friday-time sensitivity grid rather than silently selecting a time from results.
+- The phrase “matching short premium” does not explicitly state whether the 3-lot far-week options use the same strikes as the near-week shorts or independently selected strikes. The primary reconstruction treats the structure as a **diagonal** and therefore selects far-week strikes independently at approximately the same 25-point premium target; a same-strike interpretation is retained as a sensitivity variant.
+- “One strike above/below” means exactly one listed NIFTY strike increment from the original near-week short strike on the same option side.
+- “By Wednesday” is implemented as the last available liquid minute on Wednesday before the close, with the exact execution convention fixed before numerical results are accepted.
 
-- Exact URL: https://youtu.be/Cl5i-lWAzeo
-- Video ID: Cl5i-lWAzeo
-- Status: **Not yet classified**. The public web index did not return reliable title/transcript metadata for this exact ID, and the repository catalogue does not contain the ID yet.
-- Research action: keep this URL in the Phase 23 source queue and classify the strategy once reliable video metadata/transcript is available. No strategy claim is inferred from the URL alone.
+#### Phase-24 test status
+- **Status: READY FOR NUMERICAL VALIDATION.**
+- Priority: **high** because the transcript now provides concrete entry, adjustment, expiry and risk-control mechanics for a named multi-leg structure that is distinct from the previously tested credit-spread families.
+- No discretionary intraday adjustment will be inserted. Every trade leg, timestamp, strike, expiry, stop and cost must be represented explicitly in the simulator.
 
 ## Evidence rule
 Descriptions and transcripts can specify a hypothesis. They do not establish profitability. Any numerical result must come from the repository's reproducible backtest pipeline with realistic costs and out-of-sample validation.
