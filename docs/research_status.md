@@ -111,3 +111,12 @@ Phase 10 (cross-index relative-strength debit spreads) is **RETIRED** after a co
 - No result-based retuning was performed.
 
 Phase 10 result archive: `reports/phase10/` on `phase-10-cross-index-1m-v4-exec`.
+
+
+## 2026-09-24 — Phase 16 integrity checkpoint
+
+Phase 16 remains **PRE-RESULT**. Run 36021088602 failed at unit-test collection because of the escaped f-string defect (E0146); no market-data or P&L stage ran and no artifact was accepted.
+
+A second implementation audit of corrected head ef9435df found three additional validity issues before rerunning: the 30-minute hold cells were not actually limited to 30 minutes (E0157); nearest actual expiry was not carried deterministically through feature/entry/window selection (E0158); and the workflow could cancel a prior computation on a new push (E0159).
+
+These are now corrected on the same Phase 16 branch. The research grid, thresholds, entry times, stop/target ratios, side definitions, slippage levels and cost model are unchanged. The next run is the first eligible numerical validation; no prior Phase 16 P&L is accepted.

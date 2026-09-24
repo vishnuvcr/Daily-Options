@@ -7,7 +7,7 @@ on:
 
 concurrency:
   group: phase16-skew-v1
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   research:
@@ -16,6 +16,7 @@ jobs:
       matrix:
         expiry: [WEEK, MONTH]
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

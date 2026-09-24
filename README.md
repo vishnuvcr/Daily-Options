@@ -108,3 +108,8 @@ The next accepted candidate must still clear the unchanged ₹1,000 net/active-l
 ## Latest completed research result — Phase 10
 
 Phase 10 is retired after complete base/stress + walk-forward validation: best base ₹-113.62/lot/day, best stress ₹-136.48/lot/day, and no positive untouched WFA window. Result reports are archived under `reports/phase10/` on the Phase 10 execution branch. The active search continues through the remaining preregistered families and the next distinct phase only if required.
+
+
+## Phase 16 integrity correction — 2026-09-24
+
+The active Phase 16 IV-skew tail-credit family remains **pre-result**. Run 36021088602 failed during unit-test collection, so it generated no numerical evidence. Before the next run, an implementation audit identified and corrected hold-window enforcement, deterministic nearest-future-expiry selection, and CI cancellation behavior. The 288-cell preregistered grid and cost/slippage assumptions are unchanged. No Phase 16 P&L is accepted until the corrected branch passes tests and completes both base and stress runs.
