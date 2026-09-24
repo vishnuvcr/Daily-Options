@@ -127,3 +127,8 @@ Phase 17 uses exact-expiry NIFTY option files, a frozen 384-cell grid, base/stre
 ## Phase 18 v2 isolated execution
 
 Superseded Phase 18 runs were cancelled before job creation after branch updates. The authoritative v2 execution branch is `phase-18-nifty-iron-condor-regime-v2` with a unique concurrency group. No Phase 18 P&L is accepted until this isolated run completes Base and Stress.
+
+
+## Phase 19 — two-leg short-strangle frontier
+
+Phase 18 retired on zero executable four-leg setups (E0190). Phase 19 is now authoritative: exact-expiry NIFTY short strangle, 144 frozen cells, Base/Stress friction, 3-minute common-entry feasibility, and the same realistic Paytm Money/NSE cost model.
