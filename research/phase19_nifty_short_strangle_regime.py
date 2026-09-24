@@ -134,13 +134,11 @@ def load_exact_quotes(root, spot):
     files = expiry_files(root)
     chosen = {d: expiry_for_day(files, d) for d in spot["trade_date"].unique()}
     chosen = {d: x for d, x in chosen.items() if x is not None}
-
-    wanted = spot[["trade_date", "ts"]].drop_duplicates().copy()
-    wanted["end_ts"] = wanted["ts"] + pd.Timedelta(minutes=MAX_ENTRY_DELAY_MINUTES)
+    if not chosen:
+        return pd.DataFrame()
 
     con = duckdb.connect()
     con.execute("SET TimeZone='Asia/Kolkata'")
-    con.register("wanted", wanted)
     chunks = []
 
     for expiry_date, path in sorted(set(chosen.values()), key=lambda x: x[0]):
@@ -149,21 +147,19 @@ def load_exact_quotes(root, spot):
             continue
         vals = ",".join(f"DATE '{d}'" for d in dates)
         q = f"""
-        SELECT o."timestamp" AS ts,
-               CAST(o.trading_day AS DATE) AS trade_date,
-               CAST(o.strike AS DOUBLE) AS strike,
-               CAST(o.option_type AS VARCHAR) AS option_type,
-               CAST(o.open AS DOUBLE) AS open_px,
-               CAST(o.high AS DOUBLE) AS high,
-               CAST(o.low AS DOUBLE) AS low,
-               CAST(o."close" AS DOUBLE) AS close_px
-        FROM read_parquet('{path}') o
-        JOIN wanted w
-          ON CAST(o.trading_day AS DATE)=w.trade_date
-         AND o."timestamp">=w.ts
-         AND o."timestamp"<=w.end_ts
-        WHERE CAST(o.trading_day AS DATE) IN ({vals})
-          AND o."close">0
+        SELECT "timestamp" AS ts,
+               CAST(trading_day AS DATE) AS trade_date,
+               CAST(strike AS DOUBLE) AS strike,
+               CAST(option_type AS VARCHAR) AS option_type,
+               CAST(open AS DOUBLE) AS open_px,
+               CAST(high AS DOUBLE) AS high,
+               CAST(low AS DOUBLE) AS low,
+               CAST("close" AS DOUBLE) AS close_px
+        FROM read_parquet('{path}')
+        WHERE CAST(trading_day AS DATE) IN ({vals})
+          AND "close" > 0
+          AND CAST("timestamp" AS TIME) >= TIME '14:30:00'
+          AND CAST("timestamp" AS TIME) <= TIME '15:03:00'
         """
         z = con.execute(q).df()
         if not z.empty:
@@ -173,7 +169,6 @@ def load_exact_quotes(root, spot):
 
     con.close()
     return pd.concat(chunks, ignore_index=True) if chunks else pd.DataFrame()
-
 
 def build_setups(spot, quotes):
     if quotes.empty:
