@@ -93,6 +93,8 @@ def load_selected_expiry_rows(root: Path, signals: pd.DataFrame) -> pd.DataFrame
         return out
 
     out["datetime_utc"] = pd.to_datetime(out["datetime_utc"], utc=True).dt.tz_localize(None)
+    out["trade_date"] = pd.to_datetime(out["trade_date"], errors="coerce").dt.date
+    out["expiry"] = pd.to_datetime(out["expiry"], errors="coerce").dt.date
     out["option_type"] = out["option_type"].replace({
         "CE": "CALL",
         "PE": "PUT",
