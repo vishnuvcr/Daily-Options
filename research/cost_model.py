@@ -97,3 +97,51 @@ class OptionCostModel:
         gst = self.gst_rate * (brokerage + exchange + sebi)
         slippage = 4.0 * slippage_points * multiplier
         return gross - (brokerage + exchange + sebi + stt + stamp + gst + slippage)
+
+
+    def vertical_credit_spread_net_pnl(
+        self,
+        short_entry: float,
+        long_entry: float,
+        short_exit: float,
+        long_exit: float,
+        lot_size: int,
+        qty: int = 1,
+        slippage_points: float = 0.20,
+    ) -> float:
+        """Net P&L for a defined-risk credit spread.
+
+        Legs:
+        1) sell short option at entry
+        2) buy long hedge at entry
+        3) buy short option back at exit
+        4) sell long hedge at exit
+        """
+        multiplier = qty * lot_size
+        gross = (
+            (short_entry - long_entry)
+            - (short_exit - long_exit)
+        ) * multiplier
+
+        turnover = (
+            short_entry + long_entry + short_exit + long_exit
+        ) * multiplier
+        brokerage = 4.0 * self.brokerage_per_order
+        exchange = turnover * self.exchange_rate
+        sebi = turnover * self.sebi_rate
+
+        stt = (
+            (short_entry + long_exit)
+            * multiplier
+            * self.stt_sell_rate
+        )
+        stamp = (
+            (long_entry + short_exit)
+            * multiplier
+            * self.stamp_buy_rate
+        )
+        gst = self.gst_rate * (brokerage + exchange + sebi)
+        slippage = 4.0 * slippage_points * multiplier
+        return gross - (
+            brokerage + exchange + sebi + stt + stamp + gst + slippage
+        )
