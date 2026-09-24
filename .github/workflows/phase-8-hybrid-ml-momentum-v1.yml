@@ -2,6 +2,9 @@ name: Phase 8 - Hybrid Momentum and Option Confirmation
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - phase-8-hybrid-ml-momentum-v1
