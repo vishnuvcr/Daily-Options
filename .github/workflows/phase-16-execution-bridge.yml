@@ -6,7 +6,7 @@ on:
       phase_ref:
         description: "Exact Phase 16 commit to execute"
         required: true
-        default: "ffbf7845f763ffa69bce42cc0885bba8d1cce5af"
+        default: "65528f8e6012f1a9dfed15150d5ee1a3e557c6d7"
   push:
     branches: [main]
   pull_request:
@@ -28,7 +28,7 @@ jobs:
       - name: Checkout Phase 16 ref
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.phase_ref || 'ffbf7845f763ffa69bce42cc0885bba8d1cce5af' }}
+          ref: ${{ inputs.phase_ref || '65528f8e6012f1a9dfed15150d5ee1a3e557c6d7' }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -63,4 +63,4 @@ jobs:
           name: phase16-bridge-${{ matrix.expiry }}
           path: reports/
       - name: Record execution ref
-        run: echo "Phase 16 executed at ffbf7845f763ffa69bce42cc0885bba8d1cce5af" >> "$GITHUB_STEP_SUMMARY"
+        run: echo "Phase 16 executed at 65528f8e6012f1a9dfed15150d5ee1a3e557c6d7" >> "$GITHUB_STEP_SUMMARY"
