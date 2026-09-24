@@ -383,26 +383,47 @@ def _merge_leg_bars(path_a: str, path_b: str, entry_time: pd.Timestamp, max_hold
 
 def build_entries(features_by_window: dict[int, pd.DataFrame], manifest: pd.DataFrame) -> pd.DataFrame:
     rows = []
+    expiry_cache: dict[tuple[object, str], object] = {}
+    strike_cache: dict[tuple[object, object, str], tuple[object, object] | None] = {}
+
     for v in variant_grid():
         x = features_by_window[v.lead_window]
         x = x[(x["trade_time_ist"] >= v.entry_time)].copy()
         x = x[(x["lead_gap"].abs() >= v.threshold)]
         x = x[((x["fut_z"] > 0) & (x["spot_z"] > 0)) | ((x["fut_z"] < 0) & (x["spot_z"] < 0))]
+
         for d, day in x.groupby("trade_date", sort=True):
             r = day.iloc[0]
             signal_time = r["datetime"]
             entry_time = signal_time + pd.Timedelta(minutes=1)
-            mode = v.expiry_mode
-            expiry = _choose_expiry(manifest, d, mode)
+
+            expiry_key = (d, v.expiry_mode)
+            if expiry_key not in expiry_cache:
+                expiry_cache[expiry_key] = _choose_expiry(manifest, d, v.expiry_mode)
+            expiry = expiry_cache[expiry_key]
             if expiry is None:
                 continue
+
             side = "CE" if r["direction"] == "CALL" else "PE"
-            pair = _choose_strikes(manifest, expiry, side, float(r["spot_close"]), v.width_steps, d)
+            strike_key = (d, expiry, side)
+            if strike_key not in strike_cache:
+                strike_cache[strike_key] = _choose_strikes(
+                    manifest, expiry, side, float(r["spot_close"]), v.width_steps, d
+                )
+
+            pair = strike_cache[strike_key]
             if pair is None:
                 continue
+
+            # Width selection is the only variant-specific part of the cached strike universe.
+            if v.width_steps == 1:
+                pair = _choose_strikes(manifest, expiry, side, float(r["spot_close"]), 1, d)
+            else:
+                pair = _choose_strikes(manifest, expiry, side, float(r["spot_close"]), v.width_steps, d)
+            if pair is None:
+                continue
+
             p_atm, p_wing = pair
-            atm = float(p_atm["strike"])
-            wing = float(p_wing["strike"])
             rows.append({
                 "variant_id": v.key,
                 "trade_date": d,
@@ -411,8 +432,8 @@ def build_entries(features_by_window: dict[int, pd.DataFrame], manifest: pd.Data
                 "direction": r["direction"],
                 "expiry": expiry,
                 "side": side,
-                "atm_strike": atm,
-                "wing_strike": wing,
+                "atm_strike": float(p_atm["strike"]),
+                "wing_strike": float(p_wing["strike"]),
                 "atm_path": p_atm["path"],
                 "wing_path": p_wing["path"],
                 "spot": float(r["spot_close"]),
