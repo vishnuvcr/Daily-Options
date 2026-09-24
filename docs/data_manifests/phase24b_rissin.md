@@ -1,7 +1,7 @@
 # Phase 24b data manifest — Rissin/Upstox
 
 Source: https://huggingface.co/datasets/rissin/nse-options-intraday
- pinned revision: 78b1c5468255d18cf492984bfe6fe4e3ac874d7c
+ pinned revision: 8f7739cab3f38abdcbc6332a6d0a83e1341326e3
 Track: upstox_intraday
 Underlying: NIFTY
 Partitions used: 2024, 2025, 2026
