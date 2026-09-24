@@ -16,10 +16,7 @@ on:
       - "research/phase10_contracts.py"
 
 concurrency:
-  # Never serialize research runs behind a slow archive download.
-  # Each commit is independently reproducible; a newer corrected head
-  # must be able to start immediately.
-  group: phase12-zenodo-v3-${{ github.sha }}
+  group: phase12-zenodo-v3
   cancel-in-progress: true
 
 jobs:
@@ -145,8 +142,8 @@ jobs:
           from pathlib import Path
           import pandas as pd
           from research.phase12_zenodo_pilot import (
-              LEAD_WINDOWS, _load_option_path, build_entries,
-              lead_features, load_zenodo_market, discover_option_manifest
+              LEAD_WINDOWS, load_zenodo_market, discover_option_manifest,
+              lead_features, build_entries, _load_option_path
           )
 
           root = Path("data/cache/phase12_zenodo")
@@ -154,59 +151,51 @@ jobs:
           features = {w: lead_features(futures, spot, w) for w in LEAD_WINDOWS}
           manifest = discover_option_manifest(root / "options")
           entries = build_entries(features, manifest)
-          feature_days = {str(w): int(features[w]["trade_date"].nunique()) for w in features}
-          feature_date_ranges = {
-              str(w): {
-                  "min": str(features[w]["trade_date"].min()),
-                  "max": str(features[w]["trade_date"].max()),
-              }
-              for w in features
-          }
-          entry_date_counts = (
-              entries.groupby("trade_date").size().sort_values(ascending=False).head(20).to_dict()
-              if not entries.empty else {}
-          )
 
-          audit = {
-              "feature_days": feature_days,
-              "feature_date_ranges": feature_date_ranges,
-              "entry_date_counts_top20": {str(k): int(v) for k, v in entry_date_counts.items()},
-              "entries": int(len(entries)),
-              "unique_atm_paths": int(entries.atm_path.nunique()) if not entries.empty else 0,
-              "unique_wing_paths": int(entries.wing_path.nunique()) if not entries.empty else 0,
-              "entry_rows_with_both_legs": 0,
-              "examples": [],
-          }
-
-          for rec in entries.head(20).itertuples(index=False):
-              try:
-                  a = _load_option_path(rec.atm_path)
-                  b = _load_option_path(rec.wing_path)
-                  aa = a[a["datetime"] >= pd.Timestamp(rec.entry_time)]
-                  bb = b[b["datetime"] >= pd.Timestamp(rec.entry_time)]
-                  both = a.merge(b, on="datetime", how="inner")
-                  overlap = both[(both["datetime"] >= pd.Timestamp(rec.entry_time)) &
-                                 (both["datetime"] <= pd.Timestamp(rec.entry_time) + pd.Timedelta(minutes=5))]
-                  if not overlap.empty:
-                      audit["entry_rows_with_both_legs"] += 1
-                  audit["examples"].append({
-                      "entry_time": str(rec.entry_time),
-                      "atm_path": rec.atm_path,
-                      "wing_path": rec.wing_path,
-                      "atm_rows_after_entry": int(len(aa)),
-                      "wing_rows_after_entry": int(len(bb)),
-                      "overlap_rows_5m": int(len(overlap)),
-                      "first_atm_ts": str(a["datetime"].min()) if not a.empty else None,
-                      "first_wing_ts": str(b["datetime"].min()) if not b.empty else None,
-                  })
-              except Exception as exc:
-                  audit["examples"].append({"error": repr(exc), "atm_path": rec.atm_path, "wing_path": rec.wing_path})
-
-          print(json.dumps(audit, indent=2))
           if entries.empty:
               raise SystemExit("No entries generated; stop before P&L")
-          if audit["entry_rows_with_both_legs"] == 0:
-              raise SystemExit("Zero sampled entries have both option legs overlapping the entry timestamp")
+
+          coverage_ok = (
+              entries["atm_path"].map(lambda p: True) &
+              entries["wing_path"].map(lambda p: True)
+          )
+          # Re-check coverage metadata for every generated entry without loading full option files.
+          m = manifest.set_index("path")
+          for col in ("atm_path", "wing_path"):
+              st = entries[col].map(m["coverage_start"])
+              en = entries[col].map(m["coverage_end"])
+              dates = pd.to_datetime(entries["trade_date"])
+              coverage_ok &= (st.isna() | (pd.to_datetime(st) <= dates)) & (en.isna() | (pd.to_datetime(en) >= dates))
+
+          if not coverage_ok.all():
+              raise SystemExit("Generated entries contain option files outside their declared coverage dates")
+
+          # Load only two representative leg pairs for direct timestamp confirmation.
+          sampled = entries[["entry_time","atm_path","wing_path"]].drop_duplicates().head(2)
+          examples = []
+          for rec in sampled.itertuples(index=False):
+              a = _load_option_path(rec.atm_path)
+              b = _load_option_path(rec.wing_path)
+              start = pd.Timestamp(rec.entry_time)
+              stop = start + pd.Timedelta(minutes=5)
+              overlap = a.merge(b, on="datetime", how="inner")
+              overlap = overlap[(overlap["datetime"] >= start) & (overlap["datetime"] <= stop)]
+              examples.append({
+                  "entry_time": str(start),
+                  "atm_path": rec.atm_path,
+                  "wing_path": rec.wing_path,
+                  "overlap_rows_5m": int(len(overlap)),
+              })
+          if not any(x["overlap_rows_5m"] > 0 for x in examples):
+              raise SystemExit(f"Sampled option legs have no timestamp overlap: {examples}")
+
+          print(json.dumps({
+              "entries": int(len(entries)),
+              "unique_entry_days": int(entries.trade_date.nunique()),
+              "unique_variants": int(entries.variant_id.nunique()),
+              "coverage_failures": int((~coverage_ok).sum()),
+              "sample_examples": examples,
+          }, indent=2, default=str))
           PY
 
       - name: Base friction
