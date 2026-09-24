@@ -47,3 +47,9 @@ Create phase-1-data-foundation with data manifests, download adapters, schema va
 
 ### Research integrity
 No P&L from these failed runs is accepted. No parameter set was promoted or retuned from test-period results.
+
+## Latest engineering checkpoint — 2026-09-24
+
+- Phase 10 additional defect E0074 corrected in commit 5adf689; no result accepted.
+- Phase 11 additional defect E0075 isolated and corrected on dedicated v2 branch; PR #12 is open.
+- Phase 9 remains result-pending after repeated runner cancellation; CI was hardened before further interpretation.
