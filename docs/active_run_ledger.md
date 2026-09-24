@@ -35,3 +35,5 @@ The prior Phase 2/3/3F/3G/3H/3I results remain frozen and are not being retuned 
 
 
 - Phase 11: implementation commits 2c9e442, 379c853, 8bfcfe9, 2178adc, then side-selection fix 1b6314c. CI is now triggered from the corrected branch; no result is accepted yet.
+
+- Phase 9 attempt 3 job 107543124203 also cancelled by runner shutdown; no P&L accepted. Workflow concurrency was hardened to `cancel-in-progress: false`, and commit 20fa261f starts the next clean branch execution.
