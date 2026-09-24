@@ -212,3 +212,8 @@ Phase 17 is now the active family: exact-expiry NIFTY premium-skew plus option-f
 ## 2026-09-24 — Phase 17 v1 invalidation and v2 launch
 
 The clean-looking v1 run `36033082279` is **NON-EVIDENTIARY**: both base and stress produced zero trades because of an option-code mapping defect plus undefined setup-entry variables (E0166). Phase 17 remains the active research family. The corrected v2 branch uses TradeMarkk exact-expiry files, source-native CE/PE codes, next-minute open entry premiums, exact-expiry execution windows, and the unchanged 384-cell frozen grid.
+
+
+## 2026-09-24 — Phase 17 v2 execution checkpoint
+
+PR #27 is the authoritative corrected Phase 17 execution candidate. The preceding v1 result (`36033082279`) is non-evidentiary because setup construction was invalid (E0166). The v2 branch is ready for base/stress execution with the unchanged 384-cell frozen grid and exact-expiry TradeMarkk source.
