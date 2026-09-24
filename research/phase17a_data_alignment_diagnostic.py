@@ -72,7 +72,7 @@ def probe_file(path: Path, trade_date):
           CAST(open_interest AS DOUBLE) AS oi
         FROM read_parquet('{p}')
         WHERE CAST(trading_day AS DATE)=DATE '{trade_date}'
-          AND CAST("timestamp" AS TIME) IN (
+          AND strftime("timestamp", '%H:%M:%S') IN (
             TIME '14:30:00', TIME '14:31:00',
             TIME '14:45:00', TIME '14:46:00',
             TIME '15:00:00', TIME '15:01:00'
