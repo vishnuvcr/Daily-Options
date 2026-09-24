@@ -27,7 +27,6 @@ def feature_query(root, expiry_type):
     WITH b AS (
       SELECT CAST(datetime AS TIMESTAMP) datetime,
              CAST(CAST(datetime AS TIMESTAMP)+INTERVAL '5 hours 30 minutes' AS DATE) trade_date,
-             CAST(expiry AS DATE) expiry,
              expiry_type,
              option_type,
              strike_type,
@@ -35,23 +34,19 @@ def feature_query(root, expiry_type):
              CAST(iv AS DOUBLE) iv
       FROM read_parquet({g}, union_by_name=true)
       WHERE close>0 AND iv BETWEEN 0 AND 300
-        AND expiry IS NOT NULL
-        AND CAST(expiry AS DATE) >= CAST(CAST(datetime AS TIMESTAMP)+INTERVAL '5 hours 30 minutes' AS DATE)
         AND STRFTIME(CAST(datetime AS TIMESTAMP)+INTERVAL '5 hours 30 minutes','%H:%M:%S')
             BETWEEN '09:30:00' AND '10:30:00'
     ),
     nb AS (
-      SELECT *,
-        MIN(expiry) OVER(PARTITION BY datetime, trade_date, expiry_type) nearest_expiry
+      SELECT *
       FROM b
     ),
     m AS (
-      SELECT datetime, trade_date, nearest_expiry AS expiry, expiry_type, MAX(spot) spot,
+      SELECT datetime, trade_date, expiry_type, MAX(spot) spot,
         AVG(CASE WHEN option_type='PUT' AND strike_type='ATM-2' THEN iv END) put_iv,
         AVG(CASE WHEN option_type='CALL' AND strike_type='ATM+2' THEN iv END) call_iv
       FROM nb
-      WHERE expiry=nearest_expiry
-      GROUP BY datetime, trade_date, nearest_expiry, expiry_type
+      GROUP BY datetime, trade_date, expiry_type
     ),
     dense AS (
       SELECT *,
@@ -90,7 +85,7 @@ def variant_grid(expiry):
 def signals(feat,v):
     m=(feat.ist_time==v['entry_time'])&(feat.skew_z.abs()>=v['z'])&(feat.ret15.abs()<=v['jump'])
     m &= feat.skew_z.ge(v['z']) if v['side']=='PUT' else feat.skew_z.le(-v['z'])
-    return feat.loc[m].sort_values('datetime').drop_duplicates(['trade_date','expiry_type','expiry'])
+    return feat.loc[m].sort_values('datetime').drop_duplicates(['trade_date','expiry_type'])
 
 def clip_hold_window(m, entry_time, hold_minutes):
     end_time=pd.Timestamp(entry_time)+pd.Timedelta(minutes=int(hold_minutes))
@@ -120,7 +115,7 @@ def run(root,out,slippage,expiry):
         ss=signals(feat,v).copy()
         if not ss.empty:
             ss['variant_id']=f"{v['entry_time']}|z{v['z']}|j{v['jump']}|w{v['width']}|{v['side']}|h{v['hold']}|s{v['stop']}"
-            signal_sets.append(ss[['trade_date','datetime','expiry','expiry_type','variant_id','skew_z']])
+            signal_sets.append(ss[['trade_date','datetime','expiry_type','variant_id','skew_z']])
     sig_all=pd.concat(signal_sets,ignore_index=True) if signal_sets else pd.DataFrame()
     if sig_all.empty:
         t=pd.DataFrame()
@@ -130,22 +125,20 @@ def run(root,out,slippage,expiry):
         print(json.dumps(s,indent=2,default=str))
         return s
 
-    wanted=sig_all[['trade_date','datetime','expiry','expiry_type']].drop_duplicates().copy()
+    wanted=sig_all[['trade_date','datetime','expiry_type']].drop_duplicates().copy()
     wanted['entry_time']=pd.to_datetime(wanted.datetime)+pd.Timedelta(minutes=1)
 
     g=files(root,expiry)
     con=duckdb.connect()
-    con.register('wanted',wanted[['trade_date','expiry','expiry_type','entry_time']])
+    con.register('wanted',wanted[['trade_date','expiry_type','entry_time']])
     q=f"""
     SELECT CAST(o.datetime AS TIMESTAMP) datetime,
-           CAST(o.expiry AS DATE) expiry,
            o.expiry_type, o.option_type, o.strike_type,
            CAST(o.strike_price AS DOUBLE) strike,
            CAST(o.open AS DOUBLE) open
     FROM read_parquet({g},union_by_name=true) o
     JOIN wanted w
-      ON CAST(o.expiry AS DATE)=w.expiry
-     AND o.expiry_type=w.expiry_type
+      ON o.expiry_type=w.expiry_type
      AND CAST(o.datetime AS TIMESTAMP)=w.entry_time
      AND CAST(CAST(o.datetime AS TIMESTAMP)+INTERVAL '5 hours 30 minutes' AS DATE)=w.trade_date
     WHERE o.close>0
@@ -153,10 +146,10 @@ def run(root,out,slippage,expiry):
     entry=con.execute(q).df()
 
     setup_rows=[]
-    for key,ss in sig_all.groupby(['trade_date','datetime','expiry','expiry_type'],sort=False):
-        d,dt,expiry,ex=key
+    for key,ss in sig_all.groupby(['trade_date','datetime','expiry_type'],sort=False):
+        d,dt,ex=key
         et=pd.Timestamp(dt)+pd.Timedelta(minutes=1)
-        e=entry[(entry.datetime==et)&(entry.expiry==expiry)&(entry.expiry_type==ex)]
+        e=entry[(entry.datetime==et)&(entry.expiry_type==ex)]
         if e.empty: continue
         for side in ('PUT','CALL'):
             short_type='ATM-2' if side=='PUT' else 'ATM+2'
@@ -170,7 +163,7 @@ def run(root,out,slippage,expiry):
                 wing=wh.iloc[0]
                 credit=float(short.open-wing.open)
                 if credit>0:
-                    setup_rows.append({'trade_date':d,'entry_time':et,'expiry':expiry,'expiry_type':ex,'side':side,'width':width,
+                    setup_rows.append({'trade_date':d,'entry_time':et,'expiry_type':ex,'side':side,'width':width,
                                        'short_strike':float(short.strike),'wing_strike':float(wing.strike),
                                        'short_entry':float(short.open),'wing_entry':float(wing.open),'credit':credit})
     con.close()
@@ -185,10 +178,9 @@ def run(root,out,slippage,expiry):
         return s
 
     con=duckdb.connect()
-    con.register('legs',setup_df[['trade_date','entry_time','expiry','expiry_type','side','short_strike','wing_strike']].drop_duplicates())
+    con.register('legs',setup_df[['trade_date','entry_time','expiry_type','side','short_strike','wing_strike']].drop_duplicates())
     q2=f"""
     SELECT CAST(o.datetime AS TIMESTAMP) datetime,
-           CAST(o.expiry AS DATE) expiry,
            o.expiry_type, o.option_type,
            CAST(o.strike_price AS DOUBLE) strike,
            CAST(o.high AS DOUBLE) high,
@@ -201,8 +193,7 @@ def run(root,out,slippage,expiry):
            l.wing_strike AS wing_strike
     FROM read_parquet({g},union_by_name=true) o
     JOIN legs l
-      ON CAST(o.expiry AS DATE)=l.expiry
-     AND o.expiry_type=l.expiry_type
+      ON o.expiry_type=l.expiry_type
      AND o.option_type=l.side
      AND CAST(o.strike_price AS DOUBLE) IN (l.short_strike,l.wing_strike)
      AND CAST(o.datetime AS TIMESTAMP)>=l.entry_time
@@ -216,21 +207,19 @@ def run(root,out,slippage,expiry):
         win['datetime']=pd.to_datetime(win['datetime']).dt.floor('min')
         win['entry_time']=pd.to_datetime(win['entry_time']).dt.floor('min')
         win['trade_date']=pd.to_datetime(win['trade_date']).dt.date
-        win['expiry']=pd.to_datetime(win['expiry']).dt.date
         win['expiry_type']=win['expiry_type'].astype(str)
         win['side']=win['side'].astype(str)
 
     setup_df['entry_time']=pd.to_datetime(setup_df['entry_time']).dt.floor('min')
     setup_df['trade_date']=pd.to_datetime(setup_df['trade_date']).dt.date
-    setup_df['expiry']=pd.to_datetime(setup_df['expiry']).dt.date
-    setup_df['expiry_type']=setup_df['expiry_type'].astype(str)
+        setup_df['expiry_type']=setup_df['expiry_type'].astype(str)
     setup_df['side']=setup_df['side'].astype(str)
 
     outcome_rows=[]
-    setup_index=setup_df.set_index(['trade_date','entry_time','expiry','expiry_type','side','width'])
+    setup_index=setup_df.set_index(['trade_date','entry_time','expiry_type','side','width'])
     for key,u in setup_index.iterrows():
-        d,et,expiry,ex,side,width=key
-        q=win[(win.trade_date==d)&(win.entry_time==et)&(win.expiry==u.expiry)&(win.expiry_type==ex)&(win.side==side)&(win.short_strike==u.short_strike)&(win.wing_strike==u.wing_strike)]
+        d,et,ex,side,width=key
+        q=win[(win.trade_date==d)&(win.entry_time==et)&(win.expiry_type==ex)&(win.side==side)&(win.short_strike==u.short_strike)&(win.wing_strike==u.wing_strike)]
         if q.empty: continue
         a=q[q.strike==u.short_strike][['datetime','high','low','close_px']].rename(columns={'high':'shigh','low':'slow','close_px':'sclose'})
         b=q[q.strike==u.wing_strike][['datetime','high','low','close_px']].rename(columns={'high':'whigh','low':'wlow','close_px':'wclose'})
@@ -254,7 +243,7 @@ def run(root,out,slippage,expiry):
                 exrow=mm.iloc[ix]
                 net=OptionCostModel().vertical_credit_spread_net_pnl(float(u.short_entry),float(u.wing_entry),float(exrow.sclose),float(exrow.wclose),lot(d),slippage_points=slippage)
                 outcome_rows.append({
-                    'trade_date':d,'datetime':et-pd.Timedelta(minutes=1),'expiry':expiry,'expiry_type':ex,
+                    'trade_date':d,'datetime':et-pd.Timedelta(minutes=1),'expiry_type':ex,
                     'side':side,'width':width,'hold':hold,'stop':stop,
                     'net_pnl':net,'reason':reason,'entry_credit':float(u.credit)
                 })
@@ -265,7 +254,7 @@ def run(root,out,slippage,expiry):
         for v in vs:
             ss=signals(feat,v).copy()
             if ss.empty: continue
-            keycols=['trade_date','datetime','expiry','expiry_type']
+            keycols=['trade_date','datetime','expiry_type']
             oo=outcomes[
                 outcomes.side.eq(v['side']) &
                 outcomes.width.eq(v['width']) &

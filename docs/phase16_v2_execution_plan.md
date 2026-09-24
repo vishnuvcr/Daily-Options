@@ -31,3 +31,8 @@ A candidate must have positive cost-aware performance, positive doubled-slippage
 
 ## Failure handling
 Every engineering/data defect is logged before P&L interpretation. Superseded artifacts are explicitly non-evidentiary. A materially different mechanism becomes a separate research phase.
+
+
+## Contract-identity limitation
+
+Artist23's pinned parquet schema does not expose an exact expiry date. Therefore this Phase 16 stage is **preliminary** and may not be promoted solely from Artist23. Exact-expiry later-OOS validation must use an independent source containing actual expiry dates.
