@@ -216,3 +216,41 @@ Promotion:
 Phase 8B may add an ML probability filter only after the rule-based mechanism shows a credible but unstable edge. Feature model target: next 15-minute NIFTY move >= +0.10% / <= -0.10%, using chronological train/validation/test splits only.
 
 A future authenticated-data adapter will support Paytm Money historical data without storing credentials in the repository.
+
+## 13. Phase 9 — Regime-filtered defined-risk credit spreads
+
+### Research question
+Can intraday NIFTY premium-selling become economically viable when the sold tail is selected from a verified directional regime and the position is closed with a hard buyback stop rather than held to expiry?
+
+### Economic mechanism
+- Bull regime -> sell a put credit spread below spot.
+- Bear regime -> sell a call credit spread above spot.
+- Require an implied/realized-volatility premium so credit is not sold during unusually cheap option pricing.
+- Fixed absolute strikes are selected at entry and never re-labeled during the path.
+
+### Pre-registration
+96 variants:
+- bull-put / bear-call;
+- 09:45 / 10:15 entry;
+- WEEK / MONTH expiry;
+- 2 / 3 strike spread width;
+- 60 / 120 / 180 minute maximum hold;
+- two exit profiles: stop at 1.5x or 2.0x entry credit, with 50% or 65% profit capture.
+
+The short strike is fixed at three OTM strike steps from the spot at signal time. No strike-distance expansion is permitted after results.
+
+### Regime gate
+Bull: EMA20 > EMA50, 5-minute underlying return positive, and 20-minute implied/realized volatility ratio >= 1.10.
+Bear: EMA20 < EMA50, 5-minute underlying return negative, and the same volatility-ratio condition.
+
+### Execution
+Next executable minute after signal. Use actual contract open prices when available. Freeze both strikes. Resolve stop/target collision conservatively in favor of the stop.
+
+### Costs
+Repository 2026 cost model, date-aware lot size, 0.20 premium-point per-leg base slippage and 0.40 stress slippage.
+
+### Promotion
+Preliminary: mean active-day net >= Rs 1,000/lot.
+Formal: positive untouched-test expectancy, at least one untouched test window >= Rs 1,000/lot/day, and no materially negative stress collapse.
+
+This family is distinct from the prior short straddle because risk is directional, max loss is defined by the spread, and the sold tail is conditioned on the underlying regime.
