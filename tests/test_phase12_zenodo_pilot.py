@@ -10,7 +10,7 @@ from research.phase12_zenodo_pilot import (
 
 
 def test_variant_count_is_preregistered():
-    assert len(variant_grid()) == 144
+    assert len(variant_grid()) == 288
 
 
 def test_last_thursday():
