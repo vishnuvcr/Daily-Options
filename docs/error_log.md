@@ -256,3 +256,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0188 | 2026-09-24 | Phase 18 data query | Spot CTE was renamed to `spot_close`, but the final SELECT still requested the old `close` column | Base/stress failed before setup construction; no P&L accepted | Select `spot_close` in the final feature projection and add a regression test | CLOSED — pre-result |
 
 | E0192 | 2026-09-24 | Phase 18 runtime | `filter_setups()` assumed a non-empty setup frame; when no executable condor setups existed it accessed `setups.ts` and raised AttributeError instead of returning a clean zero-evidence result | Preliminary run failed before summary generation; no P&L accepted | Add an explicit empty-frame guard and regression test | CLOSED — pre-result |
+
+| E0195 | 2026-09-24 | Phase 18 setup feasibility | Full 192-cell run produced 3,753 signal rows and 2.2M quote rows but zero setup rows, so the family cannot be interpreted economically yet | No P&L evidence from the zero-setup run | Instrument four-leg availability, common timestamp, and positive-credit counts by short-offset/wing-width before changing any strategy rule | OPEN — diagnostic |
