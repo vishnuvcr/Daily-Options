@@ -53,3 +53,13 @@ No P&L from these failed runs is accepted. No parameter set was promoted or retu
 - Phase 10 additional defect E0074 corrected in commit 5adf689; no result accepted.
 - Phase 11 additional defect E0075 isolated and corrected on dedicated v2 branch; PR #12 is open.
 - Phase 9 remains result-pending after repeated runner cancellation; CI was hardened before further interpretation.
+
+## 2026-09-24 exact-ref execution checkpoint
+
+Fresh corrected workflows:
+- Phase 8 v3 run 35972809477: tests and data acquisition passed; base friction running.
+- Phase 9 v2 run 35972822793: tests and data acquisition passed; base friction running.
+- Phase 10 v2 run 35972869077: tests and data acquisition passed; base friction running.
+- Phase 11 v3 run 35972926200: queued after PR-triggered workflow creation.
+
+No P&L has been accepted from these runs yet. Exact-parent Git-data commits are now used for execution refs.
