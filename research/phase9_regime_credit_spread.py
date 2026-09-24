@@ -23,6 +23,16 @@ EXIT_PROFILES = (
 SHORT_OFFSET_STEPS = 3
 IV_RV_MIN = 1.10
 
+
+def open_db() -> duckdb.DuckDBPyConnection:
+    Path('/tmp/phase9_duckdb').mkdir(parents=True, exist_ok=True)
+    con = open_db()
+    con.execute("PRAGMA threads=2")
+    con.execute("PRAGMA memory_limit='3GB'")
+    con.execute("PRAGMA preserve_insertion_order=false")
+    con.execute("PRAGMA temp_directory='/tmp/phase9_duckdb'")
+    return con
+
 @dataclass(frozen=True)
 class Variant:
     family: str
