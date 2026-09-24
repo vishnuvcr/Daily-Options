@@ -102,3 +102,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0115 | 2026-09-24 | Phase 12 v3 performance optimization | Initial entry-generation cache patch still recomputed strike selection after caching the eligible universe | No research result; unit tests guarded the branch before numerical acceptance | Replaced repeated manifest scans with a cached eligible option universe keyed by trade date/expiry/side, then applied the unchanged nearest-strike/wing-width rule to each spot | CLOSED — execution optimization |
 
 | E0116 | 2026-09-24 | Phase 12 v3 execution performance | Option-pair caching still merged full historical leg files before slicing to the 30-minute execution window | No P&L was accepted; the calculation was superseded | Slice each leg to the exact executable window before merging; execution semantics are unchanged | CLOSED — execution optimization |
+
+| E0117 | 2026-09-24 | Tooling | Phase 12 result archive script failed with a JavaScript quoting error before GitHub mutation | No research or numerical data impact | Reissued the same archive write using an array-join payload; result stored successfully | CLOSED |
