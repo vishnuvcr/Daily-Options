@@ -234,3 +234,15 @@ Retrospective audit of the authoritative Phase 13 artifact found exact two-for-o
 ## 2026-09-25 — Phase 20 closure / Phase 21 active
 
 Authoritative Phase 20 run 36045068043 completed Base and Stress for the frozen 384-cell global-gated Phase 13 interaction. It produced 3,872 trades; best mean active-day net was Rs 481.73 base and Rs 451.73 stress, with 0 target-qualified cells and 0 walk-forward windows. Phase 20 is retired without retuning. Phase 21 is now the active distinct hypothesis: fixed regime-switching long-gamma on expansion regimes and short-vega on calm regimes, with 60 frozen cells.
+
+## Phase 24 — Falcon Spread numerical validation started — 2026-09-25
+
+The user supplied a detailed transcript-derived rule set for Equity Income's Falcon Spread:
+- Friday 5:3 near-week/far-week ratio-diagonal strangle around the 25-point premium zone;
+- Monday purchase of five near-week outer wings on each side, one strike beyond the original shorts;
+- hard stop required;
+- full structure closed by Wednesday.
+
+Phase 24 is preregistered on branch phase-24-falcon-spread-backtest-v1 with 270 frozen cells covering only unspecified timing/stop/strike-interpretation sensitivities. The source-primary cell is 25-point premium, diagonal far-week strike selection, and fixed Friday/Monday execution conventions.
+
+No numerical result is accepted until Base and Stress runs complete and the artifact is inspected.
