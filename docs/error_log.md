@@ -204,3 +204,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0148 | 2026-09-24 | Phase 16 feature loading | `x.ist_time = ...` assigned a DataFrame attribute rather than a column; subsequent sort on `ist_time` raised KeyError before any P&L | No numerical result accepted | Use explicit `x['ist_time']` column assignment and rerun Base/Stress | CLOSED — pre-result |
 
 | E0149 | 2026-09-24 | Phase 16 entry query | DuckDB rejected `close` as an output alias in the entry-quote query before simulation | No P&L accepted | Rename the projected close field to `close_px` and use the exact field consistently in downstream selection | CLOSED — pre-result |
+
+| E0150 | 2026-09-24 | Phase 16 execution-window SQL | Window query retained a second `close` alias after entry-query correction; Base failed before simulation | No P&L accepted | Rename window close to `close_px` and propagate that column into exit-price merges | CLOSED — pre-result |
