@@ -53,3 +53,5 @@
 | E0061 | 2026-09-24 | Phase 10 | Scalable path rewrite retained an undefined `row` reference inside the grouped simulation loop | Would fail before any Phase 10 P&L | Bind grouped path metadata explicitly to `meta` and use frozen strike/expiry fields from the entry row | FIXED |
 
 | E0063 | 2026-09-24 | Phase 10 | Variant-width loop rewrite left an indentation error in entry construction | Unit-test gate failed before data acquisition; no strategy statistic was produced | Normalize the width-selection block to the variant-bound single-width path and rerun | FIXED |
+
+| E0064 | 2026-09-24 | Phase 10 | First indentation correction did not cover the full entry block; unit test still failed at line 304 | No data acquisition or P&L was executed | Replaced the entire width-specific entry block with normalized indentation before the next rerun | FIXED |
