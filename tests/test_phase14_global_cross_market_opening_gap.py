@@ -5,7 +5,7 @@ from research.phase14_global_cross_market_opening_gap import variant_grid, _glob
 
 
 def test_variant_count():
-    assert len(variant_grid()) == 384
+    assert len(variant_grid()) == 768
 
 
 def test_global_zscore_uses_only_prior_returns():
