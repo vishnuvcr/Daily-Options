@@ -112,3 +112,13 @@ These are the first runs using exact branch-parent construction after E0078. No 
 | 11 v5e | phase-11-breakout-pullback-oi-v5e-authoritative | 35978104824 | 107563265459 | Tests/data passed; Base friction in progress | No |
 
 This is the sole authoritative Phase 11 execution at this checkpoint. No competing Phase 11 run should be started unless this run fails for infrastructure or engineering reasons.
+
+
+## Phase 17 launch — 2026-09-24
+
+| Phase | Branch | Status | Accepted P&L |
+|---|---|---|---|
+| 16 | phase-16-iv-skew-tail-credit-v1/v2 | DATA-LIMITED | No |
+| 17 | phase-17-nifty-exact-expiry-premium-skew-v1 | READY / NOT YET RUN | No |
+
+Phase 17 uses exact-expiry NIFTY option files, a frozen 384-cell grid, base/stress slippage ₹0.20/₹0.40 per leg, and the ₹1,000 active-day target gate. Later walk-forward and independent holdout validation remain mandatory.
