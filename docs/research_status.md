@@ -200,3 +200,10 @@ Next active frontier: intraday IV-skew / downside-tail repricing using defined-r
 Phase 15 clean rerun 36019644002 is the only accepted Phase 15 calculation. The earlier positive short-volatility shards were invalidated by E0145 because CALL/PUT sides were not included in the execution-leg join. The clean WEEK/MONTH rerun failed the target gate: WEEK best ₹30.82 base / -₹9.23 stress per active day; MONTH best -₹90.53 / -₹128.53; no ₹1,000-qualified cell. Phase 15 is retired.
 
 Phase 16 is now the active frontier: intraday IV-skew tail credit verticals, 288 fixed cells per expiry shard, using the same cost model and doubled-slippage stress. Latest run 36021088602 is executing unit tests/data setup; no Phase 16 P&L accepted.
+
+
+## 2026-09-24 — Phase 16 source-limit closure / Phase 17 launch
+
+Phase 16 is DATA-LIMITED on Artist23: the source lacks actual expiry and IV fields required by its preregistered hypothesis. No Phase 16 P&L is accepted.
+
+Phase 17 is now the active family: exact-expiry NIFTY premium-skew plus option-flow pressure using TradeMarkk 1-minute data. Branch: phase-17-nifty-exact-expiry-premium-skew-v1. Grid: 384 fixed variants. Data revision: 51ca58c. Numerical result: PENDING.
