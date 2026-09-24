@@ -106,3 +106,11 @@ def test_simulation_maps_internal_side_to_source_code_and_holds():
     assert 'o.option_type=(CASE WHEN l.side=\'PUT\' THEN \'PE\' ELSE \'CE\' END)' in src
     assert 'win.hold==v["hold"]' not in src or 'trades.hold==v.hold' in inspect.getsource(mod.run)
     assert 'float(r.entry_credit)*stop' in src
+
+    
+def test_ist_timestamp_normalization_removes_timezone_at_dataframe_boundary():
+    from research import phase17_nifty_exact_expiry_premium_skew as mod
+    import inspect
+    src=inspect.getsource(mod.ist_ts)
+    assert 'tz_convert("Asia/Kolkata")' in src
+    assert 'tz_localize(None)' in src
