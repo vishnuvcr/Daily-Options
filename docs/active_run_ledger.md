@@ -37,3 +37,14 @@ The prior Phase 2/3/3F/3G/3H/3I results remain frozen and are not being retuned 
 - Phase 11: implementation commits 2c9e442, 379c853, 8bfcfe9, 2178adc, then side-selection fix 1b6314c. CI is now triggered from the corrected branch; no result is accepted yet.
 
 - Phase 9 attempt 3 job 107543124203 also cancelled by runner shutdown; no P&L accepted. Workflow concurrency was hardened to `cancel-in-progress: false`, and commit 20fa261f starts the next clean branch execution.
+
+## Current PR / branch correction state — 2026-09-24
+
+| Phase | Current branch/PR | Result status |
+|---|---|---|
+| 8 | phase-8-hybrid-ml-momentum-v2 / PR #9 | Fresh corrected execution pending; no accepted P&L |
+| 9 | phase-9-regime-credit-spread-v1 / PR #10 | Runner cancellation reproduced; concurrency hardened; no accepted P&L |
+| 10 | phase-10-cross-index-1m-v1 / PR #8 | Additional SQL projection correction at 5adf689; fresh execution pending |
+| 11 | phase-11-breakout-pullback-oi-v2 / PR #12 | Corrected nearest-wing execution; fresh execution pending |
+
+Phase 11 original PR #11 is retained as the first implementation audit trail; v2 is the corrected execution branch.
