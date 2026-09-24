@@ -69,7 +69,6 @@ def load_entry_quotes(root,signals):
     g=parquet_glob(root)
     q=f'''
     SELECT CAST(o.datetime AS TIMESTAMP) AS datetime,
-           CAST(o.date AS DATE) AS trade_date,
            o.expiry_type,
            o.option_type,
            o.strike_type,
@@ -86,47 +85,56 @@ def load_entry_quotes(root,signals):
     '''
     out=con.execute(q).df()
     con.close()
+    if out.empty:
+        return out
+    out['datetime']=pd.to_datetime(out['datetime']).dt.floor('min')
+    out['trade_date']=(out['datetime']+pd.Timedelta(hours=5,minutes=30)).dt.date
     return out
 
-def load_execution_windows(root, setup_rows, max_hold=60):
+def load_execution_windows(root,setup_rows,max_hold=60):
     if setup_rows.empty:
         return pd.DataFrame()
     con=duckdb.connect()
     legs=[]
     for rec in setup_rows.itertuples(index=False):
-        for leg, strike in (
+        for leg,strike in (
             ('call',rec.call_strike),('put',rec.put_strike),
             ('call_wing',rec.call_wing_strike),('put_wing',rec.put_wing_strike)
         ):
             legs.append({
                 'trade_date':rec.trade_date,'expiry_type':rec.expiry_type,
-                'entry_time':rec.entry_time,'leg':leg,'strike':float(strike),
+                'entry_time':rec.entry_time,'leg':leg,'strike':float(strike)
             })
     leg_df=pd.DataFrame(legs).drop_duplicates()
     con.register('legs',leg_df)
     g=parquet_glob(root)
     q=f'''
     SELECT CAST(o.datetime AS TIMESTAMP) AS datetime,
-           CAST(o.date AS DATE) AS trade_date,
            o.expiry_type,
            CAST(o.open AS DOUBLE) AS open,
            CAST(o.high AS DOUBLE) AS high,
            CAST(o.low AS DOUBLE) AS low,
            CAST(o.close AS DOUBLE) AS close,
            CAST(o.strike_price AS DOUBLE) AS strike,
-           l.entry_time,
-           l.leg
+           l.trade_date AS trade_date,
+           l.entry_time AS entry_time,
+           l.leg AS leg
     FROM read_parquet('{g}', union_by_name=true) o
     JOIN legs l
-      ON CAST(o.date AS DATE)=l.trade_date
-     AND o.expiry_type=l.expiry_type
+      ON o.expiry_type=l.expiry_type
      AND CAST(o.strike_price AS DOUBLE)=l.strike
      AND CAST(o.datetime AS TIMESTAMP)>=l.entry_time
      AND CAST(o.datetime AS TIMESTAMP)<=l.entry_time + INTERVAL '60 minutes'
+     AND CAST(CAST(o.datetime AS TIMESTAMP) + INTERVAL '5 hours 30 minutes' AS DATE)=l.trade_date
     WHERE o.close>0
     '''
     out=con.execute(q).df()
     con.close()
+    if out.empty:
+        return out
+    out['datetime']=pd.to_datetime(out['datetime']).dt.floor('min')
+    out['entry_time']=pd.to_datetime(out['entry_time']).dt.floor('min')
+    out['trade_date']=pd.to_datetime(out['trade_date']).dt.date
     return out
 
 def pick_setup(entry_quotes,signal):
@@ -289,6 +297,8 @@ def run(data_root,out,slippage):
     wf.to_csv(out/'phase15_walk_forward.csv',index=False)
     result={
         'variants':VARIANT_COUNT,
+        'entry_quote_rows':int(len(entry_quotes)),
+        'entry_group_count':int(len(entry_groups)),
         'feature_rows':int(len(features)),
         'unique_candidate_signals':int(len(unique_signals)),
         'setup_count':int(len(setup_cache)),
