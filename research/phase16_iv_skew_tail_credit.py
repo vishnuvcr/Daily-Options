@@ -25,11 +25,17 @@ def feature_query(root, expiry_type):
     times=','.join(repr(x) for x in ENTRY_TIMES)
     return f'''
     WITH b AS (
-      SELECT CAST(datetime AS TIMESTAMP) datetime, CAST(date AS DATE) trade_date, expiry_type,
-             option_type, strike_type, CAST(spot AS DOUBLE) spot, CAST(iv AS DOUBLE) iv
+      SELECT CAST(datetime AS TIMESTAMP) datetime,
+             CAST(date AS DATE) trade_date,
+             expiry_type,
+             option_type,
+             strike_type,
+             CAST(spot AS DOUBLE) spot,
+             CAST(iv AS DOUBLE) iv
       FROM read_parquet({g}, union_by_name=true)
       WHERE close>0 AND iv BETWEEN 0 AND 300
-        AND STRFTIME(CAST(datetime AS TIMESTAMP)+INTERVAL '5 hours 30 minutes','%H:%M:%S') BETWEEN '09:30:00' AND '10:30:00'
+        AND STRFTIME(CAST(datetime AS TIMESTAMP)+INTERVAL '5 hours 30 minutes','%H:%M:%S')
+            BETWEEN '09:30:00' AND '10:30:00'
     ),
     m AS (
       SELECT datetime, trade_date, expiry_type, MAX(spot) spot,
@@ -37,11 +43,17 @@ def feature_query(root, expiry_type):
         AVG(CASE WHEN option_type='CALL' AND strike_type='ATM+2' THEN iv END) call_iv
       FROM b
       GROUP BY datetime, trade_date, expiry_type
+    ),
+    dense AS (
+      SELECT *,
+        spot/LAG(spot,15) OVER(PARTITION BY trade_date ORDER BY datetime)-1 ret15
+      FROM m
     )
-    SELECT *, put_iv-call_iv skew_iv,
-      spot/LAG(spot,15) OVER(PARTITION BY trade_date ORDER BY datetime)-1 ret15
-    FROM m
+    SELECT *,
+      put_iv-call_iv skew_iv
+    FROM dense
     WHERE put_iv IS NOT NULL AND call_iv IS NOT NULL
+      AND ret15 IS NOT NULL
       AND STRFTIME(datetime+INTERVAL '5 hours 30 minutes','%H:%M:%S') IN ({times})
     ORDER BY trade_date, datetime
     '''
