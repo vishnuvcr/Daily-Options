@@ -48,24 +48,32 @@ def compute_spot_features(parquet_glob: str) -> pd.DataFrame:
 def load_option_window(parquet_glob: str, signal_dates: list) -> pd.DataFrame:
     if not signal_dates:
         return pd.DataFrame()
-    dates_sql = ','.join([f"DATE '{d}'" for d in signal_dates])
+
+    dates_sql = ",".join([f"DATE '{d}'" for d in signal_dates])
     con = duckdb.connect()
     q = f"""
-    SELECT CAST(datetime AS TIMESTAMP) AS datetime, CAST(date AS DATE) AS trade_date,
-           option_type, CAST(expiry AS DATE) AS expiry, CAST(strike_price AS DOUBLE) AS strike,
-           CAST(open AS DOUBLE) AS open, CAST(high AS DOUBLE) AS high, CAST(low AS DOUBLE) AS low,
-           CAST(close AS DOUBLE) AS close
-    FROM read_parquet('{parquet_glob}', union_by_name=true)
-    WHERE date IN ({dates_sql}) AND expiry_type = 'MONTH' AND strike_type = 'ATM'
-      AND option_type = 'CALL' AND datetime IS NOT NULL
-    UNION ALL
-    SELECT CAST(datetime AS TIMESTAMP) AS datetime, CAST(date AS DATE) AS trade_date,
-           option_type, CAST(expiry AS DATE) AS expiry, CAST(strike_price AS DOUBLE) AS strike,
-           CAST(open AS DOUBLE) AS open, CAST(high AS DOUBLE) AS high, CAST(low AS DOUBLE) AS low,
-           CAST(close AS DOUBLE) AS close
-    FROM read_parquet('{parquet_glob}', union_by_name=true)
-    WHERE date IN ({dates_sql}) AND expiry_type = 'MONTH' AND strike_type = 'ATM'
-      AND option_type = 'CALL' AND datetime IS NOT NULL
+    WITH raw AS (
+      SELECT *
+      FROM read_parquet('{parquet_glob}', union_by_name=true)
+    )
+    SELECT
+      CAST(raw.datetime AS TIMESTAMP) AS datetime,
+      CAST(raw.date AS DATE) AS trade_date,
+      raw.option_type AS option_type,
+      TRY_CAST(raw.expiry AS DATE) AS expiry,
+      CAST(raw.strike_price AS DOUBLE) AS strike,
+      CAST(raw.open AS DOUBLE) AS open,
+      CAST(raw.high AS DOUBLE) AS high,
+      CAST(raw.low AS DOUBLE) AS low,
+      CAST(raw.close AS DOUBLE) AS close
+    FROM raw
+    WHERE CAST(raw.date AS DATE) IN ({dates_sql})
+      AND raw.expiry_type = 'MONTH'
+      AND raw.strike_type = 'ATM'
+      AND raw.option_type = 'CALL'
+      AND raw.datetime IS NOT NULL
+      AND TRY_CAST(raw.expiry AS DATE) IS NOT NULL
+    ORDER BY raw.datetime
     """
     df = con.execute(q).df()
     con.close()
