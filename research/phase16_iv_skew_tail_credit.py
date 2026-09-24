@@ -29,7 +29,7 @@ def feature_query(root, expiry_type):
              option_type, strike_type, CAST(spot AS DOUBLE) spot, CAST(iv AS DOUBLE) iv
       FROM read_parquet({g}, union_by_name=true)
       WHERE close>0 AND iv BETWEEN 0 AND 300
-        AND STRFTIME(CAST(datetime AS TIMESTAMP)+INTERVAL '5 hours 30 minutes','%H:%M:%S') IN ({times})
+        AND STRFTIME(CAST(datetime AS TIMESTAMP)+INTERVAL '5 hours 30 minutes','%H:%M:%S') BETWEEN '09:30:00' AND '10:30:00'
     ),
     m AS (
       SELECT datetime, trade_date, expiry_type, MAX(spot) spot,
@@ -42,6 +42,7 @@ def feature_query(root, expiry_type):
       spot/LAG(spot,15) OVER(PARTITION BY trade_date ORDER BY datetime)-1 ret15
     FROM m
     WHERE put_iv IS NOT NULL AND call_iv IS NOT NULL
+      AND STRFTIME(datetime+INTERVAL '5 hours 30 minutes','%H:%M:%S') IN ({times})
     ORDER BY trade_date, datetime
     '''
 
