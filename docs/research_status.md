@@ -304,3 +304,11 @@ No candidate has passed promotion, so robustness and paper-shadow phases remain 
 - Numerical execution failed because `family` was not persisted in signal rows.
 - No Phase 9 strategy statistic was accepted.
 - Fixed the signal bookkeeping and logged E0059; the next push will rerun base/stress.
+
+
+### 2026-09-24 — Step 10.1 Phase 10 initiated
+- Created `phase-10-cross-index-1m-v1`.
+- New source: public `thetrademarkk/india-index-options-1m` 1-minute NIFTY/BANKNIFTY/SENSEX dataset.
+- New mechanism: cross-index standardized relative strength + ATM option-premium confirmation, executed through defined-risk debit spreads.
+- 128 variants are pre-registered.
+- Public dataset is research-only because of its CC-BY-NC-4.0 license; any promoted result must be independently rerun on licensed/executable data.
