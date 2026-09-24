@@ -10,7 +10,7 @@ Translate the user-supplied transcript summary of Equity Income's "Falcon Spread
 4. Can any frozen configuration reach the project gate of >= ₹1,000 net per active lot per active trading day in untouched validation?
 
 ## Source-derived rules
-- Entry: use the same expiry-relative distance as the source. Under the historical Thursday-expiry regime this is Wednesday? No — the exact source trade is Friday entry. Under the current Tuesday-expiry regime, shift the calendar by two days: **Wednesday entry**.
+- Entry: preserve the source's expiry-relative distance. The old Thursday-expiry source entered on **Friday**; shifting the expiry day two calendar days earlier to Tuesday makes the current-rule entry **Wednesday**.
 - At entry, sell 5 near/current-week CE and 5 near/current-week PE at approximately 25 premium points each.
 - At entry, buy 3 next-week CE and 3 next-week PE at approximately the same 25-point premium zone.
 - Adjustment: the source's old Monday adjustment shifts two days earlier with the expiry change, giving **Friday adjustment** for current Tuesday expiry.
