@@ -61,7 +61,7 @@ A preliminary positive result is not promoted. Any cell clearing the preliminary
 - All implementation defects are logged before accepting P&L.
 
 ## Phase status
-2026-09-25 — current-expiry translation corrected to expiry-relative session offsets: **Wednesday entry → Friday adjustment → Monday exit** for current Tuesday NIFTY expiry. Historical validation preserves the old Friday → Monday → Wednesday sequence for Thursday-expiry contracts automatically.
+2026-09-25 — current-expiry translation corrected to expiry-relative session offsets: **Wednesday entry → Thursday adjustment → Monday exit** for current Tuesday NIFTY expiry. Historical validation preserves the old Friday → Monday → Wednesday sequence for Thursday-expiry contracts automatically.
 
 ### Current levy references
 - NSE STT schedule: https://www.nseindia.com/static/products-services/equity-derivatives-securities-transaction-tax
