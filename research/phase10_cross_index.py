@@ -315,13 +315,15 @@ def select_entries(
                         "direction": meta["direction"],
                         "expiry": meta["expiry"],
                         "entry_time": entry_ts,
+                        "hold_minutes": int(meta["hold_minutes"]),
+                        "risk_id": int(meta["risk_id"]),
                         "atm_strike": atm,
                         "wing_strike": wing,
                         "long_entry": long_entry,
                         "short_entry": short_entry,
                         "debit": debit,
                         "premium_ret3": premium_ret3,
-                        "signal_time": meta.signal_ts,
+                        "signal_time": meta["signal_ts"],
                     }
                 )
 
