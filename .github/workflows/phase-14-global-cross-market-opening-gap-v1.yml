@@ -1,0 +1,122 @@
+name: Phase 14 - Global Cross-Market Opening Gap
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+  push:
+    branches:
+      - phase-14-global-cross-market-opening-gap-v1
+
+concurrency:
+  group: phase14-global-gap-v1
+  cancel-in-progress: true
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pandas numpy pyarrow openpyxl xlrd pytest yfinance
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_phase14_global_cross_market_opening_gap.py
+      - name: Prepare NIFTY cache
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase14_zenodo
+          key: phase14-zenodo-2019-2020-v1
+      - name: Prepare global cache
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase14_global
+          key: phase14-global-2019-2020-v1
+      - name: Acquire NIFTY archive
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase14_zenodo/downloads data/cache/phase14_zenodo/market data/cache/phase14_zenodo/options
+          BASE="https://zenodo.org/records/10899828/files"
+          F="data/cache/phase14_zenodo/downloads/Nifty_spot_and_futures_data.zip"
+          O="data/cache/phase14_zenodo/downloads/Nifty_Options_Data.zip"
+          if [ ! -s "$F" ]; then curl -fL --retry 7 --retry-all-errors -A "Daily-Options-research/1.0" "$BASE/Nifty%20spot%20and%20futures%20data.zip?download=1" -o "$F"; fi
+          if [ ! -s "$O" ]; then curl -fL --retry 7 --retry-all-errors -A "Daily-Options-research/1.0" "$BASE/Nifty%20Options%20Data.zip?download=1" -o "$O"; fi
+          test -s "$F"; test -s "$O"
+      - name: Extract NIFTY pilot data
+        run: |
+          set -euo pipefail
+          for YEAR in 2019 2020; do
+            if [ ! -d "data/cache/phase14_zenodo/market/$YEAR" ]; then
+              entry="$(unzip -Z1 data/cache/phase14_zenodo/downloads/Nifty_spot_and_futures_data.zip | grep -E "(^|/)$YEAR\.zip$" | sed -n '1p' || true)"
+              test -n "$entry"
+              unzip -p data/cache/phase14_zenodo/downloads/Nifty_spot_and_futures_data.zip "$entry" > "/tmp/$YEAR-futures.zip"
+              mkdir -p "data/cache/phase14_zenodo/market/$YEAR"
+              unzip -q "/tmp/$YEAR-futures.zip" -d "data/cache/phase14_zenodo/market/$YEAR"
+            fi
+            if [ ! -d "data/cache/phase14_zenodo/options/$YEAR" ]; then
+              entry="$(unzip -Z1 data/cache/phase14_zenodo/downloads/Nifty_Options_Data.zip | grep -E "(^|/)NiftyOptions $YEAR\.zip$" | sed -n '1p' || true)"
+              test -n "$entry"
+              unzip -p data/cache/phase14_zenodo/downloads/Nifty_Options_Data.zip "$entry" > "/tmp/$YEAR-options.zip"
+              mkdir -p "data/cache/phase14_zenodo/options/$YEAR"
+              unzip -q "/tmp/$YEAR-options.zip" -d "data/cache/phase14_zenodo/options/$YEAR"
+            fi
+          done
+          for YEAR in 2019 2020; do
+            for PASS in 1 2 3 4; do
+              FOUND=0
+              while IFS= read -r -d '' Z; do
+                FOUND=1
+                DEST="${Z%.zip}"
+                mkdir -p "$DEST"
+                unzip -qo "$Z" -d "$DEST"
+                mv "$Z" "${Z}.processed"
+              done < <(find "data/cache/phase14_zenodo/options/$YEAR" -type f -name '*.zip' -print0)
+              if [ "$FOUND" -eq 0 ]; then break; fi
+            done
+          done
+      - name: Acquire global daily closes
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase14_global
+          python - <<'PY'
+          from pathlib import Path
+          import yfinance as yf
+          tickers = {"SP500":"^GSPC","NASDAQ":"^IXIC","NIKKEI":"^N225"}
+          out = Path("data/cache/phase14_global")
+          for name, symbol in tickers.items():
+              p = out / f"{name}.csv"
+              if p.exists() and p.stat().st_size > 100:
+                  continue
+              df = yf.download(symbol, start="2018-01-01", end="2021-01-03", auto_adjust=False, progress=False)
+              if df.empty:
+                  raise SystemExit(f"no data for {symbol}")
+              if hasattr(df.columns, "levels"):
+                  if "Close" in df.columns.get_level_values(0):
+                      df = df["Close"]
+                      if hasattr(df, "columns"):
+                          df = df.iloc[:,0]
+                  else:
+                      raise SystemExit(f"no Close for {symbol}")
+              x = df.rename("Close").reset_index()
+              x.to_csv(p, index=False)
+          PY
+          for f in data/cache/phase14_global/*.csv; do test -s "$f"; done
+      - name: Base friction
+        run: PYTHONPATH=. python -m research.phase14_global_cross_market_opening_gap --root data/cache/phase14_zenodo --global-root data/cache/phase14_global --out reports/phase14-base --slippage 0.20
+      - name: Stress friction
+        run: PYTHONPATH=. python -m research.phase14_global_cross_market_opening_gap --root data/cache/phase14_zenodo --global-root data/cache/phase14_global --out reports/phase14-stress --slippage 0.40
+      - name: Decision summary
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p reports
+          python -c 'import json; from pathlib import Path; b=Path("reports/phase14-base/phase14_summary.json"); s=Path("reports/phase14-stress/phase14_summary.json"); payload={"base":json.loads(b.read_text()) if b.exists() else {},"stress":json.loads(s.read_text()) if s.exists() else {}}; Path("reports/phase14_decision_summary.json").write_text(json.dumps(payload, indent=2, default=str)); print(json.dumps(payload, indent=2, default=str))'
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase14-global-cross-market-opening-gap-v1
+          path: reports/
