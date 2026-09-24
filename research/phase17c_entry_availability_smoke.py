@@ -21,7 +21,7 @@ def load_spot(root):
     p=root/"index"/"NIFTY.parquet"
     q=f"""
     SELECT "timestamp" AS ts, CAST(trading_day AS DATE) trade_date,
-           CAST("close" AS DOUBLE) close
+           CAST("close" AS DOUBLE) spot_close
     FROM read_parquet('{p}')
     WHERE CAST(trading_day AS DATE) BETWEEN DATE '{START_DATE}' AND DATE '{END_DATE}'
       AND strftime("timestamp",'%H:%M:%S') IN ('14:30:00','14:45:00','15:00:00')
@@ -90,7 +90,7 @@ def main(root,out):
     for _,r in spot.iterrows():
         ef=nearest(files,r.trade_date)
         if ef is None: continue
-        d=inspect_day(ef[1],r.trade_date,r.ts,float(r.close))
+        d=inspect_day(ef[1],r.trade_date,r.ts,float(r.spot_close))
         d["trade_date"]=str(r.trade_date); d["signal_ts"]=str(r.ts); d["spot"]=float(r.close)
         rows.append(d)
     summary={"signals":len(rows),"rows":rows}
