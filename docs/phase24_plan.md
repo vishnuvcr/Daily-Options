@@ -45,7 +45,7 @@ The research cost model uses:
 - NSE option-sale STT: date-aware: 0.10% through 2026-03-31 and 0.15% from 2026-04-01 onward.
 - stamp duty on buys: 0.003%
 - SEBI fee: 0.0001%
-- NSE option premium transaction charge: 0.03503% of premium turnover (₹3,553 per crore total outflow from 2026-03-01, comprising ₹3,552 transaction charge + ₹0.01 IPFT contribution).
+- NSE option premium transaction charge: date-aware: 0.03503% through 2026-02-28; from 2026-03-01 the effective transaction-charge/IPFT outflow is approximately 0.0355299% of premium turnover (₹3,553 per crore each side).
 - GST: 18% on brokerage + exchange + SEBI charges
 - Base slippage: 0.20 premium points per order
 - Stress slippage: 0.40 premium points per order
