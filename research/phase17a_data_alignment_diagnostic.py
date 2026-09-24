@@ -27,7 +27,7 @@ def spot_candidates(root):
     WITH b AS (
       SELECT CAST(timestamp AS TIMESTAMP) ts,
              CAST(trading_day AS DATE) trade_date,
-             CAST(close AS DOUBLE) close
+             CAST(close AS DOUBLE) close_px
       FROM read_parquet('{p}')
       WHERE CAST(trading_day AS DATE) BETWEEN DATE '{START_DATE}' AND DATE '{END_DATE}'
         AND close>0
