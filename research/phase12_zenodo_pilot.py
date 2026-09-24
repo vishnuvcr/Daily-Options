@@ -74,21 +74,37 @@ def _read_table(path: Path) -> pd.DataFrame:
     if raw.empty:
         return raw
 
-    first = raw.iloc[0].astype(str).str.strip().str.lower().tolist()
+    first = raw.iloc[0].astype(str).str.strip().str.lower().str.replace(" ", "_", regex=False).tolist()
     header_tokens = {"open", "high", "low", "close", "date", "time", "trade_date", "trade_time"}
     if set(first) & header_tokens:
         return pd.read_csv(path, sep=",", engine="python")
 
-    # Observed Zenodo raw schema:
-    # [symbol, trade_date, trade_time, open, high, low, close, volume, open_interest].
-    names = [
-        "symbol", "trade_date", "trade_time", "open", "high",
-        "low", "close", "volume", "open_interest"
-    ]
+    cols = list(raw.columns)
+    first_is_date = pd.to_datetime(raw[cols[0]], errors="coerce", dayfirst=False).notna().mean()
+    second_is_date = pd.to_datetime(raw[cols[1]], errors="coerce", dayfirst=False).notna().mean() if len(cols) > 1 else 0.0
+
+    if first_is_date >= 0.80:
+        # Option record: [trade_date, trade_time, open, high, low, close, volume, open_interest]
+        names = [
+            "trade_date", "trade_time", "open", "high", "low",
+            "close", "volume", "open_interest"
+        ]
+    elif second_is_date >= 0.80:
+        # Market record: [symbol, trade_date, trade_time, open, high, low, close, volume, open_interest]
+        names = [
+            "symbol", "trade_date", "trade_time", "open", "high",
+            "low", "close", "volume", "open_interest"
+        ]
+    else:
+        raise ValueError("unsupported headerless schema: cannot identify date column")
+
     n = raw.shape[1]
-    if n < 7:
+    if n < 6:
         raise ValueError(f"unsupported headerless schema with {n} columns")
-    raw.columns = names[:n] if n <= len(names) else names + [f"extra_{i}" for i in range(n - len(names))]
+    if n <= len(names):
+        raw.columns = names[:n]
+    else:
+        raw.columns = names + [f"extra_{i}" for i in range(n - len(names))]
     return raw
 
 def _norm_cols(df: pd.DataFrame) -> dict[str, str]:
