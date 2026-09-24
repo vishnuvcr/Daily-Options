@@ -309,3 +309,7 @@ Phase 24 primary-source audit found the TradeMarkk revision 51ca58c cache materi
 The primary source advertises only partial option coverage, so the research moves to an independent contract-level source without changing the frozen Falcon parameters. Phase 24b uses Rissin/Upstox NIFTY 1-minute data from Oct 2024 onward, exact expiry metadata, and the same 270-cell grid, cost model, slippage settings and expiry-relative timing.
 
 The independent phase has a hard content-based cache coverage gate and a manual GitHub Actions workflow. No Rissin P&L has yet been accepted.
+
+## Phase 24b source-pin correction — 2026-09-25
+
+Run 36058686968 passed all 7 unit tests but failed before coverage/P&L because pinned Rissin commit 78b1c54 had no NIFTY_2026 intraday partition. The dataset history was inspected independently: commit 8f7739cab3f38abdcbc6332a6d0a83e1341326e3 explicitly adds the NIFTY_2026 intraday partition (395 MB). Phase 24b is now pinned to that exact commit and the cache key has been rotated. No P&L has been accepted.
