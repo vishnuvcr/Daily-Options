@@ -1,0 +1,92 @@
+name: Phase 19 - Global Gap Credit Spread
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [phase-19-global-gap-credit-spread-v1]
+
+concurrency:
+  group: phase19-global-gap-credit-v1
+  cancel-in-progress: false
+
+jobs:
+  research:
+    strategy:
+      fail-fast: false
+      matrix:
+        friction: [base, stress]
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-19-global-gap-credit-spread-v1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pandas numpy pyarrow duckdb huggingface_hub yfinance pytest
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_phase19_global_gap_credit_spread.py
+      - name: Cache NIFTY exact-expiry data
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase19_trademarkk
+          key: phase19-trademarkk-51ca58c-v1
+          restore-keys: |
+            phase17-trademarkk-51ca58c-
+      - name: Cache global daily data
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase19_global
+          key: phase19-global-2021-2026-v1
+      - name: Acquire or reuse NIFTY data
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase19_trademarkk
+          if [ ! -f data/cache/phase19_trademarkk/index/NIFTY.parquet ]; then
+            for attempt in 1 2 3 4; do
+              python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="thetrademarkk/india-index-options-1m",repo_type="dataset",revision="51ca58c",local_dir="data/cache/phase19_trademarkk",allow_patterns=["index/NIFTY.parquet","options/NIFTY/*.parquet"])' && break
+              if [ "$attempt" -eq 4 ]; then exit 1; fi
+              sleep $((attempt*15))
+            done
+          fi
+      - name: Acquire or reuse global data
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase19_global
+          python - <<'PY'
+import pandas as pd
+import yfinance as yf
+from pathlib import Path
+out=Path('data/cache/phase19_global')
+for name,symbol in {'SP500':'^GSPC','NASDAQ':'^IXIC','NIKKEI':'^N225'}.items():
+    p=out/f'{name}.csv'
+    if p.exists() and p.stat().st_size>100:
+        continue
+    df=yf.download(symbol,start='2020-01-01',end='2026-08-06',auto_adjust=False,progress=False)
+    if df.empty: raise SystemExit(f'no data for {symbol}')
+    if hasattr(df.columns,'levels'):
+        if 'Close' not in df.columns.get_level_values(0): raise SystemExit(f'no close for {symbol}')
+        df=df['Close']
+        if hasattr(df,'columns'): df=df.iloc[:,0]
+    else:
+        df=df['Close']
+    df.rename('Close').reset_index().to_csv(p,index=False)
+PY
+      - name: Run friction
+        env:
+          SLIP: ${{ matrix.friction == 'base' && '0.20' || '0.40' }}
+          LABEL: ${{ matrix.friction }}
+        run: |
+          PYTHONPATH=. python -m research.phase19_global_gap_credit_spread \
+            --data data/cache/phase19_trademarkk \
+            --global-root data/cache/phase19_global \
+            --out reports/$LABEL \
+            --slippage "$SLIP"
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase19-global-gap-credit-${{ matrix.friction }}
+          path: reports/
