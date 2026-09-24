@@ -101,3 +101,15 @@ def test_headerless_zenodo_option_row_maps_to_named_ohlc_columns(tmp_path):
     x = _standardize_ohlc(raw)
     assert float(x.iloc[0]["open"]) == 120.5
     assert float(x.iloc[0]["close"]) == 120.2
+
+
+def test_lead_features_use_ist_entry_clock():
+    import pandas as pd
+    from research.phase12_zenodo_pilot import lead_features
+
+    dt = pd.date_range("2019-01-02 03:44:00", periods=2, freq="1min")
+    futures = pd.DataFrame({"datetime": dt, "futures_close": [100.0, 100.2]})
+    spot = pd.DataFrame({"datetime": dt, "spot_close": [100.0, 100.1]})
+    out = lead_features(futures, spot, 1)
+    assert out.iloc[-1]["trade_time_ist"] == "09:15:00"
+    assert out.iloc[-1]["trade_time_utc"] == "03:45:00"
