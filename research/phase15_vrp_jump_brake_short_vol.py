@@ -65,30 +65,39 @@ def select_signals(features,variant):
 def load_entry_quotes(root,signals):
     if signals.empty:
         return pd.DataFrame()
-    con=duckdb.connect()
-    g=parquet_glob(root)
-    q=f'''
-    SELECT CAST(o.datetime AS TIMESTAMP) AS datetime,
-           o.expiry_type,
-           o.option_type,
-           o.strike_type,
-           CAST(o.strike_price AS DOUBLE) AS strike,
-           CAST(o.open AS DOUBLE) AS open,
-           CAST(o.high AS DOUBLE) AS high,
-           CAST(o.low AS DOUBLE) AS low,
-           CAST(o.close AS DOUBLE) AS close
+
+    wanted = signals[['trade_date','expiry_type','datetime']].drop_duplicates().copy()
+    wanted['entry_time'] = wanted['datetime'] + pd.Timedelta(minutes=1)
+    con = duckdb.connect()
+    con.register('wanted', wanted[['trade_date','expiry_type','entry_time']])
+
+    g = parquet_glob(root)
+    q = f'''
+    SELECT
+      CAST(o.datetime AS TIMESTAMP) AS datetime,
+      o.expiry_type,
+      o.option_type,
+      o.strike_type,
+      CAST(o.strike_price AS DOUBLE) AS strike,
+      CAST(o.open AS DOUBLE) AS open,
+      CAST(o.high AS DOUBLE) AS high,
+      CAST(o.low AS DOUBLE) AS low,
+      CAST(o.close AS DOUBLE) AS close,
+      w.trade_date AS trade_date
     FROM read_parquet('{g}', union_by_name=true) o
-    WHERE o.close>0
+    JOIN wanted w
+      ON o.expiry_type = w.expiry_type
+     AND CAST(o.datetime AS TIMESTAMP) = w.entry_time
+     AND CAST(CAST(o.datetime AS TIMESTAMP) + INTERVAL '5 hours 30 minutes' AS DATE) = w.trade_date
+    WHERE o.close > 0
       AND o.option_type IN ('CALL','PUT')
-      AND STRFTIME(CAST(o.datetime AS TIMESTAMP) + INTERVAL '5 hours 30 minutes','%H:%M:%S')
-          IN ('09:31:00','10:01:00','10:31:00')
     '''
-    out=con.execute(q).df()
+    out = con.execute(q).df()
     con.close()
     if out.empty:
         return out
-    out['datetime']=pd.to_datetime(out['datetime']).dt.floor('min')
-    out['trade_date']=(out['datetime']+pd.Timedelta(hours=5,minutes=30)).dt.date
+    out['datetime'] = pd.to_datetime(out['datetime']).dt.floor('min')
+    out['trade_date'] = pd.to_datetime(out['trade_date']).dt.date
     return out
 
 def load_execution_windows(root,setup_rows,max_hold=60):
