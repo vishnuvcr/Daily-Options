@@ -223,30 +223,29 @@ def select_entries(
             continue
 
         con.register("chosen_df", chosen)
-        raw_sql = f"""
-        SELECT
-          CAST(trading_day AS DATE) AS trade_date,
-          CAST(expiry AS DATE) AS expiry,
-          CASE
-            WHEN UPPER(CAST(option_type AS VARCHAR)) IN ('CALL','CE') THEN 'CALL'
-            ELSE 'PUT'
-          END AS option_side,
-          CAST(strike AS DOUBLE) AS strike,
-          CAST(timestamp AS TIMESTAMP) AS local_ts,
-          CAST(close AS DOUBLE) AS close
-        FROM read_parquet('{opt_glob(root, symbol)}', union_by_name=true)
-        WHERE close > 0
-        """
-        con.register("raw_df", con.execute(raw_sql).df())  # symbol-level parquet scan remains bounded by one index
-        # Use a DuckDB table for only rows that fall in the selected trade windows.
         candidates = con.execute(
-            """
+            f"""
+            WITH raw AS (
+              SELECT
+                CAST(trading_day AS DATE) AS trade_date,
+                CAST(expiry AS DATE) AS expiry,
+                CASE
+                  WHEN UPPER(CAST(option_type AS VARCHAR)) IN ('CALL','CE') THEN 'CALL'
+                  ELSE 'PUT'
+                END AS option_side,
+                CAST(strike AS DOUBLE) AS strike,
+                CAST(timestamp AS TIMESTAMP) AS local_ts,
+                CAST(close AS DOUBLE) AS close
+              FROM read_parquet('{opt_glob(root, symbol)}', union_by_name=true)
+              WHERE close > 0
+            )
             SELECT
               c.variant_id, c.trade_date, c.local_ts AS signal_ts,
               c.entry_anchor, c.direction, c.expiry, c.leader_spot,
+              c.width_steps, c.hold_minutes, c.risk_id,
               r.option_side, r.strike, r.local_ts, r.close
             FROM chosen_df c
-            JOIN raw_df r
+            JOIN raw r
               ON r.trade_date=c.trade_date
              AND r.expiry=c.expiry
              AND r.option_side=c.direction
@@ -298,10 +297,10 @@ def select_entries(
             if not np.isfinite(premium_ret3) or premium_ret3 <= 0:
                 continue
 
-            for width_steps in (1, 2):
-                if len(wings) < width_steps:
-                    continue
-                wing = float(wings[width_steps - 1])
+            width_steps = int(meta["width_steps"])
+            if len(wings) < width_steps:
+                continue
+            wing = float(wings[width_steps - 1])
                 pair = same.loc[same["strike"].isin([atm, wing])]
                 long_entry = float(pair.loc[pair["strike"].eq(atm), "close"].iloc[0])
                 short_entry = float(pair.loc[pair["strike"].eq(wing), "close"].iloc[0])
@@ -342,38 +341,46 @@ def simulate(entries: pd.DataFrame, root: Path, out_dir: Path, slippage: float) 
             continue
         con = duckdb.connect()
         con.register("entries_df", es)
-        raw = con.execute(
+        con.register("entries_df", es)
+        path = con.execute(
             f"""
+            WITH raw AS (
+              SELECT
+                CAST(trading_day AS DATE) AS trade_date,
+                CAST(expiry AS DATE) AS expiry,
+                CASE
+                  WHEN UPPER(CAST(option_type AS VARCHAR)) IN ('CALL','CE') THEN 'CALL'
+                  ELSE 'PUT'
+                END AS option_side,
+                CAST(strike AS DOUBLE) AS strike,
+                CAST(timestamp AS TIMESTAMP) AS local_ts,
+                CAST(open AS DOUBLE) AS open,
+                CAST(high AS DOUBLE) AS high,
+                CAST(low AS DOUBLE) AS low,
+                CAST(close AS DOUBLE) AS close
+              FROM read_parquet('{opt_glob(root, symbol)}', union_by_name=true)
+              WHERE close > 0
+            )
             SELECT
-              CAST(trading_day AS DATE) AS trade_date,
-              CAST(expiry AS DATE) AS expiry,
-              CASE
-                WHEN UPPER(CAST(option_type AS VARCHAR)) IN ('CALL','CE') THEN 'CALL'
-                ELSE 'PUT'
-              END AS option_side,
-              CAST(strike AS DOUBLE) AS strike,
-              CAST(timestamp AS TIMESTAMP) AS local_ts,
-              CAST(open AS DOUBLE) AS open,
-              CAST(high AS DOUBLE) AS high,
-              CAST(low AS DOUBLE) AS low,
-              CAST(close AS DOUBLE) AS close
-            FROM read_parquet('{opt_glob(root, symbol)}', union_by_name=true)
-            WHERE close > 0
+              e.variant_id, e.trade_date, e.leader, e.direction, e.expiry,
+              e.entry_time, e.atm_strike, e.wing_strike,
+              e.long_entry, e.short_entry, e.hold_minutes, e.risk_id,
+              r.local_ts, r.open, r.high, r.low, r.close, r.strike
+            FROM entries_df e
+            JOIN raw r
+              ON r.trade_date=e.trade_date
+             AND r.expiry=e.expiry
+             AND r.option_side=e.direction
+             AND r.strike IN (e.atm_strike, e.wing_strike)
+             AND r.local_ts BETWEEN e.entry_time
+                                AND e.entry_time + e.hold_minutes * INTERVAL '1 minute'
+            ORDER BY e.variant_id, e.trade_date, r.local_ts
             """
         ).df()
         con.close()
 
-        for row in es.itertuples(index=False):
-            g = raw.loc[
-                (raw.trade_date == row.trade_date)
-                & (raw.expiry == row.expiry)
-                & (raw.option_side == row.direction)
-                & raw.strike.isin([row.atm_strike, row.wing_strike])
-                & raw.local_ts.between(
-                    row.entry_time,
-                    row.entry_time + pd.Timedelta(minutes=int(row.variant_id.split("|h")[1].split("|")[0]))
-                )
-            ].copy()
+        path["local_ts"] = pd.to_datetime(path["local_ts"])
+        for (variant_id, trade_date), g in path.groupby(["variant_id","trade_date"], sort=False):
             if g.empty:
                 continue
 
