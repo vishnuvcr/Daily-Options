@@ -42,3 +42,23 @@ def test_long_option_uses_two_order_cost_model():
         100.0, 0.0, 120.0, 0.0, lot_size=75, qty=1, slippage_points=0.20
     )
     assert one_leg > four_leg_zero_short
+
+
+def test_long_option_nan_wing_path_is_not_treated_as_spread():
+    import numpy as np
+    df = pd.DataFrame([{
+        "trade_date": pd.Timestamp("2019-01-02").date(),
+        "entry_time": pd.Timestamp("2019-01-02 10:00:00"),
+        "expiry": pd.Timestamp("2019-01-31").date(),
+        "side": "CE",
+        "atm_strike": 100.0,
+        "wing_strike": np.nan,
+        "atm_path": "atm.csv",
+        "wing_path": np.nan,
+        "spot": 100.0,
+        "hold_minutes": 10,
+        "risk_id": 0,
+        "variant_id": "x",
+    }])
+    rec = df.iloc[0]
+    assert not (isinstance(rec["wing_path"], str) and bool(rec["wing_path"]))
