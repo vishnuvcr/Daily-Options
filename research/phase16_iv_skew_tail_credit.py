@@ -196,6 +196,17 @@ def run(root,out,slippage,expiry):
     """
     win=con.execute(q2).df()
     con.close()
+    if not win.empty:
+        win['datetime']=pd.to_datetime(win['datetime']).dt.floor('min')
+        win['entry_time']=pd.to_datetime(win['entry_time']).dt.floor('min')
+        win['trade_date']=pd.to_datetime(win['trade_date']).dt.date
+        win['expiry_type']=win['expiry_type'].astype(str)
+        win['side']=win['side'].astype(str)
+
+    setup_df['entry_time']=pd.to_datetime(setup_df['entry_time']).dt.floor('min')
+    setup_df['trade_date']=pd.to_datetime(setup_df['trade_date']).dt.date
+    setup_df['expiry_type']=setup_df['expiry_type'].astype(str)
+    setup_df['side']=setup_df['side'].astype(str)
 
     rows=[]
     for _,v in pd.DataFrame(vs).iterrows():
