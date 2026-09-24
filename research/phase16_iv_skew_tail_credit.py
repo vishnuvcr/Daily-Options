@@ -68,7 +68,7 @@ def run(root,out,slippage,expiry):
     g=files(root,expiry)
     con=duckdb.connect()
     q=f'''SELECT CAST(datetime AS TIMESTAMP) datetime,expiry_type,option_type,strike_type,CAST(strike_price AS DOUBLE) strike,
-      CAST(open AS DOUBLE) open,CAST(high AS DOUBLE) high,CAST(low AS DOUBLE) low,CAST(close AS DOUBLE) close
+      CAST(open AS DOUBLE) open,CAST(high AS DOUBLE) high,CAST(low AS DOUBLE) low,CAST(close AS DOUBLE) AS close_px
       FROM read_parquet({g},union_by_name=true) WHERE close>0
       AND STRFTIME(CAST(datetime AS TIMESTAMP)+INTERVAL '5 hours 30 minutes','%H:%M:%S') IN ('09:46:00','10:01:00','10:16:00')'''
     entry=con.execute(q).df()
