@@ -179,3 +179,22 @@ The active corrected runtime is **Phase 19 v2** on `phase-19-nifty-short-strangl
 ## Phase 13 integrity correction — 2026-09-25
 
 A retrospective audit found that the authoritative Phase 13 Base/Stress trade artifacts contained exact two-for-one duplicates caused by the simulator expanding both risk profiles after `risk_id` was already part of the unique setup key. The published ₹285.45/₹225.45 near-miss is therefore invalid. Exact-deduplication recomputation gives a best full-sample mean active-day net of **₹142.72 base / ₹112.72 stress**, with 0 target-qualified cells and corrected nested-WFA mean test-window net of **₹121.82 base / ₹91.82 stress**. Phase 13 remains non-promoted; no tuning is authorized.
+
+
+## Frontier update — 2026-09-25
+
+### Phase 20 closure
+Phase 20 (global-gated interaction with the corrected Phase 13 late-day volatility-acceleration family) completed authoritative Base and Stress run 36045068043. The frozen 384-cell grid produced 3,872 trades; best mean active-day net was ₹481.73 base / ₹451.73 stress; 0 cells reached ₹1,000 and 0 walk-forward windows cleared the promotion gate. The family is retired without retuning.
+
+### Phase 21
+Phase 21 is the distinct regime-switching hypothesis: long ATM straddle in expansion regimes and short OTM strangle in calm regimes. The first corrected runs returned zero setups because of a data/alignment implementation problem; those runs are non-evidentiary and are not treated as a strategy failure.
+
+### Phase 22
+Phase 22 is the corrected IV-skew tail-credit family. Run 36048113026 passed tests and data acquisition but failed in report assembly (pandas DataFrame received nested DataFrames). No P&L was accepted. The bug is logged as E0220 and the unchanged experiment has been rerun on the corrected branch.
+
+### Phase 23 — Equity Income YouTube strategy discovery
+The Equity Income YouTube channel is now a formal hypothesis source. The research catalogue records VIX expected-range/strangle-iron-condor “Air Defense”, low-VIX weekly structures, low-VIX calendars and diagonals, bear-put spread adjustments, Set & Strike/iron-fly structures, a NIFTY Jade Lizard, a monthly debit-spread + short-call overlay, and other channel ideas. Video descriptions/examples are treated as hypotheses only; no claim of profitability is accepted without the repository's cost-aware WFA/OOS tests.
+
+[Phase 23 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-23-equity-income-video-hypotheses/docs/phase23_plan.md) · [Equity Income strategy catalogue](https://github.com/vishnuvcr/Daily-Options/blob/phase-23-equity-income-video-hypotheses/docs/equity_income_channel_catalog.md) · [Phase 23 workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-23-equity-income-video-hypotheses/.github/workflows/phase-23-equity-income-video-hypotheses.yml)
+
+Channel: https://www.youtube.com/@equityincome
