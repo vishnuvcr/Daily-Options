@@ -68,3 +68,8 @@ def test_adjustment_date_is_explicit_in_setup():
 def test_no_legacy_friday_variable_in_simulator():
     src = inspect.getsource(simulate_setup)
     assert "{friday}" not in src
+
+
+def test_current_rule_sequence_is_three_sessions():
+    src = inspect.getsource(__import__("research.phase24_falcon_spread", fromlist=["build_setup"]).build_setup)
+    assert "current Tuesday regime: Wednesday entry -> Friday adjustment -> Monday exit" in src
