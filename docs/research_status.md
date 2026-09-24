@@ -283,3 +283,7 @@ The expiry-relative mapping was rechecked against the source's historical Thursd
 
 ## Phase 24 cost-model correction — 2026-09-25
 Current NSE STT rules are date-dependent: option-sale STT was 0.10% through 2026-03-31 and is 0.15% from 2026-04-01. The simulator now applies STT separately to entry and exit sale dates. Static-rate results are superseded. Corrected Phase 24 run **36055156251** is queued.
+
+
+## Phase 24 performance correction — 2026-09-25
+The simulator now caches repeated per-setup option series and mark panels across the 9 adjustment/stop combinations. This is an execution optimization only; it does not change strategy rules, timing or cost assumptions. Static-rate and pre-cache runs remain superseded.
