@@ -25,20 +25,45 @@ def frozen_signal_dates(features):
         rows.append({'trade_date':d,'signal_time':r.datetime,'entry_time':r.datetime+pd.Timedelta(minutes=1),'direction':'CALL' if float(r.gap_signal)<0 else 'PUT','spot':float(r.spot_close),'global3':float(r.global_global3),'gap':float(r.gap_signal)})
     return pd.DataFrame(rows)
 
-def load_options(root,signals):
-    if signals.empty: return pd.DataFrame()
-    dates=sorted({str(x) for x in signals.trade_date})
-    date_sql=",".join("'" + x + "'" for x in dates)
-    glob=(root/'upstox_intraday'/'NIFTY'/'NIFTY_*.parquet').as_posix()
-    con=duckdb.connect()
-    q=f"SELECT CAST(timestamp AS TIMESTAMPTZ) AT TIME ZONE 'UTC' AS datetime_utc, CAST(date AS DATE) AS trade_date, CAST(expiry AS DATE) AS expiry, CAST(strike AS DOUBLE) AS strike, CAST(option_type AS VARCHAR) AS option_type, CAST(open AS DOUBLE) AS open, CAST(high AS DOUBLE) AS high, CAST(low AS DOUBLE) AS low, CAST(close AS DOUBLE) AS close FROM read_parquet('{glob}',union_by_name=true) WHERE CAST(date AS DATE) IN ({date_sql}) AND underlying='NIFTY' AND granularity='1min' AND expiry IS NOT NULL AND close>0"
-    x=con.execute(q).df(); con.close()
-    if x.empty: return x
-    x['trade_date']=pd.to_datetime(x['trade_date'],errors='coerce').dt.date
-    x['expiry']=pd.to_datetime(x['expiry'],errors='coerce').dt.date
-    x['option_type']=x['option_type'].replace({'CE':'CALL','PE':'PUT'})
-    x['datetime_utc']=pd.to_datetime(x['datetime_utc'],utc=True).dt.tz_localize(None)
-    return x
+def load_options(root, signals):
+    if signals.empty:
+        return pd.DataFrame()
+
+    signal_dates = sorted({str(x) for x in signals.trade_date})
+    date_sql = ",".join("'" + x + "'" for x in signal_dates)
+    glob = (root / "upstox_intraday" / "NIFTY" / "NIFTY_*.parquet").as_posix()
+
+    con = duckdb.connect()
+    query = f"""
+    SELECT
+      CAST(timestamp AS TIMESTAMP) - INTERVAL '5 hours 30 minutes' AS datetime_utc,
+      CAST(date AS DATE) AS trade_date,
+      TRY_CAST(expiry AS DATE) AS expiry,
+      CAST(strike AS DOUBLE) AS strike,
+      CAST(option_type AS VARCHAR) AS option_type,
+      CAST(open AS DOUBLE) AS open,
+      CAST(high AS DOUBLE) AS high,
+      CAST(low AS DOUBLE) AS low,
+      CAST(close AS DOUBLE) AS close
+    FROM read_parquet('{glob}', union_by_name=true)
+    WHERE CAST(date AS DATE) IN ({date_sql})
+      AND underlying = 'NIFTY'
+      AND granularity = '1min'
+      AND TRY_CAST(expiry AS DATE) > CAST(date AS DATE)
+      AND option_type IN ('CE','PE')
+      AND close > 0
+    """
+    x = con.execute(query).df()
+    con.close()
+
+    if x.empty:
+        return x
+
+    x["trade_date"] = pd.to_datetime(x["trade_date"], errors="coerce").dt.date
+    x["expiry"] = pd.to_datetime(x["expiry"], errors="coerce").dt.date
+    x["option_type"] = x["option_type"].replace({"CE": "CALL", "PE": "PUT"})
+    x["datetime_utc"] = pd.to_datetime(x["datetime_utc"], errors="coerce")
+    return x.dropna(subset=["trade_date","expiry","datetime_utc","strike","option_type"])
 
 def monthly_expiry_calendar(options):
     if options.empty: return []
@@ -47,30 +72,100 @@ def monthly_expiry_calendar(options):
     monthly=e.groupby('ym',as_index=False).expiry.max()
     return sorted(pd.to_datetime(monthly.expiry).dt.date.tolist())
 
-def simulate(signals,options,slippage):
-    if signals.empty or options.empty: return pd.DataFrame()
-    monthlies=monthly_expiry_calendar(options); cm=OptionCostModel(); rows=[]
+def simulate(signals, options, slippage):
+    if signals.empty or options.empty:
+        return pd.DataFrame()
+
+    cm = OptionCostModel()
+    rows = []
+
     for rec in signals.itertuples(index=False):
-        expiry_candidates=[d for d in monthlies if d>rec.trade_date]
-        if not expiry_candidates: continue
-        expiry=expiry_candidates[0]
-        day=options[(options.trade_date==rec.trade_date)&(options.expiry==expiry)&(options.option_type==rec.direction)].copy()
-        if day.empty: continue
-        at_signal=day[day.datetime_utc==pd.Timestamp(rec.signal_time)]
-        if at_signal.empty: continue
-        atm=float(at_signal.iloc[(at_signal['strike']-float(rec.spot)).abs().argsort().iloc[0]].strike)
-        entry=pd.Timestamp(rec.entry_time); end=entry+pd.Timedelta(minutes=FROZEN_HOLD)
-        bars=day[(day.strike==atm)&(day.datetime_utc>=entry)&(day.datetime_utc<=end)].sort_values('datetime_utc')
-        if bars.empty or bars.iloc[0].datetime_utc>entry: continue
-        first=bars.iloc[0]; entry_px=float(first.open)
-        if not np.isfinite(entry_px) or entry_px<=0: continue
-        stop=entry_px*(1-FROZEN_RISK['stop_pct']); target=entry_px*(1+FROZEN_RISK['target_pct']); exit_ts=bars.iloc[-1].datetime_utc; reason='TIME'
-        for _,bar in bars.iterrows():
-            if float(bar.low)<=stop: exit_ts=bar.datetime_utc; reason='STOP'; break
-            if float(bar.high)>=target: exit_ts=bar.datetime_utc; reason='TARGET'; break
-        ex=bars[bars.datetime_utc==exit_ts].iloc[-1]; exit_px=float(ex.close)
-        net=cm.net_pnl(entry_px,exit_px,qty=1,lot_size=index_option_lot_size('NIFTY',expiry),slippage_points=slippage)
-        rows.append({'trade_date':rec.trade_date,'year':pd.Timestamp(rec.trade_date).year,'direction':rec.direction,'expiry':expiry,'signal_time':rec.signal_time,'entry_time':rec.entry_time,'exit_time':exit_ts,'reason':reason,'strike':atm,'entry_premium':entry_px,'exit_premium':exit_px,'global3':rec.global3,'gap':rec.gap,'net_pnl':net})
+        day = options[options.trade_date == rec.trade_date].copy()
+        if day.empty:
+            continue
+
+        future_expiries = sorted(d for d in day.expiry.dropna().unique() if d > rec.trade_date)
+        if not future_expiries:
+            continue
+
+        # Frozen MONTH rule: select the first future expiry month and use
+        # the last expiry date available in that month.
+        first_month = pd.Timestamp(future_expiries[0]).to_period("M")
+        monthly_candidates = [d for d in future_expiries if pd.Timestamp(d).to_period("M") == first_month]
+        if not monthly_candidates:
+            continue
+        expiry = max(monthly_candidates)
+
+        side = rec.direction
+        day = day[(day.expiry == expiry) & (day.option_type == side)].copy()
+        if day.empty:
+            continue
+
+        at_signal = day[day.datetime_utc == pd.Timestamp(rec.signal_time)]
+        if at_signal.empty:
+            continue
+
+        distances = (at_signal["strike"] - float(rec.spot)).abs()
+        atm = float(at_signal.loc[distances.idxmin(), "strike"])
+
+        entry = pd.Timestamp(rec.entry_time)
+        end = entry + pd.Timedelta(minutes=FROZEN_HOLD)
+        bars = day[
+            (day.strike == atm)
+            & (day.datetime_utc >= entry)
+            & (day.datetime_utc <= end)
+        ].sort_values("datetime_utc")
+
+        if bars.empty or bars.iloc[0].datetime_utc > entry:
+            continue
+
+        first = bars.iloc[0]
+        entry_px = float(first.open)
+        if not np.isfinite(entry_px) or entry_px <= 0:
+            continue
+
+        stop = entry_px * (1 - FROZEN_RISK["stop_pct"])
+        target = entry_px * (1 + FROZEN_RISK["target_pct"])
+        exit_ts = bars.iloc[-1].datetime_utc
+        reason = "TIME"
+
+        for _, bar in bars.iterrows():
+            if float(bar.low) <= stop:
+                exit_ts = bar.datetime_utc
+                reason = "STOP"
+                break
+            if float(bar.high) >= target:
+                exit_ts = bar.datetime_utc
+                reason = "TARGET"
+                break
+
+        ex = bars[bars.datetime_utc == exit_ts].iloc[-1]
+        exit_px = float(ex.close)
+        net = cm.net_pnl(
+            entry_px,
+            exit_px,
+            qty=1,
+            lot_size=index_option_lot_size("NIFTY", expiry),
+            slippage_points=slippage,
+        )
+
+        rows.append({
+            "trade_date": rec.trade_date,
+            "year": pd.Timestamp(rec.trade_date).year,
+            "direction": side,
+            "expiry": expiry,
+            "signal_time": rec.signal_time,
+            "entry_time": rec.entry_time,
+            "exit_time": exit_ts,
+            "reason": reason,
+            "strike": atm,
+            "entry_premium": entry_px,
+            "exit_premium": exit_px,
+            "global3": rec.global3,
+            "gap": rec.gap,
+            "net_pnl": net,
+        })
+
     return pd.DataFrame(rows)
 
 def summarize(trades,slippage):
