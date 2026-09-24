@@ -22,15 +22,16 @@ def parquet_glob(root: Path, expiry_type: str | None = None) -> str:
     return (root / "**" / "*.parquet").as_posix()
 
 
-def required_files_sql(root: Path) -> str:
+def required_files_sql(root: Path, feature_only: bool = False) -> str:
     paths = []
+    names = (
+        ("ATM_CE.parquet", "ATM_PE.parquet")
+        if feature_only else
+        ("ATM_CE.parquet","ATM_PE.parquet","ATM+2_CE.parquet","ATM+2_PE.parquet","ATM-2_CE.parquet","ATM-2_PE.parquet")
+    )
     for expiry_type in EXPIRY_TYPES:
         folder = root / expiry_type
-        for name in (
-            "ATM_CE.parquet","ATM_PE.parquet",
-            "ATM+2_CE.parquet","ATM+2_PE.parquet",
-            "ATM-2_CE.parquet","ATM-2_PE.parquet",
-        ):
+        for name in names:
             p = folder / name
             paths.append(str(p))
     existing = [p for p in paths if Path(p).exists()]
@@ -40,7 +41,7 @@ def required_files_sql(root: Path) -> str:
     return "[" + ",".join(repr(p) for p in existing) + "]"
 
 def feature_query(root:Path)->str:
-    g=required_files_sql(root); times=','.join(repr(x) for x in ENTRY_TIMES)
+    g=required_files_sql(root, feature_only=True); times=','.join(repr(x) for x in ENTRY_TIMES)
     return f'''
     WITH base AS (
       SELECT CAST(datetime AS TIMESTAMP) AS datetime, CAST(date AS DATE) AS trade_date, expiry_type, option_type, strike_type, CAST(spot AS DOUBLE) AS spot, CAST(iv AS DOUBLE) AS iv, CAST(close AS DOUBLE) AS close
