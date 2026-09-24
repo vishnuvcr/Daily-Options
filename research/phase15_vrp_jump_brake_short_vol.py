@@ -44,7 +44,7 @@ def feature_query(root:Path)->str:
     return f'''
     WITH base AS (
       SELECT CAST(datetime AS TIMESTAMP) AS datetime, CAST(date AS DATE) AS trade_date, expiry_type, option_type, strike_type, CAST(spot AS DOUBLE) AS spot, CAST(iv AS DOUBLE) AS iv, CAST(close AS DOUBLE) AS close
-      FROM read_parquet('{g}', union_by_name=true)
+      FROM read_parquet({g}, union_by_name=true)
       WHERE close>0 AND option_type IN ('CALL','PUT') AND expiry_type IN ('WEEK','MONTH')
     ),
     minute AS (
@@ -105,7 +105,7 @@ def load_entry_quotes(root,signals):
       CAST(o.low AS DOUBLE) AS low,
       CAST(o.close AS DOUBLE) AS close,
       w.trade_date AS trade_date
-    FROM read_parquet('{g}', union_by_name=true) o
+    FROM read_parquet({g}, union_by_name=true) o
     JOIN wanted w
       ON o.expiry_type = w.expiry_type
      AND CAST(o.datetime AS TIMESTAMP) = w.entry_time
@@ -149,7 +149,7 @@ def load_execution_windows(root,setup_rows,max_hold=60):
            l.trade_date AS trade_date,
            l.entry_time AS entry_time,
            l.leg AS leg
-    FROM read_parquet('{g}', union_by_name=true) o
+    FROM read_parquet({g}, union_by_name=true) o
     JOIN legs l
       ON o.expiry_type=l.expiry_type
      AND CAST(o.strike_price AS DOUBLE)=l.strike
