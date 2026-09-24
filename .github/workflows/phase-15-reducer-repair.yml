@@ -24,7 +24,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           pattern: phase15-shard-*
-          merge-multiple: false
+          merge-multiple: true
           path: shard_artifacts
           repository: vishnuvcr/Daily-Options
           run-id: 36012314061
@@ -39,17 +39,14 @@ jobs:
           from research.phase15_vrp_jump_brake_short_vol import walk_forward
 
           root=Path('shard_artifacts')
-          trade_files=list(root.rglob('phase15_trades.csv'))
-          print('discovered_trade_files', [str(p) for p in trade_files])
-
           by_friction={'base':[],'stress':[]}
-          for p in trade_files:
-              parts=p.parts
-              fric=None
-              if 'base' in parts: fric='base'
-              elif 'stress' in parts: fric='stress'
-              if fric:
-                  by_friction[fric].append(pd.read_csv(p))
+          for expiry in ('WEEK','MONTH'):
+              for fric in ('base','stress'):
+                  p=root/expiry/fric/'phase15_trades.csv'
+                  print('checking',p)
+                  if p.exists():
+                      by_friction[fric].append(pd.read_csv(p))
+
 
           out=Path('reports/phase15-global')
           for fric,frames in by_friction.items():
