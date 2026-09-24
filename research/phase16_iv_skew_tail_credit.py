@@ -73,7 +73,7 @@ def run(root,out,slippage,expiry):
       AND STRFTIME(CAST(datetime AS TIMESTAMP)+INTERVAL '5 hours 30 minutes','%H:%M:%S') IN ('09:46:00','10:01:00','10:16:00')'''
     entry=con.execute(q).df()
     q2=f'''SELECT CAST(datetime AS TIMESTAMP) datetime,expiry_type,option_type,CAST(strike_price AS DOUBLE) strike,
-      CAST(open AS DOUBLE) open,CAST(high AS DOUBLE) high,CAST(low AS DOUBLE) low,CAST(close AS DOUBLE) close
+      CAST(open AS DOUBLE) open,CAST(high AS DOUBLE) high,CAST(low AS DOUBLE) low,CAST(close AS DOUBLE) AS close_px
       FROM read_parquet({g},union_by_name=true) WHERE close>0'''
     win=con.execute(q2).df(); con.close()
     for v in vs:
@@ -88,8 +88,8 @@ def run(root,out,slippage,expiry):
             if credit<=0: continue
             end=et+pd.Timedelta(minutes=v['hold']); q=win[(win.datetime>=et)&(win.datetime<=end)&(win.option_type==side)&(win.strike.isin([float(short.strike),float(wing.strike)]))]
             if q.empty: continue
-            a=q[q.strike==float(short.strike)][['datetime','high','low','close']].rename(columns={'high':'shigh','low':'slow','close':'sclose'})
-            b=q[q.strike==float(wing.strike)][['datetime','high','low','close']].rename(columns={'high':'whigh','low':'wlow','close':'wclose'})
+            a=q[q.strike==float(short.strike)][['datetime','high','low','close_px']].rename(columns={'high':'shigh','low':'slow','close_px':'sclose'})
+            b=q[q.strike==float(wing.strike)][['datetime','high','low','close_px']].rename(columns={'high':'whigh','low':'wlow','close_px':'wclose'})
             m=a.merge(b,on='datetime').sort_values('datetime')
             if m.empty: continue
             stop=credit*v['stop']; target=credit*TARGET_RATIO; hi=m.shigh-m.wlow; lo=m.slow-m.whigh; si=np.flatnonzero(hi>=stop); ti=np.flatnonzero(lo<=target); si=int(si[0]) if len(si) else 10**9; ti=int(ti[0]) if len(ti) else 10**9
