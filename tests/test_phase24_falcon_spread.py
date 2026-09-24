@@ -25,7 +25,7 @@ def test_current_expiry_calendar_geometry_is_documented_in_simulator():
     from research.phase24_falcon_spread import build_setup
     src = inspect.getsource(build_setup)
     assert 'entry = expiry - 4 sessions' in src
-    assert 'adjustment = expiry - 2 sessions' in src
+    assert 'adjustment = expiry - 3 sessions' in src
     assert 'exit = expiry - 1 session' in src
 
 def test_costs_include_brokerage_and_stt_and_gst():
