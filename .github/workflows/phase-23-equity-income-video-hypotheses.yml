@@ -1,0 +1,20 @@
+name: Phase 23 - Equity Income video hypothesis discovery
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "docs/equity_income_channel_catalog.md"
+      - "research/phase23_equity_income_catalog.py"
+      - "tests/test_phase23_equity_income_catalog.py"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pytest -q tests/test_phase23_equity_income_catalog.py
+      - run: PYTHONPATH=. python research/phase23_equity_income_catalog.py
