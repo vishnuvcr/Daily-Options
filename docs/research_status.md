@@ -13,3 +13,8 @@ PR #28 is the authoritative execution route. The branch-push workflow was not sc
 ## 2026-09-24 — Phase 18 retired; Phase 19 launched
 
 Phase 18 corrected execution run `36040028422` completed Base and Stress successfully but found `setup_rows=0` and `filtered_setup_rows=0` with 3,753 frozen signals and 2,205,051 option quote rows. The four-leg iron-condor hypothesis is retired as source/execution-infeasible. Phase 19 launches a two-leg short-strangle regime with unchanged late-day/low-jump/low-RV framework and a 144-cell frozen grid.
+
+
+## 2026-09-24 — Phase 19 timestamp-alignment correction
+
+Phase 19 Base/Stress returned zero setups, but a targeted 20-signal diagnostic showed the option quote window was empty after the internal timestamp normalization. This contradicts the independent Phase 17c feasibility smoke, which found common PE/CE execution minutes. E0192 replaces the join-based quote loader with the validated direct local-time window query; no signal, offset, regime, exit or cost parameter changes.
