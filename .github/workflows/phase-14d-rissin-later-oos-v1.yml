@@ -69,16 +69,10 @@ jobs:
           PY
 
       - name: Base Rissin OOS
-        run: PYTHONPATH=. python -m research.phase14_global_cross_market_opening_gap_later_oos_rissin --root data/cache/phase14d_index --global-root data/cache/phase14d_global --out reports/phase14d-base --slippage 0.20
+        run: PYTHONPATH=. python -m research.phase14_global_cross_market_opening_gap_later_oos_rissin --option-root data/cache/phase14d_rissin --index-root data/cache/phase14d_index --global-root data/cache/phase14d_global --out reports/phase14d-base --slippage 0.20
 
       - name: Stress Rissin OOS
-        run: PYTHONPATH=. python -m research.phase14_global_cross_market_opening_gap_later_oos_rissin --root data/cache/phase14d_rissin --global-root data/cache/phase14d_global --out reports/phase14d-stress --slippage 0.40
-
-      - name: Correct Rissin runner inputs and execute
-        run: |
-          set -euo pipefail
-          PYTHONPATH=. python -m research.phase14_global_cross_market_opening_gap_later_oos_rissin --root data/cache/phase14d_rissin --global-root data/cache/phase14d_global --out reports/phase14d-base-correct --slippage 0.20
-          PYTHONPATH=. python -m research.phase14_global_cross_market_opening_gap_later_oos_rissin --root data/cache/phase14d_rissin --global-root data/cache/phase14d_global --out reports/phase14d-stress-correct --slippage 0.40
+        run: PYTHONPATH=. python -m research.phase14_global_cross_market_opening_gap_later_oos_rissin --option-root data/cache/phase14d_rissin --index-root data/cache/phase14d_index --global-root data/cache/phase14d_global --out reports/phase14d-stress --slippage 0.40
 
       - name: Upload reports
         uses: actions/upload-artifact@v4
