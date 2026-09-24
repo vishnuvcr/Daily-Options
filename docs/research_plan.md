@@ -129,3 +129,8 @@ The search is open-ended within the scientific phases but not unbounded. A resea
 ## 8. Final deliverables
 
 Abstract, introduction, research questions, literature review, data, methodology, cost model, candidate strategy definitions, statistical analysis, results, robustness checks, discussion, strengths, limitations, conclusion, future research, references, appendices, source manifest, reproducibility instructions and execution checklist.
+
+
+## Phase 20 preregistration — global-gated late-day volatility acceleration
+
+The frozen Phase 13 384-cell late-day volatility-acceleration mechanism is tested only on sessions passing a fixed inherited regime gate: absolute GLOBAL3 standardized prior-session return >= 0.5 and absolute NIFTY opening gap >= 0.75%. No Phase 13 signal/entry/expiry/hold/risk/cost parameter is changed. The corrected simulator emits one outcome per input `risk_id`. Base/stress slippage remain ₹0.20/₹0.40 per premium point per leg.
