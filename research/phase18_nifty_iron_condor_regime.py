@@ -182,10 +182,16 @@ def lot(d):
 def simulate(root,filtered,slippage):
     if filtered.empty: return pd.DataFrame()
     files=dict(expiry_files(root))
-    unique=filtered.drop_duplicates(["trade_date","entry_ts","expiry","put_short","put_wing","call_short","call_wing"]).reset_index(drop=True)
+    unique=filtered.drop_duplicates(["trade_date","entry_ts","expiry","put_short","put_wing","call_short","call_wing"]).copy()
+    unique["setup_key"]=(
+        unique.trade_date.astype(str)+"|"+unique.entry_ts.astype(str)+"|"+unique.expiry.astype(str)+"|"+
+        unique.put_short.astype(str)+"|"+unique.put_wing.astype(str)+"|"+
+        unique.call_short.astype(str)+"|"+unique.call_wing.astype(str)
+    )
+    unique=unique.drop_duplicates("setup_key").reset_index(drop=True)
     unique["setup_id"]=np.arange(len(unique))
     con=duckdb.connect(); con.execute("SET TimeZone='Asia/Kolkata'")
-    con.register("legs",unique[["setup_id","trade_date","entry_ts","expiry","put_short","put_wing","call_short","call_wing"]])
+    con.register("legs",unique[["setup_id","setup_key","trade_date","entry_ts","expiry","put_short","put_wing","call_short","call_wing"]])
     chunks=[]
     for expiry_date,path in sorted(files.items()):
         active=int(con.execute("SELECT COUNT(*) FROM legs WHERE expiry=?", [expiry_date]).fetchone()[0])
@@ -243,7 +249,8 @@ def simulate(root,filtered,slippage):
                     er.pwc,er.psc,er.csc,er.cwc,lot(r.trade_date),slippage_points=slippage
                 )
                 out.append({
-                  "setup_id":int(sid),"trade_date":r.trade_date,"ts":r.ts,"expiry":r.expiry,
+                  "setup_id":int(sid),"setup_key":r.setup_key,
+                  "trade_date":r.trade_date,"ts":r.ts,"expiry":r.expiry,
                   "hold":hold,"stop":stop,"entry_credit":float(r.entry_credit),
                   "entry_delay_min":float(r.entry_delay_min),"net_pnl":pnl,"reason":reason
                 })
@@ -279,19 +286,21 @@ def run(root:Path,out:Path,slippage:float):
     trades=simulate(root,filtered,slippage)
     if not trades.empty:
         rows=[]
-        keycols=["trade_date","ts","expiry","put_short","put_wing","call_short","call_wing","hold","stop"]
-        for _,v in filtered.drop_duplicates(keycols+["variant_id"]).iterrows():
+        for _,v in filtered.drop_duplicates(["trade_date","ts","expiry","put_short","put_wing","call_short","call_wing","hold","stop","variant_id"]).iterrows():
+            setup_key=(
+                str(v.trade_date)+"|"+str(v.entry_ts)+"|"+str(v.expiry)+"|"+
+                str(v.put_short)+"|"+str(v.put_wing)+"|"+
+                str(v.call_short)+"|"+str(v.call_wing)
+            )
             m=trades[
-              (trades.trade_date==v.trade_date)&(trades.ts==v.ts)&(trades.expiry==v.expiry)&
-              (trades.hold==v.hold)&(trades.stop==v.stop)&
-              (trades.setup_id.isin([v.name if hasattr(v,"name") else -1]))
-            ]
+                (trades.setup_key==setup_key)&
+                (trades.hold==v.hold)&
+                (trades.stop==v.stop)
+            ].copy()
             if not m.empty:
-                x=m.copy(); x["variant_id"]=v.variant_id; rows.append(x)
-        if rows:
-            trades=pd.concat(rows,ignore_index=True)
-        else:
-            trades=pd.DataFrame()
+                m["variant_id"]=v.variant_id
+                rows.append(m)
+        trades=pd.concat(rows,ignore_index=True) if rows else pd.DataFrame()
     summary=summarize(trades,len(spot),out,slippage)
     summary.update({"quote_rows":int(len(quotes)),"setup_rows":int(len(setups)),"filtered_setup_rows":int(len(filtered))})
     (out/"phase18_summary.json").write_text(json.dumps(summary,indent=2,default=str))
