@@ -13,3 +13,17 @@ The repository was empty, so bootstrap it with a research charter, phase plan, s
 
 ### Communication decision
 This log records requirements, research decisions, evidence and outcomes. It intentionally does not record private hidden chain-of-thought.
+
+## 2026-09-24 — User: "Ok proceed"
+
+### Continuation decision
+Continue the bounded search under the revised stopping criterion: do not end the research until a reproducible intraday candidate clears Rs 1,000 net per active lot per trading day after realistic costs/slippage and untouched out-of-sample validation.
+
+### Execution findings
+- Phase 8 v2 run 35937700542 failed on executable-entry `open` schema handling; no P&L accepted. Branch guard added.
+- Phase 9 attempts were cancelled by runner shutdown twice with no Python exception; no P&L accepted. Workflow concurrency changed to `cancel-in-progress: false`.
+- Phase 10 run 35937773719 failed on pandas Series attribute access. A follow-up review found the candidate SQL also omitted `leader`; corrected in commit 5adf689.
+- Phase 11 was implemented as the preregistered 64-variant breakout/pullback/OI-confirmation family. Pre-run option-side selection was corrected. A further review found the PUT wing selector used the farthest lower strike; Phase 11 v2 corrects this and adds a regression test.
+
+### Research integrity decision
+No P&L result from a failed or incomplete run is accepted. No parameter has been selected from a test period. Engineering corrections are applied before interpreting results, without changing the preregistered hypothesis families or numerical parameter grids.
