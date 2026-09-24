@@ -37,13 +37,16 @@ def expiry_for_day(files, trade_date):
         return None
     return min(fut,key=lambda x:x[0])
 
+def ist_ts(x):
+    return pd.to_datetime(x, utc=True).dt.tz_convert("Asia/Kolkata").dt.floor("min")
+
 def load_spot(root: Path):
     p=root/"index"/"NIFTY.parquet"
     con=duckdb.connect()
     con.execute("SET TimeZone='Asia/Kolkata'")
     q=f"""
     WITH b AS (
-      SELECT CAST(timestamp AS TIMESTAMP) AS ts,
+      SELECT "timestamp" AS ts,
              CAST(trading_day AS DATE) AS trade_date,
              CAST(close AS DOUBLE) AS close
       FROM read_parquet('{p}')
@@ -77,9 +80,7 @@ def load_spot(root: Path):
     WHERE ret10 IS NOT NULL
       AND rv20 IS NOT NULL
       AND rv_ratio IS NOT NULL
-      AND CAST(ts AS TIME) IN (
-        TIME '14:30:00',TIME '14:45:00',TIME '15:00:00'
-      )
+      AND strftime(ts,'%H:%M:%S') IN ('14:30:00','14:45:00','15:00:00')
     ORDER BY trade_date,ts
     """
     x=con.execute(q).df()
@@ -87,7 +88,7 @@ def load_spot(root: Path):
     if x.empty:
         return x
     x["trade_date"]=pd.to_datetime(x["trade_date"]).dt.date
-    x["ts"]=pd.to_datetime(x["ts"]).dt.floor("min")
+    x["ts"]=ist_ts(x["ts"])
     return x
 
 def variant_grid():
@@ -145,7 +146,7 @@ def load_option_quotes(root, signals):
         if not dates: continue
         vals=",".join([f"DATE '{d}'" for d in dates])
         q=f"""
-        SELECT CAST(o.timestamp AS TIMESTAMP) ts,
+        SELECT o."timestamp" AS ts,
                CAST(o.trading_day AS DATE) trade_date,
                CAST(o.strike AS DOUBLE) strike,
                CAST(o.option_type AS VARCHAR) option_type,
@@ -156,76 +157,93 @@ def load_option_quotes(root, signals):
         FROM read_parquet('{path}') o
         JOIN wanted w
           ON CAST(o.trading_day AS DATE)=w.trade_date
-         AND CAST(o.timestamp AS TIMESTAMP) IN (w.ts,w.entry_ts)
+         AND (o."timestamp"=w.ts OR o."timestamp"=w.entry_ts)
         WHERE CAST(o.trading_day AS DATE) IN ({vals})
           AND o.close>0
         """
         z=con.execute(q).df()
         if not z.empty:
+            z["ts"]=ist_ts(z["ts"])
             z["expiry"]=expiry_date
             chunks.append(z)
     con.close()
     return pd.concat(chunks,ignore_index=True) if chunks else pd.DataFrame()
 
-def build_setups(signal_df, quotes):
-    setups=[]
-    signal_keys=signal_df[["trade_date","ts","close","ret10","rv_ratio"]].drop_duplicates()
-    if quotes.empty: return pd.DataFrame()
-    for (d,ts),g in quotes.groupby(["trade_date","ts"],sort=False):
-        meta=signal_keys[(signal_keys.trade_date==d)&(signal_keys.ts==ts)]
-        if meta.empty: continue
-        spot=float(meta.iloc[0].close)
-        strikes=np.sort(g.strike.dropna().unique())
-        if len(strikes)<7: continue
-        atm_i=int(np.argmin(np.abs(strikes-spot)))
+def build_setups(spot, quotes):
+    if quotes.empty:
+        return pd.DataFrame()
+    rows=[]
+    for (d,ts),sig_meta in spot.groupby(["trade_date","ts"],sort=False):
+        sig_meta=sig_meta.iloc[0]
+        q=quotes[(quotes.trade_date==d)&(quotes.ts.isin([ts,ts+pd.Timedelta(minutes=1)]))]
+        if q.empty:
+            continue
+        sig=q[q.ts==ts]
+        ent=q[q.ts==ts+pd.Timedelta(minutes=1)]
+        if sig.empty or ent.empty:
+            continue
+        strikes=np.sort(sig.strike.dropna().unique())
+        if len(strikes)<7:
+            continue
+        atm_i=int(np.argmin(np.abs(strikes-float(sig_meta.close))))
+        put2_i=atm_i-2
+        call2_i=atm_i+2
+        if put2_i<0 or call2_i>=len(strikes):
+            continue
+        put2=float(strikes[put2_i])
+        call2=float(strikes[call2_i])
+        put_sig=sig[(sig.option_type=="PE")&(sig.strike==put2)].head(1)
+        call_sig=sig[(sig.option_type=="CE")&(sig.strike==call2)].head(1)
+        if put_sig.empty or call_sig.empty:
+            continue
+        pclose=float(put_sig.iloc[0].close_px)
+        cclose=float(call_sig.iloc[0].close_px)
+        denom=max(1e-9,pclose+cclose)
+        skew=(pclose-cclose)/denom
+        pvol=float(put_sig.iloc[0].volume)
+        cvol=float(call_sig.iloc[0].volume)
+        vol_imb=(pvol-cvol)/max(1e-9,pvol+cvol)
+        poi=float(put_sig.iloc[0].oi) if pd.notna(put_sig.iloc[0].oi) else 0.0
+        coi=float(call_sig.iloc[0].oi) if pd.notna(call_sig.iloc[0].oi) else 0.0
+        oi_imb=(poi-coi)/max(1e-9,poi+coi)
+        expiry=put_sig.iloc[0].expiry
         for side in ("PUT","CALL"):
-            if side=="PUT":
-                short_i=atm_i-2
-            else:
-                short_i=atm_i+2
+            short_i=put2_i if side=="PUT" else call2_i
+            option_code="PE" if side=="PUT" else "CE"
             for width in WIDTHS:
                 wing_i=short_i-width if side=="PUT" else short_i+width
-                if short_i<0 or wing_i<0 or short_i>=len(strikes) or wing_i>=len(strikes):
+                if wing_i<0 or wing_i>=len(strikes):
                     continue
-                short_strike=float(strikes[short_i]); wing_strike=float(strikes[wing_i])
-                sel=g[g.option_type==side]
-                sh=sel[sel.strike==short_strike]
-                wh=sel[sel.strike==wing_strike]
-                sig=meta.iloc[0]
-                option_code="PE" if side=="PUT" else "CE"
-                sigp=quotes[(quotes.trade_date==d)&(quotes.ts==ts)&(quotes.strike==short_strike)&(quotes.option_type==option_code)].head(1)
-                sigw=quotes[(quotes.trade_date==d)&(quotes.ts==ts)&(quotes.strike==wing_strike)&(quotes.option_type==option_code)].head(1)
-                if sigp.empty or sigw.empty: continue
-                p=float(sigp.iloc[0].close); w=float(sigw.iloc[0].close)
-                if p<=w: continue
-                cross_call=quotes[(quotes.trade_date==d)&(quotes.ts==ts)&(quotes.strike==float(strikes[min(atm_i+2,len(strikes)-1)]))&(quotes.option_type=="CALL")]
-                cross_put=quotes[(quotes.trade_date==d)&(quotes.ts==ts)&(quotes.strike==float(strikes[max(atm_i-2,0)]))&(quotes.option_type=="PUT")]
-                if cross_call.empty or cross_put.empty: continue
-                c=float(cross_call.iloc[0].close)
-                pp=float(cross_put.iloc[0].close)
-                denom=max(1e-9,pp+c)
-                skew=(pp-c)/denom
-                vol_imb=(float(cross_put.iloc[0].volume)-float(cross_call.iloc[0].volume))/max(1e-9,float(cross_put.iloc[0].volume)+float(cross_call.iloc[0].volume))
-                oi_imb=(float(cross_put.iloc[0].oi)-float(cross_call.iloc[0].oi))/max(1e-9,float(cross_put.iloc[0].oi)+float(cross_call.iloc[0].oi))
-                setups.append({
+                short_strike=float(strikes[short_i])
+                wing_strike=float(strikes[wing_i])
+                short_q=ent[(ent.option_type==option_code)&(ent.strike==short_strike)].head(1)
+                wing_q=ent[(ent.option_type==option_code)&(ent.strike==wing_strike)].head(1)
+                if short_q.empty or wing_q.empty:
+                    continue
+                short_entry=float(short_q.iloc[0].open_px)
+                wing_entry=float(wing_q.iloc[0].open_px)
+                credit=short_entry-wing_entry
+                if credit<=0:
+                    continue
+                rows.append({
                     "trade_date":d,
                     "ts":ts,
                     "entry_ts":ts+pd.Timedelta(minutes=1),
-                    "expiry":sigp.iloc[0]["expiry"],
+                    "expiry":expiry,
                     "side":side,
                     "width":width,
                     "short_strike":short_strike,
                     "wing_strike":wing_strike,
-                    "short_entry":se,
-                    "wing_entry":we,
+                    "short_entry":short_entry,
+                    "wing_entry":wing_entry,
                     "entry_credit":credit,
                     "skew":skew,
                     "vol_imb":vol_imb,
                     "oi_imb":oi_imb,
-                    "spot_ret10":float(sig.ret10),
-                    "rv_ratio":float(sig.rv_ratio)
+                    "spot_ret10":float(sig_meta.ret10),
+                    "rv_ratio":float(sig_meta.rv_ratio)
                 })
-    return pd.DataFrame(setups)
+    return pd.DataFrame(rows)
 
 def filter_setups(setups, variants):
     out=[]
@@ -256,87 +274,112 @@ def lot(d):
     if d<pd.Timestamp("2026-01-06").date():return 75
     return 65
 
-def simulate(root, setups, out, slippage):
-    if setups.empty:return pd.DataFrame()
-    max_hold=max(HOLDS)
-    files={d:path for d,path in expiry_files(root)}
+def simulate(root, unique_setups, out, slippage):
+    if unique_setups.empty:
+        return pd.DataFrame()
+    files=dict(expiry_files(root))
     con=duckdb.connect()
     con.execute("SET TimeZone='Asia/Kolkata'")
-    legs_df=setups[[
+    con.register("legs",unique_setups[[
         "trade_date","entry_ts","expiry","side","short_strike","wing_strike"
-    ]].drop_duplicates().copy()
-    con.register("legs",legs_df)
+    ]].drop_duplicates())
+    chunks=[]
     for expiry_date,path in sorted(files.items()):
-        active=con.execute("SELECT COUNT(*) FROM legs WHERE expiry=?", [expiry_date]).fetchone()[0]
-        if not active: continue
+        active=int(con.execute("SELECT COUNT(*) FROM legs WHERE expiry=?", [expiry_date]).fetchone()[0])
+        if active==0:
+            continue
         q=f"""
-        SELECT CAST(o.timestamp AS TIMESTAMP) ts,
-               CAST(o.trading_day AS DATE) trade_date,
-               CAST(o.strike AS DOUBLE) strike,
-               CAST(o.option_type AS VARCHAR) option_type,
-               CAST(o.high AS DOUBLE) high,
-               CAST(o.low AS DOUBLE) low,
-               CAST(o.close AS DOUBLE) close
+        SELECT
+          o."timestamp" AS ts,
+          CAST(o.trading_day AS DATE) AS trade_date,
+          CAST(o.strike AS DOUBLE) AS strike,
+          CAST(o.option_type AS VARCHAR) AS option_type,
+          CAST(o.high AS DOUBLE) AS high,
+          CAST(o.low AS DOUBLE) AS low,
+          CAST(o."close" AS DOUBLE) AS close_px
         FROM read_parquet('{path}') o
         JOIN legs l
           ON l.expiry=DATE '{expiry_date}'
          AND CAST(o.trading_day AS DATE)=l.trade_date
          AND o.option_type=(CASE WHEN l.side='PUT' THEN 'PE' ELSE 'CE' END)
          AND CAST(o.strike AS DOUBLE) IN(l.short_strike,l.wing_strike)
-         AND CAST(o.timestamp AS TIMESTAMP)>=l.entry_ts
-         AND CAST(o.timestamp AS TIMESTAMP)<=l.entry_ts+INTERVAL '30 minutes'
-        WHERE o.close>0
+         AND o."timestamp">=l.entry_ts
+         AND o."timestamp"<=l.entry_ts+INTERVAL '30 minutes'
+        WHERE o."close">0
         """
         z=con.execute(q).df()
-        if not z.empty:z["expiry"]=expiry_date;chunks.append(z)
+        if not z.empty:
+            z["ts"]=ist_ts(z["ts"])
+            z["expiry"]=expiry_date
+            chunks.append(z)
     con.close()
-    if not chunks:return pd.DataFrame()
+    if not chunks:
+        return pd.DataFrame()
     win=pd.concat(chunks,ignore_index=True)
-    win["ts"]=pd.to_datetime(win.ts).dt.floor("min")
     trades=[]
-    for _,r in setups.drop_duplicates(["trade_date","entry_ts","expiry","side","width","short_strike","wing_strike"]).iterrows():
-        q=win[(win.trade_date==r.trade_date)&(win.expiry==r.expiry)&(win.option_type==r.side)&(win.strike.isin([r.short_strike,r.wing_strike]))&(win.ts>=r.entry_ts)&(win.ts<=r.entry_ts+pd.Timedelta(minutes=max_hold))]
-        if q.empty:continue
-        a=q[q.strike==r.short_strike][["ts","high","low","close"]].rename(columns={"high":"shigh","low":"slow","close":"sclose"})
-        b=q[q.strike==r.wing_strike][["ts","high","low","close"]].rename(columns={"high":"whigh","low":"wlow","close":"wclose"})
+    for _,r in unique_setups.drop_duplicates([
+        "trade_date","entry_ts","expiry","side","width","short_strike","wing_strike"
+    ]).iterrows():
+        option_code="PE" if r.side=="PUT" else "CE"
+        q=win[
+            (win.trade_date==r.trade_date)&
+            (win.expiry==r.expiry)&
+            (win.option_type==option_code)&
+            (win.strike.isin([r.short_strike,r.wing_strike]))&
+            (win.ts>=r.entry_ts)&
+            (win.ts<=r.entry_ts+pd.Timedelta(minutes=max(HOLDS)))
+        ]
+        if q.empty:
+            continue
+        a=q[q.strike==r.short_strike][["ts","high","low","close_px"]].rename(
+            columns={"high":"shigh","low":"slow","close_px":"sclose"}
+        )
+        b=q[q.strike==r.wing_strike][["ts","high","low","close_px"]].rename(
+            columns={"high":"whigh","low":"wlow","close_px":"wclose"}
+        )
         m=a.merge(b,on="ts").sort_values("ts")
-        if m.empty:continue
+        if m.empty:
+            continue
         for hold in HOLDS:
             mm=m[m.ts<=r.entry_ts+pd.Timedelta(minutes=hold)]
-            if mm.empty:continue
+            if mm.empty:
+                continue
             hi=mm.shigh-mm.wlow
             lo=mm.slow-mm.whigh
             for stop in STOPS:
-                stopv=float(r.short_signal-r.wing_signal)*stop
-                target=float(r.short_signal-r.wing_signal)*TARGET_RATIO
-                si=np.flatnonzero(hi>=stopv); ti=np.flatnonzero(lo<=target)
+                stopv=float(r.entry_credit)*stop
+                target=float(r.entry_credit)*TARGET_RATIO
+                si=np.flatnonzero(hi>=stopv)
+                ti=np.flatnonzero(lo<=target)
                 si=int(si[0]) if len(si) else 10**9
                 ti=int(ti[0]) if len(ti) else 10**9
-                if si<=ti and si<10**9:ix,reason=si,"STOP"
-                elif ti<10**9:ix,reason=ti,"TARGET"
-                else:ix,reason=len(mm)-1,"TIME"
+                if si<=ti and si<10**9:
+                    ix,reason=si,"STOP"
+                elif ti<10**9:
+                    ix,reason=ti,"TARGET"
+                else:
+                    ix,reason=len(mm)-1,"TIME"
                 er=mm.iloc[ix]
                 net=OptionCostModel().vertical_credit_spread_net_pnl(
                     float(r.short_entry),float(r.wing_entry),
-                    float(er.sclose),float(er.wclose),lot(r.trade_date),
-                    slippage_points=slippage
+                    float(er.sclose),float(er.wclose),
+                    lot(r.trade_date),slippage_points=slippage
                 )
                 trades.append({
-                    "trade_date":r.trade_date,"ts":r.ts,"expiry":r.expiry,
-                    "side":r.side,"width":r.width,"hold":hold,"stop":stop,
-                    "net_pnl":net,"reason":reason,"skew":r.skew,"vol_imb":r.vol_imb,
-                    "oi_imb":r.oi_imb,"entry_credit":float(r.entry_credit),
-                    "short_strike":float(r.short_strike),"wing_strike":float(r.wing_strike)
+                    "trade_date":r.trade_date,
+                    "ts":r.ts,
+                    "expiry":r.expiry,
+                    "side":r.side,
+                    "width":r.width,
+                    "hold":hold,
+                    "stop":stop,
+                    "short_strike":float(r.short_strike),
+                    "wing_strike":float(r.wing_strike),
+                    "net_pnl":net,
+                    "reason":reason,
+                    "entry_credit":float(r.entry_credit)
                 })
-    t=pd.DataFrame(trades)
-    if t.empty:return t
-    t.to_csv(out/"phase17_trades.csv",index=False)
-    board=[]
-    days=t.trade_date.nunique()
-    for vid,g in filter_setups(setups,variant_grid()).groupby("variant_id"):
-        gg=t.copy()
-        # Variant identity is reconstructed from setup properties by joins below in run()
-    return t
+    return pd.DataFrame(trades)
 
 def summarize(trades, signal_count, slippage, out):
     rows=[]
@@ -397,7 +440,7 @@ def run(root:Path,out:Path,slippage:float):
     for _,v in filtered.iterrows():
         mask=(
             (trades.trade_date==v.trade_date)&(trades.ts==v.ts)&(trades.expiry==v.expiry)&
-            (trades.side==v.side)&(trades.width==v.width)&
+            (trades.side==v.side)&(trades.width==v.width)&(trades.hold==v.hold)&(trades.stop==v.stop)&
             (trades.short_strike==v.short_strike)&(trades.wing_strike==v.wing_strike)
         )
         x=trades[mask].copy()
