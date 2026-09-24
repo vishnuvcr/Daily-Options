@@ -1,0 +1,64 @@
+name: Phase 19 - NIFTY Short Strangle Regime
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [phase-19-nifty-short-strangle-regime-v1]
+
+concurrency:
+  group: phase19-short-strangle
+  cancel-in-progress: false
+
+jobs:
+  research:
+    strategy:
+      fail-fast: false
+      matrix:
+        friction: [base, stress]
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-19-nifty-short-strangle-regime-v1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install pandas numpy pyarrow duckdb huggingface_hub pytest
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_phase19_nifty_short_strangle_regime.py
+      - name: Cache exact-expiry data
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase19_trademarkk
+          key: phase19-trademarkk-51ca58c-v1
+          restore-keys: |
+            phase17-trademarkk-51ca58c-v1
+            phase17-trademarkk-51ca58c-
+      - name: Acquire or reuse data
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase19_trademarkk
+          if [ ! -f data/cache/phase19_trademarkk/index/NIFTY.parquet ]; then
+            for attempt in 1 2 3 4; do
+              python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="thetrademarkk/india-index-options-1m",repo_type="dataset",revision="51ca58c",local_dir="data/cache/phase19_trademarkk",allow_patterns=["index/NIFTY.parquet","options/NIFTY/*.parquet"])' && break
+              if [ "$attempt" -eq 4 ]; then exit 1; fi
+              sleep $((attempt*15))
+            done
+          fi
+      - name: Run friction
+        env:
+          SLIP: ${{ matrix.friction == 'base' && '0.20' || '0.40' }}
+          LABEL: ${{ matrix.friction }}
+        run: |
+          PYTHONPATH=. python -m research.phase19_nifty_short_strangle_regime \
+            --data data/cache/phase19_trademarkk \
+            --out reports/$LABEL \
+            --slippage "$SLIP"
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase19-short-strangle-${{ matrix.friction }}
+          path: reports/
