@@ -171,3 +171,5 @@ jobs:
         with:
           name: phase12-zenodo-pilot-v3
           path: reports/
+
+# v3 parser-regression trigger checkpoint 2026-09-24
