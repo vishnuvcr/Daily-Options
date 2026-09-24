@@ -257,6 +257,34 @@ def _last_thursday(year: int, month: int) -> pd.Timestamp:
         d -= pd.Timedelta(days=1)
     return d.normalize()
 
+
+def _path_coverage_dates(path: Path) -> tuple[pd.Timestamp | None, pd.Timestamp | None]:
+    text = " ".join(path.parts)
+    patterns = [
+        r"(\d{1,2})-(\d{1,2})-(\d{2,4})\s+to\s+(\d{1,2})-(\d{1,2})-(\d{2,4})",
+        r"(\d{1,2})-([A-Za-z]{3})-(\d{2,4})\s+to\s+(\d{1,2})-([A-Za-z]{3})-(\d{2,4})",
+    ]
+    out = []
+    for pat in patterns:
+        for m in re.finditer(pat, text, flags=re.IGNORECASE):
+            g = m.groups()
+            try:
+                if len(g) == 6 and g[1].isdigit():
+                    d1,m1,y1,d2,m2,y2 = map(int,g)
+                else:
+                    month_map = {"jan":1,"feb":2,"mar":3,"apr":4,"may":5,"jun":6,"jul":7,"aug":8,"sep":9,"oct":10,"nov":11,"dec":12}
+                    d1,m1,y1,d2,m2,y2 = int(g[0]),month_map[g[1][:3].lower()],int(g[2]),int(g[3]),month_map[g[4][:3].lower()],int(g[5])
+                y1 = 2000+y1 if y1 < 100 else y1
+                y2 = 2000+y2 if y2 < 100 else y2
+                out.append((pd.Timestamp(y1,m1,d1).normalize(), pd.Timestamp(y2,m2,d2).normalize()))
+            except Exception:
+                continue
+    if not out:
+        return None, None
+    starts = [x[0] for x in out]
+    ends = [x[1] for x in out]
+    return min(starts), max(ends)
+
 def discover_option_manifest(root: Path) -> pd.DataFrame:
     rows = []
     for p in root.rglob("*"):
@@ -264,16 +292,12 @@ def discover_option_manifest(root: Path) -> pd.DataFrame:
             continue
         stem = re.sub(r"[^A-Za-z0-9]", "", p.stem).upper()
         m = re.search(r"(\d{4,6})(CE|PE)$", stem)
-        if m:
-            strike = float(m.group(1))
-            option_type = m.group(2)
-        else:
-            m = re.search(r"^(CE|PE)(\d{4,6})$", stem)
-            if not m:
-                continue
-            option_type = m.group(1)
-            strike = float(m.group(2))
+        if not m:
+            continue
+        strike = float(m.group(1))
+        option_type = m.group(2)
         expiry = _parse_expiry(tuple(p.parts))
+        coverage_start, coverage_end = _path_coverage_dates(p)
         if expiry is None:
             continue
         expiry_type = "MONTH" if expiry == _last_thursday(expiry.year, expiry.month) else "WEEK"
@@ -283,8 +307,10 @@ def discover_option_manifest(root: Path) -> pd.DataFrame:
             "option_type": option_type,
             "expiry": expiry.date(),
             "expiry_type": expiry_type,
+            "coverage_start": coverage_start.date() if coverage_start is not None else None,
+            "coverage_end": coverage_end.date() if coverage_end is not None else None,
         })
-    man = pd.DataFrame(rows).drop_duplicates(["path"]).sort_values(["expiry", "option_type", "strike"])
+    man = pd.DataFrame(rows).drop_duplicates(["path"]).sort_values(["expiry", "option_type", "strike", "path"])
     if man.empty:
         raise RuntimeError("No NIFTY option files discovered")
     return man
@@ -294,13 +320,21 @@ def _load_option_path(path_str: str) -> pd.DataFrame:
     return _standardize_ohlc(_read_table(Path(path_str)))
 
 def _choose_expiry(manifest: pd.DataFrame, trade_date, mode: str):
-    x = manifest[(manifest["expiry"] > trade_date) & (manifest["expiry_type"] == mode)]
+    x = manifest.copy()
+    x = x[(x["expiry"] > trade_date) & (x["expiry_type"] == mode)]
+    x = x[x["coverage_start"].isna() | (x["coverage_start"] <= trade_date)]
+    x = x[x["coverage_end"].isna() | (x["coverage_end"] >= trade_date)]
     if x.empty:
         return None
     return x["expiry"].min()
 
-def _choose_strikes(manifest: pd.DataFrame, expiry, side: str, spot: float, width_steps: int):
-    x = manifest[(manifest["expiry"] == expiry) & (manifest["option_type"] == side)]
+
+def _choose_strikes(manifest: pd.DataFrame, expiry, side: str, spot: float, width_steps: int, trade_date):
+    x = manifest[(manifest["expiry"] == expiry) & (manifest["option_type"] == side)].copy()
+    x = x[x["coverage_start"].isna() | (x["coverage_start"] <= trade_date)]
+    x = x[x["coverage_end"].isna() | (x["coverage_end"] >= trade_date)]
+    if x.empty:
+        return None
     strikes = np.sort(x["strike"].unique())
     if len(strikes) < width_steps + 1:
         return None
@@ -315,7 +349,11 @@ def _choose_strikes(manifest: pd.DataFrame, expiry, side: str, spot: float, widt
         if len(lower) < width_steps:
             return None
         wing = float(lower[-width_steps])
-    return atm, wing
+    a = x[x["strike"] == atm].sort_values("path")
+    w = x[x["strike"] == wing].sort_values("path")
+    if a.empty or w.empty:
+        return None
+    return a.iloc[0], w.iloc[0]
 
 def _merge_leg_bars(path_a: str, path_b: str, entry_time: pd.Timestamp, max_hold: int) -> pd.DataFrame:
     a = _load_option_path(path_a).rename(columns={"open":"open_a","high":"high_a","low":"low_a","close":"close_a"})
@@ -341,12 +379,12 @@ def build_entries(features_by_window: dict[int, pd.DataFrame], manifest: pd.Data
             if expiry is None:
                 continue
             side = "CE" if r["direction"] == "CALL" else "PE"
-            pair = _choose_strikes(manifest, expiry, side, float(r["spot_close"]), v.width_steps)
+            pair = _choose_strikes(manifest, expiry, side, float(r["spot_close"]), v.width_steps, d)
             if pair is None:
                 continue
-            atm, wing = pair
-            p_atm = manifest[(manifest["expiry"] == expiry) & (manifest["option_type"] == side) & (manifest["strike"] == atm)].iloc[0]
-            p_wing = manifest[(manifest["expiry"] == expiry) & (manifest["option_type"] == side) & (manifest["strike"] == wing)].iloc[0]
+            p_atm, p_wing = pair
+            atm = float(p_atm["strike"])
+            wing = float(p_wing["strike"])
             rows.append({
                 "variant_id": v.key,
                 "trade_date": d,
