@@ -96,7 +96,8 @@ def test_timezone_aware_option_timestamp_is_preserved():
     src=inspect.getsource(mod.load_option_quotes)
     assert 'o."timestamp" AS ts' in src
     assert 'CAST(o.timestamp AS TIMESTAMP)' not in src
-    assert 'o."timestamp"=w.ts' in src
+    assert 'o."timestamp">=w.ts' in src
+    assert 'o."timestamp"<=w.ts+INTERVAL \'3 minutes\'' in src
 
 
 def test_simulation_maps_internal_side_to_source_code_and_holds():
