@@ -30,7 +30,7 @@ Hugging Face dataset: rissin/nse-options-intraday.
 - Intraday source: Upstox historical 1-minute candles.
 - NIFTY intraday coverage advertised from October 2024 through 2026.
 - Canonical fields include trade date, IST timestamp, exact expiry, strike, CE/PE, OHLC, volume and OI.
-- Reproducibility pin: dataset commit 78b1c5468255d18cf492984bfe6fe4e3ac874d7c.
+- Reproducibility pin: dataset commit 8f7739cab3f38abdcbc6332a6d0a83e1341326e3.
 - Workflow downloads only the NIFTY 2024, 2025 and 2026 partitions and caches them.
 
 Source documentation: https://huggingface.co/datasets/rissin/nse-options-intraday
