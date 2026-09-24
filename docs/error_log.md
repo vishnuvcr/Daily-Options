@@ -49,3 +49,5 @@
 | E0059 | 2026-09-24 | Phase 9 | Signal construction did not persist the variant family label, causing the first numerical run to fail before entry selection | No Phase 9 P&L statistic was produced | Persist `family` in each signal row and rerun base/stress | FIXED |
 
 | E0060 | 2026-09-24 | Phase 10 | Initial draft could materialize a full option-symbol dataset in pandas and generated both spread widths for each width-specific variant | Would be too expensive and would silently mismatch the preregistered variant identity | Replaced full-table materialization with DuckDB signal joins and bound wing selection to the variant's registered width | FIXED |
+
+| E0061 | 2026-09-24 | Phase 10 | Scalable path rewrite retained an undefined `row` reference inside the grouped simulation loop | Would fail before any Phase 10 P&L | Bind grouped path metadata explicitly to `meta` and use frozen strike/expiry fields from the entry row | FIXED |
