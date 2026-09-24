@@ -228,8 +228,7 @@ def series(con, path, trade_date, strike, side, start_ts, end_ts):
              CAST(open AS DOUBLE) open_px,
              CAST(close AS DOUBLE) close_px
       FROM read_parquet('{path}')
-      WHERE CAST(trading_day AS DATE)=DATE '{trade_date}'
-        AND CAST(timestamp AS TIMESTAMP) BETWEEN TIMESTAMP '{start_ts}' AND TIMESTAMP '{end_ts}'
+      WHERE CAST(timestamp AS TIMESTAMP) BETWEEN TIMESTAMP '{start_ts}' AND TIMESTAMP '{end_ts}'
         AND CAST(strike AS DOUBLE)={float(strike)}
         AND UPPER(CAST(option_type AS VARCHAR))='{side}'
         AND close > 0
@@ -432,6 +431,7 @@ def run(data: Path, out: Path, slippage: float):
                     setups[(row.trade_date,row.ts,target,far_mode)] = s
 
     rows = []
+    errors = []
     for setup in setups.values():
         for v in variants:
             if v.entry_time != pd.Timestamp(setup["entry_ts"]).strftime("%H:%M:%S"):
@@ -440,7 +440,8 @@ def run(data: Path, out: Path, slippage: float):
                 continue
             try:
                 result = simulate_setup(con, setup, v, slippage)
-            except Exception:
+            except Exception as exc:
+                errors.append({"trade_date": str(setup["trade_date"]), "variant_id": v.variant_id, "error": repr(exc)})
                 result = None
             if result is not None:
                 rows.append({
@@ -457,6 +458,8 @@ def run(data: Path, out: Path, slippage: float):
                 })
     con.close()
 
+    if errors:
+        (out/"phase24_sim_errors.json").write_text(json.dumps(errors[:100], indent=2, default=str))
     trades = pd.DataFrame(rows)
     if trades.empty:
         summary = {"variants":len(variants),"setups":len(setups),"trades":0,
