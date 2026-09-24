@@ -44,6 +44,6 @@ def test_execution_maps_source_option_codes():
 def test_no_undefined_entry_variables_in_setup_builder():
     from research import phase17_nifty_exact_expiry_premium_skew as mod
     src = inspect.getsource(mod.build_setups)
-    assert "se" not in src
-    assert "we" not in src
-    assert "entry_credit": not in src if False else True
+    assert "short_entry" in src
+    assert "wing_entry" in src
+    assert "credit = short_entry - wing_entry" in src
