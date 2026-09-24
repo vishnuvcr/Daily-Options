@@ -41,3 +41,9 @@ def test_required_files_feature_only_uses_four_atm_files():
         assert "ATM_CE.parquet" in q and "ATM_PE.parquet" in q
         assert "ATM+2_CE.parquet" not in q
         assert "ATM-2_PE.parquet" not in q
+
+
+def test_expiry_shards_have_equal_cell_counts():
+    g=variant_grid()
+    assert sum(x['expiry_type']=='WEEK' for x in g)==144
+    assert sum(x['expiry_type']=='MONTH' for x in g)==144
