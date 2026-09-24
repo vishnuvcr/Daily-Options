@@ -106,3 +106,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0117 | 2026-09-24 | Tooling | Phase 12 result archive script failed with a JavaScript quoting error before GitHub mutation | No research or numerical data impact | Reissued the same archive write using an array-join payload; result stored successfully | CLOSED |
 
 | E0118 | 2026-09-24 | Phase 13 cost model | Outright long-option path initially reused the 4-leg vertical cost function with zero short legs, overstating brokerage/slippage | No numerical result was accepted; unit tests had not yet run on the branch | Replaced with the audited 2-order `OptionCostModel.net_pnl()` and added a regression test | CLOSED — pre-result |
+
+| E0119 | 2026-09-24 | Phase 13 preregistration/CI | Stated Phase 13 grid count was 192 but the fixed dimensions produce 384; decision-summary step also assumed a pre-existing reports directory | No market/P&L stage ran; no result accepted | Corrected the preregistered count to 384 without changing any dimension and created reports/ before decision-summary output | CLOSED — pre-result |
