@@ -123,3 +123,17 @@ def test_simulation_uses_setup_id_grouping():
     assert 'setup_df["setup_id"]' in src
     assert 'win.groupby("setup_id"' in src
     assert 'CAST(o."timestamp" AS TIMESTAMP)>=l.entry_ts' in src
+
+    
+def test_entry_delay_is_frozen_to_three_minutes():
+    from research import phase17_nifty_exact_expiry_premium_skew as mod
+    assert mod.MAX_ENTRY_DELAY_MINUTES == 3
+
+
+def test_build_setups_records_executable_entry_delay():
+    from research import phase17_nifty_exact_expiry_premium_skew as mod
+    import inspect
+    src=inspect.getsource(mod.build_setups)
+    assert "MAX_ENTRY_DELAY_MINUTES" in src
+    assert '"entry_delay_min"' in src
+    assert "common=sorted(set(short_q.ts).intersection(set(wing_q.ts)))" in src
