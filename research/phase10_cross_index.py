@@ -301,14 +301,14 @@ def select_entries(
             if len(wings) < width_steps:
                 continue
             wing = float(wings[width_steps - 1])
-                pair = same.loc[same["strike"].isin([atm, wing])]
-                long_entry = float(pair.loc[pair["strike"].eq(atm), "close"].iloc[0])
-                short_entry = float(pair.loc[pair["strike"].eq(wing), "close"].iloc[0])
-                debit = long_entry - short_entry
-                if debit <= 0:
-                    continue
-                all_rows.append(
-                    {
+            pair = same.loc[same["strike"].isin([atm, wing])]
+            long_entry = float(pair.loc[pair["strike"].eq(atm), "close"].iloc[0])
+            short_entry = float(pair.loc[pair["strike"].eq(wing), "close"].iloc[0])
+            debit = long_entry - short_entry
+            if debit <= 0:
+                continue
+            all_rows.append(
+                {
                         "variant_id": variant_id,
                         "trade_date": trade_date,
                         "leader": meta.leader,
