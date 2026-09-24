@@ -72,22 +72,33 @@ def run(root,global_root,out,slippage):
     signals=frozen_signal_dates(features)
     options=load_month_option_rows(root,signals)
 
+    option_dates = set(options.trade_date.dropna().tolist()) if not options.empty else set()
+    signal_dates = set(signals.trade_date.dropna().tolist()) if not signals.empty else set()
     diagnostic = {
         "spot_rows": int(len(spot)),
         "feature_rows": int(len(features)),
         "frozen_signal_days": int(len(signals)),
+        "signal_dates": sorted(str(x) for x in signal_dates),
         "option_rows_loaded": int(len(options)),
-        "signal_days_with_option_rows": 0,
+        "option_date_min": str(options.trade_date.min()) if not options.empty else None,
+        "option_date_max": str(options.trade_date.max()) if not options.empty else None,
+        "signal_option_date_overlap": int(len(signal_dates.intersection(option_dates))),
+        "option_type_values": sorted(str(x) for x in options.option_type.dropna().unique()) if not options.empty else [],
+        "signal_days_with_any_option_rows": 0,
+        "signal_days_with_direction_rows": 0,
         "signal_days_with_atm_at_signal_timestamp": 0,
         "signal_days_with_post_entry_atm_bars": 0,
     }
 
     if not signals.empty and not options.empty:
         for rec in signals.itertuples(index=False):
-            day_opts = options[(options.trade_date == rec.trade_date) & (options.option_type == rec.direction)]
+            any_day_opts = options[options.trade_date == rec.trade_date]
+            if not any_day_opts.empty:
+                diagnostic["signal_days_with_any_option_rows"] += 1
+            day_opts = any_day_opts[any_day_opts.option_type == rec.direction]
             if day_opts.empty:
                 continue
-            diagnostic["signal_days_with_option_rows"] += 1
+            diagnostic["signal_days_with_direction_rows"] += 1
             at_signal = day_opts[(day_opts.datetime == pd.Timestamp(rec.signal_time)) & (day_opts.strike_type == "ATM")]
             if at_signal.empty:
                 continue
