@@ -60,3 +60,13 @@ The exact-ref Phase 10 v4 workflow completed. Across 128 variants, best base mea
 ### 2026-09-24 — Phase 10 completed and retired
 
 Phase 10 completed base and doubled-slippage stress execution. The best base result was ₹-113.62/lot/day and the best stress result ₹-136.48/lot/day. All three untouched WFA windows were negative in both friction settings. The family was retired with no post-result retuning.
+
+
+## 2026-09-24 — User: "Ok proceed" — Phase 16 continuation
+
+### Phase 16 integrity actions
+The repository had advanced beyond the earlier Phase 13 checkpoint. Phase 16 is now the active frontier. The prior Phase 16 run failed unit-test collection and produced no numerical evidence.
+
+Before numerical execution, the implementation was audited and corrected for four pre-result validity issues: the 30-minute hold dimension was not enforced, actual expiry was not carried deterministically through the option joins, CI could cancel a prior computation, and the dataset session-date field was not trustworthy for the Artist23 timestamp convention. Corrections were committed on the dedicated Phase 16 branch with regression tests and without changing the preregistered economic grid.
+
+The research record intentionally stores decisions and outcomes rather than private hidden chain-of-thought. No Phase 16 P&L is accepted until corrected tests and base/stress execution complete, and a later untouched walk-forward stage satisfies the promotion gate.
