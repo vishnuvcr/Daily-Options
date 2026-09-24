@@ -92,50 +92,156 @@ def lot(d):
     return 65
 
 def run(root,out,slippage,expiry):
-    feat=load_features(root,expiry); vs=variant_grid(expiry); rows=[]
+    feat=load_features(root,expiry)
+    vs=variant_grid(expiry)
+    out.mkdir(parents=True,exist_ok=True)
+    if feat.empty:
+        t=pd.DataFrame()
+        t.to_csv(out/'phase16_trades.csv',index=False)
+        s={'expiry_type':expiry,'variants':len(vs),'feature_rows':0,'trade_rows':0,'positive_variants':0,'target_qualified':0,'best':None,'slippage':slippage}
+        (out/'phase16_summary.json').write_text(json.dumps(s,indent=2,default=str))
+        print(json.dumps(s,indent=2,default=str))
+        return s
+
+    signal_sets=[]
+    for v in vs:
+        ss=signals(feat,v).copy()
+        if not ss.empty:
+            ss['variant_id']=f"{v['entry_time']}|z{v['z']}|j{v['jump']}|w{v['width']}|{v['side']}|h{v['hold']}|s{v['stop']}"
+            signal_sets.append(ss[['trade_date','datetime','expiry_type','variant_id','skew_z']])
+    sig_all=pd.concat(signal_sets,ignore_index=True) if signal_sets else pd.DataFrame()
+    if sig_all.empty:
+        t=pd.DataFrame()
+        t.to_csv(out/'phase16_trades.csv',index=False)
+        s={'expiry_type':expiry,'variants':len(vs),'feature_rows':len(feat),'trade_rows':0,'positive_variants':0,'target_qualified':0,'best':None,'slippage':slippage}
+        (out/'phase16_summary.json').write_text(json.dumps(s,indent=2,default=str))
+        print(json.dumps(s,indent=2,default=str))
+        return s
+
+    wanted=sig_all[['trade_date','datetime','expiry_type']].drop_duplicates().copy()
+    wanted['entry_time']=pd.to_datetime(wanted.datetime)+pd.Timedelta(minutes=1)
+
     g=files(root,expiry)
     con=duckdb.connect()
-    q=f'''SELECT CAST(datetime AS TIMESTAMP) datetime,expiry_type,option_type,strike_type,CAST(strike_price AS DOUBLE) strike,
-      CAST(open AS DOUBLE) open,CAST(high AS DOUBLE) high,CAST(low AS DOUBLE) low,CAST(close AS DOUBLE) AS close_px
-      FROM read_parquet({g},union_by_name=true) WHERE close>0
-      AND STRFTIME(CAST(datetime AS TIMESTAMP)+INTERVAL '5 hours 30 minutes','%H:%M:%S') IN ('09:46:00','10:01:00','10:16:00')'''
+    con.register('wanted',wanted[['trade_date','expiry_type','entry_time']])
+    q=f"""
+    SELECT CAST(o.datetime AS TIMESTAMP) datetime,
+           o.expiry_type, o.option_type, o.strike_type,
+           CAST(o.strike_price AS DOUBLE) strike,
+           CAST(o.open AS DOUBLE) open
+    FROM read_parquet({g},union_by_name=true) o
+    JOIN wanted w
+      ON o.expiry_type=w.expiry_type
+     AND CAST(o.datetime AS TIMESTAMP)=w.entry_time
+     AND CAST(CAST(o.datetime AS TIMESTAMP)+INTERVAL '5 hours 30 minutes' AS DATE)=w.trade_date
+    WHERE o.close>0
+    """
     entry=con.execute(q).df()
-    q2=f'''SELECT CAST(datetime AS TIMESTAMP) datetime,expiry_type,option_type,CAST(strike_price AS DOUBLE) strike,
-      CAST(open AS DOUBLE) open,CAST(high AS DOUBLE) high,CAST(low AS DOUBLE) low,CAST(close AS DOUBLE) AS close_px
-      FROM read_parquet({g},union_by_name=true) WHERE close>0'''
-    win=con.execute(q2).df(); con.close()
-    for v in vs:
-        s=signals(feat,v)
-        for _,r in s.iterrows():
-            et=r.datetime+pd.Timedelta(minutes=1); side=v['side']; short_type='ATM-2' if side=='PUT' else 'ATM+2'; wing_type=('ATM-'+str(2+v['width'])) if side=='PUT' else ('ATM+'+str(2+v['width']))
-            e=entry[(entry.datetime==et)&(entry.option_type==side)&(entry.strike_type.isin([short_type,wing_type]))]
-            if e.empty: continue
-            sh=e[e.strike_type==short_type]; wh=e[e.strike_type==wing_type]
-            if sh.empty or wh.empty: continue
-            short=sh.iloc[0]; wing=wh.iloc[0]; credit=float(short.open-wing.open)
-            if credit<=0: continue
-            end=et+pd.Timedelta(minutes=v['hold']); q=win[(win.datetime>=et)&(win.datetime<=end)&(win.option_type==side)&(win.strike.isin([float(short.strike),float(wing.strike)]))]
+
+    setup_rows=[]
+    for key,ss in sig_all.groupby(['trade_date','datetime','expiry_type'],sort=False):
+        d,dt,ex=key
+        et=pd.Timestamp(dt)+pd.Timedelta(minutes=1)
+        e=entry[(entry.datetime==et)&(entry.expiry_type==ex)]
+        if e.empty: continue
+        for side in ('PUT','CALL'):
+            short_type='ATM-2' if side=='PUT' else 'ATM+2'
+            sh=e[(e.option_type==side)&(e.strike_type==short_type)]
+            if sh.empty: continue
+            short=sh.iloc[0]
+            for width in WIDTHS:
+                wing_type=('ATM-'+str(2+width)) if side=='PUT' else ('ATM+'+str(2+width))
+                wh=e[(e.option_type==side)&(e.strike_type==wing_type)]
+                if wh.empty: continue
+                wing=wh.iloc[0]
+                credit=float(short.open-wing.open)
+                if credit>0:
+                    setup_rows.append({'trade_date':d,'entry_time':et,'expiry_type':ex,'side':side,'width':width,
+                                       'short_strike':float(short.strike),'wing_strike':float(wing.strike),
+                                       'short_entry':float(short.open),'wing_entry':float(wing.open),'credit':credit})
+    con.close()
+
+    setup_df=pd.DataFrame(setup_rows).drop_duplicates()
+    if setup_df.empty:
+        t=pd.DataFrame()
+        t.to_csv(out/'phase16_trades.csv',index=False)
+        s={'expiry_type':expiry,'variants':len(vs),'feature_rows':len(feat),'signal_rows':len(sig_all),'setup_rows':0,'trade_rows':0,'positive_variants':0,'target_qualified':0,'best':None,'slippage':slippage}
+        (out/'phase16_summary.json').write_text(json.dumps(s,indent=2,default=str))
+        print(json.dumps(s,indent=2,default=str))
+        return s
+
+    con=duckdb.connect()
+    con.register('legs',setup_df[['trade_date','entry_time','expiry_type','side','short_strike','wing_strike']].drop_duplicates())
+    q2=f"""
+    SELECT CAST(o.datetime AS TIMESTAMP) datetime,
+           o.expiry_type, o.option_type,
+           CAST(o.strike_price AS DOUBLE) strike,
+           CAST(o.high AS DOUBLE) high,
+           CAST(o.low AS DOUBLE) low,
+           CAST(o.close AS DOUBLE) close_px,
+           l.trade_date AS trade_date,
+           l.entry_time AS entry_time,
+           l.side AS side,
+           l.short_strike AS short_strike,
+           l.wing_strike AS wing_strike
+    FROM read_parquet({g},union_by_name=true) o
+    JOIN legs l
+      ON o.expiry_type=l.expiry_type
+     AND o.option_type=l.side
+     AND CAST(o.strike_price AS DOUBLE) IN (l.short_strike,l.wing_strike)
+     AND CAST(o.datetime AS TIMESTAMP)>=l.entry_time
+     AND CAST(o.datetime AS TIMESTAMP)<=l.entry_time+INTERVAL '60 minutes'
+     AND CAST(CAST(o.datetime AS TIMESTAMP)+INTERVAL '5 hours 30 minutes' AS DATE)=l.trade_date
+    WHERE o.close>0
+    """
+    win=con.execute(q2).df()
+    con.close()
+
+    rows=[]
+    for _,v in pd.DataFrame(vs).iterrows():
+        ss=signals(feat,v)
+        for _,r in ss.iterrows():
+            et=pd.Timestamp(r.datetime)+pd.Timedelta(minutes=1)
+            setup=setup_df[(setup_df.trade_date==r.trade_date)&(setup_df.entry_time==et)&(setup_df.expiry_type==r.expiry_type)&(setup_df.side==v.side)&(setup_df.width==v.width)]
+            if setup.empty: continue
+            u=setup.iloc[0]
+            q=win[(win.trade_date==r.trade_date)&(win.entry_time==et)&(win.expiry_type==r.expiry_type)&(win.side==v.side)&(win.short_strike==u.short_strike)&(win.wing_strike==u.wing_strike)]
             if q.empty: continue
-            a=q[q.strike==float(short.strike)][['datetime','high','low','close_px']].rename(columns={'high':'shigh','low':'slow','close_px':'sclose'})
-            b=q[q.strike==float(wing.strike)][['datetime','high','low','close_px']].rename(columns={'high':'whigh','low':'wlow','close_px':'wclose'})
+            a=q[q.strike==u.short_strike][['datetime','high','low','close_px']].rename(columns={'high':'shigh','low':'slow','close_px':'sclose'})
+            b=q[q.strike==u.wing_strike][['datetime','high','low','close_px']].rename(columns={'high':'whigh','low':'wlow','close_px':'wclose'})
             m=a.merge(b,on='datetime').sort_values('datetime')
             if m.empty: continue
-            stop=credit*v['stop']; target=credit*TARGET_RATIO; hi=m.shigh-m.wlow; lo=m.slow-m.whigh; si=np.flatnonzero(hi>=stop); ti=np.flatnonzero(lo<=target); si=int(si[0]) if len(si) else 10**9; ti=int(ti[0]) if len(ti) else 10**9
+            stop=u.credit*v.stop
+            target=u.credit*TARGET_RATIO
+            hi=m.shigh-m.wlow
+            lo=m.slow-m.whigh
+            si=np.flatnonzero(hi>=stop)
+            ti=np.flatnonzero(lo<=target)
+            si=int(si[0]) if len(si) else 10**9
+            ti=int(ti[0]) if len(ti) else 10**9
             if si<=ti and si<10**9: ix,reason=si,'STOP'
             elif ti<10**9: ix,reason=ti,'TARGET'
             else: ix,reason=len(m)-1,'TIME'
-            ex=m.iloc[ix]; net=OptionCostModel().vertical_credit_spread_net_pnl(float(short.open),float(wing.open),float(ex.sclose),float(ex.wclose),lot(r.trade_date),slippage_points=slippage)
-            rows.append({'trade_date': r.trade_date, 'variant_id': f"{v['entry_time']}|z{v['z']}|j{v['jump']}|w{v['width']}|{side}|h{v['hold']}|s{v['stop']}", 'net_pnl': net, 'reason': reason, 'skew_z': float(r.skew_z), 'entry_credit': credit})
-    t=pd.DataFrame(rows); out.mkdir(parents=True,exist_ok=True); t.to_csv(out/'phase16_trades.csv',index=False)
+            ex=m.iloc[ix]
+            net=OptionCostModel().vertical_credit_spread_net_pnl(float(u.short_entry),float(u.wing_entry),float(ex.sclose),float(ex.wclose),lot(r.trade_date),slippage_points=slippage)
+            rows.append({'trade_date':r.trade_date,'variant_id':f"{v.entry_time}|z{v.z}|j{v.jump}|w{v.width}|{v.side}|h{v.hold}|s{v.stop}",'net_pnl':net,'reason':reason,'skew_z':float(r.skew_z),'entry_credit':float(u.credit)})
+
+    t=pd.DataFrame(rows)
+    t.to_csv(out/'phase16_trades.csv',index=False)
     board=[]
     if not t.empty:
         days=feat.trade_date.nunique()
-        for vid,g in t.groupby('variant_id'):
-            d=g.groupby('trade_date').net_pnl.sum(); pos=g.loc[g.net_pnl>0,'net_pnl'].sum(); neg=-g.loc[g.net_pnl<0,'net_pnl'].sum()
-            board.append({'variant_id':vid,'trades':len(g),'active_days':len(d),'mean_active_day_net':d.mean(),'mean_all_day_net':g.net_pnl.sum()/max(1,days),'win_rate':(g.net_pnl>0).mean(),'profit_factor':pos/max(1e-9,neg),'max_drawdown':(d.cumsum()-d.cumsum().cummax()).min(),'total_net':g.net_pnl.sum()})
-    b=pd.DataFrame(board).sort_values('mean_all_day_net',ascending=False) if board else pd.DataFrame(); b.to_csv(out/'phase16_leaderboard.csv',index=False)
-    s={'expiry_type':expiry,'variants':len(vs),'feature_rows':len(feat),'trade_rows':len(t),'positive_variants':int((b.mean_all_day_net>0).sum()) if not b.empty else 0,'target_qualified':int((b.mean_all_day_net>=TARGET).sum()) if not b.empty else 0,'best':b.iloc[0].to_dict() if not b.empty else None,'slippage':slippage}
-    (out/'phase16_summary.json').write_text(json.dumps(s,indent=2,default=str)); print(json.dumps(s,indent=2,default=str)); return s
+        for vid,g2 in t.groupby('variant_id'):
+            d=g2.groupby('trade_date').net_pnl.sum()
+            pos=g2.loc[g2.net_pnl>0,'net_pnl'].sum()
+            neg=-g2.loc[g2.net_pnl<0,'net_pnl'].sum()
+            board.append({'variant_id':vid,'trades':len(g2),'active_days':len(d),'mean_active_day_net':d.mean(),'mean_all_day_net':g2.net_pnl.sum()/max(1,days),'win_rate':(g2.net_pnl>0).mean(),'profit_factor':pos/max(1e-9,neg),'max_drawdown':(d.cumsum()-d.cumsum().cummax()).min(),'total_net':g2.net_pnl.sum()})
+    b=pd.DataFrame(board).sort_values('mean_all_day_net',ascending=False) if board else pd.DataFrame()
+    b.to_csv(out/'phase16_leaderboard.csv',index=False)
+    s={'expiry_type':expiry,'variants':len(vs),'feature_rows':len(feat),'signal_rows':len(sig_all),'setup_rows':len(setup_df),'window_rows':len(win),'trade_rows':len(t),'positive_variants':int((b.mean_all_day_net>0).sum()) if not b.empty else 0,'target_qualified':int((b.mean_all_day_net>=1000).sum()) if not b.empty else 0,'best':b.iloc[0].to_dict() if not b.empty else None,'slippage':slippage}
+    (out/'phase16_summary.json').write_text(json.dumps(s,indent=2,default=str))
+    print(json.dumps(s,indent=2,default=str))
+    return s
 
 if __name__=='__main__':
     ap=argparse.ArgumentParser(); ap.add_argument('--data',type=Path,required=True); ap.add_argument('--out',type=Path,required=True); ap.add_argument('--slippage',type=float,default=.2); ap.add_argument('--expiry-type',choices=['WEEK','MONTH'],required=True); a=ap.parse_args(); run(a.data,a.out,a.slippage,a.expiry_type)
