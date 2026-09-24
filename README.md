@@ -104,3 +104,7 @@ The three active research families have not yet produced an accepted strategy re
 - Phase 11: preregistered breakout-pullback/OI family remains pending execution.
 
 The next accepted candidate must still clear the unchanged ₹1,000 net/active-lot/day OOS gate after realistic costs and stress slippage.
+
+## Latest completed research result — Phase 10
+
+Phase 10 is retired after complete base/stress + walk-forward validation: best base ₹-113.62/lot/day, best stress ₹-136.48/lot/day, and no positive untouched WFA window. Result reports are archived under `reports/phase10/` on the Phase 10 execution branch. The active search continues through the remaining preregistered families and the next distinct phase only if required.
