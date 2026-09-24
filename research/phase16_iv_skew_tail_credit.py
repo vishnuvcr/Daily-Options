@@ -212,7 +212,7 @@ def run(root,out,slippage,expiry):
 
     setup_df['entry_time']=pd.to_datetime(setup_df['entry_time']).dt.floor('min')
     setup_df['trade_date']=pd.to_datetime(setup_df['trade_date']).dt.date
-        setup_df['expiry_type']=setup_df['expiry_type'].astype(str)
+    setup_df['expiry_type']=setup_df['expiry_type'].astype(str)
     setup_df['side']=setup_df['side'].astype(str)
 
     outcome_rows=[]
