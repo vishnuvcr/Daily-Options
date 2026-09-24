@@ -268,6 +268,32 @@ def run(root: Path, global_root: Path, out: Path, slippage: float) -> dict:
 
     signals = frozen_signal_dates(features)
     options = load_selected_expiry_rows(root, signals)
+
+    option_dates = set(options.trade_date.dropna().tolist()) if not options.empty else set()
+    signal_dates = set(signals.trade_date.dropna().tolist()) if not signals.empty else set()
+    diagnostic = {
+        "signal_dates": sorted(str(x) for x in signal_dates),
+        "option_rows_loaded": int(len(options)),
+        "option_date_min": str(options.trade_date.min()) if not options.empty else None,
+        "option_date_max": str(options.trade_date.max()) if not options.empty else None,
+        "signal_option_date_overlap": int(len(signal_dates.intersection(option_dates))),
+        "option_type_values": sorted(str(x) for x in options.option_type.dropna().unique()) if not options.empty else [],
+        "signal_days_with_any_option_rows": 0,
+        "signal_days_with_direction_rows": 0,
+        "signal_days_with_exact_signal_timestamp": 0,
+    }
+
+    if not signals.empty and not options.empty:
+        for rec in signals.itertuples(index=False):
+            any_day = options[options.trade_date == rec.trade_date]
+            if not any_day.empty:
+                diagnostic["signal_days_with_any_option_rows"] += 1
+            direction_day = any_day[any_day.option_type.isin([rec.direction, "CALL" if rec.direction == "CE" else "PUT"])]
+            if not direction_day.empty:
+                diagnostic["signal_days_with_direction_rows"] += 1
+                if (direction_day.datetime_utc == pd.Timestamp(rec.signal_time)).any():
+                    diagnostic["signal_days_with_exact_signal_timestamp"] += 1
+
     trades = simulate(signals, options, slippage)
 
     out.mkdir(parents=True, exist_ok=True)
@@ -276,6 +302,7 @@ def run(root: Path, global_root: Path, out: Path, slippage: float) -> dict:
     summary = summarize(trades, slippage)
     summary["signal_days"] = int(len(signals))
     summary["option_rows_loaded"] = int(len(options))
+    summary["diagnostic"] = diagnostic
 
     (out / "phase14_independent_summary.json").write_text(
         json.dumps(summary, indent=2, default=str)
