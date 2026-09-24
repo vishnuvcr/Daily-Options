@@ -14,7 +14,7 @@ Translate the user-supplied transcript summary of Equity Income's "Falcon Spread
 - Friday: buy 3 next-week CE and 3 next-week PE at approximately the same 25-point premium zone.
 - Monday: buy 5 near-week CE one strike above the original short CE and 5 near-week PE one strike below the original short PE.
 - Hard stop is mandatory; the supplied summary does not give a numeric threshold.
-- Close the complete structure by Wednesday; never hold to Thursday/0-DTE.
+- **Current-rule translation:** NIFTY weekly options now expire Tuesday, so the analogue of "close by Wednesday, avoid Thursday 0-DTE" is **close on Monday before the Tuesday expiry session**. NSE's transition changed NIFTY weekly expiry from Thursday to Tuesday effective for new contracts expiring on/after 2025-09-01. citeturn431147search15turn431147search2
 - Avoid deliberately tightening the initial strangle toward richer premiums such as 50 points.
 
 ## Formalization of unspecified items
@@ -26,7 +26,7 @@ These are modelling choices, not claims about the video:
 - Hard-stop threshold: 0.50, 1.00, 1.50 × initial gross credit. Stop is evaluated on close-to-close mark-to-market and exits at the next minute open.
 - Friday signal uses the minute close; actual opening fills are taken from the next minute open, preventing look-ahead.
 - Monday wing purchase uses the Monday signal minute close and the next minute open.
-- Wednesday time-out uses the last available minute before 15:15 IST and next available executable open where present; otherwise the last valid close is used.
+- The exit is the last available minute of the **pre-expiry trading session**. Under the current Tuesday-expiry regime this is Monday, with execution at the next available open where present; otherwise the last valid close is used.
 - One strike means one listed strike increment in the exact-expiry chain, not a hard-coded 50-point assumption.
 
 ## Frozen grid
@@ -59,4 +59,4 @@ A preliminary positive result is not promoted. Any cell clearing the preliminary
 - All implementation defects are logged before accepting P&L.
 
 ## Phase status
-2026-09-25 — specification complete from user-supplied transcript. Numerical validation is the next step.
+2026-09-25 — current-expiry translation corrected: Monday is the pre-expiry exit day for today's Tuesday NIFTY weekly expiry. Historical runs use the actual contract expiry and its immediately preceding trading session; Monday-expiry transition contracts are excluded because the source's Monday adjustment and pre-expiry exit cannot both be satisfied.
