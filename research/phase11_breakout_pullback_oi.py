@@ -239,128 +239,91 @@ def select_entries(signals: pd.DataFrame, root: Path) -> pd.DataFrame:
 
     con = duckdb.connect()
     con.register("signals_df", signals)
-    entries = con.execute(
-        f"""
-        WITH expiries AS (
-          SELECT DISTINCT CAST(expiry AS DATE) AS expiry
-          FROM read_parquet('{opt_glob(root)}', union_by_name=true)
-          WHERE expiry IS NOT NULL
-        ),
-        next_exp AS (
-          SELECT
-            s.*,
-            MIN(e.expiry) AS expiry
-          FROM signals_df s
-          JOIN expiries e
-            ON e.expiry > s.trade_date
-          GROUP BY ALL
-        ),
-        raw AS (
-          SELECT
-            CAST(trading_day AS DATE) AS trade_date,
-            CAST(expiry AS DATE) AS expiry,
-            CASE
-              WHEN UPPER(CAST(option_type AS VARCHAR)) IN ('CALL','CE') THEN 'CALL'
-              WHEN UPPER(CAST(option_type AS VARCHAR)) IN ('PUT','PE') THEN 'PUT'
-              ELSE NULL
-            END AS side,
-            CAST(strike AS DOUBLE) AS strike,
-            CAST(timestamp AS TIMESTAMP) AS local_ts,
-            CAST(open AS DOUBLE) AS open,
-            CAST(close AS DOUBLE) AS close
-          FROM read_parquet('{opt_glob(root)}', union_by_name=true)
-          WHERE close > 0
-        ),
-        candidates AS (
-          SELECT
-            s.*,
-            r.side,
-            r.strike,
-            r.local_ts,
-            r.open,
-            ROW_NUMBER() OVER (
-              PARTITION BY s.variant_id, s.trade_date
-              ORDER BY ABS(r.strike-s.spot), r.local_ts
-            ) AS rn
-          FROM next_exp s
-          JOIN raw r
-            ON r.trade_date=s.trade_date
-           AND r.expiry=s.expiry
-           AND r.side=s.direction
-           AND r.local_ts=s.entry_time
-        )
-        SELECT * FROM candidates WHERE rn=1
-        """
-    ).df()
+    glob = opt_glob(root)
+    sql = f"""
+    WITH expiries AS (
+      SELECT DISTINCT CAST(expiry AS DATE) AS expiry
+      FROM read_parquet('{glob}', union_by_name=true)
+      WHERE expiry IS NOT NULL
+    ),
+    next_exp AS (
+      SELECT s.*, MIN(e.expiry) AS expiry
+      FROM signals_df s
+      JOIN expiries e ON e.expiry > s.trade_date
+      GROUP BY ALL
+    ),
+    raw AS (
+      SELECT
+        CAST(trading_day AS DATE) AS trade_date,
+        CAST(expiry AS DATE) AS expiry,
+        CASE
+          WHEN UPPER(CAST(option_type AS VARCHAR)) IN ('CALL','CE') THEN 'CALL'
+          WHEN UPPER(CAST(option_type AS VARCHAR)) IN ('PUT','PE') THEN 'PUT'
+          ELSE NULL
+        END AS side,
+        CAST(strike AS DOUBLE) AS strike,
+        CAST(timestamp AS TIMESTAMP) AS local_ts,
+        CAST(open AS DOUBLE) AS open
+      FROM read_parquet('{glob}', union_by_name=true)
+      WHERE close > 0
+    ),
+    atm_candidates AS (
+      SELECT
+        s.*,
+        r.strike AS atm_strike,
+        r.open AS atm_open,
+        ROW_NUMBER() OVER (
+          PARTITION BY s.variant_id, s.trade_date
+          ORDER BY ABS(r.strike - s.spot), r.strike
+        ) AS rn
+      FROM next_exp s
+      JOIN raw r
+        ON r.trade_date=s.trade_date
+       AND r.expiry=s.expiry
+       AND r.side=s.direction
+       AND r.local_ts=s.entry_time
+    ),
+    atm AS (
+      SELECT * FROM atm_candidates WHERE rn=1
+    ),
+    wing_candidates AS (
+      SELECT
+        a.*,
+        r.strike AS wing_strike,
+        r.open AS wing_open,
+        ROW_NUMBER() OVER (
+          PARTITION BY a.variant_id, a.trade_date
+          ORDER BY CASE WHEN a.direction='CALL' THEN r.strike ELSE -r.strike END ASC
+        ) AS rn_wing
+      FROM atm a
+      JOIN raw r
+        ON r.trade_date=a.trade_date
+       AND r.expiry=a.expiry
+       AND r.side=a.direction
+       AND r.local_ts=a.entry_time
+       AND CASE
+             WHEN a.direction='CALL' THEN r.strike > a.atm_strike
+             ELSE r.strike < a.atm_strike
+           END
+    )
+    SELECT
+      variant_id, trade_date, signal_time, entry_time, direction, spot,
+      breakout_level, hold_minutes, risk_id, oi_bias, expiry,
+      atm_strike, wing_strike,
+      atm_open AS long_entry,
+      wing_open AS short_entry,
+      atm_open - wing_open AS debit
+    FROM wing_candidates
+    WHERE rn_wing=1 AND atm_open > wing_open
+    """
+    out = con.execute(sql).df()
     con.close()
-    if entries.empty:
-        return entries
-
-    # Pick the one-strike wing using the first executable minute.
-    out = []
-    con = duckdb.connect()
-    for _, e in entries.iterrows():
-        wing_df = con.execute(
-            f"""
-            SELECT DISTINCT CAST(strike AS DOUBLE) AS strike
-            FROM read_parquet('{opt_glob(root)}', union_by_name=true)
-            WHERE CAST(trading_day AS DATE)=?
-              AND CAST(expiry AS DATE)=?
-              AND CAST(timestamp AS TIMESTAMP)=?
-              AND (
-                (UPPER(CAST(option_type AS VARCHAR)) IN ('CALL','CE') AND ?='CALL' AND CAST(strike AS DOUBLE)>?)
-                OR
-                (UPPER(CAST(option_type AS VARCHAR)) IN ('PUT','PE') AND ?='PUT' AND CAST(strike AS DOUBLE)<?)
-              )
-            ORDER BY strike
-            """,
-            [
-                e["trade_date"], e["expiry"], e["local_ts"],
-                e["direction"], e["strike"], e["direction"], e["strike"]
-            ],
-        ).fetchdf()
-        if wing_df.empty:
-            continue
-        wing = float(wing_df.iloc[0]["strike"] if e["direction"] == "CALL" else wing_df.iloc[-1]["strike"])
-        q = con.execute(
-            f"""
-            SELECT CAST(strike AS DOUBLE) AS strike, CAST(open AS DOUBLE) AS open
-            FROM read_parquet('{opt_glob(root)}', union_by_name=true)
-            WHERE CAST(trading_day AS DATE)=?
-              AND CAST(expiry AS DATE)=?
-              AND CAST(timestamp AS TIMESTAMP)=?
-              AND (
-                (UPPER(CAST(option_type AS VARCHAR)) IN ('CALL','CE') AND ?='CALL')
-                OR
-                (UPPER(CAST(option_type AS VARCHAR)) IN ('PUT','PE') AND ?='PUT')
-              )
-              AND CAST(strike AS DOUBLE) IN (?,?)
-            """,
-            [e["trade_date"], e["expiry"], e["local_ts"], e["direction"], e["direction"], float(e["strike"]), wing],
-        ).fetchdf()
-        if len(q) < 2:
-            continue
-        prices = {float(r["strike"]): float(r["open"]) for _, r in q.iterrows()}
-        if float(e["strike"]) not in prices or wing not in prices:
-            continue
-        long_entry = prices[float(e["strike"])]
-        short_entry = prices[wing]
-        debit = long_entry - short_entry
-        if debit <= 0:
-            continue
-        out.append(
-            {
-                **e.to_dict(),
-                "atm_strike": float(e["strike"]),
-                "wing_strike": wing,
-                "long_entry": long_entry,
-                "short_entry": short_entry,
-                "debit": debit,
-            }
-        )
-    con.close()
-    return pd.DataFrame(out)
-
+    if out.empty:
+        return out
+    out["entry_time"] = pd.to_datetime(out["entry_time"])
+    out["signal_time"] = pd.to_datetime(out["signal_time"])
+    out["trade_date"] = pd.to_datetime(out["trade_date"]).dt.date
+    return out
 
 def simulate(entries: pd.DataFrame, root: Path, out_dir: Path, slippage: float) -> pd.DataFrame:
     if entries.empty:
