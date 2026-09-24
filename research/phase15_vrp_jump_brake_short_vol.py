@@ -22,14 +22,15 @@ def parquet_glob(root: Path, expiry_type: str | None = None) -> str:
     return (root / "**" / "*.parquet").as_posix()
 
 
-def required_files_sql(root: Path, feature_only: bool = False) -> str:
+def required_files_sql(root: Path, feature_only: bool = False, expiry_type: str | None = None) -> str:
     paths = []
     names = (
         ("ATM_CE.parquet", "ATM_PE.parquet")
         if feature_only else
         ("ATM_CE.parquet","ATM_PE.parquet","ATM+2_CE.parquet","ATM+2_PE.parquet","ATM-2_CE.parquet","ATM-2_PE.parquet")
     )
-    for expiry_type in EXPIRY_TYPES:
+    expiry_types = (expiry_type,) if expiry_type else EXPIRY_TYPES
+    for expiry_type in expiry_types:
         folder = root / expiry_type
         for name in names:
             p = folder / name
@@ -40,8 +41,8 @@ def required_files_sql(root: Path, feature_only: bool = False) -> str:
         raise FileNotFoundError("Missing required Phase 15 strike files: " + ", ".join(missing))
     return "[" + ",".join(repr(p) for p in existing) + "]"
 
-def feature_query(root:Path)->str:
-    g=required_files_sql(root, feature_only=True); times=','.join(repr(x) for x in ENTRY_TIMES)
+def feature_query(root:Path, expiry_type: str | None = None)->str:
+    g=required_files_sql(root, feature_only=True, expiry_type=expiry_type); times=','.join(repr(x) for x in ENTRY_TIMES)
     return f'''
     WITH base AS (
       SELECT CAST(datetime AS TIMESTAMP) AS datetime, CAST(date AS DATE) AS trade_date, expiry_type, option_type, strike_type, CAST(spot AS DOUBLE) AS spot, CAST(iv AS DOUBLE) AS iv, CAST(close AS DOUBLE) AS close
@@ -77,8 +78,8 @@ def variant_grid():
     return [dict(entry_time=e,vrp_threshold=v,jump_max=j,structure=s,expiry_type=x,hold_minutes=h,stop_ratio=r)
             for e in ENTRY_TIMES for v in VRP_THRESHOLDS for j in JUMP_MAX for s in STRUCTURES for x in EXPIRY_TYPES for h in HOLDS for r in STOP_RATIOS]
 
-def load_signal_rows(root):
-    con=duckdb.connect(); out=con.execute(feature_query(root)).df(); con.close()
+def load_signal_rows(root, expiry_type=None):
+    con=duckdb.connect(); out=con.execute(feature_query(root, expiry_type=expiry_type)).df(); con.close()
     if out.empty: return out
     out.trade_date=pd.to_datetime(out.trade_date).dt.date; out.datetime=pd.to_datetime(out.datetime)
     return out
@@ -96,7 +97,8 @@ def load_entry_quotes(root,signals):
     con = duckdb.connect()
     con.register('wanted', wanted[['trade_date','expiry_type','entry_time']])
 
-    g = required_files_sql(root)
+    expiry_type = str(signals.expiry_type.iloc[0])
+    g = required_files_sql(root, expiry_type=expiry_type)
     q = f'''
     SELECT
       CAST(o.datetime AS TIMESTAMP) AS datetime,
@@ -141,7 +143,8 @@ def load_execution_windows(root,setup_rows,max_hold=60):
             })
     leg_df=pd.DataFrame(legs).drop_duplicates()
     con.register('legs',leg_df)
-    g=required_files_sql(root)
+    expiry_type = str(setup_rows.expiry_type.iloc[0])
+    g=required_files_sql(root, expiry_type=expiry_type)
     q=f'''
     SELECT CAST(o.datetime AS TIMESTAMP) AS datetime,
            o.expiry_type,
@@ -256,9 +259,9 @@ def walk_forward(trades):
         rows.append({'test_start':str(min(ted)),'test_end':str(max(ted)),'selected_variant':sel,'validation_mean':val[0][1],'test_mean':float(d.mean()),'positive_day_rate':float((d>0).mean()),'trade_days':int(len(d))}); start+=step_n
     return pd.DataFrame(rows)
 
-def run(data_root,out,slippage):
-    features=load_signal_rows(data_root)
-    variants=variant_grid()
+def run(data_root,out,slippage,expiry_type=None):
+    features=load_signal_rows(data_root, expiry_type=expiry_type)
+    variants=[v for v in variant_grid() if (expiry_type is None or v['expiry_type']==expiry_type)]
     unique_signals=features[['trade_date','datetime','expiry_type','spot','vrp','abs_ret15']].drop_duplicates(['trade_date','datetime','expiry_type'])
     entry_quotes=load_entry_quotes(data_root,unique_signals)
     entry_groups={key:g.copy() for key,g in entry_quotes.groupby(['trade_date','expiry_type','datetime'],sort=False)}
@@ -330,7 +333,8 @@ def run(data_root,out,slippage):
     wf=walk_forward(trades)
     wf.to_csv(out/'phase15_walk_forward.csv',index=False)
     result={
-        'variants':VARIANT_COUNT,
+        'variants':len(variants),
+        'expiry_shard':expiry_type,
         'entry_quote_rows':int(len(entry_quotes)),
         'entry_group_count':int(len(entry_groups)),
         'feature_rows':int(len(features)),
@@ -353,4 +357,4 @@ def run(data_root,out,slippage):
     return result
 
 if __name__=='__main__':
-    ap=argparse.ArgumentParser(); ap.add_argument('--data',type=Path,required=True); ap.add_argument('--out',type=Path,required=True); ap.add_argument('--slippage',type=float,default=0.20); a=ap.parse_args(); run(a.data,a.out,a.slippage)
+    ap=argparse.ArgumentParser(); ap.add_argument('--data',type=Path,required=True); ap.add_argument('--out',type=Path,required=True); ap.add_argument('--slippage',type=float,default=0.20); ap.add_argument('--expiry-type',choices=['WEEK','MONTH']); a=ap.parse_args(); run(a.data,a.out,a.slippage,a.expiry_type)
