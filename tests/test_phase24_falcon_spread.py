@@ -44,3 +44,13 @@ def test_series_loader_uses_timestamp_range_not_trading_day_filter():
     src = inspect.getsource(series)
     assert "CAST(trading_day AS DATE)" not in src
     assert "BETWEEN TIMESTAMP" in src
+
+
+
+def test_mark_panel_uses_backward_asof_only():
+    from research.phase24_falcon_spread import mark_panel
+    import pandas as pd
+    a = pd.DataFrame({'ts': pd.to_datetime(['2025-01-01 09:30:00','2025-01-01 09:32:00']), 'close_px':[1.0,3.0]})
+    b = pd.DataFrame({'ts': pd.to_datetime(['2025-01-01 09:31:00']), 'close_px':[2.0]})
+    out = mark_panel({'a':a,'b':b}, tolerance_minutes=1)
+    assert out['b'].tolist() == [2.0]
