@@ -33,6 +33,8 @@ def test_costs_include_brokerage_and_stt_and_gst():
     src = inspect.getsource(cost)
     assert '40.0' in src
     assert '0.0015' in src
+    assert '0.001' in src
+    assert '2026, 4, 1' in src
     assert '0.18' in src
 
 def test_source_primary_premium_is_in_frozen_grid():
