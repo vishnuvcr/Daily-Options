@@ -275,3 +275,7 @@ The expiry-relative timing correction is implemented as Wednesday entry → Frid
 
 ## Phase 24 CI recovery — 2026-09-25
 A stale pre-fix simulation run was holding the workflow concurrency group. CI was changed to cancel stale Phase 24 runs, and the corrected head is now queued as run **36054572240**. No performance result has been accepted from the cancelled/stale runs.
+
+
+## Phase 24 timing correction — 2026-09-25 (second correction)
+The expiry-relative mapping was rechecked against the source's historical Thursday-expiry sequence. The source geometry is **Friday entry → Monday adjustment → Wednesday exit**, corresponding to expiry−4, expiry−3, expiry−1 trading sessions. Therefore the current Tuesday-expiry analogue is **Wednesday entry → Thursday adjustment → Monday exit**. Earlier Friday-adjustment timing is superseded and produces no accepted P&L.
