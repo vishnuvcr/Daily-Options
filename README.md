@@ -112,3 +112,7 @@ Phase 10 is retired after complete base/stress + walk-forward validation: best b
 
 ### Phase 12 parked frontier — 2026-09-24
 A data-gated derivative-versus-spot lead/lag hypothesis is preregistered in [PR #20](https://github.com/vishnuvcr/Daily-Options/pull/20). It is intentionally parked while Phases 9 and 11 complete. No Phase 12 trading result exists.
+
+
+### Phase 9 closure — 2026-09-24
+Phase 9 is retired after corrected global evaluation: 96 variants, 106,152 trades, best base mean active-day net -₹168.79/lot/day, stress -₹228.79, and 0/16 positive WFA windows. The next live frontier is Phase 11.
