@@ -218,3 +218,8 @@ Phase 19 is a parked distinct fallback family: global overnight returns + NIFTY 
 ## 2026-09-24 — Phase 19 execution-ready checkpoint
 
 Phase 19 is now frozen at 512 cells: global overnight z-score (SP500 or GLOBAL3) + NIFTY opening gap agreement/fade + low-RV regime, expressed through a one-sided exact-expiry NIFTY credit spread. Base/stress slippage remains ₹0.20/₹0.40 per leg. The phase will remain separate from Phase 18 and will not be tuned from Phase 18 results.
+
+
+## 2026-09-24 — Phase 19 execution bridge activation
+
+The authoritative Phase 19 workflow is now installed on `main` as a repository-level execution bridge. It checks out the frozen Phase 19 branch, runs the 512-cell grid, and reports base/stress results without changing parameters.
