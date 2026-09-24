@@ -179,3 +179,10 @@ Next active frontier: a global-cross-market opening-gap / India-open regime fami
 Phase 14 global-cross-market opening-gap completed successfully in run 35996090009. The 768-cell frozen grid produced 15,464 entries and 30,256 trades. The raw leaderboard contained 32 cells above ₹1,000/lot/day at both base and stress, but these were concentrated in very small active-day samples. The freeze-safe walk-forward had only one available test window because the 2019–2020 data span yielded 212 distinct signal days; the selected rule (`GLOBAL3|gz0.5|gap0.0075|FADE|09:30:00|LONG|MONTH|h20|r0`) lost ₹1,232.12/lot/day base and ₹1,292.12 stress in that test. Phase 14 is therefore PROMISING/UNVALIDATED rather than promoted.
 
 Next step: independent later-period validation of that exact frozen rule on the pinned 2020–2025 `artist-23/nifty-options-data` dataset, with no parameter search.
+
+
+## 2026-09-24 — Phase 14 later-OOS closure and Phase 15 live execution
+
+Phase 14 later-OOS validation of the frozen global-cross-market opening-gap rule is now closed. On the independent Rissin 1-minute NIFTY option source (run 36000863530), the exact frozen rule produced 12 executable trades across 17 signal days. Base mean active-day net was ₹352.05/lot; doubled-slippage stress was ₹322.05/lot. Only 2025 contributed trades, so the result did not satisfy the multi-year/100-trade promotion gate. Phase 14 is frozen and retired; no parameter retuning is authorized.
+
+Phase 15 VRP + jump-brake short-volatility is the active frontier. Authoritative run 36005428946 on branch phase-15-vrp-jump-brake-short-vol-v1 has passed tests, pinned data acquisition and the lightweight timestamp/quote alignment probe; Base friction remains in progress. No Phase 15 P&L is accepted until Base, stress, walk-forward and independent later-source validation are complete.
