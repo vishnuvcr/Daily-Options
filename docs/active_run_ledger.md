@@ -104,3 +104,11 @@ These are the first runs using exact branch-parent construction after E0078. No 
 - All four shards completed base and stress; global trade files were independently aggregated after reducer packaging defects.
 - Final: best base -₹168.79/lot/day; stress -₹228.79; 0/16 positive WFA windows.
 - Phase 9 is frozen negative and retired.
+
+## 2026-09-24 — authoritative Phase 11 v5e checkpoint
+
+| Phase | Execution branch | Workflow run | Job | Status | Accepted P&L |
+|---|---|---:|---:|---|---|
+| 11 v5e | phase-11-breakout-pullback-oi-v5e-authoritative | 35978104824 | 107563265459 | Tests/data passed; Base friction in progress | No |
+
+This is the sole authoritative Phase 11 execution at this checkpoint. No competing Phase 11 run should be started unless this run fails for infrastructure or engineering reasons.
