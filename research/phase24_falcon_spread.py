@@ -137,7 +137,7 @@ def load_candidate_spot(root):
       FROM read_parquet('{p}')
       WHERE CAST(trading_day AS DATE) BETWEEN DATE '{START_DATE}' AND DATE '{END_DATE}'
         AND EXTRACT(ISODOW FROM CAST(trading_day AS DATE))=5
-        AND CAST(timestamp AS TIME) IN (
+        AND CAST(CAST(timestamp AS TIMESTAMP) AS TIME) IN (
           TIME '09:30:00',TIME '10:00:00',TIME '11:00:00',
           TIME '13:00:00',TIME '14:00:00'
         )
