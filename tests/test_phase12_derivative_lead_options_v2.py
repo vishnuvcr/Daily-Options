@@ -30,3 +30,6 @@ def test_utc_like_naive_time_is_preserved():
     x = pd.Series(pd.to_datetime(["2025-01-02 03:45:00", "2025-01-02 03:46:00"]))
     y = to_utc_naive(x)
     assert str(y.iloc[0]) == "2025-01-02 03:45:00"
+
+
+# execution trigger checkpoint 2026-09-24
