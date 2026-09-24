@@ -92,7 +92,7 @@ def main(root,out):
         ef=nearest(files,r.trade_date)
         if ef is None: continue
         d=inspect_day(ef[1],r.trade_date,r.ts,float(r.spot_close))
-        d["trade_date"]=str(r.trade_date); d["signal_ts"]=str(r.ts); d["spot"]=float(r.close)
+        d["trade_date"]=str(r.trade_date); d["signal_ts"]=str(r.ts); d["spot"]=float(r.spot_close)
         rows.append(d)
     summary={"signals":len(rows),"rows":rows}
     delays=[]
