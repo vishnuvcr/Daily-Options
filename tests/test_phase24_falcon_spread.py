@@ -21,9 +21,10 @@ def test_monday_one_strike_wings():
     assert 'ce_w = ce[ce > setup["short_ce_strike"]]' in src
     assert 'pe_w = pe[pe < setup["short_pe_strike"]]' in src
 
-def test_wednesday_timeout_and_no_thursday_holding():
+def test_current_expiry_exit_is_pre_expiry_not_0dte():
     src = inspect.getsource(simulate_setup)
-    assert 'pd.Timedelta(days=2)' in src
+    assert 'Tuesday' in src
+    assert 'PRE_EXPIRY_EXIT' in src
     assert '15:15:00' in src
 
 def test_costs_include_brokerage_and_stt_and_gst():
@@ -54,3 +55,8 @@ def test_mark_panel_uses_backward_asof_only():
     b = pd.DataFrame({'ts': pd.to_datetime(['2025-01-01 09:31:00']), 'close_px':[2.0]})
     out = mark_panel({'a':a,'b':b}, tolerance_minutes=1)
     assert out['b'].tolist() == [2.0]
+
+
+def test_monday_adjustment_is_allowed_on_current_pre_expiry_day():
+    src = inspect.getsource(simulate_setup)
+    assert 'if mon.date() > exit_date' in src
