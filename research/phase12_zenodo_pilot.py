@@ -349,10 +349,19 @@ def simulate_unique(entries: pd.DataFrame, out: Path, slippage: float) -> pd.Dat
     if entries.empty:
         return pd.DataFrame()
     cm = OptionCostModel()
-    unique = entries[["variant_id","trade_date","entry_time","direction","expiry","side","atm_strike","wing_strike","atm_path","wing_path","spot"]].drop_duplicates()
+    unique = entries[[
+        "variant_id","trade_date","entry_time","direction","expiry","side",
+        "atm_strike","wing_strike","atm_path","wing_path","spot",
+        "hold_minutes","risk_id"
+    ]].drop_duplicates()
     rows = []
     for rec in unique.itertuples(index=False):
-        bars = _merge_leg_bars(rec.atm_path, rec.wing_path, pd.Timestamp(rec.entry_time), 30)
+        bars = _merge_leg_bars(
+            rec.atm_path,
+            rec.wing_path,
+            pd.Timestamp(rec.entry_time),
+            int(rec.hold_minutes),
+        )
         if bars.empty:
             continue
         first = bars.iloc[0]
@@ -361,45 +370,56 @@ def simulate_unique(entries: pd.DataFrame, out: Path, slippage: float) -> pd.Dat
         debit = long_entry - short_entry
         if debit <= 0:
             continue
-        for hold in HOLDS:
-            slice_ = bars[bars["datetime"] <= pd.Timestamp(rec.entry_time) + pd.Timedelta(minutes=hold)]
-            if slice_.empty:
-                continue
-            for risk_id, prof in enumerate(RISK_PROFILES):
-                stop_level = debit * (1 - prof["stop_pct"])
-                target_level = debit * (1 + prof["target_pct"])
-                exit_ts = slice_["datetime"].iloc[-1]
-                reason = "TIME"
-                for _, b in slice_.iterrows():
-                    spread_high = float(b["high_a"] - b["low_b"])
-                    spread_low = float(b["low_a"] - b["high_b"])
-                    if spread_low <= stop_level:
-                        exit_ts = b["datetime"]
-                        reason = "STOP"
-                        break
-                    if spread_high >= target_level:
-                        exit_ts = b["datetime"]
-                        reason = "TARGET"
-                        break
-                ex = slice_.loc[slice_["datetime"] == exit_ts].iloc[-1]
-                long_exit = float(ex["close_a"])
-                short_exit = float(ex["close_b"])
-                net = cm.vertical_debit_spread_net_pnl(
-                    long_entry, short_entry, long_exit, short_exit,
-                    lot_size=index_option_lot_size("NIFTY", rec.expiry),
-                    qty=1, slippage_points=slippage
-                )
-                rows.append({
-                    **rec._asdict(),
-                    "hold_minutes": hold,
-                    "risk_id": risk_id,
-                    "exit_time": exit_ts,
-                    "reason": reason,
-                    "entry_debit": debit,
-                    "exit_debit": long_exit - short_exit,
-                    "net_pnl": net,
-                })
+
+        hold = int(rec.hold_minutes)
+        risk_id = int(rec.risk_id)
+        prof = RISK_PROFILES[risk_id]
+        slice_ = bars[
+            bars["datetime"] <= pd.Timestamp(rec.entry_time) + pd.Timedelta(minutes=hold)
+        ]
+        if slice_.empty:
+            continue
+
+        stop_level = debit * (1 - prof["stop_pct"])
+        target_level = debit * (1 + prof["target_pct"])
+        exit_ts = slice_["datetime"].iloc[-1]
+        reason = "TIME"
+
+        for _, b in slice_.iterrows():
+            spread_high = float(b["high_a"] - b["low_b"])
+            spread_low = float(b["low_a"] - b["high_b"])
+            if spread_low <= stop_level:
+                exit_ts = b["datetime"]
+                reason = "STOP"
+                break
+            if spread_high >= target_level:
+                exit_ts = b["datetime"]
+                reason = "TARGET"
+                break
+
+        ex = slice_.loc[slice_["datetime"] == exit_ts].iloc[-1]
+        long_exit = float(ex["close_a"])
+        short_exit = float(ex["close_b"])
+        net = cm.vertical_debit_spread_net_pnl(
+            long_entry, short_entry, long_exit, short_exit,
+            lot_size=index_option_lot_size("NIFTY", rec.expiry),
+            qty=1, slippage_points=slippage
+        )
+        rows.append({
+            **rec._asdict(),
+            "hold_minutes": hold,
+            "risk_id": risk_id,
+            "exit_time": exit_ts,
+            "reason": reason,
+            "entry_debit": debit,
+            "exit_debit": long_exit - short_exit,
+            "net_pnl": net,
+        })
     trades = pd.DataFrame(rows)
+    if len(trades) > len(entries):
+        raise RuntimeError(
+            f"simulation expanded entries unexpectedly: trades={len(trades)} entries={len(entries)}"
+        )
     out.mkdir(parents=True, exist_ok=True)
     trades.to_csv(out / "phase12_zenodo_trades.csv", index=False)
     return trades
