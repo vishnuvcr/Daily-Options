@@ -106,6 +106,15 @@ jobs:
           find data/cache/phase12_zenodo/market -type f | head -20
           find data/cache/phase12_zenodo/options -type f | head -20
 
+      - name: Inspect Zenodo raw schemas
+        run: |
+          echo "=== NIFTY.csv ==="
+          find data/cache/phase12_zenodo/market -type f -name 'NIFTY.csv' -print -exec head -12 {} \;
+          echo "=== NIFTY_F1.csv ==="
+          find data/cache/phase12_zenodo/market -type f -name 'NIFTY_F1.csv' -print -exec head -12 {} \;
+          echo "=== Sample option files ==="
+          find data/cache/phase12_zenodo/options -type f \( -name '*.xlsx' -o -name '*.xls' -o -name '*.csv' \) | head -5
+
       - name: Data and pilot metadata audit
         run: |
           python - <<'PY'
