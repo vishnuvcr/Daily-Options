@@ -365,7 +365,6 @@ def build_entries(features_by_window: dict[int, pd.DataFrame], manifest: pd.Data
                 "hold_minutes": v.hold_minutes,
                 "risk_id": v.risk_id,
             })
-            break
     return pd.DataFrame(rows)
 
 def simulate_unique(entries: pd.DataFrame, out: Path, slippage: float) -> pd.DataFrame:
