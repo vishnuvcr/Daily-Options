@@ -63,3 +63,8 @@ These are the first runs using exact branch-parent construction after E0078. No 
 - Phase 10 v3 execution branch phase-10-cross-index-1m-v3-exec, commit 2a2619d8, run 35973399377: tests passed; data acquisition in progress at last check.
 - Phase 9 v4 memory-safe/retry branch phase-9-regime-credit-spread-v4-retry, commit bb74dffe, run 35973446515: dependency installation/data acquisition in progress at last check.
 - Phase 11 v3 run 35972926200 remains queued.
+
+### Phase 8 formal-gate correction — 2026-09-24
+- Phase 8 v4 branch corrected in-place to exact-parent commit `ccfa4605d8dc3702bdab0a4f1091c0e78857a2be`, parent `96947e1`.
+- The prior contaminated test commit `5792cb6` is retained only as an audit artifact; it is not the execution ref.
+- The corrected v4 ref should now trigger the formal-gate workflow from the repository's push/PR workflow.
