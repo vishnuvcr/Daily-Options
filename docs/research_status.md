@@ -297,3 +297,9 @@ No candidate has passed promotion, so robustness and paper-shadow phases remain 
 - The numerical stage failed with a DuckDB binder error because `entry_price` was not persisted after executable option selection.
 - No Phase 8 strategy statistic was accepted.
 - Fixed the entry-price persistence and validation; the next push will rerun base/stress evaluation.
+
+
+### 2026-09-24 — Step 8.4 Clean rerun branch
+- Phase 8 run 35937086686 failed before P&L because the executable-entry SQL omitted option `open` (E0062).
+- Created clean branch `phase-8-hybrid-ml-momentum-v2` carrying the corrected engine with the same 96-variant preregistration.
+- No Phase 8 numerical statistic is accepted from the failed run.
