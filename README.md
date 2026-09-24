@@ -120,3 +120,9 @@ Phase 9 is retired after corrected global evaluation: 96 variants, 106,152 trade
 
 ### 2026-09-24 Phase 11 v5e authoritative execution
 The current authoritative Phase 11 execution is isolated on phase-11-breakout-pullback-oi-v5e-authoritative (workflow run 35978104824). Unit tests and cached BANKNIFTY data acquisition passed; Base friction is in progress. No Phase 11 P&L is accepted until base, stress and decision/walk-forward gates complete. Earlier Phase 8/9/10 negative families remain frozen, and Phase 12 remains parked.
+
+
+### Phase 12 closed / Phase 13 active frontier — 2026-09-24
+Phase 12 v3 completed successfully and is retired after 52,476 entries / 51,760 executable trades. Best base net was -₹151.50/lot/active day; stress -₹211.50; all four walk-forward windows were negative. See `reports/phase12_v3_final_result.md` and `docs/research_status_2026-09-24.md`.
+
+Phase 13 will use modern 1-minute NIFTY option data with a materially different volatility-regime + price-structure + defined-risk execution hypothesis. Current source candidates: `thetrademarkk/india-index-options-1m` and `rissin/nse-options-intraday`.
