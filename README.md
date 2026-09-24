@@ -168,3 +168,9 @@ Phase 19 is preregistered but **not launched**: global overnight returns + NIFTY
 Phase 19 — NIFTY short strangle regime is the active execution frontier on branch `phase-19-nifty-short-strangle-regime-v1`. Authoritative GitHub Actions run **36042015205** (commit `2ed269eb2bc875671c818f5cde2707e0a97e4499`) is currently running both Base and Stress friction. Unit tests and exact-expiry cached-data acquisition have passed; the numerical friction step is still in progress. No P&L is accepted until both friction jobs complete and the frozen 144-cell result is reviewed.
 
 The E0195 correction derives option `trade_date` from the normalized UTC→IST timestamp; no strategy, regime, entry, exit, slippage or cost parameter was changed.
+
+## Phase 19 runtime correction — 2026-09-25
+
+The original corrected Phase 19 execution (run `36042015205`) is retained as non-evidentiary execution history because the friction stage stalled without artifacts. A pre-result audit found E0197: the simulation layer still used the dataset's `trading_day` key after E0195 had established timestamp-derived IST trade dates as authoritative.
+
+The active corrected runtime is **Phase 19 v2** on `phase-19-nifty-short-strangle-regime-v2-runtime`. It keeps the frozen 144-cell strategy grid, exact-expiry source, Paytm Money/NSE cost model and Base/Stress slippage values unchanged, while using timestamp-safe execution joins, vectorized exit-event calculation and exact cost-equivalence tests. Latest run: `36043078139`; v2 unit tests passed, Stress is acquiring/reusing cached data and Base is queued. No Phase 19 P&L is accepted yet.
