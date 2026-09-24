@@ -46,8 +46,8 @@ jobs:
           fi
       - name: Run selected friction
         env:
-          SLIP: \${{ matrix.friction == 'base' && '0.20' || '0.40' }}
-          LABEL: \${{ matrix.friction }}
+          SLIP: ${{ matrix.friction == 'base' && '0.20' || '0.40' }}
+          LABEL: ${{ matrix.friction }}
         run: |
           PYTHONPATH=. python -m research.phase17_nifty_exact_expiry_premium_skew \
             --data data/cache/phase17_trademarkk \
@@ -61,5 +61,5 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: phase17a-\${{ matrix.friction }}
+          name: phase17a-${{ matrix.friction }}
           path: reports/
