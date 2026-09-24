@@ -1,0 +1,93 @@
+name: Phase 14c - Independent Contract-Level Validation
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+  push:
+    branches:
+      - phase-14-global-cross-market-opening-gap-independent-contract-v1
+
+concurrency:
+  group: phase14c-independent-contract-v1
+  cancel-in-progress: true
+
+jobs:
+  validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install pandas numpy pyarrow duckdb pytest huggingface_hub yfinance
+
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_phase14_global_cross_market_opening_gap_independent_contract.py
+
+      - name: Prepare market cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/cache/phase14c_market
+            data/cache/phase14c_global
+          key: phase14c-trademarkk-0f4800e-v1
+
+      - name: Discover and download exact NIFTY expiry files
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase14c_market
+          python -c "from huggingface_hub import HfApi; import json; api=HfApi(); files=api.list_repo_files(repo_id='thetrademarkk/india-index-options-1m', repo_type='dataset', revision='0f4800e'); ex=[]; import re; from pathlib import Path; from datetime import date; start=date(2021,8,1); end=date(2024,3,31);           [ex.append(f) for f in files if re.match(r'^options/NIFTY/\\d{4}-\\d{2}-\\d{2}\\.parquet$', f) and start <= date.fromisoformat(Path(f).stem) <= end];           selected=[]; by_month={};           [by_month.setdefault(Path(f).stem[:7],[]).append(f) for f in ex];           [selected.append(max(v, key=lambda q: Path(q).stem)) for v in by_month.values()];           Path('data/cache/phase14c_market/selected_expiries.txt').write_text('\\n'.join(selected)); print('selected_expiry_files', len(selected)); print('\\n'.join(selected))"
+          python - <<'PY'
+          from pathlib import Path
+          from huggingface_hub import snapshot_download
+          files=[x.strip() for x in Path('data/cache/phase14c_market/selected_expiries.txt').read_text().splitlines() if x.strip()]
+          patterns=['index/NIFTY.parquet']+files
+          snapshot_download(
+              repo_id='thetrademarkk/india-index-options-1m',
+              repo_type='dataset',
+              revision='0f4800e',
+              local_dir='data/cache/phase14c_market',
+              allow_patterns=patterns,
+          )
+          PY
+          test -f data/cache/phase14c_market/index/NIFTY.parquet
+          test -s data/cache/phase14c_market/selected_expiries.txt
+
+      - name: Acquire global daily closes
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase14c_global
+          python - <<'PY'
+          from pathlib import Path
+          import yfinance as yf
+          tickers={'SP500':'^GSPC','NASDAQ':'^IXIC','NIKKEI':'^N225'}
+          out=Path('data/cache/phase14c_global')
+          for name,sym in tickers.items():
+              p=out/f'{name}.csv'
+              if p.exists() and p.stat().st_size>100:
+                  continue
+              df=yf.download(sym,start='2020-07-01',end='2024-04-02',auto_adjust=False,progress=False)
+              if df.empty:
+                  raise SystemExit(f'no data for {sym}')
+              if hasattr(df.columns,'levels'):
+                  df=df['Close']
+                  if hasattr(df,'columns'):
+                      df=df.iloc[:,0]
+              df.rename('Close').reset_index().to_csv(p,index=False)
+          PY
+
+      - name: Base independent OOS
+        run: PYTHONPATH=. python -m research.phase14_global_cross_market_opening_gap_independent_contract --root data/cache/phase14c_market --global-root data/cache/phase14c_global --out reports/phase14c-base --slippage 0.20
+
+      - name: Stress independent OOS
+        run: PYTHONPATH=. python -m research.phase14_global_cross_market_opening_gap_independent_contract --root data/cache/phase14c_market --global-root data/cache/phase14c_global --out reports/phase14c-stress --slippage 0.40
+
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase14c-independent-contract-validation-v1
+          path: reports/
