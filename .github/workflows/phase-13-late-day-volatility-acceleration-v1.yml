@@ -1,4 +1,4 @@
-name: Phase 13 - Late-Day Volatility Acceleration
+name: Phase 20 - Global-Gated Late-Day Volatility Acceleration
 
 on:
   workflow_dispatch:
@@ -6,10 +6,10 @@ on:
     branches: [main]
   push:
     branches:
-      - phase-13-late-day-volatility-acceleration-v1
+      - phase-20-global-gated-volatility-acceleration-v2
 
 concurrency:
-  group: phase13-late-day-vol-v1
+  group: phase20-global-gated-vol-v2
   cancel-in-progress: true
 
 jobs:
@@ -21,14 +21,16 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install dependencies
-        run: pip install pandas numpy pyarrow openpyxl xlrd pytest
+        run: pip install pandas numpy pyarrow openpyxl xlrd duckdb yfinance pytest
       - name: Unit tests
         run: PYTHONPATH=. pytest -q tests/test_phase13_late_day_volatility_acceleration.py
       - name: Prepare cache
         uses: actions/cache@v4
         with:
-          path: data/cache/phase12_zenodo
-          key: phase13-zenodo-2019-2020-v1
+          path: |
+            data/cache/phase12_zenodo
+            data/cache/phase20_global
+          key: phase20-zenodo-global-2019-2020-v2
       - name: Acquire archive
         run: |
           set -euo pipefail
@@ -74,20 +76,44 @@ jobs:
               if [ "$FOUND" -eq 0 ]; then break; fi
             done
           done
+      - name: Acquire global data
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase20_global
+          python - <<'PY'
+import yfinance as yf
+from pathlib import Path
+out=Path("data/cache/phase20_global")
+for name,symbol in {"SP500":"^GSPC","NASDAQ":"^IXIC","NIKKEI":"^N225"}.items():
+    p=out/f"{name}.csv"
+    if p.exists() and p.stat().st_size>100:
+        continue
+    df=yf.download(symbol,start="2018-01-01",end="2021-01-01",auto_adjust=False,progress=False)
+    if df.empty:
+        raise SystemExit(f"no data for {symbol}")
+    if hasattr(df.columns,"levels"):
+        if "Close" not in df.columns.get_level_values(0):
+            raise SystemExit(f"no close for {symbol}")
+        df=df["Close"]
+        if hasattr(df,"columns"):
+            df=df.iloc[:,0]
+    else:
+        df=df["Close"]
+    df.rename("Close").reset_index().to_csv(p,index=False)
       - name: Base friction
-        run: PYTHONPATH=. python -m research.phase13_late_day_volatility_acceleration --root data/cache/phase12_zenodo --out reports/phase13-base --slippage 0.20
+        run: PYTHONPATH=. python -m research.phase13_late_day_volatility_acceleration --root data/cache/phase12_zenodo --global-root data/cache/phase20_global --out reports/phase20-base --slippage 0.20
       - name: Stress friction
-        run: PYTHONPATH=. python -m research.phase13_late_day_volatility_acceleration --root data/cache/phase12_zenodo --out reports/phase13-stress --slippage 0.40
+        run: PYTHONPATH=. python -m research.phase13_late_day_volatility_acceleration --root data/cache/phase12_zenodo --global-root data/cache/phase20_global --out reports/phase20-stress --slippage 0.40
       - name: Decision summary
         if: always()
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p reports
-          python -c 'import json; from pathlib import Path; b=Path("reports/phase13-base/phase13_summary.json"); s=Path("reports/phase13-stress/phase13_summary.json"); payload={"base":json.loads(b.read_text()) if b.exists() else {},"stress":json.loads(s.read_text()) if s.exists() else {}}; Path("reports/phase13_decision_summary.json").write_text(json.dumps(payload, indent=2, default=str)); print(json.dumps(payload, indent=2, default=str))'
+          python -c 'import json; from pathlib import Path; b=Path("reports/phase20-base/phase13_summary.json"); s=Path("reports/phase20-stress/phase13_summary.json"); payload={"base":json.loads(b.read_text()) if b.exists() else {},"stress":json.loads(s.read_text()) if s.exists() else {}}; Path("reports/phase20_decision_summary.json").write_text(json.dumps(payload, indent=2, default=str)); print(json.dumps(payload, indent=2, default=str))'
       - name: Upload reports
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: phase13-late-day-volatility-v1
+          name: phase20-global-gated-volatility-acceleration-v2
           path: reports/
