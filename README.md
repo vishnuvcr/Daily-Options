@@ -156,3 +156,8 @@ Phase 16 is classified DATA-LIMITED because the pinned Artist23 source lacks the
 Phase 17 is the active exact-expiry NIFTY family: premium-skew + option volume/OI pressure + spot-momentum confirmation, expressed as defined-risk credit spreads. It uses TradeMarkk revision 51ca58c, where NIFTY options are partitioned by exact expiry-date files and expose strike, option type, OHLCV and OI. The frozen tournament contains 384 variants with base/stress slippage of ₹0.20/₹0.40 per leg.
 
 [Phase 17 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-17-nifty-exact-expiry-premium-skew-v1/docs/phase17_plan.md) · [Phase 17 status](https://github.com/vishnuvcr/Daily-Options/blob/phase-17-nifty-exact-expiry-premium-skew-v1/docs/research_status.md) · [Phase 17 workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-17-nifty-exact-expiry-premium-skew-v1/.github/workflows/phase-17-nifty-exact-expiry-premium-skew-v1.yml)
+
+
+## Phase 19 parked fallback — 2026-09-24
+
+Phase 19 is preregistered but **not launched**: global overnight returns + NIFTY opening gap as a pre-open regime classifier, followed by intraday volatility-compression confirmation and exact-expiry defined-risk iron-condor execution. The 384-cell grid is frozen in `docs/phase19_plan.md`; it will not be tuned from Phase 18 results.
