@@ -11,8 +11,8 @@ def test_setup_carries_structure_dimensions():
 
 def test_filter_locks_structure_dimensions():
     src=inspect.getsource(mod.filter_setups)
-    assert "setups.short_offset==v["short_offset"]" in src
-    assert "setups.wing_width==v["wing_width"]" in src
+    assert 'setups.short_offset==v["short_offset"]' in src
+    assert 'setups.wing_width==v["wing_width"]' in src
 
 def test_variant_attribution_locks_structure_dimensions():
     src=inspect.getsource(mod.run)
