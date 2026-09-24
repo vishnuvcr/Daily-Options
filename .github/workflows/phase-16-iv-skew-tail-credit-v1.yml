@@ -1,0 +1,48 @@
+name: Phase 16 - IV Skew Tail Credit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [phase-16-iv-skew-tail-credit-v1]
+
+concurrency:
+  group: phase16-skew-v1
+  cancel-in-progress: true
+
+jobs:
+  research:
+    strategy:
+      fail-fast: false
+      matrix:
+        expiry: [WEEK, MONTH]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Install dependencies
+        run: pip install pandas numpy pyarrow duckdb huggingface_hub pytest
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_phase16_iv_skew_tail_credit.py
+      - name: Cache Artist23
+        uses: actions/cache@v4
+        with:
+          path: data/cache/hf_nifty_options
+          key: phase3f-artist23-45e0a04-v2
+      - name: Acquire or reuse dataset
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/hf_nifty_options
+          if ! find data/cache/hf_nifty_options -type f -name '*.parquet' -print -quit | grep -q .; then
+            python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='artist-23/nifty-options-data',repo_type='dataset',revision='45e0a04',local_dir='data/cache/hf_nifty_options',allow_patterns=['NIFTY/**/*.parquet'])"
+          fi
+      - name: Base friction
+        run: PYTHONPATH=. python -m research.phase16_iv_skew_tail_credit --data data/cache/hf_nifty_options/NIFTY --out reports/${{ matrix.expiry }}/base --slippage 0.20 --expiry-type ${{ matrix.expiry }}
+      - name: Stress friction
+        run: PYTHONPATH=. python -m research.phase16_iv_skew_tail_credit --data data/cache/hf_nifty_options/NIFTY --out reports/${{ matrix.expiry }}/stress --slippage 0.40 --expiry-type ${{ matrix.expiry }}
+      - name: Upload shard
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase16-shard-${{ matrix.expiry }}
+          path: reports/
