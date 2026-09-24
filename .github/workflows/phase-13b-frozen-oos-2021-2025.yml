@@ -31,9 +31,9 @@ jobs:
         run: |
           mkdir -p data/cache/phase13b_artist23
           if [ ! -d data/cache/phase13b_artist23/NIFTY ]; then
-            python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='artist-23/nifty-options-data', repo_type='dataset', local_dir='data/cache/phase13b_artist23', allow_patterns=['NIFTY/*.parquet'])"
+            python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='artist-23/nifty-options-data', repo_type='dataset', local_dir='data/cache/phase13b_artist23', allow_patterns=['NIFTY/MONTH/*.parquet'])"
           fi
-          find data/cache/phase13b_artist23/NIFTY -type f -name '*.parquet' -print | sed -n '1,20p'
+          find data/cache/phase13b_artist23/NIFTY/MONTH -type f -name '*.parquet' -print | sed -n '1,20p'
       - name: Base frozen validation
         run: PYTHONPATH=. python -m research.phase13b_frozen_oos --root data/cache/phase13b_artist23 --out reports/phase13b-base --slippage 0.20
       - name: Stress frozen validation
