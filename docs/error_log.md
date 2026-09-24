@@ -114,3 +114,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0120 | 2026-09-24 | Phase 13 simulation | LONG-option rows store `wing_path=None`, which pandas materialized as NaN; truth-testing that value routed LONG cells into the spread simulator and passed a float to Path() | Base result invalid; no P&L accepted | Added explicit pd.notna/string checks for wing-path presence and a regression test; hardened decision-summary shell step after the failed run | CLOSED — pre-result |
 
 | E0121 | 2026-09-24 | Phase 13b CI acquisition | Frozen OOS validation stopped because the Hugging Face `snapshot_download` heredoc was malformed in GitHub Actions; unit tests had already passed | No validation P&L was computed or accepted | Replaced the heredoc with a direct Python command; frozen rule and validation period remain unchanged | CLOSED — pre-validation |
+
+| E0121 | 2026-09-24 | Phase 14 preregistration | The fixed dimensions multiply to 768 cells, not 384 | Unit test caught the arithmetic error before any data/P&L run | Corrected hypothesis and test count to 768 without changing any dimension | CLOSED — pre-result |
