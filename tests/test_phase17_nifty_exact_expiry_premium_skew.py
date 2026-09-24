@@ -34,3 +34,10 @@ def test_spot_features_do_not_nest_window_functions():
     src=inspect.getsource(mod.load_spot)
     assert "STDDEV_SAMP(ret1) OVER" in src
     assert "AVG(rv20) OVER" in src
+
+    
+def test_internal_direction_maps_to_source_option_codes():
+    from research import phase17_nifty_exact_expiry_premium_skew as mod
+    import inspect
+    src=inspect.getsource(mod.build_setups)
+    assert 'option_code="PE" if side=="PUT" else "CE"' in src
