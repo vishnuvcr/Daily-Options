@@ -261,3 +261,10 @@ User clarification: the Falcon video is an older Thursday-expiry-era strategy. C
 Phase 24 has therefore been corrected so the source's old "close by Wednesday to avoid Thursday 0-DTE" rule becomes **close on Monday before Tuesday expiry** for the current regime. Historical validation is expiry-aware: the exit session is the actual trading session immediately preceding each contract's expiry; Monday-expiry transition contracts are skipped because the source's Monday adjustment cannot occur before a Monday expiry.
 
 The previously running Phase 24 computation using the old Wednesday timeout is superseded and will not be used for P&L. The new timing correction will be validated by the next clean Base/Stress run before any performance conclusion is accepted.
+## Phase 24 timing correction — 2026-09-25 (finalized)
+
+Correct current-rule geometry is now **Wednesday entry → Friday adjustment → Monday exit** for present-day NIFTY weekly options that expire Tuesday. This is the exact expiry-relative translation of the source's old **Friday entry → Monday adjustment → Wednesday exit** under the former Thursday-expiry regime.
+
+The simulator no longer hard-codes weekdays for the strategy mechanics. It derives the event sessions from the actual contract expiry using trading-session offsets: entry = expiry − 4 sessions; adjustment = expiry − 2 sessions; exit = expiry − 1 session. This preserves the source geometry across the historical Thursday-to-Tuesday expiry transition.
+
+No P&L from the earlier incorrect timing implementation is accepted.
