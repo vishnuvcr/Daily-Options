@@ -291,11 +291,15 @@ def discover_option_manifest(root: Path) -> pd.DataFrame:
         if not p.is_file() or p.suffix.lower() not in {".csv", ".txt", ".xlsx", ".xls"}:
             continue
         stem = re.sub(r"[^A-Za-z0-9]", "", p.stem).upper()
-        m = re.search(r"(\d{4,6})(CE|PE)$", stem)
+        m = re.search(r"(?:NIFTY)?(?:(\d{4,6})(CE|PE)|((?:CE|PE))(\d{4,6}))$", stem)
         if not m:
             continue
-        strike = float(m.group(1))
-        option_type = m.group(2)
+        if m.group(1):
+            strike = float(m.group(1))
+            option_type = m.group(2)
+        else:
+            strike = float(m.group(4))
+            option_type = m.group(3)
         expiry = _parse_expiry(tuple(p.parts))
         coverage_start, coverage_end = _path_coverage_dates(p)
         if expiry is None:
@@ -319,8 +323,17 @@ def discover_option_manifest(root: Path) -> pd.DataFrame:
 def _load_option_path(path_str: str) -> pd.DataFrame:
     return _standardize_ohlc(_read_table(Path(path_str)))
 
+def _coverage_columns(x: pd.DataFrame) -> pd.DataFrame:
+    x = x.copy()
+    if "coverage_start" not in x.columns:
+        x["coverage_start"] = None
+    if "coverage_end" not in x.columns:
+        x["coverage_end"] = None
+    return x
+
+
 def _choose_expiry(manifest: pd.DataFrame, trade_date, mode: str):
-    x = manifest.copy()
+    x = _coverage_columns(manifest)
     x = x[(x["expiry"] > trade_date) & (x["expiry_type"] == mode)]
     x = x[x["coverage_start"].isna() | (x["coverage_start"] <= trade_date)]
     x = x[x["coverage_end"].isna() | (x["coverage_end"] >= trade_date)]
@@ -330,7 +343,8 @@ def _choose_expiry(manifest: pd.DataFrame, trade_date, mode: str):
 
 
 def _choose_strikes(manifest: pd.DataFrame, expiry, side: str, spot: float, width_steps: int, trade_date):
-    x = manifest[(manifest["expiry"] == expiry) & (manifest["option_type"] == side)].copy()
+    x = _coverage_columns(manifest)
+    x = x[(x["expiry"] == expiry) & (x["option_type"] == side)].copy()
     x = x[x["coverage_start"].isna() | (x["coverage_start"] <= trade_date)]
     x = x[x["coverage_end"].isna() | (x["coverage_end"] >= trade_date)]
     if x.empty:
