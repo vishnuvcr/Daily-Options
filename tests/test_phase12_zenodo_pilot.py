@@ -53,3 +53,5 @@ def test_zenodo_known_market_filenames(tmp_path):
     assert len(spot) == 2
     assert "futures_close" in futures.columns
     assert "spot_close" in spot.columns
+
+# concurrency-fix trigger checkpoint 2026-09-24
