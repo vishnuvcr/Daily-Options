@@ -111,3 +111,18 @@ Phase 10 (cross-index relative-strength debit spreads) is **RETIRED** after a co
 - No result-based retuning was performed.
 
 Phase 10 result archive: `reports/phase10/` on `phase-10-cross-index-1m-v4-exec`.
+
+## Phase 12 preregistration — 2026-09-24
+
+A new data-gated family is preregistered in branch `phase-12-derivative-lead-options-v1` / PR #20.
+
+Mechanism: measure derivative-versus-spot standardized return dislocation on NIFTY futures, then express a qualifying directional signal through a defined-risk option debit spread.
+
+The phase is intentionally parked until:
+- at least 300 futures trading days;
+- >=90% futures/spot minute overlap;
+- deterministic nearest-contract selection;
+- exact contract-expiry metadata available before promotion;
+- sufficient option entry coverage.
+
+No Phase 12 P&L result exists yet.
