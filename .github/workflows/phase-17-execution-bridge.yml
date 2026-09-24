@@ -6,9 +6,12 @@ on:
       phase_ref:
         description: "Exact Phase 17 commit to execute"
         required: true
-        default: "d75ad917516099e34d71d9057d89d1cad7269643"
+        default: "e80803f943abab764985647e2de2a21036f00abf"
   pull_request:
     types: [opened, synchronize, reopened]
+  push:
+    paths:
+      - ".github/workflows/phase-17-execution-bridge.yml"
 
 concurrency:
   group: phase17-execution
@@ -16,7 +19,7 @@ concurrency:
 
 jobs:
   research:
-    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.ref == 'phase-17-nifty-exact-expiry-premium-skew-v1'
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.ref == 'phase-17-nifty-exact-expiry-premium-skew-v1'
     strategy:
       fail-fast: false
       matrix:
