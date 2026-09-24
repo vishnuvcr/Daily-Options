@@ -11,6 +11,10 @@ concurrency:
 
 jobs:
   research:
+    strategy:
+      fail-fast: false
+      matrix:
+        friction: [base, stress]
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
@@ -42,33 +46,18 @@ jobs:
               sleep $((attempt*15))
             done
           fi
-      - name: Base friction
+      - name: Run friction
+        env:
+          SLIP: ${{ matrix.friction == 'base' && '0.20' || '0.40' }}
+          LABEL: ${{ matrix.friction }}
         run: |
-          PYTHONPATH=. python -m research.phase17_nifty_exact_expiry_premium_skew             --data data/cache/phase17_trademarkk             --out reports/base             --slippage 0.20
-      - name: Stress friction
-        run: |
-          PYTHONPATH=. python -m research.phase17_nifty_exact_expiry_premium_skew             --data data/cache/phase17_trademarkk             --out reports/stress             --slippage 0.40
-      - name: Decision summary
-        run: |
-          python - <<'PY'
-import json
-from pathlib import Path
-b=json.loads(Path("reports/base/phase17_summary.json").read_text())
-s=json.loads(Path("reports/stress/phase17_summary.json").read_text())
-d={
-  "phase":"17c-v2",
-  "base":b,
-  "stress":s,
-  "base_target_qualified":b.get("target_qualified",0),
-  "stress_target_qualified":s.get("target_qualified",0),
-  "decision":"PRELIMINARY_TARGET_PASS" if b.get("target_qualified",0)>0 and s.get("target_qualified",0)>0 else "PRELIMINARY_TARGET_FAIL_OR_DATA_LIMITED"
-}
-Path("reports/phase17c_decision.json").write_text(json.dumps(d,indent=2))
-print(json.dumps(d,indent=2))
-PY
+          PYTHONPATH=. python -m research.phase17_nifty_exact_expiry_premium_skew \
+            --data data/cache/phase17_trademarkk \
+            --out reports/$LABEL \
+            --slippage "$SLIP"
       - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: phase17c-v2-executable-entry
+          name: phase17c-v2-${{ matrix.friction }}
           path: reports/
