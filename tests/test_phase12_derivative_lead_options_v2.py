@@ -33,3 +33,5 @@ def test_utc_like_naive_time_is_preserved():
 
 
 # execution trigger checkpoint 2026-09-24
+
+# v2d trigger checkpoint
