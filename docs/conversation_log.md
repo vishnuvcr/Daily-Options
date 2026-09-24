@@ -53,3 +53,6 @@ No strategy result is promoted or described as successful.
 ### Phase 8 closure — 2026-09-24
 
 The first clean exact-ref Phase 8 run completed base and stress. Across all 96 preregistered variants, none reached ₹1,000 net/active lot/day. The best base mean all-day net was -₹6.13 and stress was -₹36.13. The family is retired without WFA promotion or test-period retuning.
+### Phase 10 closure — 2026-09-24
+
+The exact-ref Phase 10 v4 workflow completed. Across 128 variants, best base mean all-day net was -₹113.62/lot/day, stress -₹136.48, and all 3 walk-forward test windows were negative. The family is retired without retuning.
