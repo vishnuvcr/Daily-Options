@@ -8,3 +8,8 @@ Phase 18 is an independent defined-risk short-volatility family using exact-expi
 ## 2026-09-24 — Phase 18 v2 PR execution trigger
 
 PR #28 is the authoritative execution route. The branch-push workflow was not scheduled reliably, so the repository now uses the main-branch PR workflow `phase-18-v2-pr-execution.yml`; this log update intentionally synchronizes the PR without altering the frozen 192-cell strategy definition.
+
+
+## 2026-09-24 — Phase 18 retired; Phase 19 launched
+
+Phase 18 corrected execution run `36040028422` completed Base and Stress successfully but found `setup_rows=0` and `filtered_setup_rows=0` with 3,753 frozen signals and 2,205,051 option quote rows. The four-leg iron-condor hypothesis is retired as source/execution-infeasible. Phase 19 launches a two-leg short-strangle regime with unchanged late-day/low-jump/low-RV framework and a 144-cell frozen grid.
