@@ -240,3 +240,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0182 | 2026-09-24 | Phase 17c feasibility smoke | Smoke diagnostic failed before execution analysis because DuckDB rejected the projected alias `close` in the spot query | No feasibility conclusion could be drawn from the smoke failure | Rename the spot field to `spot_close` and update downstream references; rerun the same diagnostic sample and 3-minute availability rule | CLOSED — diagnostic |
 
 | E0183 | 2026-09-24 | Phase 17c feasibility smoke | Smoke diagnostic compared expiry Timestamp values against Python datetime.date values | The smoke could not reach entry-availability analysis | Normalize the comparison date with `pd.Timestamp(d).date()` and rerun unchanged diagnostic logic | CLOSED — diagnostic |
+
+| E0185 | 2026-09-24 | Phase 17c feasibility smoke | After alias normalization to `spot_close`, the smoke main loop still referenced `r.close` when storing spot metadata | Smoke failed after successfully reading spot/option data; no feasibility conclusion | Use `r.spot_close` consistently and rerun the same sample | CLOSED — diagnostic |
