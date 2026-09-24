@@ -36,6 +36,9 @@ jobs:
             data/cache/phase12_zenodo
             data/cache/phase20_global
           key: phase20-zenodo-global-2019-2020-v2
+          restore-keys: |
+            phase13-zenodo-2019-2020-v1
+            phase20-zenodo-global-2019-2020-
 
       - name: Acquire Zenodo archive
         run: |
