@@ -1,0 +1,47 @@
+name: Phase 17c - Entry Availability Smoke
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [phase-17c-entry-availability-smoke-v1]
+
+concurrency:
+  group: phase17c-entry-smoke
+  cancel-in-progress: false
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: "phase-17c-entry-availability-smoke-v1"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pandas numpy pyarrow duckdb huggingface_hub
+      - name: Cache data
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase17_trademarkk
+          key: phase17-trademarkk-51ca58c-v1
+      - name: Acquire or reuse data
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase17_trademarkk
+          if [ ! -f data/cache/phase17_trademarkk/index/NIFTY.parquet ]; then
+            python - <<'PY'
+from huggingface_hub import snapshot_download
+snapshot_download(repo_id="thetrademarkk/india-index-options-1m",repo_type="dataset",revision="51ca58c",local_dir="data/cache/phase17_trademarkk",allow_patterns=["index/NIFTY.parquet","options/NIFTY/*.parquet"])
+PY
+          fi
+      - name: Run entry availability smoke
+        run: PYTHONPATH=. python -m research.phase17c_entry_availability_smoke data/cache/phase17_trademarkk reports/smoke
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase17c-entry-smoke
+          path: reports/smoke/
