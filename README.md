@@ -174,3 +174,8 @@ The E0195 correction derives option `trade_date` from the normalized UTC→IST t
 The original corrected Phase 19 execution (run `36042015205`) is retained as non-evidentiary execution history because the friction stage stalled without artifacts. A pre-result audit found E0197: the simulation layer still used the dataset's `trading_day` key after E0195 had established timestamp-derived IST trade dates as authoritative.
 
 The active corrected runtime is **Phase 19 v2** on `phase-19-nifty-short-strangle-regime-v2-runtime`. It keeps the frozen 144-cell strategy grid, exact-expiry source, Paytm Money/NSE cost model and Base/Stress slippage values unchanged, while using timestamp-safe execution joins, vectorized exit-event calculation and exact cost-equivalence tests. Latest run: `36043078139`; v2 unit tests passed, Stress is acquiring/reusing cached data and Base is queued. No Phase 19 P&L is accepted yet.
+
+
+## Phase 13 integrity correction — 2026-09-25
+
+A retrospective audit found that the authoritative Phase 13 Base/Stress trade artifacts contained exact two-for-one duplicates caused by the simulator expanding both risk profiles after `risk_id` was already part of the unique setup key. The published ₹285.45/₹225.45 near-miss is therefore invalid. Exact-deduplication recomputation gives a best full-sample mean active-day net of **₹142.72 base / ₹112.72 stress**, with 0 target-qualified cells and corrected nested-WFA mean test-window net of **₹121.82 base / ₹91.82 stress**. Phase 13 remains non-promoted; no tuning is authorized.
