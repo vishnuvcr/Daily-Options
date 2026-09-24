@@ -206,3 +206,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0149 | 2026-09-24 | Phase 16 entry query | DuckDB rejected `close` as an output alias in the entry-quote query before simulation | No P&L accepted | Rename the projected close field to `close_px` and use the exact field consistently in downstream selection | CLOSED — pre-result |
 
 | E0150 | 2026-09-24 | Phase 16 execution-window SQL | Window query retained a second `close` alias after entry-query correction; Base failed before simulation | No P&L accepted | Rename window close to `close_px` and propagate that column into exit-price merges | CLOSED — pre-result |
+
+| E0151 | 2026-09-24 | Phase 16 signal construction | The clean Phase 16 run produced zero feature rows because the feature aggregation grouped by `strike_type`, preventing ATM-2 put IV and ATM+2 call IV from coexisting in the same minute/expiry row | **No Phase 16 P&L result exists yet; empty trade files are invalid as strategy evidence** | Aggregate by minute/trade_date/expiry_type only, with separate conditional put-IV and call-IV columns; add regression test | CLOSED — pre-result |
