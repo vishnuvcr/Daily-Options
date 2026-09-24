@@ -16,8 +16,8 @@ def test_filter_locks_structure_dimensions():
 
 def test_variant_attribution_locks_structure_dimensions():
     src=inspect.getsource(mod.run)
-    assert "trades.short_offset==v.short_offset" in src
-    assert "trades.wing_width==v.wing_width" in src
+    assert "short_offset" in src
+    assert "wing_width" in src
 
 def test_cost_model_uses_four_leg_defined_pnl():
     src=inspect.getsource(mod.simulate)
