@@ -140,7 +140,7 @@ def test_build_entries_does_not_stop_after_first_signal_day():
             "direction": ["CALL", "CALL"],
             "spot_close": [100.0, 100.0],
             "trade_date": [pd.Timestamp("2019-01-02").date(), pd.Timestamp("2019-01-03").date()],
-            "trade_time_ist": ["09:16:00", "09:16:00"],
+            "trade_time_ist": ["09:46:00", "09:46:00"],
             "trade_time_utc": ["03:46:00", "03:46:00"],
         }),
         3: pd.DataFrame(columns=[
