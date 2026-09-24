@@ -165,3 +165,10 @@ The isolated v5e concurrency group uses `cancel-in-progress: false`, so the earl
 - Accepted P&L: none.
 
 The isolated v5e concurrency group uses cancel-in-progress=false, so the earlier v5/v6 cancellation pattern is not being repeated. Phase 8, Phase 9 and Phase 10 remain frozen negative; Phase 12 remains parked.
+
+
+## 2026-09-24 — Phase 13 final result
+
+Phase 13 late-day volatility acceleration completed cleanly in workflow run 35994608170. The 384-cell preregistered family generated 40,384 signal entries and 79,456 trade records. Best base mean active-day net was ₹285.45/lot/day; doubled-slippage stress was ₹225.45. No cell reached ₹1,000/lot/day. Nested walk-forward produced 5 windows: 4 positive and 1 negative at both friction levels. One base test window exceeded ₹1,000, but the corresponding stress window remained below target, so the family is classified as a near-miss and frozen without retuning.
+
+Next active frontier: a global-cross-market opening-gap / India-open regime family, using only information known before the Indian session and a separate option execution layer.
