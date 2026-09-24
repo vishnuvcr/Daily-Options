@@ -309,7 +309,7 @@ def cost(legs, lot, slippage, entry_date=None, exit_date=None):
     buy_entry = sum(leg["entry"] * leg["qty"] * lot for leg in legs if leg["sign"] > 0)
     buy_exit = sum(leg["exit"] * leg["qty"] * lot for leg in legs if leg["sign"] < 0)
     brokerage = 40.0 * len(legs)
-    exchange = turnover * 0.0003503
+    exchange_rate = 0.0003503 if (entry_date is None or pd.Timestamp(entry_date).date() < date(2026, 3, 1)) else 0.000355299\n    exchange = turnover * exchange_rate
     sebi = turnover * 0.000001
     entry_stt_rate = 0.001 if entry_date is None or pd.Timestamp(entry_date).date() < date(2026, 4, 1) else 0.0015
     exit_stt_rate = 0.001 if exit_date is None or pd.Timestamp(exit_date).date() < date(2026, 4, 1) else 0.0015
