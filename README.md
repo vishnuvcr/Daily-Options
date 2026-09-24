@@ -201,15 +201,22 @@ Channel: https://www.youtube.com/@equityincome
 
 ## Frontier update — 2026-09-25 — Falcon Spread
 
-The supplied transcript for Equity Income's **Falcon Spread — Top Hedging Trick Public Won't Know** has now been formalized and entered as Phase 24. The source-derived mechanics are a Friday 5:3 near-week/far-week ratio-diagonal strangle around the ~25-point premium zone, Monday purchase of five near-week outer wings one strike beyond each short, a hard stop, and a Wednesday time-out.
+The supplied transcript for Equity Income's **Falcon Spread — Top Hedging Trick Public Won't Know** has been formalized as Phase 24. The frozen source mechanics are the 5:3 near-week/far-week ratio-diagonal structure around the ~25-point premium zone, one-strike outer-wing adjustment, hard stop and pre-expiry exit.
 
-Phase 24 is preregistered on branch phase-24-falcon-spread-backtest-v1 with 270 cells covering only the source-unspecified timing, hard-stop and far-strike interpretation uncertainties. Base and doubled-slippage runs use the pinned TradeMarkk exact-expiry NIFTY dataset and the existing Paytm Money/NSE cost model.
+### Correct current-rule timing
 
-Current authoritative Actions run: **36051595562**. Tests and cached data acquisition have passed; Base and Stress are currently in the numerical friction stage. No Falcon P&L is accepted yet.
+The source-era Thursday-expiry sequence was **Friday entry → Monday adjustment → Wednesday exit**. Preserving the expiry-relative trading-session geometry gives the current NIFTY Tuesday-expiry analogue:
 
-[Phase 24 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-24-falcon-spread-backtest-v1/docs/phase24_plan.md) · [Falcon simulator](https://github.com/vishnuvcr/Daily-Options/blob/phase-24-falcon-spread-backtest-v1/research/phase24_falcon_spread.py) · [Phase 24 workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-24-falcon-spread-backtest-v1/.github/workflows/phase-24-falcon-spread-backtest.yml)
-### Phase 24 timing correction — 2026-09-25
+**Wednesday entry → Thursday adjustment → Monday pre-expiry exit.**
 
-The Falcon Spread source is an older Thursday-expiry strategy. Current NIFTY weekly options expire Tuesday under NSE's revised contract schedule (new contracts expiring on/after 2025-09-01), so Phase 24 now translates the old "close by Wednesday / avoid Thursday 0-DTE" rule into a **Monday pre-expiry exit / avoid Tuesday 0-DTE** rule. Historical validation is contract-expiry-aware rather than assuming one weekday across the entire dataset. [NSE expiry circular](https://nsearchives.nseindia.com/content/circulars/FAOP68747.pdf) · [NSE current NIFTY 50 contract specification](https://www.nseindia.com/static/products-services/equity-derivatives-nifty50)
+Current NSE specifications state that NIFTY 50 weekly options expire every Tuesday, moving to the previous trading day when Tuesday is a holiday. [NSE current contract specification](https://www.nseindia.com/static/products-services/equity-derivatives-nifty50)
 
-The currently running Phase 24 artifact based on the old Wednesday exit is superseded and will not be used for P&L. The corrected timing is on `phase-24-falcon-spread-backtest-v1` and will be rerun with Base/Stress before interpretation.
+Phase 24 v1 was run first on the pinned TradeMarkk exact-expiry source, but its cached option coverage was too sparse for inference: the corrected Stress artifact had only 5 executable entry dates. Those apparent high-P&L cells are rejected as evidence.
+
+### Phase 24 v2 — independent-source validation
+
+The frozen 270-cell Falcon grid is now being rerun without parameter retuning on independent **Rissin/Upstox 1-minute NIFTY option data**, pinned to raw-parquet revision 78b1c5468255d18cf492984bfe6fe4e3ac874d7c. The dataset documents 1-minute NIFTY options from October 2024 onward with explicit expiry, strike, option type and IST timestamps. [Rissin dataset](https://huggingface.co/datasets/rissin/nse-options-intraday) · [Pinned raw-parquet revision](https://huggingface.co/datasets/rissin/nse-options-intraday/commit/78b1c5468255d18cf492984bfe6fe4e3ac874d7c)
+
+Latest v2 Actions run: 36057816149. The first data-acquisition attempts on revision c97e450 were rejected because that revision exposed auto-converted default/train shards instead of the documented raw file paths; this is logged as E0239. The workflow is now pinned to the raw-parquet revision and rerunning. No Phase 24 v2 P&L is accepted yet.
+
+[Phase 24 v1 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-24-falcon-spread-backtest-v1/docs/phase24_plan.md) · [Phase 24 v1 simulator](https://github.com/vishnuvcr/Daily-Options/blob/phase-24-falcon-spread-backtest-v1/research/phase24_falcon_spread.py) · [Phase 24 v2 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-24-falcon-spread-backtest-v2-rissin/docs/phase24_v2_plan.md) · [Phase 24 v2 simulator](https://github.com/vishnuvcr/Daily-Options/blob/phase-24-falcon-spread-backtest-v2-rissin/research/phase24_falcon_spread_rissin.py) · [Phase 24 v2 workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-24-falcon-spread-backtest-v2-rissin/.github/workflows/phase24-falcon-spread-v2-rissin.yml)
