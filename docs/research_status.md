@@ -208,3 +208,10 @@ Phase 16 is now the active frontier: intraday IV-skew tail credit verticals, 288
 - Phase 16 corrected feature run produced 3,626 WEEK / 3,517 MONTH feature rows, 4,861 / 4,863 executable setups and ~480k execution-window rows, proving data coverage. The zero-trade output was then traced to DATE/TIMESTAMP join normalization (E0156).
 - Phase 16 now caches execution outcomes by signal/side/width/hold/stop before mapping the 288 preregistered cells (E0157). Unit tests are required before numerical acceptance.
 - Authoritative latest Phase 16 run: 36030055443, commit 7eefb6034014353c84e26e077c14655bb1eb5028. It is currently queued for a GitHub runner; no numerical result from this corrected run is accepted yet.
+
+
+## 2026-09-25 — Phase 19 authoritative execution checkpoint
+
+The corrected Phase 19 run `36042015205` on `phase-19-nifty-short-strangle-regime-v1` (head `2ed269eb2bc875671c818f5cde2707e0a97e4499`) is active. Both Base and Stress jobs passed unit tests and exact-expiry data acquisition and are currently executing the friction calculation. The run remains non-evidentiary until both jobs complete and the frozen 144-cell leaderboard, trade count, active-day net P&L, stress result and later-period validation gates are reviewed.
+
+No parameter retuning has been performed after E0195.
