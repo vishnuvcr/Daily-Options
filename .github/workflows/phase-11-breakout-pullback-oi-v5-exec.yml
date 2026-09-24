@@ -16,8 +16,11 @@ on:
       - "research/phase10_contracts.py"
 
 concurrency:
-  group: phase12-zenodo-v3
-  cancel-in-progress: false
+  # Never serialize research runs behind a slow archive download.
+  # Each commit is independently reproducible; a newer corrected head
+  # must be able to start immediately.
+  group: phase12-zenodo-v3-${{ github.sha }}
+  cancel-in-progress: true
 
 jobs:
   research:
