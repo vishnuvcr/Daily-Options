@@ -1,5 +1,5 @@
 [object Object]
 
-## 2026-09-24 — Phase 18 iron-condor preflight correction
+## 2026-09-24 — Phase 18 setup-feasibility diagnostic
 
-Phase 18 is an independent defined-risk short-volatility family using exact-expiry NIFTY options. Before execution, a structure-attribution defect was found and corrected: short-offset and wing-width are now explicit in setup construction, filtering, simulation and final variant mapping. No Phase 18 P&L from superseded code is accepted.
+The corrected Phase 18 run produced 3,753 frozen signal rows and 2,205,051 option rows but zero executable setup rows in both frictions. This is not a strategy P&L result. A setup-feasibility diagnostic is now running to separate leg availability, common-entry timing, and positive-credit construction.
