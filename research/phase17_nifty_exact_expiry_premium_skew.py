@@ -150,7 +150,7 @@ def load_option_quotes(root, signals):
                CAST(o.strike AS DOUBLE) strike,
                CAST(o.option_type AS VARCHAR) option_type,
                CAST(o.open AS DOUBLE) open,
-               CAST(o.close AS DOUBLE) close,
+               CAST(o.close AS DOUBLE) close_px,
                CAST(o.volume AS DOUBLE) volume,
                CAST(o.open_interest AS DOUBLE) oi
         FROM read_parquet('{path}') o
