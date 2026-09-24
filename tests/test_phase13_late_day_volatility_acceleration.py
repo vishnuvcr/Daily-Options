@@ -82,3 +82,5 @@ def test_phase20_simulator_uses_input_risk_id_once():
     source = inspect.getsource(simulate)
     assert "enumerate(RISK_PROFILES)" not in source
     assert "RISK_PROFILES[risk_id]" in source
+
+# Phase 20 isolated workflow trigger checkpoint
