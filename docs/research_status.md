@@ -279,3 +279,7 @@ A stale pre-fix simulation run was holding the workflow concurrency group. CI wa
 
 ## Phase 24 timing correction — 2026-09-25 (second correction)
 The expiry-relative mapping was rechecked against the source's historical Thursday-expiry sequence. The source geometry is **Friday entry → Monday adjustment → Wednesday exit**, corresponding to expiry−4, expiry−3, expiry−1 trading sessions. Therefore the current Tuesday-expiry analogue is **Wednesday entry → Thursday adjustment → Monday exit**. Earlier Friday-adjustment timing is superseded and produces no accepted P&L.
+
+
+## Phase 24 cost-model correction — 2026-09-25
+Current NSE STT rules are date-dependent: option-sale STT was 0.10% through 2026-03-31 and is 0.15% from 2026-04-01. The simulator now applies STT separately to entry and exit sale dates. Static-rate results are superseded. Corrected Phase 24 run **36055156251** is queued.
