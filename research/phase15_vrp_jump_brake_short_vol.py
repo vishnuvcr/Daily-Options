@@ -151,7 +151,7 @@ def run(data_root,out,slippage):
             bars=build_window(eq,signal,setup,v['hold_minutes'])
             t=simulate(signal,setup,bars,v['structure'],v['stop_ratio'],slippage)
             if t is not None:
-                t['variant_id']=f\"{v['entry_time']}|vrp{v['vrp_threshold']:.1f}|jump{v['jump_max']:.4f}|{v['structure']}|{v['expiry_type']}|h{v['hold_minutes']}|s{v['stop_ratio']:.2f}\"; trades.append(t)
+                t['variant_id']=f"{v['entry_time']}|vrp{v['vrp_threshold']:.1f}|jump{v['jump_max']:.4f}|{v['structure']}|{v['expiry_type']}|h{v['hold_minutes']}|s{v['stop_ratio']:.2f}"; trades.append(t)
     trades=pd.DataFrame(trades); out.mkdir(parents=True,exist_ok=True)
     if not trades.empty: trades.to_csv(out/'phase15_trades.csv',index=False)
     rows=[]
