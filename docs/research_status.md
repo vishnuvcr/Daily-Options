@@ -224,3 +224,8 @@ The original Phase 19 corrected run `36042015205` is non-evidentiary after remai
 ## 2026-09-25 — Phase 19 v3 authoritative execution
 
 A clean Phase 19 v3 branch `phase-19-nifty-short-strangle-regime-v3-authoritative` was created to eliminate stale-run contention and report contamination. The frozen 144-cell short-strangle rule, exact-expiry dataset revision, cost model, Base slippage ₹0.20 and Stress slippage ₹0.40 are unchanged. The workflow cleans its output directory, runs unit tests, then Base and Stress sequentially and uploads only fresh Phase 19 evidence. Latest run: `36043694480`; tests and cached-data acquisition passed and Base friction is currently executing. No P&L has been accepted.
+
+
+## 2026-09-25 — Phase 13 deduplication audit
+
+Retrospective audit of the authoritative Phase 13 artifact found exact two-for-one duplication in every Base and Stress trade row. The simulator looped over both risk profiles even though `risk_id` was already part of the unique setup key. Exact-deduplication correction gives best full-sample mean active-day net ₹142.72 base / ₹112.72 stress, 0 target-qualified cells, and corrected nested-WFA mean test-window net ₹121.82 base / ₹91.82 stress. The published Phase 13 ₹285.45/₹225.45 result is invalidated and no retuning is permitted.
