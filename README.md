@@ -139,7 +139,7 @@ Phase 15 is the active frontier. Run 36005428946 on branch phase-15-vrp-jump-bra
 
 Phase 15 has been retired after a clean rerun exposed and corrected a critical CALL/PUT execution-leg join defect (E0145). The corrected result did not reach the ₹1,000 net/active-lot/day target: WEEK best ₹30.82 base / -₹9.23 stress; MONTH best -₹90.53 / -₹128.53. Earlier positive Phase 15 artifacts are explicitly invalidated.
 
-Phase 16 is active on `phase-16-iv-skew-tail-credit-v1`: a preregistered IV-skew tail credit-vertical family using 288 cells per expiry shard, realistic Paytm Money/NSE costs and doubled slippage. Latest workflow: `36021088602`.
+Phase 16 is active on `phase-16-iv-skew-tail-credit-v1`: a preregistered IV-skew tail credit-vertical family using 288 cells per expiry shard, realistic Paytm Money/NSE costs and doubled slippage. The first corrected feature run produced 3,626 WEEK / 3,517 MONTH feature rows and ~4,861 executable setups per shard; its zero-trade artifact was traced to a DATE/TIMESTAMP join defect and is invalidated. The latest corrected outcome-cache run is `36030055443`, currently queued for a runner; no Phase 16 P&L is accepted yet.
 
 Research status: [docs/research_status.md](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md) · [error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md) · [Phase 16 hypothesis](https://github.com/vishnuvcr/Daily-Options/blob/phase-16-iv-skew-tail-credit-v1/docs/phase16_hypothesis.md)
 
