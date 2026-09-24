@@ -68,3 +68,10 @@ After reviewing current/historical lead-lag evidence, a futures/derivative-versu
 ### Phase 9 closure — 2026-09-24
 
 The corrected Phase 9 engine produced real trades after the earlier path-join defect was fixed. All 96 variants and 106,152 trades were independently aggregated from the four shard artifacts. Best base mean active-day net was -₹168.79/lot/day; stress -₹228.79; all 16 WFA windows were negative. The family is retired without retuning.
+
+
+## 2026-09-25 — Resume in new chat / Phase 19 monitoring
+
+The research was resumed from the Phase 18 retirement and corrected Phase 19 execution checkpoint. Authoritative run `36042015205` is on `phase-19-nifty-short-strangle-regime-v1`, head `2ed269eb2bc875671c818f5cde2707e0a97e4499`. Both Base and Stress passed tests and data acquisition and are executing the unchanged frozen short-strangle grid. No P&L has been interpreted or promoted.
+
+A live-log read returned a GitHub `BlobNotFound` response while the jobs remained in progress; workflow job-step state is used as the authoritative runtime monitor.
