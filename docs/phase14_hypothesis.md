@@ -12,7 +12,7 @@ Recent global-index research finds opening-gap predictability is market-sequence
 
 ## Preregistration
 
-384 fixed simulation cells:
+768 fixed simulation cells:
 
 - global signal: S&P 500 only or equal-weight standardized S&P 500 + Nasdaq Composite + Nikkei 225;
 - global standardized-return threshold: 0.5 or 1.0;
