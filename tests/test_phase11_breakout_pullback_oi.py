@@ -30,3 +30,10 @@ def test_oi_bias_directional():
     df = pd.DataFrame({"put_oi": [120.0], "call_oi": [80.0]})
     bias = (df["put_oi"] - df["call_oi"]) / (df["put_oi"] + df["call_oi"])
     assert float(bias.iloc[0]) > 0
+
+
+def test_put_wing_is_nearest_lower_strike():
+    strikes = [48600.0, 48500.0, 48400.0]
+    atm = 48600.0
+    lower = sorted([s for s in strikes if s < atm])
+    assert lower[0] == 48500.0
