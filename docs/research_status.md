@@ -287,3 +287,7 @@ Current NSE STT rules are date-dependent: option-sale STT was 0.10% through 2026
 
 ## Phase 24 performance correction — 2026-09-25
 The simulator now caches repeated per-setup option series and mark panels across the 9 adjustment/stop combinations. This is an execution optimization only; it does not change strategy rules, timing or cost assumptions. Static-rate and pre-cache runs remain superseded.
+
+
+## Phase 24 cost-model correction — NSE March 2026 transaction charges
+The simulator now applies the NSE equity-options premium transaction charge date-wise: 0.03503% before 2026-03-01 and approximately 0.0355299% from 2026-03-01, in addition to date-aware STT. The pending prior run is superseded by the new correction.
