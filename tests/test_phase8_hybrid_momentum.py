@@ -2,7 +2,7 @@ from research.phase8_hybrid_momentum import variant_grid, RISK_PROFILES
 
 
 def test_phase8_variant_count():
-    assert len(variant_grid()) == 48
+    assert len(variant_grid()) == 96
     assert len(RISK_PROFILES) == 2
     assert {v.family for v in variant_grid()} == {"trend", "mean_reversion"}
 
