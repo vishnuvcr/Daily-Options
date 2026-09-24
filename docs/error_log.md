@@ -116,3 +116,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0121 | 2026-09-24 | Phase 13b CI acquisition | Frozen OOS validation stopped because the Hugging Face `snapshot_download` heredoc was malformed in GitHub Actions; unit tests had already passed | No validation P&L was computed or accepted | Replaced the heredoc with a direct Python command; frozen rule and validation period remain unchanged | CLOSED — pre-validation |
 
 | E0121 | 2026-09-24 | Phase 14 preregistration | The fixed dimensions multiply to 768 cells, not 384 | Unit test caught the arithmetic error before any data/P&L run | Corrected hypothesis and test count to 768 without changing any dimension | CLOSED — pre-result |
+
+| E0122 | 2026-09-24 | Phase 13b data-layout | Artist-23 NIFTY parquet files are partitioned under `NIFTY/MONTH/*.parquet`, not directly under `NIFTY/*.parquet`; the dataset itself downloaded successfully | No frozen-rule validation P&L was computed | Corrected both the engine glob and Hugging Face allow-pattern to the actual monthly partition | CLOSED — pre-validation |
