@@ -3,7 +3,7 @@ import argparse, json
 from pathlib import Path
 import duckdb, numpy as np, pandas as pd, yfinance as yf
 from research.cost_model import OptionCostModel
-from research.phase19_nifty_short_strangle_regime import expiry_files, expiry_for_day, load_exact_quotes, load_spot, lot, START_DATE, END_DATE
+from research.phase19_nifty_short_strangle_regime import expiry_files, expiry_for_day, load_spot, lot, START_DATE, END_DATE, ist_wall
 
 ENTRY=("14:30:00","14:45:00","15:00:00")
 HOLDS=(15,30)
@@ -58,6 +58,54 @@ def regime_table(root,global_root):
     n["expansion"]=n.g3.abs().ge(.5)|n.gap.abs().ge(.0075)
     return n[["d","gap","g3","expansion"]].rename(columns={"d":"trade_date"})
 
+
+
+def load_phase21_quotes(root: Path, spot: pd.DataFrame) -> pd.DataFrame:
+    files = expiry_files(root)
+    dates = sorted(pd.to_datetime(spot["trade_date"]).dt.date.unique())
+    wanted = {}
+    for d in dates:
+        future = [x for x in files if x[0] > d]
+        if not future:
+            continue
+        weekly = min(future, key=lambda x: x[0])[0]
+        monthly_candidates = [x for x in future if x[0].month != d.month]
+        monthly = min(monthly_candidates, key=lambda x: x[0])[0] if monthly_candidates else weekly
+        wanted.setdefault(weekly, set()).add(d)
+        wanted.setdefault(monthly, set()).add(d)
+
+    chunks = []
+    con = duckdb.connect()
+    con.execute("SET TimeZone='Asia/Kolkata'")
+    for ed, path in sorted(files):
+        ds = wanted.get(ed)
+        if not ds:
+            continue
+        q = f"""
+        SELECT "timestamp" ts,
+               CAST(strike AS DOUBLE) strike,
+               CAST(option_type AS VARCHAR) option_type,
+               CAST(open AS DOUBLE) open_px,
+               CAST(high AS DOUBLE) high,
+               CAST(low AS DOUBLE) low,
+               CAST(close AS DOUBLE) close_px
+        FROM read_parquet('{path}')
+        WHERE "close">0
+          AND strftime("timestamp",'%H:%M:%S')>='14:30:00'
+          AND strftime("timestamp",'%H:%M:%S')<='15:03:00'
+        """
+        z = con.execute(q).df()
+        if z.empty:
+            continue
+        z["ts"] = ist_wall(z["ts"])
+        z["trade_date"] = pd.to_datetime(z["ts"]).dt.date
+        z = z[z["trade_date"].isin(ds)].copy()
+        if not z.empty:
+            z["expiry"] = pd.Timestamp(ed).date()
+            chunks.append(z)
+    con.close()
+    return pd.concat(chunks, ignore_index=True) if chunks else pd.DataFrame()
+
 def build_entries(root,spot,quotes,regime):
     files=expiry_files(root); ri=regime.set_index("trade_date"); rows=[]
     for v in variants():
@@ -75,7 +123,7 @@ def build_entries(root,spot,quotes,regime):
                 f=[x for x in files if x[0]>pd.Timestamp(d).date() and x[0].month!=pd.Timestamp(d).date().month]
                 if not f: continue
                 ed,path=min(f,key=lambda x:x[0])
-            q=quotes[(quotes.trade_date==d)&(quotes.ts>=sm.ts)&(quotes.ts<=sm.ts+pd.Timedelta(minutes=3))]
+            q=quotes[(quotes.trade_date==d)&(quotes.expiry==ed)&(quotes.ts>=sm.ts)&(quotes.ts<=sm.ts+pd.Timedelta(minutes=3))]
             sig=q[q.ts==sm.ts]
             strikes=np.sort(sig.strike.dropna().unique())
             if len(strikes)<7: continue
