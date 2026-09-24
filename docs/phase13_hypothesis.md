@@ -12,7 +12,7 @@ This phase therefore does not assume that a breakout is profitable. It tests whe
 
 ## Preregistration
 
-192 fixed simulation cells:
+384 fixed simulation cells:
 
 - signal lookback: 10 or 15 minutes;
 - standardized return threshold: 1.0 or 1.5;
