@@ -126,3 +126,10 @@ The current authoritative Phase 11 execution is isolated on phase-11-breakout-pu
 Phase 12 v3 completed successfully and is retired after 52,476 entries / 51,760 executable trades. Best base net was -₹151.50/lot/active day; stress -₹211.50; all four walk-forward windows were negative. See `reports/phase12_v3_final_result.md` and `docs/research_status_2026-09-24.md`.
 
 Phase 13 will use modern 1-minute NIFTY option data with a materially different volatility-regime + price-structure + defined-risk execution hypothesis. Current source candidates: `thetrademarkk/india-index-options-1m` and `rissin/nse-options-intraday`.
+
+
+## 2026-09-24 live frontier checkpoint
+
+Phase 14 is now frozen after independent later-period validation of the exact selected rule: 12 executable trades, ₹352.05/lot mean active-day net at base friction and ₹322.05 under doubled slippage, with only one contributing calendar year. It is not promoted.
+
+Phase 15 is the active frontier. Run 36005428946 on branch phase-15-vrp-jump-brake-short-vol-v1 has passed tests, data acquisition and a timestamp/quote alignment probe; Base is currently running. No Phase 15 result is accepted yet.
