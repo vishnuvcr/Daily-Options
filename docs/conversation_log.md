@@ -65,3 +65,9 @@
 - User instructed that the study must continue until a Rs 1,000 net/lot/day strategy is found or created.
 - The prior Phase 3 closure is therefore treated as an evidence checkpoint, not the end of the program.
 - Phase 8 was opened to test a materially different hybrid mechanism using trend/regime information plus option-premium confirmation and dynamic exits.
+
+
+## 2026-09-24 — Phase 9 initialization
+- Phase 8 hybrid momentum is still running its corrected CI screen.
+- A parallel, materially distinct Phase 9 was opened to test regime-filtered defined-risk credit spreads.
+- The new family is pre-registered at 96 variants and does not reuse the retired naked short-straddle specification.
