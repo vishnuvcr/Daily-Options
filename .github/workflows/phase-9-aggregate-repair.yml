@@ -3,7 +3,7 @@ name: Phase 9 - Aggregate Repair
 on:
   push:
     branches:
-      - phase-9-regime-credit-spread-v7-aggregate-repair
+      - phase-9-regime-credit-spread-v8-aggregate-path-repair
   workflow_dispatch:
 
 jobs:
