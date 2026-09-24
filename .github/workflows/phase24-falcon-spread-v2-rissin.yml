@@ -54,16 +54,16 @@ jobs:
           cp data/cache/phase24_rissin/upstox_intraday/NIFTY/NIFTY_2026.parquet data/cache/phase24_rissin/NIFTY_2026.parquet
       - name: Run friction
         env:
-          SLIP: \${{ matrix.friction == 'base' && '0.20' || '0.40' }}
-          LABEL: \${{ matrix.friction }}
+          SLIP: ${{ matrix.friction == 'base' && '0.20' || '0.40' }}
+          LABEL: ${{ matrix.friction }}
         run: |
           PYTHONPATH=. python -m research.phase24_falcon_spread_rissin \
             --data data/cache/phase24_rissin \
-            --out reports/\${LABEL} \
-            --slippage "\${SLIP}"
+            --out reports/${LABEL} \
+            --slippage "${SLIP}"
       - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: phase24-falcon-rissin-\${{ matrix.friction }}
+          name: phase24-falcon-rissin-${{ matrix.friction }}
           path: reports/
