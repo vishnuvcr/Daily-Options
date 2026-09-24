@@ -78,7 +78,7 @@ def probe_candidate(path, trade_date, signal_ts, spot):
       CAST(strike AS DOUBLE) strike,
       CAST(option_type AS VARCHAR) option_type,
       CAST(open AS DOUBLE) open,
-      CAST(close AS DOUBLE) close,
+      CAST(close AS DOUBLE) close_px,
       CAST(volume AS DOUBLE) volume,
       CAST(open_interest AS DOUBLE) oi
     FROM read_parquet('{path}')
