@@ -14,3 +14,4 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0069 | 2026-09-24 | Phase 10 | Run 35937773719 raised `AttributeError: 'Series' object has no attribute 'leader'` during entry construction | No P&L produced | Replaced attribute access with explicit Series key access and committed the fix | OPEN — awaiting fresh workflow |
 
 | E0070 | 2026-09-24 | Environment | Local container could not resolve github.com during an attempted branch clone, so local CI reproduction was unavailable | No effect on repository workflows | Use GitHub Actions as the authoritative branch execution environment; no result is inferred from the failed local clone | CLOSED |
+| E0072 | 2026-09-24 | Phase 11 preflight | Initial entry-price query allowed both CALL and PUT rows, which could mix sides at identical strikes | Could corrupt debit-spread entry prices | Query now restricts option_type to the selected direction before CI execution | CLOSED |
