@@ -37,3 +37,5 @@ def test_risk_profiles_fixed():
         {"stop_pct": 0.30, "target_pct": 0.60},
         {"stop_pct": 0.50, "target_pct": 1.00},
     )
+
+# helper-dependency trigger checkpoint 2026-09-24
