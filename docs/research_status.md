@@ -3,7 +3,7 @@
 Last updated: 2026-09-24
 
 ## Overall
-Phase 7 — FINAL SYNTHESIS ACTIVE; EXPLORATORY PROGRAM CLOSED WITHOUT A PROMOTION CANDIDATE.
+Phase 8 — ACTIVE; HYBRID MOMENTUM + OPTION-PREMIUM CONFIRMATION.
 
 ## Step log
 
@@ -283,3 +283,10 @@ No candidate has passed promotion, so robustness and paper-shadow phases remain 
 - Paytm Money historical API documentation was verified as a future data-upgrade path and reports 1-minute NSE cash/F&O historical OHLC/volume/OI from 2017, including contract-wise options and futures.
 - Phase 8A will test the external mechanism on the pinned public option dataset with explicit leakage and cost controls before any ML extension.
 - Promotion target remains Rs 1,000 net per active lot per trading day; exhaustion of one public dataset no longer closes the research program.
+
+
+### 2026-09-24 — Step 8.2 Phase 8 CI correction and rerun
+- Initial Phase 8 Actions run 35936607044 failed in unit tests before data acquisition because the declared grid count was written as 48 while the actual Cartesian product contained 96 variants.
+- No Phase 8 numerical result was produced or accepted from that run.
+- Corrected the preregistration/test/documentation to 96 bounded variants.
+- New run 35936795905 is executing on the corrected branch; data and P&L remain unaccepted until the run completes successfully.
