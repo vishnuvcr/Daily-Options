@@ -101,3 +101,44 @@ def test_headerless_zenodo_option_row_maps_to_named_ohlc_columns(tmp_path):
     x = _standardize_ohlc(raw)
     assert float(x.iloc[0]["open"]) == 120.5
     assert float(x.iloc[0]["close"]) == 120.2
+
+
+def test_simulation_uses_variant_hold_and_risk_without_expansion(tmp_path, monkeypatch):
+    import pandas as pd
+    import research.phase12_zenodo_pilot as mod
+
+    bars = pd.DataFrame([
+        {
+            "datetime": pd.Timestamp("2019-04-16 04:31:00"),
+            "open_a": 50.0, "high_a": 55.0, "low_a": 49.0, "close_a": 54.0,
+            "open_b": 20.0, "high_b": 21.0, "low_b": 19.0, "close_b": 20.0,
+        },
+        {
+            "datetime": pd.Timestamp("2019-04-16 04:32:00"),
+            "open_a": 54.0, "high_a": 55.0, "low_a": 53.0, "close_a": 54.0,
+            "open_b": 20.0, "high_b": 20.5, "low_b": 19.5, "close_b": 20.0,
+        },
+    ])
+    monkeypatch.setattr(mod, "_merge_leg_bars", lambda *args, **kwargs: bars)
+    monkeypatch.setattr(mod, "index_option_lot_size", lambda *args, **kwargs: 75)
+
+    entries = pd.DataFrame([{
+        "variant_id": "lw3|z1.50|10:00:00|MONTH|w2|h20|r1",
+        "trade_date": "2019-04-16",
+        "entry_time": "2019-04-16 04:31:00",
+        "direction": "CALL",
+        "expiry": "2019-05-30",
+        "side": "CE",
+        "atm_strike": 11800.0,
+        "wing_strike": 11900.0,
+        "atm_path": "a.csv",
+        "wing_path": "b.csv",
+        "spot": 11783.0,
+        "hold_minutes": 20,
+        "risk_id": 1,
+    }])
+
+    out = mod.simulate_unique(entries, tmp_path, 0.20)
+    assert len(out) == 1
+    assert int(out.iloc[0]["hold_minutes"]) == 20
+    assert int(out.iloc[0]["risk_id"]) == 1
