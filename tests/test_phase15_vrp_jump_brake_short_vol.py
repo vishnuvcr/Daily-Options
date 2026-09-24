@@ -9,3 +9,19 @@ def test_grid_dimensions():
     assert {x['jump_max'] for x in g}=={0.0025,0.0040}
     assert {x['structure'] for x in g}=={'STRADDLE','IRONFLY'}
     assert {x['expiry_type'] for x in g}=={'WEEK','MONTH'}
+
+
+def test_required_files_sql_is_duckdb_list():
+    from pathlib import Path
+    from research.phase15_vrp_jump_brake_short_vol import required_files_sql
+    import tempfile
+    with tempfile.TemporaryDirectory() as td:
+        root = Path(td)
+        for expiry in ("WEEK","MONTH"):
+            (root/expiry).mkdir(parents=True, exist_ok=True)
+            for name in ("ATM_CE.parquet","ATM_PE.parquet","ATM+2_CE.parquet","ATM+2_PE.parquet","ATM-2_CE.parquet","ATM-2_PE.parquet"):
+                (root/expiry/name).write_bytes(b"")
+        sql_list = required_files_sql(root)
+        assert sql_list.startswith("[")
+        assert sql_list.endswith("]")
+        assert "'WEEK/ATM_CE.parquet'" in sql_list or "ATM_CE.parquet" in sql_list
