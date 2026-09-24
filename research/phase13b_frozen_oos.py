@@ -105,7 +105,7 @@ def main() -> None:
     ap.add_argument('--out', type=Path, required=True)
     ap.add_argument('--slippage', type=float, default=0.20)
     args = ap.parse_args()
-    parquet_glob = str(args.root / 'NIFTY' / '*.parquet')
+    parquet_glob = str(args.root / 'NIFTY' / 'MONTH' / '*.parquet')
     signals = compute_spot_features(parquet_glob)
     options = load_option_window(parquet_glob, [d.isoformat() for d in signals.trade_date.unique()])
     trades = simulate(signals, options, args.slippage)
