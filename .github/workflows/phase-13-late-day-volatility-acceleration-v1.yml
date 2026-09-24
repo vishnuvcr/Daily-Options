@@ -2,8 +2,6 @@ name: Phase 20 - Global-Gated Late-Day Volatility Acceleration
 
 on:
   workflow_dispatch:
-  pull_request:
-    branches: [main]
   push:
     branches:
       - phase-20-global-gated-volatility-acceleration-v2
@@ -15,28 +13,34 @@ concurrency:
 jobs:
   research:
     runs-on: ubuntu-latest
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: phase-20-global-gated-volatility-acceleration-v2
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
       - name: Install dependencies
         run: pip install pandas numpy pyarrow openpyxl xlrd duckdb yfinance pytest
+
       - name: Unit tests
         run: PYTHONPATH=. pytest -q tests/test_phase13_late_day_volatility_acceleration.py
-      - name: Prepare cache
+
+      - name: Cache research data
         uses: actions/cache@v4
         with:
           path: |
             data/cache/phase12_zenodo
             data/cache/phase20_global
           key: phase20-zenodo-global-2019-2020-v2
-      - name: Acquire archive
+
+      - name: Acquire Zenodo archive
         run: |
           set -euo pipefail
-          mkdir -p data/cache/phase12_zenodo/downloads
-          mkdir -p data/cache/phase12_zenodo/market
-          mkdir -p data/cache/phase12_zenodo/options
+          mkdir -p data/cache/phase12_zenodo/downloads data/cache/phase12_zenodo/market data/cache/phase12_zenodo/options
           BASE="https://zenodo.org/records/10899828/files"
           FUT_ZIP="data/cache/phase12_zenodo/downloads/Nifty_spot_and_futures_data.zip"
           OPT_ZIP="data/cache/phase12_zenodo/downloads/Nifty_Options_Data.zip"
@@ -44,21 +48,18 @@ jobs:
           if [ ! -s "$OPT_ZIP" ]; then curl -fL --retry 7 --retry-all-errors -A "Daily-Options-research/1.0" "$BASE/Nifty%20Options%20Data.zip?download=1" -o "$OPT_ZIP"; fi
           test -s "$FUT_ZIP"
           test -s "$OPT_ZIP"
-      - name: Extract pilot data
-        run: |
-          set -euo pipefail
           for YEAR in 2019 2020; do
             if [ ! -d "data/cache/phase12_zenodo/market/$YEAR" ]; then
-              entry="$(unzip -Z1 data/cache/phase12_zenodo/downloads/Nifty_spot_and_futures_data.zip | grep -E "(^|/)$YEAR\.zip$" | sed -n '1p' || true)"
+              entry="$(unzip -Z1 "$FUT_ZIP" | grep -E "(^|/)$YEAR\.zip$" | sed -n '1p' || true)"
               test -n "$entry"
-              unzip -p data/cache/phase12_zenodo/downloads/Nifty_spot_and_futures_data.zip "$entry" > "/tmp/$YEAR-futures.zip"
+              unzip -p "$FUT_ZIP" "$entry" > "/tmp/$YEAR-futures.zip"
               mkdir -p "data/cache/phase12_zenodo/market/$YEAR"
               unzip -q "/tmp/$YEAR-futures.zip" -d "data/cache/phase12_zenodo/market/$YEAR"
             fi
             if [ ! -d "data/cache/phase12_zenodo/options/$YEAR" ]; then
-              entry="$(unzip -Z1 data/cache/phase12_zenodo/downloads/Nifty_Options_Data.zip | grep -E "(^|/)NiftyOptions $YEAR\.zip$" | sed -n '1p' || true)"
+              entry="$(unzip -Z1 "$OPT_ZIP" | grep -E "(^|/)NiftyOptions $YEAR\.zip$" | sed -n '1p' || true)"
               test -n "$entry"
-              unzip -p data/cache/phase12_zenodo/downloads/Nifty_Options_Data.zip "$entry" > "/tmp/$YEAR-options.zip"
+              unzip -p "$OPT_ZIP" "$entry" > "/tmp/$YEAR-options.zip"
               mkdir -p "data/cache/phase12_zenodo/options/$YEAR"
               unzip -q "/tmp/$YEAR-options.zip" -d "data/cache/phase12_zenodo/options/$YEAR"
             fi
@@ -76,44 +77,25 @@ jobs:
               if [ "$FOUND" -eq 0 ]; then break; fi
             done
           done
-      - name: Acquire global data
-        run: |
-          set -euo pipefail
-          mkdir -p data/cache/phase20_global
-          python - <<'PY'
-import yfinance as yf
-from pathlib import Path
-out=Path("data/cache/phase20_global")
-for name,symbol in {"SP500":"^GSPC","NASDAQ":"^IXIC","NIKKEI":"^N225"}.items():
-    p=out/f"{name}.csv"
-    if p.exists() and p.stat().st_size>100:
-        continue
-    df=yf.download(symbol,start="2018-01-01",end="2021-01-01",auto_adjust=False,progress=False)
-    if df.empty:
-        raise SystemExit(f"no data for {symbol}")
-    if hasattr(df.columns,"levels"):
-        if "Close" not in df.columns.get_level_values(0):
-            raise SystemExit(f"no close for {symbol}")
-        df=df["Close"]
-        if hasattr(df,"columns"):
-            df=df.iloc[:,0]
-    else:
-        df=df["Close"]
-    df.rename("Close").reset_index().to_csv(p,index=False)
+
       - name: Base friction
-        run: PYTHONPATH=. python -m research.phase13_late_day_volatility_acceleration --root data/cache/phase12_zenodo --global-root data/cache/phase20_global --out reports/phase20-base --slippage 0.20
+        run: |
+          rm -rf reports/phase20-base
+          PYTHONPATH=. python -m research.phase13_late_day_volatility_acceleration             --root data/cache/phase12_zenodo             --global-root data/cache/phase20_global             --out reports/phase20-base             --slippage 0.20
+
       - name: Stress friction
-        run: PYTHONPATH=. python -m research.phase13_late_day_volatility_acceleration --root data/cache/phase12_zenodo --global-root data/cache/phase20_global --out reports/phase20-stress --slippage 0.40
+        run: |
+          rm -rf reports/phase20-stress
+          PYTHONPATH=. python -m research.phase13_late_day_volatility_acceleration             --root data/cache/phase12_zenodo             --global-root data/cache/phase20_global             --out reports/phase20-stress             --slippage 0.40
+
       - name: Decision summary
         if: always()
-        shell: bash
         run: |
-          set -euo pipefail
-          mkdir -p reports
-          python -c 'import json; from pathlib import Path; b=Path("reports/phase20-base/phase13_summary.json"); s=Path("reports/phase20-stress/phase13_summary.json"); payload={"base":json.loads(b.read_text()) if b.exists() else {},"stress":json.loads(s.read_text()) if s.exists() else {}}; Path("reports/phase20_decision_summary.json").write_text(json.dumps(payload, indent=2, default=str)); print(json.dumps(payload, indent=2, default=str))'
+          python -c 'import json; from pathlib import Path; b=Path("reports/phase20-base/phase13_summary.json"); s=Path("reports/phase20-stress/phase13_summary.json"); Path("reports/phase20_decision_summary.json").write_text(json.dumps({"base":json.loads(b.read_text()) if b.exists() else {},"stress":json.loads(s.read_text()) if s.exists() else {}}, indent=2, default=str))'
+
       - name: Upload reports
-        uses: actions/upload-artifact@v4
         if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: phase20-global-gated-volatility-acceleration-v2
           path: reports/
