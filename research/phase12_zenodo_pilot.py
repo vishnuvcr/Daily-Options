@@ -264,10 +264,15 @@ def discover_option_manifest(root: Path) -> pd.DataFrame:
             continue
         stem = re.sub(r"[^A-Za-z0-9]", "", p.stem).upper()
         m = re.search(r"(\d{4,6})(CE|PE)$", stem)
-        if not m:
-            continue
-        strike = float(m.group(1))
-        option_type = m.group(2)
+        if m:
+            strike = float(m.group(1))
+            option_type = m.group(2)
+        else:
+            m = re.search(r"^(CE|PE)(\d{4,6})$", stem)
+            if not m:
+                continue
+            option_type = m.group(1)
+            strike = float(m.group(2))
         expiry = _parse_expiry(tuple(p.parts))
         if expiry is None:
             continue
