@@ -41,7 +41,7 @@ jobs:
               bars_from_long_window, simulate, HOLDS
           )
           root=Path("data/cache/hf_nifty_options/NIFTY")
-          variant=[v for v in variant_grid() if v["expiry_type"]=="WEEK"][0]
+          variant=[v for v in variant_grid() if v["expiry_type"]=="WEEK" and v["vrp_threshold"]==0.0 and v["jump_max"]==0.0040 and v["entry_time"]=="09:30:00" and v["structure"]=="STRADDLE" and v["hold_minutes"]==30 and v["stop_ratio"]==1.30][0]
           features=load_signal_rows(root,"WEEK")
           sig=select_signals(features,variant).head(25)
           eq=load_entry_quotes(root,sig)
