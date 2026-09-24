@@ -208,3 +208,8 @@ Phase 24 is preregistered on branch phase-24-falcon-spread-backtest-v1 with 270 
 Current authoritative Actions run: **36051595562**. Tests and cached data acquisition have passed; Base and Stress are currently in the numerical friction stage. No Falcon P&L is accepted yet.
 
 [Phase 24 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-24-falcon-spread-backtest-v1/docs/phase24_plan.md) · [Falcon simulator](https://github.com/vishnuvcr/Daily-Options/blob/phase-24-falcon-spread-backtest-v1/research/phase24_falcon_spread.py) · [Phase 24 workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-24-falcon-spread-backtest-v1/.github/workflows/phase-24-falcon-spread-backtest.yml)
+### Phase 24 timing correction — 2026-09-25
+
+The Falcon Spread source is an older Thursday-expiry strategy. Current NIFTY weekly options expire Tuesday under NSE's revised contract schedule (new contracts expiring on/after 2025-09-01), so Phase 24 now translates the old "close by Wednesday / avoid Thursday 0-DTE" rule into a **Monday pre-expiry exit / avoid Tuesday 0-DTE** rule. Historical validation is contract-expiry-aware rather than assuming one weekday across the entire dataset. [NSE expiry circular](https://nsearchives.nseindia.com/content/circulars/FAOP68747.pdf) · [NSE current NIFTY 50 contract specification](https://www.nseindia.com/static/products-services/equity-derivatives-nifty50)
+
+The currently running Phase 24 artifact based on the old Wednesday exit is superseded and will not be used for P&L. The corrected timing is on `phase-24-falcon-spread-backtest-v1` and will be rerun with Base/Stress before interpretation.
