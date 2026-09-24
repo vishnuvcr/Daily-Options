@@ -8,3 +8,5 @@ def test_frozen_rule_constants():
 # frozen-oos trigger checkpoint 2026-09-24
 
 # acquisition-fix trigger checkpoint 2026-09-24
+
+# parquet-layout trigger checkpoint 2026-09-24
