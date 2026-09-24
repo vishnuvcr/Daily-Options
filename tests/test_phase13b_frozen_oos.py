@@ -36,3 +36,5 @@ def test_load_option_window_handles_expiry_column(tmp_path):
     out = load_option_window(str(p), ["2021-01-04"])
     assert len(out) == 2
     assert out.iloc[0]["expiry"] == pd.Timestamp("2021-01-28")
+
+# DuckDB-query-fix trigger checkpoint 2026-09-24
