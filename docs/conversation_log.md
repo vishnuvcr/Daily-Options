@@ -60,3 +60,7 @@ The exact-ref Phase 10 v4 workflow completed. Across 128 variants, best base mea
 ### 2026-09-24 — Phase 10 completed and retired
 
 Phase 10 completed base and doubled-slippage stress execution. The best base result was ₹-113.62/lot/day and the best stress result ₹-136.48/lot/day. All three untouched WFA windows were negative in both friction settings. The family was retired with no post-result retuning.
+
+### 2026-09-24 — Phase 12 preregistration
+
+After reviewing current/historical lead-lag evidence, a futures/derivative-versus-spot price-discovery family was preregistered as the next distinct mechanism. It is data-gated and does not assume futures permanently lead spot. No strategy result has been produced from Phase 12.
