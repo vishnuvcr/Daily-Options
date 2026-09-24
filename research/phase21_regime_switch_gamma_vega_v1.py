@@ -45,7 +45,8 @@ def global_daily(root,name,symbol):
     return x[["date","z"]].dropna()
 
 def prev_z(df,dates):
-    a=pd.DataFrame({"date":pd.to_datetime(dates)}); b=df.copy(); b["date"]=pd.to_datetime(b.date)
+    a=pd.DataFrame({"date":pd.to_datetime(dates).astype("datetime64[ns]")})
+    b=df.copy(); b["date"]=pd.to_datetime(b.date).astype("datetime64[ns]")
     return pd.merge_asof(a.sort_values("date"),b.sort_values("date"),on="date",direction="backward",allow_exact_matches=False)["z"].to_numpy()
 
 def regime_table(root,global_root):
