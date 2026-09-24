@@ -330,9 +330,9 @@ def select_entries(signals: pd.DataFrame, root: Path) -> pd.DataFrame:
               AND CAST(expiry AS DATE)=?
               AND CAST(timestamp AS TIMESTAMP)=?
               AND (
-                (UPPER(CAST(option_type AS VARCHAR)) IN ('CALL','CE') AND ? IN ('CALL','PUT'))
+                (UPPER(CAST(option_type AS VARCHAR)) IN ('CALL','CE') AND ?='CALL')
                 OR
-                (UPPER(CAST(option_type AS VARCHAR)) IN ('PUT','PE') AND ? IN ('CALL','PUT'))
+                (UPPER(CAST(option_type AS VARCHAR)) IN ('PUT','PE') AND ?='PUT')
               )
               AND CAST(strike AS DOUBLE) IN (?,?)
             """,
