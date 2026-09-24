@@ -84,3 +84,8 @@ The stalled Phase 19 execution was not treated as strategy evidence. E0197 was f
 ## 2026-09-25 — Phase 19 v3 authoritative execution
 
 After the v1 friction stall and v2 runner contention, an isolated Phase 19 v3 branch was created. It retains the frozen short-strangle parameters and corrected timestamp-derived option trade-date logic, uses clean output directories, and runs Base then Stress in one authoritative job. Latest run `36043694480`: tests/data acquisition passed; Base friction is executing. No numerical result is yet accepted.
+
+
+## 2026-09-25 — Phase 13 integrity correction
+
+The prior Phase 13 result was revisited during candidate-audit work. Every trade row in the authoritative Base/Stress artifact was an exact duplicate, caused by risk-profile expansion before merging on the already-keyed `risk_id`. The corrected result is about half the published net: ₹142.72 base / ₹112.72 stress best-cell mean active-day net, with no target-qualified cell and corrected WFA mean ₹121.82 / ₹91.82. This is an audit correction, not a new strategy search or parameter tuning.
