@@ -213,3 +213,8 @@ Phase 16 is now the active frontier: intraday IV-skew tail credit verticals, 288
 ## Phase 19 preregistration — 2026-09-24
 
 Phase 19 is a parked distinct fallback family: global overnight returns + NIFTY opening gap as a pre-open regime classifier, followed by intraday volatility-compression confirmation and exact-expiry defined-risk iron-condor execution. It is not launched while Phase 18 remains unresolved.
+
+
+## 2026-09-24 — Phase 19 execution-ready checkpoint
+
+Phase 19 is now frozen at 512 cells: global overnight z-score (SP500 or GLOBAL3) + NIFTY opening gap agreement/fade + low-RV regime, expressed through a one-sided exact-expiry NIFTY credit spread. Base/stress slippage remains ₹0.20/₹0.40 per leg. The phase will remain separate from Phase 18 and will not be tuned from Phase 18 results.
