@@ -63,38 +63,113 @@ def select_signals(features,variant):
     x=features[m].copy()
     return x.sort_values(['trade_date','datetime']).drop_duplicates(['trade_date','expiry_type'])[['trade_date','datetime','expiry_type','spot','vrp','abs_ret15']]
 def load_entry_quotes(root,signals):
-    if signals.empty:return pd.DataFrame()
-    con=duckdb.connect(); con.register('setups',signals[['trade_date','expiry_type']].drop_duplicates())
+    if signals.empty:
+        return pd.DataFrame()
+    s=signals[['trade_date','expiry_type','datetime']].drop_duplicates().copy()
+    s['entry_time']=s['datetime']+pd.Timedelta(minutes=1)
+    con=duckdb.connect()
+    con.register('setups',s[['trade_date','expiry_type','entry_time']])
     g=parquet_glob(root)
     q=f'''
-    SELECT CAST(o.datetime AS TIMESTAMP) AS datetime, CAST(o.date AS DATE) AS trade_date, o.expiry_type, o.option_type, o.strike_type, CAST(o.strike_price AS DOUBLE) AS strike, CAST(o.open AS DOUBLE) AS open, CAST(o.high AS DOUBLE) AS high, CAST(o.low AS DOUBLE) AS low, CAST(o.close AS DOUBLE) AS close
-    FROM read_parquet('{g}', union_by_name=true) o JOIN setups s ON CAST(o.date AS DATE)=s.trade_date AND o.expiry_type=s.expiry_type
+    SELECT CAST(o.datetime AS TIMESTAMP) AS datetime, CAST(o.date AS DATE) AS trade_date,
+           o.expiry_type, o.option_type, o.strike_type,
+           CAST(o.strike_price AS DOUBLE) AS strike,
+           CAST(o.open AS DOUBLE) AS open, CAST(o.high AS DOUBLE) AS high,
+           CAST(o.low AS DOUBLE) AS low, CAST(o.close AS DOUBLE) AS close
+    FROM read_parquet('{g}', union_by_name=true) o
+    JOIN setups s
+      ON CAST(o.date AS DATE)=s.trade_date
+     AND o.expiry_type=s.expiry_type
+     AND CAST(o.datetime AS TIMESTAMP)=s.entry_time
     WHERE o.close>0 AND o.option_type IN ('CALL','PUT')
     '''
-    out=con.execute(q).df(); con.close(); return out
+    out=con.execute(q).df()
+    con.close()
+    return out
+
+def load_execution_windows(root, setup_rows, max_hold=60):
+    if setup_rows.empty:
+        return pd.DataFrame()
+    con=duckdb.connect()
+    legs=[]
+    for rec in setup_rows.itertuples(index=False):
+        for leg, strike in (
+            ('call',rec.call_strike),('put',rec.put_strike),
+            ('call_wing',rec.call_wing_strike),('put_wing',rec.put_wing_strike)
+        ):
+            legs.append({
+                'trade_date':rec.trade_date,'expiry_type':rec.expiry_type,
+                'entry_time':rec.entry_time,'leg':leg,'strike':float(strike),
+            })
+    leg_df=pd.DataFrame(legs).drop_duplicates()
+    con.register('legs',leg_df)
+    g=parquet_glob(root)
+    q=f'''
+    SELECT CAST(o.datetime AS TIMESTAMP) AS datetime,
+           CAST(o.date AS DATE) AS trade_date,
+           o.expiry_type,
+           CAST(o.open AS DOUBLE) AS open,
+           CAST(o.high AS DOUBLE) AS high,
+           CAST(o.low AS DOUBLE) AS low,
+           CAST(o.close AS DOUBLE) AS close,
+           CAST(o.strike_price AS DOUBLE) AS strike,
+           l.entry_time,
+           l.leg
+    FROM read_parquet('{g}', union_by_name=true) o
+    JOIN legs l
+      ON CAST(o.date AS DATE)=l.trade_date
+     AND o.expiry_type=l.expiry_type
+     AND CAST(o.strike_price AS DOUBLE)=l.strike
+     AND CAST(o.datetime AS TIMESTAMP)>=l.entry_time
+     AND CAST(o.datetime AS TIMESTAMP)<=l.entry_time + INTERVAL '60 minutes'
+    WHERE o.close>0
+    '''
+    out=con.execute(q).df()
+    con.close()
+    return out
+
 def pick_setup(entry_quotes,signal):
     ts=pd.Timestamp(signal.datetime)+pd.Timedelta(minutes=1)
-    e=entry_quotes[(entry_quotes.trade_date==signal.trade_date)&(entry_quotes.expiry_type==signal.expiry_type)&(entry_quotes.datetime==ts)]
-    if e.empty: return None
+    e=entry_quotes[
+        (entry_quotes.trade_date==signal.trade_date)
+        & (entry_quotes.expiry_type==signal.expiry_type)
+        & (entry_quotes.datetime==ts)
+    ]
+    if e.empty:return None
     d={}
     for side in ('CALL','PUT'):
-        atm=e[(e.option_type==side)&(e.strike_type=='ATM')]; wing=e[(e.option_type==side)&(e.strike_type==('ATM+2' if side=='CALL' else 'ATM-2'))]
-        if atm.empty or wing.empty: return None
+        atm=e[(e.option_type==side)&(e.strike_type=='ATM')]
+        wing=e[(e.option_type==side)&(e.strike_type==('ATM+2' if side=='CALL' else 'ATM-2'))]
+        if atm.empty or wing.empty:return None
         d[side]=(float(atm.iloc[0].strike),float(atm.iloc[0].open),float(wing.iloc[0].strike),float(wing.iloc[0].open))
-    return {'entry_time':ts,'call_strike':d['CALL'][0],'call_entry':d['CALL'][1],'call_wing_strike':d['CALL'][2],'call_wing_entry':d['CALL'][3],
-            'put_strike':d['PUT'][0],'put_entry':d['PUT'][1],'put_wing_strike':d['PUT'][2],'put_wing_entry':d['PUT'][3]}
+    return {
+        'entry_time':ts,
+        'call_strike':d['CALL'][0],'call_entry':d['CALL'][1],
+        'call_wing_strike':d['CALL'][2],'call_wing_entry':d['CALL'][3],
+        'put_strike':d['PUT'][0],'put_entry':d['PUT'][1],
+        'put_wing_strike':d['PUT'][2],'put_wing_entry':d['PUT'][3],
+    }
 
-def build_window(entry_quotes,signal,setup,hold):
-    end=setup['entry_time']+pd.Timedelta(minutes=hold)
-    q=entry_quotes[(entry_quotes.trade_date==signal.trade_date)&(entry_quotes.expiry_type==signal.expiry_type)&(entry_quotes.datetime>=setup['entry_time'])&(entry_quotes.datetime<=end)]
-    frames=[]
-    for name,strike,side in [('call',setup['call_strike'],'CALL'),('put',setup['put_strike'],'PUT'),('call_wing',setup['call_wing_strike'],'CALL'),('put_wing',setup['put_wing_strike'],'PUT')]:
-        x=q[(q.option_type==side)&(q.strike==strike)][['datetime','open','high','low','close']].copy()
-        if x.empty: return pd.DataFrame()
-        x=x.rename(columns={c:f'{name}_{c}' for c in ['open','high','low','close']}); frames.append(x)
-    out=frames[0]
-    for x in frames[1:]: out=out.merge(x,on='datetime',how='inner')
-    return out.sort_values('datetime')
+def bars_from_long_window(window_rows,key,hold):
+    if window_rows.empty:
+        return pd.DataFrame()
+    d,e,et=key
+    q=window_rows[
+        (window_rows.trade_date==d)
+        & (window_rows.expiry_type==e)
+        & (window_rows.entry_time==et)
+        & (window_rows.datetime<=et+pd.Timedelta(minutes=hold))
+    ]
+    if q.empty:return pd.DataFrame()
+    wide=q.pivot_table(index='datetime',columns='leg',values=['open','high','low','close'],aggfunc='last').reset_index()
+    if wide.empty:return pd.DataFrame()
+    colmap={}
+    for metric in ('open','high','low','close'):
+        for leg in ('call','put','call_wing','put_wing'):
+            colmap[(metric,leg)]=f'{leg}_{metric}'
+    wide.columns=[colmap.get(c,c) if isinstance(c,tuple) else c for c in wide.columns]
+    needed=['datetime','call_open','call_high','call_low','call_close','put_open','put_high','put_low','put_close','call_wing_open','call_wing_high','call_wing_low','call_wing_close','put_wing_open','put_wing_high','put_wing_low','put_wing_close']
+    return wide[[c for c in needed if c in wide.columns]].sort_values('datetime')
 
 def lot_size_for_trade_date(d):
     d=pd.Timestamp(d).date()
@@ -139,14 +214,40 @@ def walk_forward(trades):
     return pd.DataFrame(rows)
 
 def run(data_root,out,slippage):
-    features=load_signal_rows(data_root); variants=variant_grid()
-    all_candidate_signals=features[['trade_date','datetime','expiry_type','spot','vrp','abs_ret15']].drop_duplicates(['trade_date','datetime','expiry_type'])
-    eq=load_entry_quotes(data_root,all_candidate_signals)
+    features=load_signal_rows(data_root)
+    variants=variant_grid()
+    unique_signals=features[['trade_date','datetime','expiry_type','spot','vrp','abs_ret15']].drop_duplicates(['trade_date','datetime','expiry_type'])
+    entry_quotes=load_entry_quotes(data_root,unique_signals)
+    entry_groups={key:g.copy() for key,g in entry_quotes.groupby(['trade_date','expiry_type','datetime'],sort=False)}
+
     setup_cache={}
-    for _,sig in all_candidate_signals.iterrows():
-        setup=pick_setup(eq,sig)
-        if setup is not None: setup_cache[(sig.trade_date,sig.datetime,sig.expiry_type)]=setup
+    setup_rows=[]
+    for signal in unique_signals.itertuples(index=False):
+        key=(signal.trade_date,signal.expiry_type,pd.Timestamp(signal.datetime)+pd.Timedelta(minutes=1))
+        g=entry_groups.get(key)
+        if g is None:
+            continue
+        setup=pick_setup(g,signal)
+        if setup is None:
+            continue
+        setup_cache[(signal.trade_date,signal.datetime,signal.expiry_type)]=setup
+        setup_rows.append({
+            'trade_date':signal.trade_date,
+            'expiry_type':signal.expiry_type,
+            'entry_time':setup['entry_time'],
+            'call_strike':setup['call_strike'],
+            'put_strike':setup['put_strike'],
+            'call_wing_strike':setup['call_wing_strike'],
+            'put_wing_strike':setup['put_wing_strike'],
+        })
+
+    setup_df=pd.DataFrame(setup_rows).drop_duplicates()
+    window_rows=load_execution_windows(data_root,setup_df,max_hold=max(HOLDS))
     window_cache={}
+    if not window_rows.empty:
+        for key in window_rows[['trade_date','expiry_type','entry_time']].drop_duplicates().itertuples(index=False,name=None):
+            window_cache[key]=window_rows[(window_rows.trade_date==key[0])&(window_rows.expiry_type==key[1])&(window_rows.entry_time==key[2])].copy()
+
     trades=[]
     for v in variants:
         sig=select_signals(features,v)
@@ -155,23 +256,56 @@ def run(data_root,out,slippage):
             key=(signal.trade_date,signal.datetime,signal.expiry_type)
             setup=setup_cache.get(key)
             if setup is None: continue
-            wkey=(key,v['hold_minutes'])
-            if wkey not in window_cache: window_cache[wkey]=build_window(eq,signal,setup,v['hold_minutes'])
-            bars=window_cache[wkey]
+            wkey=(signal.trade_date,signal.expiry_type,setup['entry_time'])
+            bars=bars_from_long_window(window_cache.get(wkey,pd.DataFrame()),wkey,v['hold_minutes'])
             t=simulate(signal,setup,bars,v['structure'],v['stop_ratio'],slippage)
             if t is not None:
-                t['variant_id']=f"{v['entry_time']}|vrp{v['vrp_threshold']:.1f}|jump{v['jump_max']:.4f}|{v['structure']}|{v['expiry_type']}|h{v['hold_minutes']}|s{v['stop_ratio']:.2f}"; trades.append(t)
-    trades=pd.DataFrame(trades); out.mkdir(parents=True,exist_ok=True)
+                t['variant_id']=f"{v['entry_time']}|vrp{v['vrp_threshold']:.1f}|jump{v['jump_max']:.4f}|{v['structure']}|{v['expiry_type']}|h{v['hold_minutes']}|s{v['stop_ratio']:.2f}"
+                trades.append(t)
+
+    trades=pd.DataFrame(trades)
+    out.mkdir(parents=True,exist_ok=True)
     if not trades.empty: trades.to_csv(out/'phase15_trades.csv',index=False)
     rows=[]
     if not trades.empty:
         total_days=features.trade_date.nunique()
         for vid,g in trades.groupby('variant_id'):
-            d=g.groupby('trade_date').net_pnl.sum(); wins=g.loc[g.net_pnl>0,'net_pnl'].sum(); losses=-g.loc[g.net_pnl<0,'net_pnl'].sum()
-            rows.append({'variant_id':vid,'trades':len(g),'active_days':len(d),'mean_active_day_net':float(d.mean()),'mean_all_day_net':float(d.sum()/max(1,total_days)),'win_rate':float((g.net_pnl>0).mean()),'profit_factor':float(wins/max(1e-9,losses)),'max_drawdown':float((d.cumsum()-d.cumsum().cummax()).min()),'total_net':float(g.net_pnl.sum())})
-    board=pd.DataFrame(rows).sort_values('mean_all_day_net',ascending=False) if rows else pd.DataFrame(); board.to_csv(out/'phase15_leaderboard.csv',index=False); wf=walk_forward(trades); wf.to_csv(out/'phase15_walk_forward.csv',index=False)
-    result={'variants':VARIANT_COUNT,'feature_rows':int(len(features)),'unique_candidate_signals':int(len(all_candidate_signals)),'setup_count':int(len(setup_cache)),'trade_rows':int(len(trades)),'positive_variants':int((board.mean_all_day_net>0).sum()) if not board.empty else 0,'target_qualified_prelim':int((board.mean_all_day_net>=TARGET).sum()) if not board.empty else 0,'best':board.iloc[0].to_dict() if not board.empty else None,'walk_forward_windows':int(len(wf)),'positive_test_windows':int((wf.test_mean>0).sum()) if not wf.empty else 0,'target_test_windows':int((wf.test_mean>=TARGET).sum()) if not wf.empty else 0,'mean_test_window_net':float(wf.test_mean.mean()) if not wf.empty else None,'slippage_points_per_leg':slippage,'gate':'PASS_PRELIMINARY' if (not board.empty and board.iloc[0].mean_all_day_net>=TARGET and not wf.empty and (wf.test_mean>=TARGET).any()) else 'FAIL_PRELIMINARY'}
-    (out/'phase15_summary.json').write_text(json.dumps(result,indent=2,default=str)); print(json.dumps(result,indent=2,default=str)); return result
+            d=g.groupby('trade_date').net_pnl.sum()
+            wins=g.loc[g.net_pnl>0,'net_pnl'].sum()
+            losses=-g.loc[g.net_pnl<0,'net_pnl'].sum()
+            rows.append({
+                'variant_id':vid,'trades':len(g),'active_days':len(d),
+                'mean_active_day_net':float(d.mean()),
+                'mean_all_day_net':float(d.sum()/max(1,total_days)),
+                'win_rate':float((g.net_pnl>0).mean()),
+                'profit_factor':float(wins/max(1e-9,losses)),
+                'max_drawdown':float((d.cumsum()-d.cumsum().cummax()).min()),
+                'total_net':float(g.net_pnl.sum())
+            })
+    board=pd.DataFrame(rows).sort_values('mean_all_day_net',ascending=False) if rows else pd.DataFrame()
+    board.to_csv(out/'phase15_leaderboard.csv',index=False)
+    wf=walk_forward(trades)
+    wf.to_csv(out/'phase15_walk_forward.csv',index=False)
+    result={
+        'variants':VARIANT_COUNT,
+        'feature_rows':int(len(features)),
+        'unique_candidate_signals':int(len(unique_signals)),
+        'setup_count':int(len(setup_cache)),
+        'window_rows':int(len(window_rows)),
+        'trade_rows':int(len(trades)),
+        'positive_variants':int((board.mean_all_day_net>0).sum()) if not board.empty else 0,
+        'target_qualified_prelim':int((board.mean_all_day_net>=TARGET).sum()) if not board.empty else 0,
+        'best':board.iloc[0].to_dict() if not board.empty else None,
+        'walk_forward_windows':int(len(wf)),
+        'positive_test_windows':int((wf.test_mean>0).sum()) if not wf.empty else 0,
+        'target_test_windows':int((wf.test_mean>=TARGET).sum()) if not wf.empty else 0,
+        'mean_test_window_net':float(wf.test_mean.mean()) if not wf.empty else None,
+        'slippage_points_per_leg':slippage,
+        'gate':'PASS_PRELIMINARY' if (not board.empty and board.iloc[0].mean_all_day_net>=TARGET and not wf.empty and (wf.test_mean>=TARGET).any()) else 'FAIL_PRELIMINARY'
+    }
+    (out/'phase15_summary.json').write_text(json.dumps(result,indent=2,default=str))
+    print(json.dumps(result,indent=2,default=str))
+    return result
 
 if __name__=='__main__':
     ap=argparse.ArgumentParser(); ap.add_argument('--data',type=Path,required=True); ap.add_argument('--out',type=Path,required=True); ap.add_argument('--slippage',type=float,default=0.20); a=ap.parse_args(); run(a.data,a.out,a.slippage)
