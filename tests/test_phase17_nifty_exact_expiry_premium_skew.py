@@ -41,3 +41,11 @@ def test_internal_direction_maps_to_source_option_codes():
     import inspect
     src=inspect.getsource(mod.build_setups)
     assert 'option_code="PE" if side=="PUT" else "CE"' in src
+
+
+def test_option_quote_query_uses_close_px():
+    from research import phase17_nifty_exact_expiry_premium_skew as mod
+    import inspect
+    src=inspect.getsource(mod.load_option_quotes)
+    assert "close_px" in src
+    assert "CAST(o.close AS DOUBLE) close," not in src
