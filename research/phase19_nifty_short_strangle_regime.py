@@ -148,7 +148,7 @@ def load_exact_quotes(root, spot):
         vals = ",".join(f"DATE '{d}'" for d in dates)
         q = f"""
         SELECT "timestamp" AS ts,
-               CAST(trading_day AS DATE) AS trade_date,
+               CAST(trading_day AS DATE) AS source_trading_day,
                CAST(strike AS DOUBLE) AS strike,
                CAST(option_type AS VARCHAR) AS option_type,
                CAST(open AS DOUBLE) AS open_px,
@@ -156,16 +156,19 @@ def load_exact_quotes(root, spot):
                CAST(low AS DOUBLE) AS low,
                CAST("close" AS DOUBLE) AS close_px
         FROM read_parquet('{path}')
-        WHERE CAST(trading_day AS DATE) IN ({vals})
-          AND "close" > 0
+        WHERE "close" > 0
           AND strftime("timestamp",'%H:%M:%S') >= '14:30:00'
           AND strftime("timestamp",'%H:%M:%S') <= '15:03:00'
         """
         z = con.execute(q).df()
         if not z.empty:
             z["ts"] = ist_wall(z["ts"])
-            z["expiry"] = expiry_date
-            chunks.append(z)
+            # Dataset rule: derive trade_date from UTC timestamp converted to IST.
+            z["trade_date"] = pd.to_datetime(z["ts"]).dt.date
+            z = z[z["trade_date"].isin(dates)].copy()
+            if not z.empty:
+                z["expiry"] = expiry_date
+                chunks.append(z)
 
     con.close()
     return pd.concat(chunks, ignore_index=True) if chunks else pd.DataFrame()
