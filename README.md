@@ -77,3 +77,5 @@ Known active run heads:
 The promotion gate remains unchanged: positive net OOS expectancy; at least one untouched test window >= Rs 1,000/lot/day; realistic brokerage/statutory/exchange charges; base and doubled slippage reported; and no test-period parameter selection.
 
 A preliminary backtest is never treated as a promoted strategy.
+
+- Phase 11 preregistered: breakout-pullback continuation with ATM option OI/volume confirmation, 64 variants; held until needed after Phases 8-10.
