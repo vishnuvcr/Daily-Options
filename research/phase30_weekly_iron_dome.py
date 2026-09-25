@@ -101,7 +101,6 @@ def load_option_series(con, path, trade_day, strike, side, start_ts, end_ts):
            CAST(open AS DOUBLE) AS open_px,
            CAST(close AS DOUBLE) AS close_px
     FROM read_parquet('{str(path).replace("'", "''")}')
-    WHERE CAST(trading_day AS DATE) = DATE '{trade_day}'
       AND CAST(timestamp AS TIMESTAMP) BETWEEN TIMESTAMP '{start_ts}' AND TIMESTAMP '{end_ts}'
       AND CAST(strike AS DOUBLE) = {float(strike)}
       AND UPPER(CAST(option_type AS VARCHAR)) = '{side}'
@@ -268,47 +267,89 @@ def build_setup(con, index_path, expiry_path, expiry, entry_date, entry_offset):
         "end_ts": end_ts,
     }
 
-def run_cell(con, setup, trigger, adjustment, slippage):
+def build_mark_panel(spot, legs, start_ts, end_ts):
+    start_ts = pd.Timestamp(start_ts)
+    end_ts = pd.Timestamp(end_ts)
+    base = spot[(spot.ts >= start_ts) & (spot.ts <= end_ts)][["ts", "close_px"]].copy()
+    if base.empty:
+        return pd.DataFrame()
+    base = base.rename(columns={"close_px": "spot"}).sort_values("ts")
+    for i, leg in enumerate(legs):
+        if not leg["active"]:
+            continue
+        z = leg["series"][
+            (leg["series"].ts >= start_ts) & (leg["series"].ts <= end_ts)
+        ][["ts", "close_px"]].copy()
+        if z.empty:
+            return pd.DataFrame()
+        z = z.rename(columns={"close_px": f"leg_{i}"}).sort_values("ts")
+        base = pd.merge_asof(base, z, on="ts", direction="backward")
+    active_names = [f"leg_{i}" for i, leg in enumerate(legs) if leg["active"]]
+    if not active_names:
+        return pd.DataFrame()
+    return base.dropna(subset=["spot"] + active_names).sort_values("ts")
+
+
+def first_trigger(panel, active, trigger, center_ref, cycle_start, cycle_max):
+    if panel.empty:
+        return None
+    spot = panel["spot"].to_numpy(dtype=float)
+    if trigger == "WING_60":
+        delta = spot - float(center_ref)
+        mask = (delta >= 120.0) | (delta <= -120.0)
+    else:
+        equity = np.full(len(panel), float(cycle_start), dtype=float)
+        for i, leg in enumerate(active):
+            if not leg["active"]:
+                continue
+            sign = -1.0 if leg["position"] == "SHORT" else 1.0
+            equity = (
+                equity
+                + sign * panel[f"leg_{i}"].to_numpy(dtype=float)
+                * float(leg["qty"]) * float(leg["lot"])
+            )
+        mask = equity <= float(cycle_start) - 0.60 * float(cycle_max)
+    hits = np.flatnonzero(mask)
+    if len(hits) == 0:
+        return None
+    j = int(hits[0])
+    delta = float(spot[j] - float(center_ref))
+    challenged = "CE" if delta >= 0 else "PE"
+    return {
+        "ts": pd.Timestamp(panel.iloc[j]["ts"]),
+        "spot": float(spot[j]),
+        "challenged": challenged,
+    }
+
+
+def run_cell(con, setup, trigger, adjustment, slippage, initial_panel=None):
     trade = {"cash": 0.0, "costs": 0.0, "adjustments": 0}
     active = setup["initial_legs"]
     open_active_structure(trade, active, setup["fill_ts"], slippage)
     center_ref = float(setup["initial_center"])
     cycle_start = cycle_anchor(trade, active)
     cycle_max = max_loss_inr(active)
+    exit_signal = pd.Timestamp(f"{setup['expiry']} {EXIT_CLOCK}")
+    start_ts = setup["fill_ts"]
+    first_cycle = True
 
-    for ts in setup["spot"]["ts"]:
-        ts = pd.Timestamp(ts)
-        if ts < setup["fill_ts"] or ts > pd.Timestamp(setup["expiry"]) + pd.Timedelta(hours=15):
-            continue
+    while trade["adjustments"] <= MAX_ADJUSTMENTS:
+        panel = initial_panel if first_cycle and initial_panel is not None else build_mark_panel(
+            setup["spot"], active, start_ts, exit_signal
+        )
+        first_cycle = False
+        hit = first_trigger(panel, active, trigger, center_ref, cycle_start, cycle_max)
+        if hit is None or trade["adjustments"] >= MAX_ADJUSTMENTS:
+            break
 
-        equity = current_equity(trade, active, ts)
-        if equity is None:
-            continue
-        spot_row = setup["spot"][setup["spot"]["ts"] == ts]
-        if spot_row.empty:
-            continue
-        spot = float(spot_row.iloc[0]["close_px"])
-
-        if trigger == "WING_60":
-            delta = spot - center_ref
-            challenged = "CE" if delta >= 120 else "PE" if delta <= -120 else None
-            fired = challenged is not None
-        else:
-            cycle_pnl = equity - cycle_start
-            challenged = "CE" if spot >= center_ref else "PE"
-            fired = cycle_pnl <= -0.60 * cycle_max
-
-        if not fired or trade["adjustments"] >= MAX_ADJUSTMENTS:
-            continue
-
-        exec_ts = ts + pd.Timedelta(minutes=1)
-        data_day = ts.date()
-
+        exec_ts = hit["ts"] + pd.Timedelta(minutes=1)
+        data_day = hit["ts"].date()
+        challenged = hit["challenged"]
         if adjustment == "RECENTER_BOTH":
             for leg in active:
                 if leg["active"] and not close_leg(trade, leg, exec_ts, slippage):
                     return None
-            new_center = round_strike(spot)
+            new_center = round_strike(hit["spot"])
             new_legs = new_structure(
                 con,
                 setup["expiry_path"],
@@ -329,10 +370,13 @@ def run_cell(con, setup, trigger, adjustment, slippage):
             for i, leg in enumerate(active):
                 if leg["active"] and leg["position"] == "SHORT" and leg["side"] == challenged:
                     target_idx = i
-                    # "One strike inside" is interpreted literally as one strike
-                    # deeper ITM for the challenged short leg: lower CE strike on
-                    # an upside challenge, higher PE strike on a downside challenge.
-                    target_strike = leg["strike"] - STRIKE_INTERVAL if challenged == "CE" else leg["strike"] + STRIKE_INTERVAL
+                    # "One strike inside" = one strike deeper ITM:
+                    # challenged CE -> lower strike; challenged PE -> higher strike.
+                    target_strike = (
+                        leg["strike"] - STRIKE_INTERVAL
+                        if challenged == "CE"
+                        else leg["strike"] + STRIKE_INTERVAL
+                    )
                     break
             if target_idx is None:
                 return None
@@ -367,8 +411,8 @@ def run_cell(con, setup, trigger, adjustment, slippage):
         trade["adjustments"] += 1
         cycle_start = cycle_anchor(trade, active)
         cycle_max = max_loss_inr([x for x in active if x["active"]])
+        start_ts = exec_ts
 
-    exit_signal = pd.Timestamp(f"{setup['expiry']} {EXIT_CLOCK}")
     exit_ts = exit_signal + pd.Timedelta(minutes=1)
     for leg in active:
         if leg["active"] and not close_leg(trade, leg, exit_ts, slippage):
@@ -386,7 +430,6 @@ def run_cell(con, setup, trigger, adjustment, slippage):
         "adjustments": int(trade["adjustments"]),
         "brokerage_cost": float(trade["costs"]),
     }
-
 def run(data: Path, out: Path, slippage: float):
     out.mkdir(parents=True, exist_ok=True)
     index_path = data / "index" / "NIFTY.parquet"
@@ -408,9 +451,16 @@ def run(data: Path, out: Path, slippage: float):
             if setup is None:
                 continue
             setups += 1
+            initial_panel = build_mark_panel(
+                setup["spot"], setup["initial_legs"], setup["fill_ts"], pd.Timestamp(f"{setup['expiry']} {EXIT_CLOCK}")
+            )
+            if initial_panel.empty:
+                continue
             for trigger in TRIGGERS:
                 for adjustment in ADJUSTMENTS:
-                    result = run_cell(con, setup, trigger, adjustment, slippage)
+                    result = run_cell(
+                        con, setup, trigger, adjustment, slippage, initial_panel=initial_panel
+                    )
                     if result is not None:
                         rows.append(result)
 
