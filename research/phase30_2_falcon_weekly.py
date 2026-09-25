@@ -117,10 +117,8 @@ def expiry_setups(sessions, expiries):
     return out
 
 
-def load_snapshot_window(con, root, entry_date, near_expiry, far_expiry, signal_times):
+def load_snapshot(con, root, entry_date, near_expiry, far_expiry, ts, fill_ts):
     path = glob_expr(root)
-    start_ts = min(signal_times)
-    end_ts = max(signal_times) + pd.Timedelta(minutes=1)
     q = f"""
     SELECT CAST(timestamp AS TIMESTAMP) AS ts,
            CAST(expiry AS DATE) AS expiry,
@@ -133,11 +131,12 @@ def load_snapshot_window(con, root, entry_date, near_expiry, far_expiry, signal_
       AND granularity='1min'
       AND CAST(date AS DATE)=DATE '{entry_date}'
       AND CAST(expiry AS DATE) IN (DATE '{near_expiry}', DATE '{far_expiry}')
-      AND CAST(timestamp AS TIMESTAMP) BETWEEN TIMESTAMP '{start_ts}' AND TIMESTAMP '{end_ts}'
+      AND CAST(timestamp AS TIMESTAMP) BETWEEN TIMESTAMP '{ts}' AND TIMESTAMP '{fill_ts}'
       AND open > 0 AND close > 0
     ORDER BY expiry, option_type, strike, ts
     """
     return con.execute(q).df()
+
 
 def select_target(chain, expiry, side, target, ref_strike=None, far_otm=False):
     x = chain[(chain.expiry == pd.Timestamp(expiry).date()) & (chain.option_type == side)].copy()
@@ -224,12 +223,12 @@ def settle(legs, lot, slippage, brokerage_per_order, entry_date=None, exit_date=
     return gross - cost(legs, lot, slippage, brokerage_per_order, entry_date, exit_date)
 
 
-def build_setup(con, root, cal, entry_time, target, far_mode, snapshot_window):
+def build_setup(con, root, cal, entry_time, target, far_mode):
     entry_date, adjust_date, exit_date = cal["entry_date"], cal["adjust_date"], cal["exit_date"]
     near_exp, far_exp = cal["near_expiry"], cal["far_expiry"]
     signal_ts = pd.Timestamp(f"{entry_date} {entry_time}")
     fill_ts = signal_ts + pd.Timedelta(minutes=1)
-    snap = snapshot_window
+    snap = load_snapshot(con, root, entry_date, near_exp, far_exp, signal_ts, fill_ts)
     if snap.empty:
         return None
 
@@ -416,13 +415,10 @@ def run(data: Path, out: Path, slippage: float, brokerage_per_order: float):
 
     setups = []
     for cal in cals:
-        base = pd.Timestamp(str(cal["entry_date"]))
-        signal_times = [base + pd.Timedelta(hours=int(t[:2]), minutes=int(t[3:5])) for t in ENTRY_TIMES]
-        snap = load_snapshot_window(con, data, cal["entry_date"], cal["near_expiry"], cal["far_expiry"], signal_times)
         for entry_time in ENTRY_TIMES:
             for target in TARGET_PREMIUMS:
                 for far_mode in FAR_MODES:
-                    s = build_setup(con, data, cal, entry_time, target, far_mode, snap)
+                    s = build_setup(con, data, cal, entry_time, target, far_mode)
                     if s is not None:
                         setups.append(s)
 
