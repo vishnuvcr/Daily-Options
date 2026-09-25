@@ -229,7 +229,7 @@ def main() -> int:
         ]
         for field, values in (row.get("fields") or {}).items():
             status = (row.get("field_status") or {}).get(field, "UNSPECIFIED")
-            shown = "; ".join(f"{v["value"]}@{v["start_sec"]:.1f}s" for v in values) if values else "UNSPECIFIED"
+            shown = "; ".join(f"{v['value']}@{v['start_sec']:.1f}s" for v in values) if values else "UNSPECIFIED"
             lines.append(f"- **{field}** — {status}: {shown}")
         lines.extend([
             "",
