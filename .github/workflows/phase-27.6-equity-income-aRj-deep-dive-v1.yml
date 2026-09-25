@@ -1,0 +1,53 @@
+name: Phase 27.6 - aRj Air Defense deep dive
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/phase27-6-trigger.txt"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase27-6-aRj-deep-dive
+  cancel-in-progress: true
+
+jobs:
+  deep_dive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout Phase 27.6 branch
+        uses: actions/checkout@v4
+        with:
+          ref: phase-27.6-equity-income-aRj-deep-dive-v1
+          fetch-depth: 0
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install tooling
+        run: python -m pip install requests==2.34.2 pytest==8.4.2
+      - name: Unit tests
+        run: python -m pytest -q tests/test_phase27_6_arj_deep_dive.py
+      - name: Extract deep-dive evidence
+        run: python research/phase27_6_arj_deep_dive.py
+      - name: Validate
+        run: |
+          python - <<'PY'
+          import json
+          s=json.load(open('reports/phase27_6_aRj_deep_dive.json'))
+          assert s['video_id']=='aRjY_O6U3nQ'
+          assert s['backtest_allowed'] is False
+          print(json.dumps(s,indent=2))
+          PY
+      - name: Persist
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f reports/phase27_6_aRj_deep_dive.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Phase 27.6: persist aRj source deep dive"
+          git push origin HEAD:phase-27.6-equity-income-aRj-deep-dive-v1
