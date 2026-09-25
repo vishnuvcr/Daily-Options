@@ -117,3 +117,7 @@ While Phase 30 v8 computes, a controlled launcher-only PR #86 was created to rer
 ## 2026-09-25 — Phase 30 v8 closure / Air Defense launch
 
 Authoritative Iron Dome v8 Base+Stress execution completed. All 12 frozen cells failed the ₹5,000/week consistency gate; the family is retired without WFA or retuning. Research now advances to the Air Defense candidate because its Python-acquired transcript has yielded a clearer India-VIX expected-range mechanism and explicit expiry-exit timing.
+
+## 2026-09-25 — Phase 30.1 Air Defense launch
+
+After the clean Phase 30 v8 retirement, research advanced to the source-resolved Air Defense candidate. A 24-cell frozen grid was registered before numerical execution. The Python-only NSE India VIX acquisition layer is cached separately from the pinned TradeMarkk options source. No result-driven parameter changes are permitted.
