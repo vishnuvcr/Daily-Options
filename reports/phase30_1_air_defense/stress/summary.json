@@ -1,0 +1,41 @@
+{
+  "status": "COMPLETE",
+  "slippage": 0.4,
+  "brokerage": 10.0,
+  "cell_count": 24,
+  "reference_position_size": "1 NIFTY lot short CE + 1 NIFTY lot short PE",
+  "weekly_target": 5000.0,
+  "preliminary_pass_cells": 0,
+  "duplicate_setup_keys": 0,
+  "best": {
+    "cell_id": "AD30_03_093000_S1_NONE",
+    "entry_offset": -3,
+    "entry_clock": "09:30:00",
+    "sigma": 1.0,
+    "adjustment": "NONE",
+    "executed_weeks": 35,
+    "mean_weekly_net": 2070.6306568837213,
+    "median_weekly_net": 2686.2440260850003,
+    "positive_week_rate": 0.8571428571428571,
+    "total_net": 72472.07299093025,
+    "worst_week": -23519.548685290436,
+    "profit_factor": 2.9294935806538858,
+    "weekly_max_drawdown": 23519.548685290436,
+    "expected_shortfall_95": -14094.985583161717,
+    "executed_week_coverage": 0.8333333333333334,
+    "target_pass_mean": false,
+    "target_pass_median": false,
+    "target_pass_positive_rate": true,
+    "target_pass_execution_coverage": true,
+    "preliminary_pass": false
+  },
+  "coverage": {
+    "eligible_expiry_files": 42,
+    "vix_rows": 236,
+    "research_window": [
+      "2025-09-02",
+      "2026-08-04"
+    ],
+    "normal_tuesday_only": true
+  }
+}
