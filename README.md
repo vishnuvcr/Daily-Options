@@ -416,3 +416,7 @@ Authoritative v8 run **36157105595** is executing on `phase-30-equity-income-wee
 Authoritative run **36157105595** completed Base and doubled-slippage Stress successfully. The frozen 12-cell Iron Dome family produced **3,092 unique trade rows** across 262 eligible expiry files and 774 executable setups. **0/12 cells met the ₹5,000/week preliminary gate** in either friction setting. Best Base mean weekly net was **-₹585.85**; best Stress mean weekly net was **-₹807.58**. No cell reached the 70% positive-week target; execution coverage was high, so the failure is economic rather than primarily a coverage failure. Phase 30 is retired without WFA/OOS selection or retuning.
 
 The next distinct Equity Income family is the source-resolved **Air Defense / India-VIX expected-range weekly short-volatility system**; its Python transcript evidence is being converted into a bounded numerical grid before testing.
+
+### Phase 30.1 — Air Defense active frontier
+
+The Iron Dome family is retired after the complete v8 Base+Stress audit. Phase 30.1 now tests the **Air Defense / India-VIX expected-range weekly short-strangle** family on `phase-30.1-equity-income-air-defense-v1`. The source evidence is Python-acquired and hashed; the 24-cell numerical grid is frozen before execution. [Phase 30.1 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.1-equity-income-air-defense-v1/docs/phase30_1_air_defense_plan.md)
