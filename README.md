@@ -238,3 +238,11 @@ Trading-strategy testing is paused. A dedicated fixed acquisition branch now arc
 [Equity Income archive branch](https://github.com/vishnuvcr/Daily-Options/tree/equity-income-channel-archive-v1) · [Archive plan](https://github.com/vishnuvcr/Daily-Options/blob/equity-income-channel-archive-v1/docs/equity_income_channel_archive_plan.md) · [Weekly research plan](https://github.com/vishnuvcr/Daily-Options/blob/equity-income-channel-archive-v1/docs/equity_income_weekly_research_plan.md)
 
 The next research program is weekly rather than daily, with a fixed-position reference target of **₹5,000 net per traded week**, plus Base/Stress costs, weekly drawdown analysis, nested WFA and later-period OOS validation. Separate Phase 26–35 branches have been created for the research pipeline.
+
+## 2026-09-25 — Equity Income archive keyless activation
+
+The fixed `equity-income-channel-archive-v1` branch now uses **RSA-OAEP + Fernet hybrid encryption** and no longer requires a GitHub repository secret. The repository stores only the public key; the matching private key is kept outside GitHub.
+
+A weekly archive workflow is now on `main`. It checks out the fixed archive branch, runs the Python-only discovery/transcript program, verifies the encrypted envelopes, and pushes only new archive records back to the fixed branch. GitHub requires scheduled workflows to live on the default branch, so the schedule is intentionally hosted here while the research data remains isolated on the archive branch. citeturn445342search0turn445342search1
+
+[Equity Income archive branch](https://github.com/vishnuvcr/Daily-Options/tree/equity-income-channel-archive-v1) · [Key management](https://github.com/vishnuvcr/Daily-Options/blob/equity-income-channel-archive-v1/docs/equity_income_archive_key_management.md) · [Archive plan](https://github.com/vishnuvcr/Daily-Options/blob/equity-income-channel-archive-v1/docs/equity_income_channel_archive_plan.md)
