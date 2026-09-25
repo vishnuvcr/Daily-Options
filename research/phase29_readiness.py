@@ -51,20 +51,6 @@ NSE_EVIDENCE = {
 }
 
 
-def get_json(url: str, retries: int = 4) -> object:
-    last = None
-    for attempt in range(1, retries + 1):
-        try:
-            req = Request(url, headers={"User-Agent": "Daily-Options-Phase29.1/1.0"})
-            with urlopen(req, timeout=30) as resp:
-                return json.loads(resp.read().decode("utf-8"))
-        except Exception as exc:
-            last = exc
-            if attempt < retries:
-                time.sleep(attempt * 2)
-    raise RuntimeError(f"HF API request failed after {retries} attempts: {url}: {last}")
-
-
 def tree(repo: str, revision: str) -> list[RepoFile]:
     """Read the pinned Hub tree through the official Python client."""
     api = HfApi()
@@ -174,8 +160,8 @@ def main() -> int:
             "trade_source_revision": REVISIONS["trademarkk"]["revision"],
             "independent_source": REVISIONS["rissin"]["repo"],
             "independent_source_revision": REVISIONS["rissin"]["revision"],
-            "index_option_partition_present": "YES" if inventory["trademarkk"]["paths"].get("options/NIFTY", {}).get("file_count", 0) > 0 else "NO",
-            "independent_nifty_partition_present": "YES" if inventory["rissin"]["paths"].get("upstox_intraday/NIFTY", {}).get("file_count", 0) > 0 else "NO",
+            "index_option_partition_present": "YES" if inventory["trademarkk"]["paths"].get("options/NIFTY", {}).get("parquet_file_count", 0) > 0 else "NO",
+            "independent_nifty_partition_present": "YES" if inventory["rissin"]["paths"].get("upstox_intraday/NIFTY", {}).get("parquet_file_count", 0) > 0 else "NO",
             "ohlc_available": "YES",
             "bid_ask_available": "NO_VERIFIED_PUBLIC_SOURCE",
             "tradeMarkk_intraday_oi": "YES",
