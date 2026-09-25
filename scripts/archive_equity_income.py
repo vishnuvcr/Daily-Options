@@ -23,6 +23,7 @@ from pathlib import Path
 
 from cryptography.fernet import Fernet, InvalidToken
 from yt_dlp import YoutubeDL
+from yt_dlp.extractor.youtube._base import INNERTUBE_CLIENTS
 from youtube_transcript_api import YouTubeTranscriptApi
 
 CHANNEL = "https://www.youtube.com/@equityincome"
@@ -112,6 +113,100 @@ def parse_vtt(vtt: str) -> list[dict]:
     return normalize_snippets(out)
 
 
+def parse_innertube_json3(data: dict) -> list[dict]:
+    out = []
+    for event in data.get("events") or []:
+        if not isinstance(event, dict) or not event.get("segs"):
+            continue
+        text_parts = []
+        for seg in event.get("segs") or []:
+            if isinstance(seg, dict) and seg.get("utf8"):
+                text_parts.append(seg["utf8"])
+        text = "".join(text_parts).strip()
+        if not text:
+            continue
+        start = float(event.get("tStartMs", 0)) / 1000.0
+        duration = float(event.get("dDurationMs", 0)) / 1000.0
+        out.append({"start": start, "duration": duration, "text": text})
+    return normalize_snippets(out)
+
+
+def fetch_innertube(video_id: str) -> tuple[list[dict], str, bool] | None:
+    """Use yt-dlp's pinned client definitions to ask YouTube for caption tracks.
+
+    TV/embedded clients avoid the web client's current subtitle PO-token path.
+    The returned caption track contains a server-signed base URL; no transcript
+    text is inferred or generated locally.
+    """
+    session = requests.Session()
+    for client_name in ("tv", "tv_downgraded", "web_embedded"):
+        cfg = INNERTUBE_CLIENTS.get(client_name)
+        if not cfg:
+            continue
+        ctx = json.loads(json.dumps(cfg["INNERTUBE_CONTEXT"]))
+        client = ctx.setdefault("client", {})
+        client.setdefault("hl", "en")
+        client_name_header = str(cfg.get("INNERTUBE_CONTEXT_CLIENT_NAME", ""))
+        client_version = str(client.get("clientVersion", ""))
+        headers = {
+            "Content-Type": "application/json",
+            "Origin": "https://www.youtube.com",
+            "User-Agent": client.get("userAgent") or "Mozilla/5.0",
+            "X-YouTube-Client-Name": client_name_header,
+            "X-YouTube-Client-Version": client_version,
+        }
+        body = {
+            "context": ctx,
+            "videoId": video_id,
+            "contentCheckOk": True,
+            "racyCheckOk": True,
+        }
+        try:
+            response = session.post(
+                "https://www.youtube.com/youtubei/v1/player",
+                params={"prettyPrint": "false"},
+                json=body,
+                headers=headers,
+                timeout=(3, 8),
+            )
+            if response.status_code != 200:
+                continue
+            data = response.json()
+            tracks = (
+                data.get("captions", {})
+                .get("playerCaptionsTracklistRenderer", {})
+                .get("captionTracks", [])
+            )
+            ranked = []
+            for track in tracks or []:
+                lang = track.get("languageCode", "")
+                generated = track.get("kind") == "asr"
+                rank_lang = PREFERRED_LANGS.index(lang) if lang in PREFERRED_LANGS else 99
+                ranked.append((int(generated), rank_lang, lang, generated, track))
+            ranked.sort()
+            for _, _, lang, generated, track in ranked:
+                base_url = track.get("baseUrl")
+                if not base_url:
+                    continue
+                cap = session.get(
+                    base_url,
+                    params={"fmt": "json3"},
+                    headers={"User-Agent": headers["User-Agent"]},
+                    timeout=(3, 8),
+                )
+                if cap.status_code != 200 or not cap.text.strip():
+                    continue
+                try:
+                    snippets = parse_innertube_json3(cap.json())
+                except (ValueError, TypeError):
+                    snippets = []
+                if snippets:
+                    return snippets, lang, generated
+        except (requests.RequestException, ValueError, KeyError, TypeError):
+            continue
+    return None
+
+
 def fetch_timedtext(video_id: str) -> tuple[list[dict], str, bool] | None:
     """Try direct caption retrieval with short bounded HTTP requests."""
     endpoint = "https://www.youtube.com/api/timedtext"
@@ -156,9 +251,12 @@ def select_track(transcript_list):
 
 
 def fetch_transcript(video_id: str, video_url: str, retries: int = 1):
-    # Prefer direct caption retrieval; then use yt-dlp subtitle metadata.
-    # Avoid long full-player API calls that are vulnerable to current YouTube
-    # anti-bot / PO-token enforcement.
+    # Prefer InnerTube caption-track retrieval using yt-dlp's pinned client
+    # definitions, then the legacy timedtext endpoint, then yt-dlp subtitles.
+    timed = fetch_innertube(video_id)
+    if timed is not None:
+        snippets, lang, generated = timed
+        return snippets, lang, lang, generated, "youtube-innertube"
     timed = fetch_timedtext(video_id)
     if timed is not None:
         snippets, lang, generated = timed
