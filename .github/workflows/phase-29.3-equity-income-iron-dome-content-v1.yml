@@ -45,7 +45,6 @@ jobs:
         run: python research/phase29_3_iron_dome_content.py
 
       - name: Validate safety gate
-
         run: |
           python - <<'PY'
           import json
