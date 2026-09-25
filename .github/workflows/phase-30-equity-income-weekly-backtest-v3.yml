@@ -36,7 +36,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: \${{ github.head_ref || github.ref_name }}
+          ref: ${{ github.head_ref || github.ref_name }}
           fetch-depth: 0
 
       - name: Setup Python
@@ -113,20 +113,20 @@ jobs:
 
       - name: Run friction
         env:
-          SLIP: \${{ matrix.friction == 'base' && '0.20' || '0.40' }}
-          LABEL: \${{ matrix.friction }}
+          SLIP: ${{ matrix.friction == 'base' && '0.20' || '0.40' }}
+          LABEL: ${{ matrix.friction }}
         run: |
           PYTHONPATH=. python research/phase30_weekly_iron_dome.py \
             --data data/cache/phase30_trademarkk \
-            --out reports/\${LABEL} \
-            --slippage "\${SLIP}"
+            --out reports/${LABEL} \
+            --slippage "${SLIP}"
 
       - name: Upload run reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: phase30-iron-dome-\${{ matrix.friction }}
-          path: reports/\${{ matrix.friction }}/
+          name: phase30-iron-dome-${{ matrix.friction }}
+          path: reports/${{ matrix.friction }}/
 
       - name: Persist machine-readable summary
         if: always() && matrix.friction == 'base'
@@ -137,4 +137,4 @@ jobs:
           git add reports/base/summary.json reports/base/leaderboard.csv reports/base/weekly.csv reports/base/trades.csv 2>/dev/null || true
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "Phase 30: persist Base weekly Iron Dome results"
-          git push origin HEAD:\${{ github.head_ref || github.ref_name }}
+          git push origin HEAD:${{ github.head_ref || github.ref_name }}
