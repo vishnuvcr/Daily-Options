@@ -1,0 +1,162 @@
+{
+  "phase": "29.4",
+  "videos": [
+    {
+      "video_id": "5xz7X5QsFv8",
+      "reference_date": "2026-04-30",
+      "source": "youtube-transcript-ai",
+      "language": "en",
+      "generated": null,
+      "fact_candidates": {
+        "weekdays": [
+          "Friday",
+          "Monday",
+          "Sunday",
+          "Thursday",
+          "Tuesday"
+        ],
+        "times": [
+          "09:30",
+          "15:00"
+        ],
+        "percentages": [
+          40,
+          60
+        ],
+        "point_values": [
+          50,
+          200,
+          300
+        ],
+        "strike_like_values": [
+          23500,
+          23800,
+          23900,
+          24000
+        ],
+        "hold_days": [
+          2,
+          3,
+          4
+        ],
+        "adjustment_terms": [
+          "60_percent_mark",
+          "deeper_itm_directional_roll",
+          "two_adjustments"
+        ],
+        "actions": [
+          "buy",
+          "exit",
+          "move",
+          "sell",
+          "square"
+        ]
+      }
+    },
+    {
+      "video_id": "9cetNfglyO4",
+      "reference_date": "2026-05-02",
+      "source": "youtube-transcript-ai",
+      "language": "en",
+      "generated": null,
+      "fact_candidates": {
+        "weekdays": [
+          "Monday"
+        ],
+        "times": [
+          "09:30",
+          "15:00"
+        ],
+        "percentages": [],
+        "point_values": [],
+        "strike_like_values": [
+          22650,
+          22700,
+          22750,
+          22800
+        ],
+        "hold_days": [],
+        "adjustment_terms": [
+          "deeper_itm_directional_roll",
+          "one_strike_inside",
+          "two_adjustments"
+        ],
+        "actions": [
+          "buy",
+          "close",
+          "move",
+          "sell",
+          "square"
+        ]
+      }
+    }
+  ],
+  "cross_video_common_adjustment_terms": [
+    "deeper_itm_directional_roll",
+    "two_adjustments"
+  ],
+  "rule_ledger": [
+    {
+      "field": "underlying",
+      "value": "NIFTY",
+      "status": "EXPLICIT"
+    },
+    {
+      "field": "core_structure",
+      "value": "weekly iron-fly / short-straddle with balanced protection",
+      "status": "EXPLICIT"
+    },
+    {
+      "field": "illustrated_wing_width_points",
+      "value": 200,
+      "status": "ILLUSTRATIVE"
+    },
+    {
+      "field": "max_adjustments",
+      "value": 2,
+      "status": "EXPLICIT"
+    },
+    {
+      "field": "adjustment_trigger",
+      "value": "60% mark",
+      "status": "EXPLICIT"
+    },
+    {
+      "field": "adjustment_trigger_metric",
+      "value": null,
+      "status": "UNRESOLVED"
+    },
+    {
+      "field": "entry_timing_relative_to_expiry",
+      "value": "2\u20134 trading sessions before expiry family",
+      "status": "FORMALIZATION_REQUIRED"
+    },
+    {
+      "field": "entry_clock",
+      "value": null,
+      "status": "UNRESOLVED"
+    },
+    {
+      "field": "one_strike_inside",
+      "value": "directional adjustment example",
+      "status": "ILLUSTRATIVE"
+    },
+    {
+      "field": "exit_anchor",
+      "value": "15:00 on expiry day",
+      "status": "ILLUSTRATIVE"
+    },
+    {
+      "field": "lot_ratio",
+      "value": "1:1:1:1",
+      "status": "FORMALIZATION_REQUIRED"
+    }
+  ],
+  "numerical_backtest_allowed": 0,
+  "phase30_gate": "BLOCKED",
+  "next_required": [
+    "Verify historical NIFTY lot size and expiry regime at the candidate entry dates.",
+    "Freeze the exact trigger metric and adjustment leg mapping.",
+    "Register executable pricing and Paytm Money/NSE friction before Phase 30."
+  ]
+}

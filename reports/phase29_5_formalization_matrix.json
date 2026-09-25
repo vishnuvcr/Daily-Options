@@ -1,0 +1,247 @@
+{
+  "phase": "29.5",
+  "formalization_cells": [
+    {
+      "cell_id": "ID29_5_01",
+      "entry_offset_trading_sessions": -4,
+      "entry_clock": "09:30",
+      "trigger": "WING_60",
+      "adjustment": "RECENTER_BOTH",
+      "max_adjustments": 2,
+      "wing_points": 200,
+      "strike_interval": 50,
+      "lot_ratio": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "exit_clock": "15:00",
+      "expiry_day_rule": "TUESDAY_OR_PREVIOUS_TRADING_DAY"
+    },
+    {
+      "cell_id": "ID29_5_02",
+      "entry_offset_trading_sessions": -4,
+      "entry_clock": "09:30",
+      "trigger": "WING_60",
+      "adjustment": "ONE_STRIKE_INSIDE",
+      "max_adjustments": 2,
+      "wing_points": 200,
+      "strike_interval": 50,
+      "lot_ratio": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "exit_clock": "15:00",
+      "expiry_day_rule": "TUESDAY_OR_PREVIOUS_TRADING_DAY"
+    },
+    {
+      "cell_id": "ID29_5_03",
+      "entry_offset_trading_sessions": -4,
+      "entry_clock": "09:30",
+      "trigger": "RISK_60",
+      "adjustment": "RECENTER_BOTH",
+      "max_adjustments": 2,
+      "wing_points": 200,
+      "strike_interval": 50,
+      "lot_ratio": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "exit_clock": "15:00",
+      "expiry_day_rule": "TUESDAY_OR_PREVIOUS_TRADING_DAY"
+    },
+    {
+      "cell_id": "ID29_5_04",
+      "entry_offset_trading_sessions": -4,
+      "entry_clock": "09:30",
+      "trigger": "RISK_60",
+      "adjustment": "ONE_STRIKE_INSIDE",
+      "max_adjustments": 2,
+      "wing_points": 200,
+      "strike_interval": 50,
+      "lot_ratio": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "exit_clock": "15:00",
+      "expiry_day_rule": "TUESDAY_OR_PREVIOUS_TRADING_DAY"
+    },
+    {
+      "cell_id": "ID29_5_05",
+      "entry_offset_trading_sessions": -3,
+      "entry_clock": "09:30",
+      "trigger": "WING_60",
+      "adjustment": "RECENTER_BOTH",
+      "max_adjustments": 2,
+      "wing_points": 200,
+      "strike_interval": 50,
+      "lot_ratio": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "exit_clock": "15:00",
+      "expiry_day_rule": "TUESDAY_OR_PREVIOUS_TRADING_DAY"
+    },
+    {
+      "cell_id": "ID29_5_06",
+      "entry_offset_trading_sessions": -3,
+      "entry_clock": "09:30",
+      "trigger": "WING_60",
+      "adjustment": "ONE_STRIKE_INSIDE",
+      "max_adjustments": 2,
+      "wing_points": 200,
+      "strike_interval": 50,
+      "lot_ratio": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "exit_clock": "15:00",
+      "expiry_day_rule": "TUESDAY_OR_PREVIOUS_TRADING_DAY"
+    },
+    {
+      "cell_id": "ID29_5_07",
+      "entry_offset_trading_sessions": -3,
+      "entry_clock": "09:30",
+      "trigger": "RISK_60",
+      "adjustment": "RECENTER_BOTH",
+      "max_adjustments": 2,
+      "wing_points": 200,
+      "strike_interval": 50,
+      "lot_ratio": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "exit_clock": "15:00",
+      "expiry_day_rule": "TUESDAY_OR_PREVIOUS_TRADING_DAY"
+    },
+    {
+      "cell_id": "ID29_5_08",
+      "entry_offset_trading_sessions": -3,
+      "entry_clock": "09:30",
+      "trigger": "RISK_60",
+      "adjustment": "ONE_STRIKE_INSIDE",
+      "max_adjustments": 2,
+      "wing_points": 200,
+      "strike_interval": 50,
+      "lot_ratio": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "exit_clock": "15:00",
+      "expiry_day_rule": "TUESDAY_OR_PREVIOUS_TRADING_DAY"
+    },
+    {
+      "cell_id": "ID29_5_09",
+      "entry_offset_trading_sessions": -2,
+      "entry_clock": "09:30",
+      "trigger": "WING_60",
+      "adjustment": "RECENTER_BOTH",
+      "max_adjustments": 2,
+      "wing_points": 200,
+      "strike_interval": 50,
+      "lot_ratio": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "exit_clock": "15:00",
+      "expiry_day_rule": "TUESDAY_OR_PREVIOUS_TRADING_DAY"
+    },
+    {
+      "cell_id": "ID29_5_10",
+      "entry_offset_trading_sessions": -2,
+      "entry_clock": "09:30",
+      "trigger": "WING_60",
+      "adjustment": "ONE_STRIKE_INSIDE",
+      "max_adjustments": 2,
+      "wing_points": 200,
+      "strike_interval": 50,
+      "lot_ratio": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "exit_clock": "15:00",
+      "expiry_day_rule": "TUESDAY_OR_PREVIOUS_TRADING_DAY"
+    },
+    {
+      "cell_id": "ID29_5_11",
+      "entry_offset_trading_sessions": -2,
+      "entry_clock": "09:30",
+      "trigger": "RISK_60",
+      "adjustment": "RECENTER_BOTH",
+      "max_adjustments": 2,
+      "wing_points": 200,
+      "strike_interval": 50,
+      "lot_ratio": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "exit_clock": "15:00",
+      "expiry_day_rule": "TUESDAY_OR_PREVIOUS_TRADING_DAY"
+    },
+    {
+      "cell_id": "ID29_5_12",
+      "entry_offset_trading_sessions": -2,
+      "entry_clock": "09:30",
+      "trigger": "RISK_60",
+      "adjustment": "ONE_STRIKE_INSIDE",
+      "max_adjustments": 2,
+      "wing_points": 200,
+      "strike_interval": 50,
+      "lot_ratio": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "exit_clock": "15:00",
+      "expiry_day_rule": "TUESDAY_OR_PREVIOUS_TRADING_DAY"
+    }
+  ],
+  "cell_count": 12,
+  "contract_checks": [
+    {
+      "video_id": "5xz7X5QsFv8",
+      "reference_date": "2026-04-30",
+      "next_tuesday_expiry": "2026-05-05",
+      "historical_lot_size": 65,
+      "weekly_strike_interval": 50,
+      "lot_size_is_2026_revision": true
+    },
+    {
+      "video_id": "9cetNfglyO4",
+      "reference_date": "2026-05-02",
+      "next_tuesday_expiry": "2026-05-05",
+      "historical_lot_size": 65,
+      "weekly_strike_interval": 50,
+      "lot_size_is_2026_revision": true
+    }
+  ],
+  "numerical_backtest_allowed": 0,
+  "phase30_gate": "BLOCKED",
+  "gate_reason": [
+    "All 12 cells require exact historical contract joins before P&L.",
+    "Bid/ask quote completeness remains unverified; OHLC is not a spread observation.",
+    "Paytm Money/NSE date-aware cost model must be frozen in Phase 30."
+  ]
+}

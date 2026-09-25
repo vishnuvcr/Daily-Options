@@ -380,3 +380,43 @@ Run **36135151445** completed successfully after E0263/E0264 implementation corr
 - 2 CONTRACT_READY_FOR_CONTENT_JOIN (both are the duplicated NIFTY Iron Dome candidate)
 
 This is **not** numerical backtest readiness. Every row remains `backtest_allowed=NO`. Phase 30 remains BLOCKED because exact leg composition, dated expiry/lot-size joins, quote completeness and execution-cost modelling are not yet proven.
+
+## 2026-09-25 — Phase 29.3 completed
+
+Run **36135786342** passed. Python transcript acquisition succeeded for both NIFTY Iron Dome videos (the primary youtube-transcript-api attempt was blocked by YouTube/cloud-IP restrictions, and the deterministic yt-dlp auto-caption fallback succeeded). Seven relevant pinned TradeMarkk NIFTY expiry partitions were identified and content-inspected successfully; all contained the expected timestamp/strike/option_type/expiry/OHLCV/open-interest fields.
+
+The source evidence now supports a provisional Iron Dome reconstruction: NIFTY weekly Iron Fly/short-straddle core, an illustrated 200-point balanced-wing example, a 60% adjustment mark, a maximum of two adjustments, Monday/Tuesday adjustment examples, and an expiry-day theta-decay scenario. Entry timing, exact 60% definition, adjustment formulas, lot ratios and exact exit rule remain non-deterministic. Therefore numerical backtesting remains blocked and Phase 30 is not opened.
+
+
+## 2026-09-25 — Phase 29.3 provenance correction and clean rerun
+
+The Phase 29.3 workflow was rerun after correcting two engineering-integrity issues: the persisted manifest now identifies the actual deterministic multi-source Python caption retrieval layer, and evidence pushes from pull-request runs now target `github.head_ref` rather than the synthetic `<pr>/merge` ref. The rerun regenerated the transcript manifest and preserved `numerical_backtest_allowed=0`. No strategy rule or numerical result was changed.
+
+## 2026-09-25 — Phase 29.4 completed: Iron Dome rule-fact reconstruction
+
+Authoritative Phase 29.4 run **36136592358** passed all steps. The Python-only source-fact extractor successfully reconstructed structured evidence from both Iron Dome videos.
+
+Confirmed source facts:
+- NIFTY weekly Iron Fly / Iron Dome core with balanced protection.
+- Maximum of **two adjustments**.
+- A **60% mark** is explicitly used as an adjustment trigger.
+- Video 1 explicitly illustrates a **200-point balanced wing** around a 23,900 short strike; this remains an illustration, not a frozen universal width.
+- Video 1 states a **2–4 day weekly holding concept**.
+- Both videos contain a directional/deeper-ITM adjustment concept; video 2 explicitly references a **one-strike-inside** leg movement.
+- Video 1 gives a Monday 09:30 adjustment example; video 2 gives a near-close/expiry-day theta-decay adjustment scenario and a 15:00 expiry-day illustration.
+
+The current NSE regime must be used when formalizing the strategy: NIFTY weekly options expire Tuesday, and this Tuesday regime has been in force since September 2025. Therefore the April/May 2026 source videos are already post-change; their Monday examples are not to be shifted back to the old Thursday calendar. NSE circular FAOP68685 (expiry-day transition) and current NIFTY contract specifications confirm this Tuesday regime.
+
+Still unresolved before numerical testing:
+- what the **60% metric** mathematically means;
+- exact initial entry clock;
+- exact short/long-leg mapping during each adjustment;
+- exact lot ratio;
+- whether the 200-point wing is universal or only an example;
+- whether 15:00 expiry-day is a hard exit or merely a payoff illustration.
+
+**Phase 30 remains BLOCKED.** No P&L, win-rate, drawdown or target qualification has been accepted from the Iron Dome family.
+
+## Current research frontier — Phase 29.5
+
+The next bounded phase is **source-fidelity formalization + contract/lot readiness**, not a free-form parameter search. It will convert the remaining ambiguities into a small preregistered formalization matrix, verify Tuesday-expiry contract/lot rules against the historical dates, and enforce the existing Paytm Money/NSE cost + Base/Stress execution gate before opening numerical testing.

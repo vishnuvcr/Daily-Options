@@ -1,0 +1,68 @@
+name: Phase 29.5 - Iron Dome formalization and contract gate
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/phase29.5-run.txt"
+  pull_request:
+    paths:
+      - ".github/phase29.5-run.txt"
+      - "research/phase29_5_iron_dome_formalization.py"
+      - "tests/test_phase29_5_iron_dome_formalization.py"
+      - ".github/workflows/phase-29.5-equity-income-iron-dome-formalization-v1.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase29.5-equity-income-iron-dome-formalization
+  cancel-in-progress: false
+
+jobs:
+  formalization:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Unit tests
+        run: |
+          python -m pip install --disable-pip-version-check pytest==8.4.2
+          PYTHONPATH=. python -m pytest -q tests/test_phase29_5_iron_dome_formalization.py
+
+      - name: Build deterministic formalization matrix
+        run: PYTHONPATH=. python research/phase29_5_iron_dome_formalization.py
+
+      - name: Validate no-P&L gate
+        run: |
+          python - <<'PY'
+          import json
+          s=json.load(open("reports/phase29_5_formalization_matrix.json",encoding="utf-8"))
+          assert s["cell_count"] == 12
+          assert s["numerical_backtest_allowed"] == 0
+          assert s["phase30_gate"] == "BLOCKED"
+          assert all(x["historical_lot_size"] == 65 for x in s["contract_checks"])
+          print(json.dumps(s,indent=2))
+          PY
+
+      - name: Persist formalization evidence
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/phase29_5_formalization_matrix.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Phase 29.5: persist Iron Dome formalization matrix"
+          TARGET_REF="${{ github.head_ref || github.ref_name }}"
+          git push origin HEAD:"$TARGET_REF"
