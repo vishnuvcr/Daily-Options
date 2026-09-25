@@ -58,3 +58,10 @@ Because the independent replication is negative across the entire preregistered 
 ## Research consequence
 
 The research now moves to the next distinct hypothesis rather than spending additional phases narrowing the failed Falcon parameter family. The same cost/slippage framework, independent-data validation discipline and no-post-result-tuning rule remain in force.
+
+
+## RETRACTION — 2026-09-25
+
+This document's earlier Phase 25 numerical decision is **RETRACTED**. A forensic code audit found that the Phase 25 simulator's pre-adjustment stop scan extended beyond the adjustment timestamp and that its pre-stop cache key omitted adjustment time. This means the reported P&L did not faithfully implement the documented Falcon adjustment sequence. The report also treated a nominal 270-cell grid as if all 270 variants were executable, while only 135 variants appeared in the produced leaderboard.
+
+The numerical values above are retained only as an audit record of the invalid run. They must not be interpreted as evidence that Falcon is unprofitable or that the family should be retired. The corrected simulator is being rerun on the same pinned independent Rissin data with unchanged strategy rules.
