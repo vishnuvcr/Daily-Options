@@ -1,2 +1,2 @@
 run Phase 29.1 readiness audit
-triggered after E0252 correction
+triggered after recursive parquet inventory correction
