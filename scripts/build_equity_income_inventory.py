@@ -77,6 +77,8 @@ def main() -> int:
     transcripts = read_jsonl(args.root / "transcript_manifest.jsonl")
     if not videos:
         raise SystemExit("NO_VIDEO_MANIFEST")
+    if set(videos) != set(transcripts):
+        raise SystemExit(f"ARCHIVE_ID_MISMATCH videos={len(videos)} transcripts={len(transcripts)}")
 
     duplicate_counts = Counter(normalize_title(v.get("title", "")) for v in videos.values())
     inventory_rows = []
@@ -85,6 +87,8 @@ def main() -> int:
     for video_id, video in sorted(videos.items(), key=lambda kv: (kv[1].get("title") or "", kv[0])):
         transcript = transcripts.get(video_id, {})
         status = transcript.get("status", "missing")
+        if status not in {"archived", "already_archived"}:
+            raise SystemExit(f"UNRESOLVED_TRANSCRIPT:{video_id}:{status}")
         title = video.get("title") or ""
         guess = family_guess(title)
         title_key = normalize_title(title)
@@ -99,6 +103,8 @@ def main() -> int:
             "transcript_status": status,
             "transcript_method": transcript_method,
             "transcript_error": transcript_error,
+            "transcript_integrity": "VERIFIED",
+            "snippet_count": transcript.get("snippet_count", 0),
             "candidate_payoff_family": guess,
             "duplicate_title_group": duplicate_group,
             "source_fidelity": "UNRESOLVED",
@@ -141,7 +147,8 @@ def main() -> int:
         "videos": len(inventory_rows),
         "transcript_status_counts": dict(sorted(counts.items())),
         "candidate_family_counts": dict(sorted(families.items())),
-        "strategy_candidates": len(registry_rows),
+        "strategy_candidates": sum(1 for row in inventory_rows if row["candidate_payoff_family"] != "unclassified"),
+        "transcript_verified": sum(1 for row in inventory_rows if row["transcript_status"] in {"archived", "already_archived"}),
         "phase": 26,
         "backtesting_started": False,
     }
