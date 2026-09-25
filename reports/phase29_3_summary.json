@@ -1,12 +1,12 @@
 {
   "phase": "29.3",
   "candidate_videos": 2,
-  "transcript_fetch_ok": 0,
-  "transcript_fetch_blocked": 2,
+  "transcript_fetch_ok": 2,
+  "transcript_fetch_blocked": 0,
   "nifty_expiry_parquet_files_at_pin": 267,
   "candidate_expiry_files_found": 7,
   "expiry_content_checks_ok": 7,
-  "rule_status": "RECONSTRUCTION_REQUIRED",
+  "rule_status": "SOURCE_TEXT_FETCHED_PENDING_HUMAN_RULE_FREEZE",
   "numerical_backtest_allowed": 0,
   "phase30_gate": "BLOCKED",
   "next_required": [
