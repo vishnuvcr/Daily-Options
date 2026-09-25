@@ -1,2 +1,3 @@
 run Phase 29.3 Iron Dome content audit
 triggered after datetime serialization correction
+CI probe for hardened transcript fallbacks
