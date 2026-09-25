@@ -19,47 +19,94 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        friction: [base, stress]
+        friction:
+          - base
+          - stress
     runs-on: ubuntu-latest
     timeout-minutes: 240
     steps:
       - uses: actions/checkout@v4
-        with: {ref: phase-25-falcon-rissin-independent-v1}
+        with:
+          ref: phase-25-falcon-rissin-independent-v1
+
       - uses: actions/setup-python@v5
-        with: {python-version: '3.12'}
+        with:
+          python-version: "3.12"
+
       - name: Install dependencies
         run: pip install pandas numpy duckdb pyarrow huggingface_hub pytest
+
       - name: Unit tests
         run: PYTHONPATH=. pytest -q tests/test_phase25_falcon_rissin.py
+
       - name: Cache Rissin NIFTY data
         uses: actions/cache@v4
         with:
           path: data/cache/phase25_rissin
           key: phase25-rissin-78b1c546-nifty-2024-2025-v1
+
       - name: Acquire pinned Rissin data
         run: |
           set -euo pipefail
           mkdir -p data/cache/phase25_rissin
           python - <<'PY'
           from huggingface_hub import snapshot_download
-          snapshot_download(repo_id='rissin/nse-options-intraday',repo_type='dataset',revision='78b1c5468255d18cf492984bfe6fe4e3ac874d7c',local_dir='data/cache/phase25_rissin',allow_patterns=['upstox_intraday/NIFTY/NIFTY_2024.parquet','upstox_intraday/NIFTY/NIFTY_2025.parquet'])
+          snapshot_download(
+              repo_id="rissin/nse-options-intraday",
+              repo_type="dataset",
+              revision="78b1c5468255d18cf492984bfe6fe4e3ac874d7c",
+              local_dir="data/cache/phase25_rissin",
+              allow_patterns=[
+                  "upstox_intraday/NIFTY/NIFTY_2024.parquet",
+                  "upstox_intraday/NIFTY/NIFTY_2025.parquet",
+              ],
+          )
           PY
+
       - name: Validate data coverage
         run: |
+          set -euo pipefail
           test -s data/cache/phase25_rissin/upstox_intraday/NIFTY/NIFTY_2024.parquet
           test -s data/cache/phase25_rissin/upstox_intraday/NIFTY/NIFTY_2025.parquet
           python - <<'PY'
           import duckdb
           from pathlib import Path
-          r=Path('data/cache/phase25_rissin/upstox_intraday/NIFTY')
-          f=[str(r/'NIFTY_2024.parquet'),str(r/'NIFTY_2025.parquet')]
-          c=duckdb.connect(); x=c.execute("SELECT COUNT(*),COUNT(DISTINCT CAST(date AS DATE)),COUNT(DISTINCT CAST(expiry AS DATE)) FROM read_parquet(?) WHERE granularity='1min'",[f]).fetchone(); print(x)
-          assert x[1]>=200 and x[2]>=40
+
+          root = Path("data/cache/phase25_rissin/upstox_intraday/NIFTY")
+          files = [
+              str(root / "NIFTY_2024.parquet"),
+              str(root / "NIFTY_2025.parquet"),
+          ]
+          conn = duckdb.connect()
+          row = conn.execute(
+              """
+              SELECT
+                  COUNT(*),
+                  COUNT(DISTINCT CAST(date AS DATE)),
+                  COUNT(DISTINCT CAST(expiry AS DATE))
+              FROM read_parquet(?)
+              WHERE granularity = '1min'
+              """,
+              [files],
+          ).fetchone()
+          print(row)
+          assert row[1] >= 200
+          assert row[2] >= 40
           PY
+
       - name: Run friction
-        env: {SLIP: ${{ matrix.friction == 'base' && '0.20' || '0.40' }}}
-        run: PYTHONPATH=. python -m research.phase25_falcon_rissin --data data/cache/phase25_rissin --out reports/${{ matrix.friction }} --slippage "$SLIP"
+        env:
+          SLIP: ${{ matrix.friction == 'base' && '0.20' || '0.40' }}
+        run: >
+          PYTHONPATH=.
+          python -m research.phase25_falcon_rissin
+          --data data/cache/phase25_rissin
+          --out reports/${{ matrix.friction }}
+          --slippage "$SLIP"
+
       - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v4
-        with: {name: phase25-falcon-${{ matrix.friction }},path: reports/}
+        with:
+          name: phase25-falcon-${{ matrix.friction }}
+          path: reports/
