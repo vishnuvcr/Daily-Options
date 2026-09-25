@@ -260,3 +260,13 @@ The fixed branch equity-income-channel-archive-v1 has been hardened with a sourc
 [Archive status](https://github.com/vishnuvcr/Daily-Options/blob/equity-income-channel-archive-v1/docs/equity_income_archive_status.md) · [Archive plan](https://github.com/vishnuvcr/Daily-Options/blob/equity-income-channel-archive-v1/docs/equity_income_channel_archive_plan.md)
 
 Trading research remains paused until every current video has a validated transcript or an explicit durable failure record and the full integrity gate passes.
+
+## 2026-09-25 — Equity Income archive acquisition checkpoint
+
+Archive run 36126797339 recovered **39/169** public video transcripts; all 39 encrypted payloads passed integrity validation. The archive is still incomplete.
+
+The next fixed-branch acquisition escalation adds a structured source-caption JSON fallback with millisecond timings and generated/human provenance. Existing successful transcripts are persisted and will be skipped on reruns.
+
+[Archive status](https://github.com/vishnuvcr/Daily-Options/blob/equity-income-channel-archive-v1/docs/equity_income_archive_status.md) · [Archive plan](https://github.com/vishnuvcr/Daily-Options/blob/equity-income-channel-archive-v1/docs/equity_income_channel_archive_plan.md)
+
+Trading research remains paused until the 169-video archive completion gate is satisfied.
