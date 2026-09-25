@@ -27,4 +27,4 @@
     "Historical lot size and expiry remain date-specific official-exchange joins.",
     "Bid/ask remains unverified; later simulations must use an explicit OHLC execution/slippage model."
   ]
-}\n
+}
