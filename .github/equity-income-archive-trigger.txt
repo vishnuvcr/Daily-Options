@@ -14,3 +14,5 @@ Retry 2026-09-25e: parallel transcript workers.
 Retry 2026-09-25e: canonical workers CLI corrected.
 
 Retry 2026-09-25f: duplicate workers argparse definition removed.
+
+Retry 2026-09-25g: InnerTube caption-track retrieval added and parser-tested.
