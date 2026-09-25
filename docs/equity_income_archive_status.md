@@ -65,3 +65,12 @@ The hardened archive code and fixed-branch manual workflow are committed. A new 
 Trigger commit on main: a26be8c4f9ca3c07b0bbe40732557e362edc63ed.
 
 Acceptance remains pending until the resulting GitHub Actions archive snapshot reports validated encrypted transcript envelopes and passes the full inventory/integrity gate.
+
+## CI trigger workaround — 2026-09-25
+
+The connected GitHub action surface does not expose workflow_dispatch. To avoid stopping for user intervention, the main archive workflow now also accepts a tightly scoped pull_request trigger on the trigger file.
+
+Controlled trigger PR: #36.
+Head commit: 1204ff2b0b4004eac29892df9c79b7d4cebfbcff.
+
+The workflow checks out only the fixed archive branch and may commit only resumable archive progress there. No strategy code or research parameters are changed.
