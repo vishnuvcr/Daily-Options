@@ -20,3 +20,5 @@ Retry 2026-09-25g: InnerTube caption-track retrieval added and parser-tested.
 Retry 2026-09-25h: pinned PO-token provider 2.0.0 enabled for yt-dlp.
 
 Retry 2026-09-25i: persist partial encrypted successes; reduce concurrency to 2; fail only after commit.
+
+Retry 2026-09-25j: completeness gate + Invidious/proxy fallback probe added.
