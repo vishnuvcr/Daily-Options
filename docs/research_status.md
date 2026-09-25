@@ -560,3 +560,10 @@ While Falcon is computing, the next distinct Equity Income candidate has been id
 Research question: can the source-defined bear-put spread, once the archived Python-acquired transcript is deterministically recovered, be formalized into a current Tuesday-expiry NIFTY rule set that clears the ₹5,000/week consistency gate after realistic costs without contaminating the test set?
 
 No numerical Bear Put test has been started and no rule values are being invented from the public description. The existing channel catalogue records this candidate as distinct from the prior short-vol families but requiring exact adjustment-rule recovery before execution.
+
+
+## 2026-09-25 — Parallel research advance while Falcon computes
+- **Falcon / Phase 30.2:** authoritative run 36160873596 remains in Base + Stress friction. No P&L accepted.
+- **Source-resolution:** the Bear Put video `IpCuGEDxF1k` has a primary repository rule card, but economically material entry/adjustment/exit/stop fields remain unresolved. The public YouTube description confirms the strategy is a bear-put-spread method with entry/exit, adjustment and risk-management discussion, but that is corroboration only. citeturn358529youtube20
+- **Archive infrastructure:** the keyless Python archive script was corrected and the canonical archive workflow was promoted to `main`; the workflow now targets `equity-income-channel-archive-v2-hybrid-keyless`, has manual dispatch plus a push trigger, and retains the weekly schedule. This addresses archive scheduling defect E0254 and script defect E0255.
+- **Cost verification:** NSE's current STT page confirms option-sale STT is 0.10% through 2026-03-31 and 0.15% from 2026-04-01; NSE's Feb 27, 2026 transaction-charge circular confirms equity-options premium transaction charges of ₹3,503/crore before the March 1 revision and ₹3,553/crore from March 1, consistent with the date-aware model used by the current Falcon simulator. citeturn833533search0turn704031view0
