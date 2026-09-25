@@ -10,6 +10,8 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import subprocess
+import tempfile
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -43,6 +45,50 @@ NUMBER_PAT = re.compile(r"(?<![A-Za-z])\d+(?:\.\d+)?(?![A-Za-z])")
 
 def norm_text(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
+
+
+def transcript_with_ytdlp(video_id: str) -> dict:
+    with tempfile.TemporaryDirectory() as td:
+        out = Path(td) / "%(id)s.%(ext)s"
+        cmd = [
+            "yt-dlp", "--quiet", "--no-warnings", "--skip-download",
+            "--write-auto-subs", "--sub-langs", "en.*,en",
+            "--sub-format", "vtt", "--output", str(out),
+            f"https://www.youtube.com/watch?v={video_id}",
+        ]
+        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
+        if proc.returncode != 0:
+            raise RuntimeError((proc.stderr or proc.stdout or "yt-dlp failed").strip())
+        files = sorted(Path(td).glob(f"{video_id}*.vtt"))
+        if not files:
+            raise RuntimeError("yt-dlp completed but produced no VTT subtitle file")
+        text_lines = []
+        for line in files[0].read_text(encoding="utf-8", errors="replace").splitlines():
+            line = line.strip()
+            if not line or line == "WEBVTT" or "-->" in line or line.isdigit():
+                continue
+            text_lines.append(re.sub(r"<[^>]+>", "", line))
+        full = norm_text(" ".join(text_lines))
+        sha = hashlib.sha256(full.encode("utf-8")).hexdigest()
+        evidence = []
+        lower_lines = [norm_text(x) for x in text_lines if norm_text(x)]
+        for i, txt in enumerate(lower_lines):
+            lower = txt.lower()
+            if any(term in lower for term in RULE_TERMS) or NUMBER_PAT.search(txt):
+                context = " ".join(lower_lines[max(0, i - 1): min(len(lower_lines), i + 2)])
+                evidence.append({
+                    "text": norm_text(context)[:320],
+                    "trigger_terms": sorted({term for term in RULE_TERMS if term in lower})[:8],
+                })
+        return {
+            "status": "OK",
+            "video_id": video_id,
+            "method": "yt-dlp-auto-subs-vtt",
+            "sha256": sha,
+            "snippet_count": len(lower_lines),
+            "evidence_count": len(evidence),
+            "evidence": evidence[:160],
+        }
 
 
 def transcript(video_id: str) -> dict:
@@ -162,12 +208,15 @@ def main() -> int:
     for v in VIDEOS:
         try:
             transcript_rows.append(transcript(v["video_id"]))
-        except Exception as exc:
-            transcript_rows.append({
-                "status": "ERROR",
-                "video_id": v["video_id"],
-                "error": str(exc),
-            })
+        except Exception as first_exc:
+            try:
+                transcript_rows.append(transcript_with_ytdlp(v["video_id"]))
+            except Exception as second_exc:
+                transcript_rows.append({
+                    "status": "ERROR",
+                    "video_id": v["video_id"],
+                    "error": f"youtube-transcript-api: {first_exc}; yt-dlp fallback: {second_exc}",
+                })
 
     archive_manifest = {
         "tool": "youtube-transcript-api",
@@ -197,6 +246,11 @@ def main() -> int:
     for item in inv:
         for cand in item["candidate_expiry_files"]:
             content_checks.append(inspect_one(cand["path"]))
+
+    Path("reports/phase29_3_expiry_content_checks.json").write_text(
+        json.dumps({"checks": content_checks}, indent=2) + "\n",
+        encoding="utf-8",
+    )
 
     transcript_ok = sum(x["status"] == "OK" for x in transcript_rows)
     transcript_blocked = sum(x["status"] != "OK" for x in transcript_rows)
