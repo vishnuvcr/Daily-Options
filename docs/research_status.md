@@ -330,3 +330,9 @@ The Equity Income archive is now converted from the blocked GitHub-secret design
 - Local hybrid-encryption round-trip test passed; the actual full-channel GitHub Actions acquisition has not yet been executed.
 
 Trading research remains paused until the channel inventory/transcript archive is complete.
+
+## 2026-09-25 — Keyless archive first-run syntax correction
+
+The first live keyless archive run (GitHub Actions **36118488376**) reached Python execution and failed before channel discovery because two generated string literals in `archive_equity_income_keyless.py` contained literal newlines. This was a code-generation defect, not a data or encryption failure.
+
+The canonical archive branch was corrected at commit `6bd858822117ac89afa6f62596b09c934b6b15e4`. A fresh run was triggered from `main`; no transcript data from the failed run was accepted.
