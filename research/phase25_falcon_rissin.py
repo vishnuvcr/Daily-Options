@@ -20,7 +20,7 @@ def lot_size(e):
 def src(root):
     ps=[root/"upstox_intraday/NIFTY/NIFTY_2024.parquet",root/"upstox_intraday/NIFTY/NIFTY_2025.parquet"]
     if any(not p.exists() for p in ps): raise FileNotFoundError("missing pinned Rissin NIFTY files")
-    return "read_parquet(["+",".join("'"+str(p).replace("'","''")+"'" for p in ps)+"])"
+    return "read_parquet(["+",".join("'"+str(p).replace("'","''") for p in ps)+"])"
 
 def target(df,side,p,ref=None,outward=False):
     x=df[df.option_type==side].copy()
@@ -35,8 +35,10 @@ def chain(c,S,e,d,a,b):
     return c.execute(q).df()
 
 def series(c,S,d,e,k,side,a,b):
+    start_day=pd.Timestamp(a).date()
+    end_day=pd.Timestamp(b).date()
     q=f"""SELECT CAST(timestamp AS TIMESTAMP) ts,CAST(open AS DOUBLE) open_px,CAST(close AS DOUBLE) close_px FROM {S}
-    WHERE CAST(date AS DATE)=DATE '{d}' AND CAST(expiry AS DATE)=DATE '{e}' AND CAST(timestamp AS TIMESTAMP) BETWEEN TIMESTAMP '{a}' AND TIMESTAMP '{b}'
+    WHERE CAST(date AS DATE) BETWEEN DATE '{start_day}' AND DATE '{end_day}' AND CAST(expiry AS DATE)=DATE '{e}' AND CAST(timestamp AS TIMESTAMP) BETWEEN TIMESTAMP '{a}' AND TIMESTAMP '{b}'
     AND CAST(strike AS DOUBLE)={float(k)} AND UPPER(CAST(option_type AS VARCHAR))='{side}' AND granularity='1min' AND close>0 ORDER BY ts"""
     x=c.execute(q).df()
     if x.empty:return pd.DataFrame(columns=["ts","open_px","close_px"])
