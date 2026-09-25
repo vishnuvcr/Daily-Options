@@ -344,3 +344,9 @@ The first full keyless archive retry discovered **169 unique videos**, confirmin
 The archive implementation is now transcript-first: channel discovery supplies stable video IDs/URLs/titles/provenance; transcript retrieval proceeds without per-video metadata extraction. The metadata enrichment path is no longer a hard completion gate.
 
 The canonical archive workflow was also corrected to operate on the canonical `equity-income-channel-archive-v1` branch and remain manual-only there; the unattended schedule remains on `main`.
+
+## 2026-09-25 — Keyless archive CLI correction
+
+Run **36122852931** failed immediately because the default-branch workflow passed `--workers 4` while the checked-out archive commit did not yet expose that option. The canonical keyless script now exposes one `--workers` option; no strategy or encryption design changed.
+
+A fresh archive run will be used to test actual transcript acquisition.
