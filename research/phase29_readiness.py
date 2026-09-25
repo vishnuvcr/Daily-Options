@@ -10,12 +10,8 @@ from __future__ import annotations
 
 import csv
 import json
-import time
 from pathlib import Path
-from urllib.parse import quote, urlencode
-from urllib.request import Request, urlopen
-
-HF_API = "https://huggingface.co/api/datasets"
+from huggingface_hub import HfApi, RepoFile
 REVISIONS = {
     "trademarkk": {
         "repo": "thetrademarkk/india-index-options-1m",
@@ -69,22 +65,21 @@ def get_json(url: str, retries: int = 4) -> object:
     raise RuntimeError(f"HF API request failed after {retries} attempts: {url}: {last}")
 
 
-def tree(repo: str, revision: str, path: str, recursive: bool = True) -> list[dict]:
-    items: list[dict] = []
-    cursor = None
-    for _ in range(20):
-        params = {"path": path, "recursive": "true" if recursive else "false", "expand": "false"}
-        if cursor:
-            params["cursor"] = cursor
-        url = f"{HF_API}/{quote(repo, safe='/')}/tree/{quote(revision, safe='')}?{urlencode(params)}"
-        payload = get_json(url)
-        if not isinstance(payload, list):
-            raise RuntimeError(f"Unexpected HF tree response for {repo}:{revision}:{path}")
-        items.extend(payload)
-        cursor = payload[-1].get("cursor") if payload and isinstance(payload[-1], dict) else None
-        if not cursor or len(payload) < 1000:
-            break
-    return items
+def tree(repo: str, revision: str) -> list[RepoFile]:
+    """Read the pinned Hub tree through the official Python client."""
+    api = HfApi()
+    items = list(
+        api.list_repo_tree(
+            repo_id=repo,
+            path_in_repo=None,
+            recursive=True,
+            expand=False,
+            revision=revision,
+            repo_type="dataset",
+            token=False,
+        )
+    )
+    return [item for item in items if isinstance(item, RepoFile)]
 
 
 def inventory_source(name: str, spec: dict) -> dict:
@@ -95,26 +90,28 @@ def inventory_source(name: str, spec: dict) -> dict:
         "expected_schema": spec["expected_schema"],
         "intraday_oi_available": spec["oi_intraday"],
         "api_status": "OK",
+        "tree_file_count": 0,
     }
-    for path in spec["paths"]:
-        try:
-            rows = tree(spec["repo"], spec["revision"], path)
-            files = sorted(r.get("path", "") for r in rows if r.get("type") == "file")
-            dirs = sorted(r.get("path", "") for r in rows if r.get("type") == "directory")
-            parquet = [p for p in files if p.lower().endswith(".parquet")]
+    try:
+        rows = tree(spec["repo"], spec["revision"])
+        all_paths = sorted(item.path for item in rows)
+        result["tree_file_count"] = len(all_paths)
+        for path in spec["paths"]:
+            prefix = path.rstrip("/") + "/"
+            files = [p for p in all_paths if p.startswith(prefix) and p.lower().endswith(".parquet")]
             result["paths"][path] = {
-                "status": "PRESENT",
-                "file_count": len(files),
-                "parquet_file_count": len(parquet),
-                "directory_count": len(dirs),
-                "sample_files": parquet[:3] + (parquet[-3:] if len(parquet) > 3 else []),
-                "first_file": parquet[0] if parquet else None,
-                "last_file": parquet[-1] if parquet else None,
+                "status": "PRESENT" if files else "EMPTY",
+                "parquet_file_count": len(files),
+                "sample_files": files[:3] + (files[-3:] if len(files) > 3 else []),
+                "first_file": files[0] if files else None,
+                "last_file": files[-1] if files else None,
             }
-        except Exception as exc:
-            result["api_status"] = "ERROR"
-            result["paths"][path] = {"status": "ERROR", "error": str(exc)}
+    except Exception as exc:
+        result["api_status"] = "ERROR"
+        for path in spec["paths"]:
+            result["paths"][path] = {"status": "ERROR", "error": str(exc), "parquet_file_count": 0}
     return result
+
 
 
 def classify(hint: str, inv: dict) -> tuple[str, str, str]:
