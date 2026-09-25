@@ -28,3 +28,5 @@ Retry 2026-09-25k: bounded multi-path transcript ladder, parser regression, and 
 Retry 2026-09-25k: Invidious-first caption ladder + non-cancelling archive concurrency.
 
 PR-triggered archive execution retry 2026-09-25b.
+
+Retry 2026-09-25l: proxy-first transcript acquisition, four workers, cancel stale archive run.
