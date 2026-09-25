@@ -1,1 +1,170 @@
-strategy_id,source_video_ids,strategy_name,underlying,timeframe,payoff_family,source_fidelity,data_status,phase_status,notes
+strategy_id,source_video_ids,title_set,strategy_name,underlying,timeframe,payoff_family,entry_rule,strike_rule,adjustment_rule,stop_rule,target_rule,exit_rule,capital_rule,source_fidelity,data_status,duplicate_group,phase_status
+EI_VIDEO_02Id0-s1upM,02Id0-s1upM,"""Magnet-Block"" Options Buyers Miss this Secret !","""Magnet-Block"" Options Buyers Miss this Secret !",,,indicator_signal,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_6KSuMGVH1HY,6KSuMGVH1HY,#intra The Right Time to Sell Options Or Premium Is Gone | New Method of Option Selling,#intra The Right Time to Sell Options Or Premium Is Gone | New Method of Option Selling,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_n1ZmTP7wwNM,n1ZmTP7wwNM,"-₹₹ How I Rescued a Dying IronFly in One Simple Move""","-₹₹ How I Rescued a Dying IronFly in One Simple Move""",,,iron_fly,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_8lcWPVCE8_Y,8lcWPVCE8_Y,03 Simple Trading Methods to Go From Confused to Consistent,03 Simple Trading Methods to Go From Confused to Consistent,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_gLWimSHdH9Y,gLWimSHdH9Y,03 Strike Iron-Fly Power Punch ❕,03 Strike Iron-Fly Power Punch ❕,,,iron_fly,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_vcht6l78q-o,vcht6l78q-o,1 Fund. 3 Benefits. LowRisk,1 Fund. 3 Benefits. LowRisk,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_mAPbwYsqOf8,mAPbwYsqOf8,1-2-3 Intraday Option Selling For Working Professionals,1-2-3 Intraday Option Selling For Working Professionals,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_Vs8pBvSmdQo,Vs8pBvSmdQo,1-2-3 Intraday Option Selling Powerplay,1-2-3 Intraday Option Selling Powerplay,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_lxy4YmNFzzY,lxy4YmNFzzY,1221 Hedged Options Strategy | #equityincome,1221 Hedged Options Strategy | #equityincome,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_Z3QkVx4Og-0,Z3QkVx4Og-0,1:10 Risk Reward in Options Buying? How This Setup Actually Works ,1:10 Risk Reward in Options Buying? How This Setup Actually Works,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_Q5L2N4UC0aI,Q5L2N4UC0aI,1:2:2 Bear Trap Formation Options Strategy,1:2:2 Bear Trap Formation Options Strategy,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_rWnouPoBqNE,rWnouPoBqNE,1:3 RR IRON-FLY Spread Trading,1:3 RR IRON-FLY Spread Trading,,,iron_fly,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_YCYRi4NSIIk,YCYRi4NSIIk,2 Clever ✌🏻Covered Call Tricks Pros Never Tell You | No Rolling,2 Clever ✌🏻Covered Call Tricks Pros Never Tell You | No Rolling,,,covered_call,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_wEluayTelMA,wEluayTelMA,3-Step Options Setup Sleep Without Gap Worries,3-Step Options Setup Sleep Without Gap Worries,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_-xIqiFdNC-U,-xIqiFdNC-U,9 to 5 Weekly Options Strategy,9 to 5 Weekly Options Strategy,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_Ln7kdbHJdH8,Ln7kdbHJdH8,9 to 5 Working Person Trading Guide,9 to 5 Working Person Trading Guide,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_Qg_DtZy2ojs,Qg_DtZy2ojs,92.96% POP Weekly Hedge Strategy for Options Traders,92.96% POP Weekly Hedge Strategy for Options Traders,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_GGmj3B9pxjU,GGmj3B9pxjU,A Twisted Sister : Tactical Straddle Upgrade,A Twisted Sister : Tactical Straddle Upgrade,,,straddle,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_GrxszH8i9hA,GrxszH8i9hA,Alpha Weekly Strategy:  (Single Adjustment),Alpha Weekly Strategy:  (Single Adjustment),,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_c6clDpZNg2I,c6clDpZNg2I,"BEARISH Options AS A BUSINESS | WHICH TRADE, WHEN?","BEARISH Options AS A BUSINESS | WHICH TRADE, WHEN?",,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_UBk0f6HvXfg,UBk0f6HvXfg,Bad-Trade Blocker ¦ Intraday Option Selling Indicator ,Bad-Trade Blocker ¦ Intraday Option Selling Indicator,,,indicator_signal,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_BPMnOB5S_t0,BPMnOB5S_t0,Bat-Man Adjustment When Market Trends HARD !,Bat-Man Adjustment When Market Trends HARD !,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_LLg0j245DoY,LLg0j245DoY,Batman 2.0: The Safer Strategy They Don’t Teach!,Batman 2.0: The Safer Strategy They Don’t Teach!,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_PdlryN3vLBQ,PdlryN3vLBQ,Batman Spread Strategy (Explained with ATR Range) ,Batman Spread Strategy (Explained with ATR Range),,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_IpCuGEDxF1k,IpCuGEDxF1k,Bear Put Spread Attack Plan: When to Enter and How to Adjust,Bear Put Spread Attack Plan: When to Enter and How to Adjust,,,debit_spread,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_Ub-lWtW2lro,Ub-lWtW2lro,"Breakout Sniper Mode: Filter the Noise, Find the Move","Breakout Sniper Mode: Filter the Noise, Find the Move",,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_pmvyqgGQP_8,pmvyqgGQP_8,Climbing Straddle Technique which uses Very Low Margins,Climbing Straddle Technique which uses Very Low Margins,,,straddle,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_D4JL_bRpG6Q,D4JL_bRpG6Q,Covered Call Mastery With Downside Hedge 💀,Covered Call Mastery With Downside Hedge 💀,,,covered_call,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_jibvZlF_pzg,jibvZlF_pzg,Cross Calendar Strategy,Cross Calendar Strategy,,,calendar,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_Hqa5iendUh4,Hqa5iendUh4,Delta Options Trading Strategy ,Delta Options Trading Strategy,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_sAIzB6LTo4A,sAIzB6LTo4A,Diagonal Calendar Spread | For Low Vix Trading,Diagonal Calendar Spread | For Low Vix Trading,,,calendar|diagonal,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_H-SkEbPN7XI,H-SkEbPN7XI,Double Theta Attack Adjustment of Iron-Condor,Double Theta Attack Adjustment of Iron-Condor,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_Cl5i-lWAzeo,Cl5i-lWAzeo,Falcon Spread - Top Hedging Trick Public Won't Know,Falcon Spread - Top Hedging Trick Public Won't Know,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_075JsUnCkbU,075JsUnCkbU,False Hedge Exposed - One Step You Skipped,False Hedge Exposed - One Step You Skipped,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_8-p_oYdQzbQ,8-p_oYdQzbQ,Fearless Calendar Strike Force,Fearless Calendar Strike Force,,,calendar,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_wfnsvVVv6t4,wfnsvVVv6t4,Fire & Hold Strategy Built for Working People,Fire & Hold Strategy Built for Working People,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_2p7qJSY3l0w,2p7qJSY3l0w,Frog Jump Stock Options Strategy for Working People |,Frog Jump Stock Options Strategy for Working People |,,,covered_or_equity,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_wVN9MqTOZTo,wVN9MqTOZTo,Future Without Futures | Synthetic Futures with Options,Future Without Futures | Synthetic Futures with Options,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_qr6vqtC0Hyg,qr6vqtC0Hyg,Futures Trading for People With Real Jobs 💼,Futures Trading for People With Real Jobs 💼,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_-79bvB---FQ,-79bvB---FQ,Hit & Forget Options Trading Strategy,Hit & Forget Options Trading Strategy,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_6S4Uj6rC_EE,6S4Uj6rC_EE,How to Adjust Calendar Trades in Tough Markets ,How to Adjust Calendar Trades in Tough Markets,,,calendar,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_X5LY3fvrqao,X5LY3fvrqao,How to Grow Small Account with Weekly Options ¦ For Office People,How to Grow Small Account with Weekly Options ¦ For Office People,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_Xj_vwFQzSpE,Xj_vwFQzSpE,How to exit Illiquid Options,How to exit Illiquid Options,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_lMfu0SetbLM,lMfu0SetbLM,How to get One Spread Pay for Another #Spreadtrading ,How to get One Spread Pay for Another #Spreadtrading,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_O0I-27anGhY,O0I-27anGhY,IN-THE-M0NEY Covered Call Secrets No One Talks About !,IN-THE-M0NEY Covered Call Secrets No One Talks About !,,,covered_call,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_Tk1wwrFs8b0,Tk1wwrFs8b0,Income in 3 Markets?,Income in 3 Markets?,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_DP1w8yNBdpg,DP1w8yNBdpg,Intraday 1:3 Option Selling Setup ,Intraday 1:3 Option Selling Setup,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_zc0pAQAYjuI,zc0pAQAYjuI,Intraday Arsenal  Powerplay Method,Intraday Arsenal  Powerplay Method,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_ZVV2adzfrPs,ZVV2adzfrPs,Intraday Explosion Trading Setup with Adjustments,Intraday Explosion Trading Setup with Adjustments,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_nPTyCdDcl_I,nPTyCdDcl_I,Intraday Stock Options Writing Strategy,Intraday Stock Options Writing Strategy,,,covered_or_equity,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_DYc142yDgRg,DYc142yDgRg,Intraday strategy for working professionals ,Intraday strategy for working professionals,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_1V-06qTH5Rc,1V-06qTH5Rc,Iron Condor Adjustment ,Iron Condor Adjustment,,,iron_condor,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_jpetJcmqBiI,jpetJcmqBiI,Iron Fly Rescue 🔥 ,Iron Fly Rescue 🔥,,,iron_fly,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_1eEQdN6sobc,1eEQdN6sobc,Iron-Clad Option Strategy,Iron-Clad Option Strategy,,,iron_condor,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_pnQ9zzOTrxA,pnQ9zzOTrxA,IronFly Bounce Back Adjustment💭 ,IronFly Bounce Back Adjustment💭,,,iron_fly,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_BaGDEK0Moik,BaGDEK0Moik,IronFly Range Extender for Fast Markets,IronFly Range Extender for Fast Markets,,,iron_fly,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_VbOmv8QB2fE,VbOmv8QB2fE,Jim Simons’ Options Strategy: A Hidden Advantage Retail Traders Miss,Jim Simons’ Options Strategy: A Hidden Advantage Retail Traders Miss,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_sNFT-l6c54k,sNFT-l6c54k,L.E.A.P.S - Set & Forget Leaps Formula,L.E.A.P.S - Set & Forget Leaps Formula,,,leaps,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_EZZzwpLpghM,EZZzwpLpghM,"LOSING-OPTION-TRADE? ""USE TIME'"" Method | Bear Put , Bull Call Adjustment","LOSING-OPTION-TRADE? ""USE TIME'"" Method | Bear Put , Bull Call Adjustment",,,debit_spread,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_Hk55IhMoYAQ,Hk55IhMoYAQ,Leaps Calendar pro Strategy for Working People,Leaps Calendar pro Strategy for Working People,,,calendar|leaps,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_yXv383HTcvM,yXv383HTcvM,"Low Vix ""Terminator"" Options Strategy - For working Professionals","Low Vix ""Terminator"" Options Strategy - For working Professionals",,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_GbmLdB95tv0,GbmLdB95tv0,Low Vix Calendar Adjustments ,Low Vix Calendar Adjustments,,,calendar,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_4mrwSd4rikY,4mrwSd4rikY,MARKET HIT. STILL GREEN - Strategy Survived Everything,MARKET HIT. STILL GREEN - Strategy Survived Everything,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_jPQ14Ok-hqw,jPQ14Ok-hqw,Maths Behind Options Trading Success,Maths Behind Options Trading Success,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_WQVVl4ea3nY,WQVVl4ea3nY,NAKED PUT SELLING RISK?WATCH THIS BEFORE YOU DECIDE ,NAKED PUT SELLING RISK?WATCH THIS BEFORE YOU DECIDE,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_XcwJVbu7nLE,XcwJVbu7nLE,Nifty / Banknifty Pair Options Strategy,Nifty / Banknifty Pair Options Strategy,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_Ncmq68DeN04,Ncmq68DeN04,Nifty BAT-MAN 5000+ Point Range With One Adjustment,Nifty BAT-MAN 5000+ Point Range With One Adjustment,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_9cetNfglyO4,9cetNfglyO4,Nifty Iron Dome Options Strategy ¦ 2 Adjustments Only for Working People,Nifty Iron Dome Options Strategy ¦ 2 Adjustments Only for Working People,,,iron_condor,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_5xz7X5QsFv8,5xz7X5QsFv8,Nifty Iron Dome ¦ 2 Adjustments Only for Working People ,Nifty Iron Dome ¦ 2 Adjustments Only for Working People,,,iron_condor,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_dkC5OPsmIRM,dkC5OPsmIRM,"Nifty Weekly Income Setup, Can it survive Brutal Test? ","Nifty Weekly Income Setup, Can it survive Brutal Test?",,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_OvaJumYancs,OvaJumYancs,No More Straddles. This Strategy Is Smarter,No More Straddles. This Strategy Is Smarter,,,straddle,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_JImI4cVpWeQ,JImI4cVpWeQ,Office Job + Trading? | The Strategy That Doesn't Need Prediction,Office Job + Trading? | The Strategy That Doesn't Need Prediction,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_ezhaIYdGJJw,ezhaIYdGJJw,Old Way ❌ vs Smart Way ✅ to Sell Options (Avoid This Mistake),Old Way ❌ vs Smart Way ✅ to Sell Options (Avoid This Mistake),,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_Yaf0-MQpciA,Yaf0-MQpciA,Operation Budget Day: The Options Strategy + Adjustments + XXXL Wide Range,Operation Budget Day: The Options Strategy + Adjustments + XXXL Wide Range,,,ratio_spread,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_9xXF9gIKQ-A,9xXF9gIKQ-A,Operation Double Iron - Diwali Special Video ,Operation Double Iron - Diwali Special Video,,,ratio_spread,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_LKekgNncNNw,LKekgNncNNw,Opstra Just Unlocked - Pair Trading Power,Opstra Just Unlocked - Pair Trading Power,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_OoDGepNPk3U,OoDGepNPk3U,Option Selling Adjustments Trap Control | #Equityincome,Option Selling Adjustments Trap Control | #Equityincome,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_3A8iiHtQs4I,3A8iiHtQs4I,Options Trading with ChatGPT - My Real TradingView Workflow ,Options Trading with ChatGPT - My Real TradingView Workflow,,,indicator_signal,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_4lwekT_OIlY,4lwekT_OIlY,Overnight Strategy For Working People #stbt #equityincome ,Overnight Strategy For Working People #stbt #equityincome,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_CGPLpXMJkhc,CGPLpXMJkhc,Part - 2 Nifty / Banknifty Pair Options Strategy,Part - 2 Nifty / Banknifty Pair Options Strategy,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_tdX2_3T9WMw,tdX2_3T9WMw,Part - 2 The Loss-Shield Strategy for Working People ,Part - 2 The Loss-Shield Strategy for Working People,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_jSkVc3GddOA,jSkVc3GddOA,Part - 3 The Loss-Shield Strategy for Working People,Part - 3 The Loss-Shield Strategy for Working People,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_Mj3MeJLV8uo,Mj3MeJLV8uo,Power Packed Intraday Scanner For Pros,Power Packed Intraday Scanner For Pros,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_OGPX7Tk6qyA,OGPX7Tk6qyA,Profit locking technique for retail traders ,Profit locking technique for retail traders,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_NDc9ul5-KXw,NDc9ul5-KXw,Put Selling as a Business ,Put Selling as a Business,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_pfDcEyTXSc0,pfDcEyTXSc0,RR Spread That Respects Your Time | Working People Strategy,RR Spread That Respects Your Time | Working People Strategy,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_Cw_vTBiogm0,Cw_vTBiogm0,Ratio Spread + Sniper Hedge ,Ratio Spread + Sniper Hedge,,,ratio_spread,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_6_W4UpFsehs,6_W4UpFsehs,Retail Option Seller's Diagonal Setup for Low Vix,Retail Option Seller's Diagonal Setup for Low Vix,,,diagonal,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_aRjY_O6U3nQ,aRjY_O6U3nQ,Retail Option Sellers Need This First - STRANGLE AIR DEFENSE SYSTEM,Retail Option Sellers Need This First - STRANGLE AIR DEFENSE SYSTEM,,,iron_condor|strangle,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_QgdKOIyO4IQ,QgdKOIyO4IQ,Retail Trader's Bearish Iron-Condor Trick,Retail Trader's Bearish Iron-Condor Trick,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_GfPyo6tv-WA,GfPyo6tv-WA,Retail Trader's Option Selling TOP TRICK | Equityincome,Retail Trader's Option Selling TOP TRICK | Equityincome,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_aQNpDh2F2WE,aQNpDh2F2WE,SHORT PUTS: SELL FEAR STRATEGY,SHORT PUTS: SELL FEAR STRATEGY,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_ao8QwPbB30Q,ao8QwPbB30Q,STBT (Sell Today Buy Tomorrow) Options Strategy with Hedge l,STBT (Sell Today Buy Tomorrow) Options Strategy with Hedge l,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_eahlR62kk-0,eahlR62kk-0,STBT OPTIONS TRADING STRATEGY ,STBT OPTIONS TRADING STRATEGY,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_M_X7B0Qus1k,M_X7B0Qus1k,STBT Strategy For Working Professionals,STBT Strategy For Working Professionals,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_JZeyzi0o8Oc,JZeyzi0o8Oc,STBT Weekly Strategy for Working People | No Adjustment,STBT Weekly Strategy for Working People | No Adjustment,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_ktqzzUvoUFA,ktqzzUvoUFA,STOCK OPTIONS WAR MODE - The RSI Entry,STOCK OPTIONS WAR MODE - The RSI Entry,,,covered_or_equity,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_N0YQj-pczpg,N0YQj-pczpg,STT Went Up. How I Cut ₹700 Per Lot | #equityincome,STT Went Up. How I Cut ₹700 Per Lot | #equityincome,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_3ImqtFO0nHw,3ImqtFO0nHw,Set & Strike Weekly Options Method for Working People,Set & Strike Weekly Options Method for Working People,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_E9F9nCTyO-Q,E9F9nCTyO-Q,Short Straddle: The Final Adjustment When All Else Fails,Short Straddle: The Final Adjustment When All Else Fails,,,straddle,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_8Wr_PWXnztY,8Wr_PWXnztY,Smarter Covered Call | Stop Wasting Premium !,Smarter Covered Call | Stop Wasting Premium !,,,covered_call,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_b-ZZIBhX7fI,b-ZZIBhX7fI,Stock Options Masterclass: High IV Sniper Entry ,Stock Options Masterclass: High IV Sniper Entry,,,covered_or_equity,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_-7kAJqEtBS8,-7kAJqEtBS8,Stock Options Selling with This Indicator | Catch better Levels #equityincome,Stock Options Selling with This Indicator | Catch better Levels #equityincome,,,indicator_signal|covered_or_equity,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_vluJW5DVDbg,vluJW5DVDbg,"Straddle Adjustment So Smart, It Feels Unfair !","Straddle Adjustment So Smart, It Feels Unfair !",,,straddle,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_ETiyK2Ybci8,ETiyK2Ybci8,Straddle In Loss? 1000 Point Hedged Adjustment,Straddle In Loss? 1000 Point Hedged Adjustment,,,straddle,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_cxBtKABYOPE,cxBtKABYOPE,Strap Options Strategy: Best Adjustments for Low VIX Days,Strap Options Strategy: Best Adjustments for Low VIX Days,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_iDm6wc2TG98,iDm6wc2TG98,Strike Mode Activated : The 1:5Play,Strike Mode Activated : The 1:5Play,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_fQw2qLM9_o4,fQw2qLM9_o4,"The ""HEDGE"" Every Option Seller Must Know","The ""HEDGE"" Every Option Seller Must Know",,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_QgsC28PVPXo,QgsC28PVPXo,The Calendar Options Combat Plan For Working People,The Calendar Options Combat Plan For Working People,,,calendar,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_sMZGbncoeKo,sMZGbncoeKo,The Iron Hedge | LEAPS Options Strategy,The Iron Hedge | LEAPS Options Strategy,,,leaps,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_THZp_U4slxs,THZp_U4slxs,The Loss-Shield Strategy for Working People,The Loss-Shield Strategy for Working People,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_5Dr2SL-MQxY,5Dr2SL-MQxY,The Put Shield options Strategy,The Put Shield options Strategy,,,put_strategy,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_851ZmXYon64,851ZmXYon64,"The Ratio Spread ""War"" Machine Built For Violent Markets","The Ratio Spread ""War"" Machine Built For Violent Markets",,,ratio_spread,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_mezwEBOn0bY,mezwEBOn0bY,The Ratio Spread For 💪🏻 Alpha Sellers ,The Ratio Spread For 💪🏻 Alpha Sellers,,,ratio_spread,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_UgQI7WDJ-xA,UgQI7WDJ-xA,The Richest Trades Start Small,The Richest Trades Start Small,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_qAlvtunP9xI,qAlvtunP9xI,The VIRAL 1-1-2 Options Spread | Working People Options Strategy,The VIRAL 1-1-2 Options Spread | Working People Options Strategy,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_nEgtT3KQ1yg,nEgtT3KQ1yg,This Hedge can be Better than Covered Call ,This Hedge can be Better than Covered Call,,,covered_call,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_-E3grhfYDV4,-E3grhfYDV4,This Payoff Hits like a Missile ,This Payoff Hits like a Missile,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_6HZUXkGns2A,6HZUXkGns2A,This is why Retail Traders Miss Big Move (Right Way to Use PCR) ,This is why Retail Traders Miss Big Move (Right Way to Use PCR),,,pcr_directional,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_mgZ7FWdG3c8,mgZ7FWdG3c8,Top 02 Intraday Indicators for Real Edge,Top 02 Intraday Indicators for Real Edge,,,indicator_signal,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_PNSAHbwdbaA,PNSAHbwdbaA,Top 3 Strategies for Beginners ,Top 3 Strategies for Beginners,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_5BQKPOUZ8Hs,5BQKPOUZ8Hs,Top Iron-Condor Adjustments | Iron-Condor Flip,Top Iron-Condor Adjustments | Iron-Condor Flip,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_3VaIprntqlA,3VaIprntqlA,Unique Sold Put Adjustment,Unique Sold Put Adjustment,,,put_strategy,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_LvzfugcnpGA,LvzfugcnpGA,Wait for THIS Level Before Selling Weekly Options Intraday ,Wait for THIS Level Before Selling Weekly Options Intraday,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_s1j4F8CYaTM,s1j4F8CYaTM,Weekly Adjustments for Iron-Condor  #equityincome ,Weekly Adjustments for Iron-Condor  #equityincome,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_o6CSaHAq50c,o6CSaHAq50c,Weekly Calendar Strategy Theta + Hedge,Weekly Calendar Strategy Theta + Hedge,,,calendar,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_vsZDpN4nZD4,vsZDpN4nZD4,Weekly Collar for Working Professionals 💼 ,Weekly Collar for Working Professionals 💼,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_3dKrtjyX4hc,3dKrtjyX4hc,Weekly Cross Calendar ¦ Hedged Strategy ¦ #equityincome ,Weekly Cross Calendar ¦ Hedged Strategy ¦ #equityincome,,,calendar,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_gwPOZtHwLIc,gwPOZtHwLIc,Weekly Options Air Defense System  Built to Survive Gap Attacks,Weekly Options Air Defense System  Built to Survive Gap Attacks,,,iron_condor,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_oGCcVVk0KtM,oGCcVVk0KtM,Weekly Options Buying without Theta Decay  ,Weekly Options Buying without Theta Decay,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_KTy9i7kUnXE,KTy9i7kUnXE,Weekly Options Guerilla Tactics 🚀,Weekly Options Guerilla Tactics 🚀,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_QlQVLenJ_Rc,QlQVLenJ_Rc,Weekly Options Selling with ⚔️ Triple Confirmation Method ⚔️,Weekly Options Selling with ⚔️ Triple Confirmation Method ⚔️,,,covered_or_equity,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_thHoEGJAGLg,thHoEGJAGLg,Weekly Options Survival Strategy For Low Vix,Weekly Options Survival Strategy For Low Vix,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_nIo7ysDbDKg,nIo7ysDbDKg,Weekly Shield | Working People Strategy,Weekly Shield | Working People Strategy,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_mQ0A07NzKmY,mQ0A07NzKmY,When VIX is Low - This Calendar Speaks Loudest,When VIX is Low - This Calendar Speaks Loudest,,,calendar,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_VAJ7yoFMSFA,VAJ7yoFMSFA,Why 90% pick the Wrong Strike - The 2 Minute Protocol,Why 90% pick the Wrong Strike - The 2 Minute Protocol,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_GODEm21Sl1s,GODEm21Sl1s,Why Futures Traders Bleed Money ¦ Future Trading Methods,Why Futures Traders Bleed Money ¦ Future Trading Methods,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_w3-vrFmhIVU,w3-vrFmhIVU,XXXL RANGE OPTIONS STRATEGY FOR WORKING PROFESSIONALS,XXXL RANGE OPTIONS STRATEGY FOR WORKING PROFESSIONALS,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO___7N-w3N2hc,__7N-w3N2hc,You’re Closer to Risk Than You Think,You’re Closer to Risk Than You Think,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_TapDWbaBFw4,TapDWbaBFw4,Zebra Intraday Options Strategy #0dte,Zebra Intraday Options Strategy #0dte,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_MI-LUs6GvOk,MI-LUs6GvOk,“Clever Options Trading Fibonacci Edge”,“Clever Options Trading Fibonacci Edge”,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_2gxtLyEkmHs,2gxtLyEkmHs,⚔️ Expiry Day Gamma Strategy for Intraday Traders,⚔️ Expiry Day Gamma Strategy for Intraday Traders,,,gamma,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_xI3lwE-U3sc,xI3lwE-U3sc,⚡ Ratio Spread (Unheard) Adjustment BEAST MODE,⚡ Ratio Spread (Unheard) Adjustment BEAST MODE,,,ratio_spread,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_q9aOvZcvMEI,q9aOvZcvMEI,🎅Weekly Options Selling with Christmas Tree Options Strategy ,🎅Weekly Options Selling with Christmas Tree Options Strategy,,,covered_or_equity,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_sBFLcfcG06U,sBFLcfcG06U,🎯 Intraday Tactical Strike Strategy | For Working People,🎯 Intraday Tactical Strike Strategy | For Working People,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_boRpz56uI6o,boRpz56uI6o,🏆 Top Iron-Fly Trick of All Time,🏆 Top Iron-Fly Trick of All Time,,,iron_fly,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_TtBbiED12Rg,TtBbiED12Rg,💀 Covered Call Killer | Extra Protection | Special Trick,💀 Covered Call Killer | Extra Protection | Special Trick,,,covered_call,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_VL4P5nNsdng,VL4P5nNsdng,"💎 Option Volatility Secrets, Never Shown On YouTube","💎 Option Volatility Secrets, Never Shown On YouTube",,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_x4SQSpj_inQ,x4SQSpj_inQ,💹 Intraday Option Selling Battle Plan | Darvas Box Setup,💹 Intraday Option Selling Battle Plan | Darvas Box Setup,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_Ljyv8khEMqk,Ljyv8khEMqk,💹Kelly's Options Trading Calculator | Method Used By Professionals,💹Kelly's Options Trading Calculator | Method Used By Professionals,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_vrtNR5M2CVk,vrtNR5M2CVk,📌 #1 Trick of Overnight Gap Protection for Options Trading ¦ #equityincome ,📌 #1 Trick of Overnight Gap Protection for Options Trading ¦ #equityincome,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_0qHsGg2YDIg,0qHsGg2YDIg,📌 Iron Condor Super Adjustments ,📌 Iron Condor Super Adjustments,,,iron_condor,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_nmQFhPwbRfg,nmQFhPwbRfg,📍Pin-Point Strike ⚡ Strategy for Working Professionals,📍Pin-Point Strike ⚡ Strategy for Working Professionals,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_7oxXpVnllW8,7oxXpVnllW8,🔥 2 Viral Covered Call Tricks! | Equityincome,🔥 2 Viral Covered Call Tricks! | Equityincome,,,covered_call,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_91kS7WII9Lg,91kS7WII9Lg,🔥 Double Calendar Hedged Strategy For Busy People ,🔥 Double Calendar Hedged Strategy For Busy People,,,calendar,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_Kh6zy3hy4Lo,Kh6zy3hy4Lo,🔥 IRON-FLY Damage Control Protocol,🔥 IRON-FLY Damage Control Protocol,,,iron_fly,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_7t6y29xJRMg,7t6y29xJRMg,🔥 Iron Fly Strategy Adjustment When Markets Turn Wild ⚔️ ,🔥 Iron Fly Strategy Adjustment When Markets Turn Wild ⚔️,,,iron_fly,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_hAy3T7sE5qo,hAy3T7sE5qo,🔥 RR 1:5 LEAPS OPTIONS STRATEGY ¦ Professional Hedged Setup ¦ #equityincome ,🔥 RR 1:5 LEAPS OPTIONS STRATEGY ¦ Professional Hedged Setup ¦ #equityincome,,,leaps,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_Y0EbZhLin44,Y0EbZhLin44,🔥 The Weekly IronFly Most Traders Are Missing,🔥 The Weekly IronFly Most Traders Are Missing,,,iron_fly,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_FbLyqJpz7pY,FbLyqJpz7pY,🔥 This Batman Adjustment Can Change Your Payoff ,🔥 This Batman Adjustment Can Change Your Payoff,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_QCWBykZmlqI,QCWBykZmlqI,🔥 Tomorrow Gap up or Down? OBV early Signal,🔥 Tomorrow Gap up or Down? OBV early Signal,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO__pDU1aqKivU,_pDU1aqKivU,🔥Aggressive Straddle Adjustment Plan ✅,🔥Aggressive Straddle Adjustment Plan ✅,,,straddle,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_igUs-iyxhzE,igUs-iyxhzE,🔥Cross Calendar Setup for Working Professionals ,🔥Cross Calendar Setup for Working Professionals,,,calendar,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_L7lqjl9UymE,L7lqjl9UymE,🔥HEDGING UNDER FIRE : THE RANGE ADVANTAGE !,🔥HEDGING UNDER FIRE : THE RANGE ADVANTAGE !,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_RBSR9h3nzzQ,RBSR9h3nzzQ,🔱 Trend Sniper ¦ Working People Strategy,🔱 Trend Sniper ¦ Working People Strategy,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_z8gYpMnOh1A,z8gYpMnOh1A,"🤫 The ""Real"" Hedging Looks Like This |","🤫 The ""Real"" Hedging Looks Like This |",,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_0a5xwwkChd4,0a5xwwkChd4,🦁#Leaps Passive Trading. Here's How.,🦁#Leaps Passive Trading. Here's How.,,,leaps,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_mHnaPTedrUU,mHnaPTedrUU,🧠10x Better than your Synthetic Future #optionselling #niftyoptiontradingstrategy #optiontrading,🧠10x Better than your Synthetic Future #optionselling #niftyoptiontradingstrategy #optiontrading,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING
+EI_VIDEO_F2mBweH77Es,F2mBweH77Es,🪽 Broken-Wing 21 Day Butterfly | Sweet Spot Trading,🪽 Broken-Wing 21 Day Butterfly | Sweet Spot Trading,,,unclassified,,,,,,,,UNRESOLVED,UNRESOLVED,,PENDING

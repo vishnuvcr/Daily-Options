@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "videos": 169,
+  "transcript_status_counts": {
+    "archived": 169
+  },
+  "candidate_family_counts": {
+    "calendar": 12,
+    "covered_call": 7,
+    "covered_or_equity": 7,
+    "debit_spread": 2,
+    "diagonal": 2,
+    "gamma": 1,
+    "indicator_signal": 5,
+    "iron_condor": 7,
+    "iron_fly": 10,
+    "leaps": 5,
+    "pcr_directional": 1,
+    "put_strategy": 2,
+    "ratio_spread": 6,
+    "straddle": 7,
+    "strangle": 1,
+    "unclassified": 98
+  },
+  "strategy_candidates": 71,
+  "transcript_verified": 169,
+  "phase": 26,
+  "backtesting_started": false
+}
