@@ -152,3 +152,12 @@ Frozen family retired. Base and Stress artifacts were independently audited for 
 | 30.1 | phase-30.1-equity-income-air-defense-v1 | 36159121044 | Unit tests/cache passed; exact-expiry acquisition in progress | No |
 
 Phase 30 v8 is retired. The Air Defense family is the sole active Equity Income numerical frontier.
+
+## 2026-09-25 — Phase 30.1 closure / Phase 30.2 active frontier
+
+| Phase | Branch | Workflow run | Status | Accepted P&L |
+|---|---|---:|---|---|
+| 30.1 | phase-30.1-equity-income-air-defense-v1 | 36159644022 | Base + Stress complete; 0/24 pass weekly gate | Yes — negative-to-target evidence; family retired |
+| 30.2 | phase-30.2-equity-income-falcon-weekly-v1 | 36160694325 | Pending/queued | No |
+
+Air Defense remains archived as a positive-but-under-target family. Falcon is now the sole active Equity Income numerical frontier.
