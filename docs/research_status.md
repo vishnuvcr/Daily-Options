@@ -347,3 +347,12 @@ Stress best: same frozen cell, 45 trades, 28.89% win rate, **-₹2,219.25/lot/da
 **Decision: Phase 25 RETIRED.** No Falcon variant qualified, and the family is not advanced to WFA/OOS. No post-result Falcon tuning is permitted. The next phase must be a distinct hypothesis.
 
 Final manuscript fragment: `reports/phase25_falcon_rissin_final_result.md`.
+
+
+## Phase 25 forensic re-audit — 2026-09-25 — PRIOR RESULT RETRACTED
+
+The previously recorded Phase 25 retirement is **RETRACTED**. A strategy-level audit against the Phase 24 reference implementation found a material simulation regression: the Phase 25 pre-adjustment stop scan was not bounded by the selected adjustment timestamp. It could therefore classify a post-adjustment loss as `STOP_PRE_ADJUST` and exit without adding the five-lot outer wings. The Phase 25 pre-stop cache also omitted adjustment time from its key, causing stop timestamps to be reused across different adjustment-time variants.
+
+A second accounting issue was found: the summary reported a nominal 270 variants, but the actual Phase 25 leaderboard contained only **135 executable variants**, all `DIAGONAL_PREMIUM`; the 135 `SAME_STRIKE` variants generated no trades. Therefore the earlier statement that all 270 variants were negative was incorrect.
+
+The code has now been corrected to match the Phase 24 pre-adjustment semantics: `start <= mark_time < adjustment_signal`, with the stop cache keyed by setup and adjustment time. A fresh Base + Stress run is mandatory. **No Falcon retirement decision is currently valid.**
