@@ -336,3 +336,11 @@ Trading research remains paused until the channel inventory/transcript archive i
 The first live keyless archive run (GitHub Actions **36118488376**) reached Python execution and failed before channel discovery because two generated string literals in `archive_equity_income_keyless.py` contained literal newlines. This was a code-generation defect, not a data or encryption failure.
 
 The canonical archive branch was corrected at commit `6bd858822117ac89afa6f62596b09c934b6b15e4`. A fresh run was triggered from `main`; no transcript data from the failed run was accepted.
+
+## 2026-09-25 — Archive discovery-first correction
+
+The first full keyless archive retry discovered **169 unique videos**, confirming channel enumeration, but every per-video yt-dlp metadata request hit YouTube anti-bot challenges. Because the script required successful metadata enrichment before transcript retrieval, that run produced no transcripts.
+
+The archive implementation is now transcript-first: channel discovery supplies stable video IDs/URLs/titles/provenance; transcript retrieval proceeds without per-video metadata extraction. The metadata enrichment path is no longer a hard completion gate.
+
+The canonical archive workflow was also corrected to operate on the canonical `equity-income-channel-archive-v1` branch and remain manual-only there; the unattended schedule remains on `main`.
