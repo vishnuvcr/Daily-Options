@@ -334,3 +334,16 @@ The frozen strategy is unchanged. The simulator now also caches exact-expiry str
 User requested continuation. Repository control files were re-read before resuming. Authoritative Phase 25 run **36111174510** remains **in progress**; both Base and Stress jobs are in the **Run friction** step. All prerequisite steps visible in the jobs have passed: checkout, Python setup, dependencies, **7/7 unit tests**, cached Rissin restore/acquisition, coverage validation, and cache save. The previous runs 36110262221 and 36110775799 are cancelled/superseded and contribute no P&L.
 
 No new strategy tuning is permitted while this frozen-grid friction run is active. The next action is to wait for completion and inspect the produced Base/Stress artifacts, executable-date coverage, trade count, active-day net P&L, drawdown, win rate, and the preregistered promotion gate. If the run fails or times out, the failure is logged and corrected before numerical interpretation.
+
+
+## Phase 25 final decision — 2026-09-25
+
+Authoritative run **36111174510** completed successfully in both Base and Stress. The independent Rissin source passed the 84,280,469-row / 311-date / 76-expiry coverage gate and all 7 unit tests. The frozen 270-cell Falcon family produced **680 setups, 47 distinct entry dates and 6,120 trade records**. No variant had positive mean active-day net.
+
+Base best: `09:30:00|p25|DIAGONAL_PREMIUM|adj11:00:00|stop0.5`, 45 trades, 33.33% win rate, **-₹1,645.92/lot/day** mean active-day net, **-₹74,066.24** total net.
+
+Stress best: same frozen cell, 45 trades, 28.89% win rate, **-₹2,219.25/lot/day** mean active-day net, **-₹99,866.24** total net.
+
+**Decision: Phase 25 RETIRED.** No Falcon variant qualified, and the family is not advanced to WFA/OOS. No post-result Falcon tuning is permitted. The next phase must be a distinct hypothesis.
+
+Final manuscript fragment: `reports/phase25_falcon_rissin_final_result.md`.
