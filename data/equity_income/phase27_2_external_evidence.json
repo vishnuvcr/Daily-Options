@@ -1,0 +1,45 @@
+{
+  "aRjY_O6U3nQ": {
+    "title": "Retail Option Sellers Need This First - STRANGLE AIR DEFENSE SYSTEM",
+    "source_url": "https://www.youtube.com/watch?v=aRjY_O6U3nQ",
+    "evidence": [
+      "Uses India VIX and time to expiry to estimate NIFTY expected range.",
+      "Explains 1-sigma and 2-sigma ranges and applies them to short strangles and iron condors.",
+      "Describes adjusting positions when price moves toward the short strikes."
+    ],
+    "source_type": "YouTube description",
+    "research_use": "supports family/payoff identification and regime-input requirements; does not establish exact strike/stop/exit rules"
+  },
+  "3dKrtjyX4hc": {
+    "title": "Weekly Cross Calendar | Hedged Strategy",
+    "source_url": "https://www.youtube.com/watch?v=3dKrtjyX4hc",
+    "evidence": [
+      "Describes a weekly cross-calendar using two weekly expiries.",
+      "Discusses IV influence, margin/capital deployment, strike selection and gamma risk near expiry.",
+      "States stop loss needs to be part of the system."
+    ],
+    "source_type": "YouTube description",
+    "research_use": "supports multi-expiry calendar family and required data fields; exact leg ratios and adjustment trigger remain transcript-dependent"
+  },
+  "1V-06qTH5Rc": {
+    "title": "Iron Condor Adjustment",
+    "source_url": "https://www.youtube.com/watch?v=1V-06qTH5Rc",
+    "evidence": [
+      "Describes defending an iron condor when the market keeps moving or reverses.",
+      "Discusses adding far-OTM options, widening the setup, breakevens/theta and extending the structure."
+    ],
+    "source_type": "YouTube description",
+    "research_use": "supports a distinct adjustment-family candidate; exact trigger, strikes, sizing and stop remain transcript-dependent"
+  },
+  "s1j4F8CYaTM": {
+    "title": "Weekly Adjustments for Iron-Condor",
+    "source_url": "https://www.youtube.com/watch?v=s1j4F8CYaTM",
+    "evidence": [
+      "Description gives chapters for initial weekly iron-condor setup, adjustment trigger, step-by-step adjustment, range extension and weekly-expiry handling.",
+      "Mentions margin considerations and different outcomes if the market reverses or continues trending.",
+      "Description reiterates stop-loss as part of the system."
+    ],
+    "source_type": "YouTube description",
+    "research_use": "supports weekly iron-condor family grouping and adjustment-rule reconstruction"
+  }
+}
