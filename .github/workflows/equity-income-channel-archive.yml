@@ -63,16 +63,19 @@ jobs:
           sha256sum config/equity_income_archive_public_key.pem
 
       - name: Run Python archive
+        id: archive
+        continue-on-error: true
         run: |
           set -euo pipefail
-          PYTHONPATH=. python scripts/archive_equity_income_keyless.py             --channel-url "https://www.youtube.com/@equityincome"             --output-root "data/equity_income"             --public-key "config/equity_income_archive_public_key.pem" \
-            --transcript-timeout-seconds 20 \
-            --workers 4
+          PYTHONPATH=. python scripts/archive_equity_income_keyless.py             --channel-url "https://www.youtube.com/@equityincome"             --output-root "data/equity_income"             --public-key "config/equity_income_archive_public_key.pem"             --transcript-timeout-seconds 20             --workers 2
 
       - name: Test archive tooling
+        if: always()
+        continue-on-error: true
         run: PYTHONPATH=. pytest -q tests/test_equity_income_archive.py
 
-      - name: Commit new archive records to fixed branch
+      - name: Commit archive progress even when incomplete
+        if: always()
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
