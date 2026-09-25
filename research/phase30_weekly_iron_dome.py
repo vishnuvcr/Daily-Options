@@ -108,6 +108,7 @@ def load_option_series(con, path, _trade_day, strike, side, start_ts, end_ts):
            CAST(open AS DOUBLE) AS open_px,
            CAST(close AS DOUBLE) AS close_px
     FROM read_parquet('{str(path).replace("'", "''")}')
+    WHERE CAST(timestamp AS TIMESTAMP) BETWEEN TIMESTAMP '{start_ts}' AND TIMESTAMP '{end_ts}'
       AND CAST(timestamp AS TIMESTAMP) BETWEEN TIMESTAMP '{start_ts}' AND TIMESTAMP '{end_ts}'
       AND CAST(strike AS DOUBLE) = {float(strike)}
       AND UPPER(CAST(option_type AS VARCHAR)) = '{side}'
