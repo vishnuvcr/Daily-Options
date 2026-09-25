@@ -369,3 +369,14 @@ Phase 29.1 run 36133844640 completed successfully after correcting E0252 (HF rep
 - Rissin pinned tree: 51 Parquet files total; Upstox NIFTY 4, BANKNIFTY 3, SENSEX 3; historical NIFTY 14 and BANKNIFTY 22.
 - Preliminary feasibility classification: 51 index-family candidates; data-limited 16; unresolved 4.
 - Numerical backtest gate: BLOCKED. Bid/ask verified = 0; strategy-specific quote completeness = 0; full historical lot-size verification = 0.
+
+## 2026-09-25 — Phase 29.2 completed
+
+Run **36135151445** completed successfully after E0263/E0264 implementation corrections. The 71-row candidate registry was cross-checked against the 169-video Equity Income archive and 169 archived transcript-manifest records. Strict metadata-level contract readiness is:
+- 54 UNDERLYING_UNRESOLVED
+- 10 DATA_PARTIAL_INDEPENDENT_GAP (primary stock-option coverage exists, but no independent stock-option source is pinned)
+- 4 RULE_RECONSTRUCTION_REQUIRED
+- 1 LONG_DATED_DATA_LIMITED
+- 2 CONTRACT_READY_FOR_CONTENT_JOIN (both are the duplicated NIFTY Iron Dome candidate)
+
+This is **not** numerical backtest readiness. Every row remains `backtest_allowed=NO`. Phase 30 remains BLOCKED because exact leg composition, dated expiry/lot-size joins, quote completeness and execution-cost modelling are not yet proven.
