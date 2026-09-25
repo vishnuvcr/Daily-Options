@@ -417,10 +417,10 @@ def fetch_external_transcript_service(video_id: str):
     """Last-resort caption proxy; preserves service provenance and does not generate text locally."""
     from urllib.parse import quote
 
+    # The documented no-key endpoint already falls back from human to
+    # auto-generated captions, so one request per video is sufficient.
     endpoints = (
         "https://youtube-transcript.ai/transcript/{video_id}.txt?lang=en",
-        "https://youtube-transcript.ai/transcript/{video_id}.txt?lang=hi",
-        "https://youtube-transcript.ai/transcript/{video_id}.txt",
     )
     errors = []
     headers = {"User-Agent": "Daily-Options-Equity-Income-Archive/1.0"}
