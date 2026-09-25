@@ -121,3 +121,7 @@ Authoritative Iron Dome v8 Base+Stress execution completed. All 12 frozen cells 
 ## 2026-09-25 — Phase 30.1 Air Defense launch
 
 After the clean Phase 30 v8 retirement, research advanced to the source-resolved Air Defense candidate. A 24-cell frozen grid was registered before numerical execution. The Python-only NSE India VIX acquisition layer is cached separately from the pinned TradeMarkk options source. No result-driven parameter changes are permitted.
+
+## 2026-09-25 — Phase 30.1 closure / Falcon continuation
+
+The Air Defense family completed both Base and Stress. It achieved a high positive-week rate in the best frozen cell but only about ₹2.1k mean weekly net at the one-lot-per-short reference size, so it does not meet the declared ₹5k/week promotion gate. The research therefore advances without tuning to the Falcon Spread independent replication. This preserves the source-fidelity sequence and avoids repeating the earlier day-based target.
