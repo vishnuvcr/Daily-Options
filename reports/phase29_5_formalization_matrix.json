@@ -237,6 +237,9 @@
       "lot_size_is_2026_revision": true
     }
   ],
+  "weekly_economic_target_net": 5000,
+  "weekly_positive_rate_target": 0.7,
+  "weekly_execution_coverage_target": 0.8,
   "numerical_backtest_allowed": 0,
   "phase30_gate": "BLOCKED",
   "gate_reason": [
