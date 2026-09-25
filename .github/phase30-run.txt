@@ -1,1 +1,1 @@
-run Phase 30 Iron Dome weekly backtest — target ₹5000/week
+run Phase 30 Iron Dome weekly backtest — target ₹5000/week — trigger-20260925-1959
