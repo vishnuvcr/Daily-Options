@@ -21,3 +21,11 @@ No candidate enters backtest while economically material rules remain unresolved
 - Preserve information barriers and historical lot sizes.
 - Log every implementation/data error in `docs/error_log.md`.
 - Update `docs/research_status.md` after each execution.
+
+## 2026-09-25 — Phase 27 activation after Phase 26 completion
+
+Phase 26 is complete with 169/169 transcript integrity verified. Phase 27 now performs source-preserving rule evidence extraction for all strategy-candidate videos flagged by Phase 26.
+
+Transcript text is fetched through a Python HTTP client, held only in memory, and converted into non-copyright structured evidence: days, times, underlying, premium references, lot/ratio references, strike terminology, stop/target/adjustment phrases and detected payoff-family terms.
+
+Rule cards store only structured evidence and source provenance. They do not store plaintext transcripts. Materially unresolved rule fields remain UNSPECIFIED and are not allowed into numerical testing.
