@@ -1,0 +1,1 @@
+Phase 27 controlled trigger: extract deterministic source-rule evidence for all strategy candidates.\n
