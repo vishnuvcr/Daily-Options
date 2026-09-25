@@ -250,3 +250,13 @@ A weekly archive workflow is now on `main`. It checks out the fixed archive bran
 ## 2026-09-25 — Equity Income archive retry correction
 
 The first live full-channel attempt enumerated 169 videos but was stopped by YouTube anti-bot challenges during per-video metadata enrichment. No transcript result was accepted. The archive was corrected to use channel discovery as the deterministic inventory and retrieve transcripts directly by video ID/URL, so metadata-page challenges no longer block transcript acquisition.
+
+## 2026-09-25 — Equity Income archive continuation checkpoint
+
+The channel inventory is now confirmed at 169 public videos, but the latest completed archive pass produced 0 validated transcripts because YouTube anti-bot controls blocked every transcript attempt from the GitHub runner. This is treated as an acquisition failure, not as evidence that the videos lack transcripts.
+
+The fixed branch equity-income-channel-archive-v1 has been hardened with a source-preserving Python fallback ladder using the pinned PO-token provider, additional yt-dlp clients, youtube-transcript-api, InnerTube, timedtext, and one bounded no-key third-party transcript endpoint with explicit provenance. Partial encrypted successes are committed for resumable continuation.
+
+[Archive status](https://github.com/vishnuvcr/Daily-Options/blob/equity-income-channel-archive-v1/docs/equity_income_archive_status.md) · [Archive plan](https://github.com/vishnuvcr/Daily-Options/blob/equity-income-channel-archive-v1/docs/equity_income_channel_archive_plan.md)
+
+Trading research remains paused until every current video has a validated transcript or an explicit durable failure record and the full integrity gate passes.
