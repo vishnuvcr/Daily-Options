@@ -105,3 +105,7 @@ For the Equity Income YouTube channel analysis, the prior ₹1,000-per-day objec
 Rebase the active YouTube promotion gate around completed trading weeks at a fixed, disclosed reference strategy position size. Evaluate mean and median weekly net, profitable-week rate, execution coverage, Base/Stress costs, drawdown and tail risk, nested walk-forward validation and independent later-period OOS.
 
 The old ₹1,000/day criterion remains historical only for pre-YouTube intraday phases. This change does not alter any already-accepted historical result or select parameters from test data.
+
+## 2026-09-25 — Current Phase 30 v8 checkpoint
+
+Research resumed from the v7 invalidation. The active v8 branch isolates mutable leg state per parameter cell. Authoritative run 36157105595 passed tests and data coverage and is executing Base. A prior v8 Base-only artifact was audited as internally consistent but is not treated as the final result because Stress was skipped after a persistence failure. No WFA/OOS tuning is permitted.
