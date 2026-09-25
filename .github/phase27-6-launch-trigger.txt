@@ -1,2 +1,4 @@
 Phase 27.6 launcher trigger: deep-dive aRj Air Defense source evidence.
 Phase 27.6 targeted risk/expiry extraction rerun 2026-09-25.
+
+Phase 27.6 trigger rerun 2026-09-25-02
