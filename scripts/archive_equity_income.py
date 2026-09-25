@@ -453,6 +453,11 @@ def fetch_transcript(video_id: str, video_url: str, retries: int = 1):
     4) direct timedtext,
     5) no-key third-party transcript proxy as a last resort.
     """
+    invidious = fetch_invidious(video_id)
+    if invidious is not None:
+        snippets, lang, label, generated = invidious
+        return snippets, lang, label, generated, "invidious-captions"
+
     ytdlp_result = fetch_ytdlp_subtitles(video_url)
     if ytdlp_result[0] is not None:
         return ytdlp_result
@@ -462,11 +467,6 @@ def fetch_transcript(video_id: str, video_url: str, retries: int = 1):
     if api_result[0] is not None:
         return api_result
     errors.append(f"youtube-transcript-api:{api_result[1]}")
-
-    invidious = fetch_invidious(video_id)
-    if invidious is not None:
-        snippets, lang, label, generated = invidious
-        return snippets, lang, label, generated, "invidious-captions"
 
     timed = fetch_innertube(video_id)
     if timed is not None:
