@@ -1,0 +1,23 @@
+{
+  "candidate_videos": 71,
+  "processed": 71,
+  "errors": 0,
+  "manual_review_required": 71,
+  "family_hit_counts": {
+    "iron_fly": 26,
+    "ratio_spread": 26,
+    "option_selling": 20,
+    "option_buying": 5,
+    "iron_condor": 9,
+    "straddle": 29,
+    "hedged_income": 30,
+    "covered_call": 8,
+    "leaps": 6,
+    "strangle": 17,
+    "debit_spread": 10,
+    "calendar": 14,
+    "diagonal": 2,
+    "credit_spread": 5,
+    "jade_lizard": 1
+  }
+}
