@@ -301,3 +301,10 @@ The corrected TradeMarkk Stress artifact is **data-limited**: 270 variants, but 
 Run **36056063674** completed the Stress friction job successfully. The Stress artifact reports 270 preregistered variants but only **32 executable setups / 5 unique entry dates** (2023-12-15, 2025-06-13, 2025-12-17, 2026-03-18, 2026-06-29) and 288 trade records. The apparent 18 target-qualified cells are dominated by single-trade observations and are rejected as strategy evidence. The audit indicates the restored exact-expiry cache was under-covered for the nominal research window; data-acquisition completeness must be validated before accepting any Phase 24 P&L. Base friction is still running from the same ref and will be treated as non-evidentiary until the cache problem is corrected.
 
 Phase 24 next execution requirement: rebuild/reacquire a coverage-validated exact-expiry cache, then rerun the unchanged 270-cell grid. No parameter retuning is authorized from the sparse Stress leaderboard.
+
+
+## 2026-09-25 — Phase 24 audit closure and Phase 25 launch
+
+Phase 24 TradeMarkk execution is quarantined for evidence because its accepted artifact contained only 5 unique executable entry dates and 32 setup combinations across the nominal research window. The apparent target-qualified cells were dominated by single-trade observations. This is logged as E0237/E0238; no Phase 24 leaderboard cell is promoted.
+
+Phase 25 is now the active independent replication branch: `phase-25-falcon-rissin-independent-v1`. It uses pinned Rissin/Upstox NIFTY 1-minute data revision `78b1c5468255d18cf492984bfe6fe4e3ac874d7c`, exact expiry metadata, the unchanged 270-cell Falcon grid, Wednesday→Thursday→Monday current-rule geometry, historical Friday→Monday→Wednesday geometry, Paytm Money/NSE costs, and doubled slippage. Promotion is blocked until the independent source produces adequate sample size and survives base/stress gates.
