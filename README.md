@@ -229,3 +229,12 @@ Phase 24 Falcon results are quarantined after execution audit: only 5 unique exe
 - [Phase 25 plan](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/phase25_plan.md)
 - [Research status](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md)
 - [Error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md)
+
+
+## 2026-09-25 — Equity Income archive / weekly research program
+
+Trading-strategy testing is paused. A dedicated fixed acquisition branch now archives the public Equity Income YouTube channel with deterministic Python tooling, transcript provenance and integrity hashes. Full transcripts are stored encrypted rather than plaintext because this repository is public.
+
+[Equity Income archive branch](https://github.com/vishnuvcr/Daily-Options/tree/equity-income-channel-archive-v1) · [Archive plan](https://github.com/vishnuvcr/Daily-Options/blob/equity-income-channel-archive-v1/docs/equity_income_channel_archive_plan.md) · [Weekly research plan](https://github.com/vishnuvcr/Daily-Options/blob/equity-income-channel-archive-v1/docs/equity_income_weekly_research_plan.md)
+
+The next research program is weekly rather than daily, with a fixed-position reference target of **₹5,000 net per traded week**, plus Base/Stress costs, weekly drawdown analysis, nested WFA and later-period OOS validation. Separate Phase 26–35 branches have been created for the research pipeline.
