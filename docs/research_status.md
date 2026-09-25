@@ -415,3 +415,11 @@ Controlled PR run 36125157622 is active on GitHub Actions. Job 108039526067 has 
 The Python archive acquisition step is currently executing. No transcript count, P&L, or strategy conclusion is accepted until the job completes and the encrypted archive manifest/snapshot is persisted.
 
 Current fixed branch inventory remains 169 discovered videos and 0 persisted encrypted transcripts from the prior completed snapshot.
+
+## 2026-09-25 — Equity Income archive result and next acquisition escalation
+
+The hardened archive run 36126797339 recovered **39 of 169** public videos with **39/39 encrypted envelopes passing integrity validation**. The remaining 130 are unresolved because the GitHub-runner YouTube paths remain blocked and the previous no-key proxy commonly returned HTTP 200 without parseable timestamp lines.
+
+The fixed archive branch has now added a structured youtubegpt.ai JSON caption fallback that returns millisecond-timed source caption segments and an explicit generated/human track flag. The next run will reuse the 39 persisted successes and attempt only the 130 unresolved videos.
+
+Weekly trading research remains PAUSED until the archive gate passes.
