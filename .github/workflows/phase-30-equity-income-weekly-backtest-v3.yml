@@ -2,7 +2,7 @@ name: Phase 30 - Equity Income Iron Dome weekly backtest
 
 on:
   workflow_dispatch:
-      - ".github/workflows/phase-30-equity-income-weekly-backtest-v3.yml"  pull_request:
+  pull_request:
     paths:
       - ".github/workflows/phase-30-equity-income-weekly-backtest-v3.yml"
       - "docs/phase30_weekly_backtest_plan.md"
