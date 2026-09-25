@@ -301,3 +301,18 @@ The corrected TradeMarkk Stress artifact is **data-limited**: 270 variants, but 
 Run **36056063674** completed the Stress friction job successfully. The Stress artifact reports 270 preregistered variants but only **32 executable setups / 5 unique entry dates** (2023-12-15, 2025-06-13, 2025-12-17, 2026-03-18, 2026-06-29) and 288 trade records. The apparent 18 target-qualified cells are dominated by single-trade observations and are rejected as strategy evidence. The audit indicates the restored exact-expiry cache was under-covered for the nominal research window; data-acquisition completeness must be validated before accepting any Phase 24 P&L. Base friction is still running from the same ref and will be treated as non-evidentiary until the cache problem is corrected.
 
 Phase 24 next execution requirement: rebuild/reacquire a coverage-validated exact-expiry cache, then rerun the unchanged 270-cell grid. No parameter retuning is authorized from the sparse Stress leaderboard.
+
+## 2026-09-25 — Phase 25 independent Falcon replication engineering checkpoint
+
+- The pinned Rissin NIFTY 1-minute source passed the coverage gate on both runners: **84,280,469 rows, 311 distinct trading dates, 76 distinct expiries**.
+- Run **36109400662** was non-evidentiary: tests and data coverage passed, but setup construction failed on scalar-vs-Series strike access (E0240).
+- Run **36109602872** was non-evidentiary: tests and data coverage passed, but the DuckDB file-list SQL was malformed (E0241).
+- The multi-day series date-range defect was caught by static audit and regression testing before any numerical result was accepted (E0239).
+- Phase 25 is now corrected for the observed CI/YAML, multi-day-series, scalar-field, and source-SQL defects. The workflow also persists the Rissin data cache across failed research jobs.
+- **No P&L result is accepted yet. No parameter retuning has occurred.**
+- Next accepted checkpoint: clean Base + Stress friction on the frozen 270-cell grid, followed by inspection of executable setup dates, trade counts, active-day net P&L, stress results, and the Phase 25 promotion gate.
+- Positive adequately sampled replication advances the unchanged rule to Phase 26 untouched WFA/OOS; otherwise the Falcon family is retired.
+
+## Current Phase 25 status — 2026-09-25
+
+**ACTIVE — corrected clean execution pending.**
