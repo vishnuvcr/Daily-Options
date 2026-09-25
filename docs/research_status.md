@@ -478,3 +478,19 @@ Research decision:
 - Consistency is measured with ≥70% positive eligible OOS weeks and ≥80% execution coverage unless the source rule explicitly defines a no-trade week.
 - Paytm Money/NSE costs, date-specific lot sizes, Base/Stress slippage, WFA and later-period OOS remain mandatory.
 - No existing Phase 29.4 source evidence or P&L conclusion is changed by this target update.
+
+
+## 2026-09-25 — Phase 30 numerical gate opened, then invalidated pre-conclusion
+
+The Equity Income YouTube program has now moved from source-rule formalization into numerical testing against the frozen 12-cell NIFTY Iron Dome family. The active objective is **₹5,000 NET per completed trading week**, with the weekly consistency gates already registered in the research plan.
+
+The first vectorized Base run completed its coverage and simulation stages, but static result audit identified a critical data-loader defect: the option-series loader restricted each exact-expiry parquet to the single entry/adjustment `trading_day`, causing later marks to be carried forward instead of using the full timestamp range to expiry. Therefore **no Phase 30 P&L result from the affected run is accepted**.
+
+The corrected rerun must:
+1. load the full timestamp range from each pinned exact-expiry NIFTY parquet;
+2. preserve the frozen 12-cell rule set;
+3. run Base and doubled-slippage Stress;
+4. report weekly mean, median, positive-week rate, execution coverage, worst week/drawdown and tail-risk metrics;
+5. only then open the WFA/OOS gate.
+
+The ₹1,000/day objective remains retired for the Equity Income YouTube program.
