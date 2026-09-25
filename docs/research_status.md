@@ -362,3 +362,11 @@ The next deterministic Python acquisition method is now **InnerTube caption-trac
 InnerTube caption-track retrieval did not solve the GitHub-runner acquisition problem: the full 169-video retry still failed. Current yt-dlp documentation identifies Proof-of-Origin tokens as relevant to YouTube subtitle/player requests, and the BgUtils provider is specifically designed to supply those tokens and has been used to address bot-check failures. citeturn863015search1turn408341view0
 
 The archive now pins **bgutil-ytdlp-pot-provider 2.0.0**, starts its matching provider container on localhost, and makes PO-token-enabled yt-dlp the primary transcript acquisition path. The public-key archive design is unchanged; no GitHub secret is introduced. PyPI currently lists 2.0.0 as the latest provider release. citeturn434885search0
+
+## 2026-09-25 — Resumable archive checkpoint
+
+Run **36123998811** produced the first partial transcript success: **1/169** videos archived before 168 failures. That success was not previously durable. The subsequent workflow was changed to persist encrypted partial progress and to fail explicitly after commit when the archive remains incomplete.
+
+The latest canonical archive snapshot currently records **169 discovered videos, 0 archived, 169 transcript errors** because the next run's new fallbacks were added after that snapshot. The next run will test the new acquisition ladder, now including curated Invidious caption APIs and a no-key transcript proxy, while retaining direct yt-dlp/PO-token, YouTube Transcript API, InnerTube and timedtext paths.
+
+No trading/backtest phase has started; Phase 26 remains metadata-only until transcript acquisition is adequately resolved.
