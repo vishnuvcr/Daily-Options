@@ -106,3 +106,7 @@ Phase 29.1 run 36133844640 completed successfully after correcting E0252 (HF rep
 ## 2026-09-25 — Phase 29.2 execution
 
 Phase 29.2 was started on dedicated branch `phase-29.2-equity-income-contract-coverage-v1`. The plan and manual-run workflow were created. Run 36134416123 stopped at unit tests because of malformed newline literals in the new Python artifact-writing lines (E0263). No data result was accepted. The script was corrected and will be rerun; the contract-content and numerical gates remain locked.
+
+## 2026-09-25 — Phase 29.2 validator diagnosis
+
+Run 36134943745 passed unit tests and matrix construction, then the standalone validator failed because the generated JSON artifacts ended with literal \\n text rather than a real newline. The validator log exposed the exact JSONDecodeError. E0264 was logged; the producer is now corrected to write a valid newline terminator. No trading result has been accepted.
