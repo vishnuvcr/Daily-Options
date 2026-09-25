@@ -119,26 +119,27 @@ def sim(c,S,s,v,slip):
     cw=ce[ce>s["sce"]]; pw=pe[pe<s["spe"]]
     if len(cw)==0 or len(pw)==0:return None
     wc,wp=float(cw[0]),float(pw[-1])
+    sig=pd.Timestamp(f"{ad} {v[3]}"); ex=sig+pd.Timedelta("1min")
     pre_key=setup_key
     if pre_key not in _PRE_PANEL_CACHE:
         _PRE_PANEL_CACHE[pre_key]=panel(I)
     pre=_PRE_PANEL_CACHE[pre_key]
-    if pre_key not in _PRE_STOP_CACHE:
+    pre_stop_key=(setup_key,v[3])
+    if pre_stop_key not in _PRE_STOP_CACHE:
         stops={m:None for m in STOP_MULTIPLES}
         unresolved=set(stops)
         for r in pre.itertuples():
+            if r.ts < start or r.ts >= sig:
+                continue
+            p=s["credit"]-5*r.sce-5*r.spe+3*r.fce+3*r.fpe
             for m in tuple(unresolved):
-                p=s["credit"]-5*r.sce-5*r.spe+3*r.fce+3*r.fpe
                 if p<=-m*s["credit"]:
                     stops[m]=r.ts
             unresolved={m for m,t in stops.items() if t is None}
             if not unresolved:
                 break
-            if unresolved:
-                continue
-        _PRE_STOP_CACHE[pre_key]=stops
-    stop=_PRE_STOP_CACHE[pre_key][v[4]]
-    sig=pd.Timestamp(f"{ad} {v[3]}"); ex=sig+pd.Timedelta("1min")
+        _PRE_STOP_CACHE[pre_stop_key]=stops
+    stop=_PRE_STOP_CACHE[pre_stop_key][v[4]]
     base=[(s["sce0"],None,5,-1,"sce"),(s["spe0"],None,5,-1,"spe"),(s["fce0"],None,3,1,"fce"),(s["fpe0"],None,3,1,"fpe")]
     if stop is not None:
         out=[]
