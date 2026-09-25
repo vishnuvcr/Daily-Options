@@ -1,3 +1,2 @@
 run Phase 29.3 Iron Dome content audit
-triggered after workflow normalization
-retry multi-source Python transcript fallback
+triggered after datetime serialization correction
