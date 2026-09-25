@@ -114,7 +114,7 @@ jobs:
           if [ -d reports/base ]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add reports/base
+            git add -f reports/base
             if ! git diff --cached --quiet; then
               git commit -m "Phase 30: persist Base weekly Iron Dome results"
               git push origin HEAD:"${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
@@ -141,7 +141,7 @@ jobs:
           if [ -d reports/stress ]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add reports/stress
+            git add -f reports/stress
             if ! git diff --cached --quiet; then
               git commit -m "Phase 30: persist Stress weekly Iron Dome results"
               git push origin HEAD:"${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
