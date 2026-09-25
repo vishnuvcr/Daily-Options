@@ -76,7 +76,7 @@ def tree(repo: str, revision: str, path: str) -> list[dict]:
         params = {"path": path, "recursive": "false", "expand": "false"}
         if cursor:
             params["cursor"] = cursor
-        url = f"{HF_API}/{quote(repo, safe='')}/tree/{quote(revision, safe='')}?{urlencode(params)}"
+        url = f"{HF_API}/{quote(repo, safe='/')}/tree/{quote(revision, safe='')}?{urlencode(params)}"
         payload = get_json(url)
         if not isinstance(payload, list):
             raise RuntimeError(f"Unexpected HF tree response for {repo}:{revision}:{path}")
