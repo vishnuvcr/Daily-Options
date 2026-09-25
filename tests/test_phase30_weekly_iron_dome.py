@@ -28,3 +28,27 @@ def test_one_strike_inside_moves_deeper_itm():
     pe_strike = 25000.0
     assert ce_strike - STRIKE_INTERVAL == 24950.0
     assert pe_strike + STRIKE_INTERVAL == 25050.0
+
+import pandas as pd
+from research.phase30_weekly_iron_dome import build_mark_panel, first_trigger
+
+def test_vectorized_wing_trigger_uses_first_crossing():
+    spot = pd.DataFrame({
+        "ts": pd.to_datetime(["2026-01-01 09:31:00","2026-01-01 09:32:00","2026-01-01 09:33:00"]),
+        "close_px": [25000.0,25110.0,25125.0],
+    })
+    leg = {
+        "active": True,
+        "series": pd.DataFrame({
+            "ts": pd.to_datetime(["2026-01-01 09:31:00","2026-01-01 09:32:00","2026-01-01 09:33:00"]),
+            "close_px": [100.0,90.0,85.0],
+        }),
+        "position": "SHORT",
+        "qty": 1,
+        "lot": 65,
+    }
+    panel = build_mark_panel(spot,[leg],spot.ts.iloc[0],spot.ts.iloc[-1])
+    hit = first_trigger(panel,[leg],"WING_60",25000.0,0.0,1000.0)
+    assert hit is not None
+    assert hit["ts"] == pd.Timestamp("2026-01-01 09:32:00")
+    assert hit["challenged"] == "CE"
