@@ -4,3 +4,5 @@ Updated 2026-09-25 for transcript-first retry.
 Retry 2026-09-25: bounded transcript fetch and alternate subtitle clients.
 
 Retry 2026-09-25b: direct YouTube timedtext fallback added; bounded transcript fetch retained.
+
+Retry 2026-09-25c: direct caption endpoint attempted before transcript API.
