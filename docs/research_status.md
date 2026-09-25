@@ -423,3 +423,11 @@ The hardened archive run 36126797339 recovered **39 of 169** public videos with 
 The fixed archive branch has now added a structured youtubegpt.ai JSON caption fallback that returns millisecond-timed source caption segments and an explicit generated/human track flag. The next run will reuse the 39 persisted successes and attempt only the 130 unresolved videos.
 
 Weekly trading research remains PAUSED until the archive gate passes.
+
+## 2026-09-25 — Phase 27 source-rule evidence checkpoint
+
+Phase 26 inventory passed with 169/169 verified transcripts. Phase 27 run 36130444316 then processed 71 title-selected strategy candidates with zero acquisition errors.
+
+The automatic extractor intentionally did not promote any strategy to testing: all 71 candidates still require source-faithful manual reconstruction of economically material entry, adjustment, strike, stop, target and exit rules.
+
+No Equity Income backtest is being accepted yet. The next step is timestamped transcript-context extraction and frozen rule-sheet construction.
