@@ -393,3 +393,9 @@ Latest archive code commits:
 - 55e2e893a0bc3992a5395c3db14e130b0e2243f0 — archive status checkpoint
 
 Trading/strategy testing remains PAUSED until the archive completion gate is passed. No transcript-derived strategy interpretation is promoted from the pre-archive catalogue.
+
+## 2026-09-25 — Hardened archive rerun triggered
+
+After the 169/169 transcript failure snapshot, the fixed archive branch was hardened with the bounded source-preserving transcript ladder, parser regression coverage, resumable partial writes and a fixed-branch manual workflow using the same PO-token provider.
+
+Main trigger commit a26be8c4f9ca3c07b0bbe40732557e362edc63ed has been pushed. The next acceptance checkpoint is the resulting GitHub Actions run and its persisted archive snapshot. No trading research has resumed.
