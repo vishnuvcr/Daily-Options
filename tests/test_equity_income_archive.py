@@ -1,4 +1,4 @@
-from scripts.archive_equity_income import normalize_snippets, parse_vtt, sha256_bytes
+from scripts.archive_equity_income import normalize_snippets, parse_vtt, parse_innertube_json3, sha256_bytes
 from scripts.archive_equity_income_keyless import hybrid_decrypt, hybrid_encrypt
 
 def test_normalize_snippets_collapses_duplicate_caption():
@@ -45,3 +45,18 @@ Less &amp; more &lt;than&gt;
 """
     out = parse_vtt(vtt)
     assert out[0]["text"] == "Less & more <than>"
+
+
+def test_parse_innertube_json3():
+    data = {
+        "events": [
+            {"tStartMs": 1250, "dDurationMs": 500, "segs": [{"utf8": "Hello "}, {"utf8": "world"}]},
+            {"tStartMs": 2000, "dDurationMs": 500, "segs": [{"utf8": "ignored"}]},
+            {"tStartMs": 2500, "dDurationMs": 500},
+        ]
+    }
+    out = parse_innertube_json3(data)
+    assert out == [
+        {"start": 1.25, "duration": 0.5, "text": "Hello world"},
+        {"start": 2.0, "duration": 0.5, "text": "ignored"},
+    ]
