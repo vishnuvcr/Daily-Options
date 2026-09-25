@@ -445,3 +445,9 @@ Clean idempotent run **36132902868** completed all gates.
 Evidence-completeness prioritization now identifies **8 T1**, **10 T2**, and **53 T3** candidates out of 71. This is an evidence-quality triage only; it is not a performance ranking and **0 candidates are backtest-eligible**.
 
 The T1 set is the next source-fidelity reconstruction workload. Four T1/near-T1 candidates already have independent YouTube-description evidence cached in the repository; exact source rules remain transcript-dependent.
+
+## 2026-09-25 — Phase 27.4 evidence precision checkpoint
+
+Phase 27.4 run 36133569295 succeeded for all 8 T1 candidates. The parser now rejects clock-as-ratio/lot false positives, but **8/8 T1 records still contain at least one conflicting material rule field**. Therefore no T1 strategy is yet backtest-ready.
+
+Next: frozen T1 source-resolution matrix and conflict reconciliation. Backtesting remains blocked until entry, strike, adjustment, stop/target, exit and contract-timing fields are source-resolved.
