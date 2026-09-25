@@ -8,6 +8,7 @@ import requests
 
 NSE_HOME = 'https://www.nseindia.com/'
 VIX_URL = 'https://www.nseindia.com/api/historicalOR/vixhistory'
+NIFTYINDICES_URL = 'https://www.niftyindices.com/Backpage.aspx/BindHistoricalIndiaVixData'
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/136 Safari/537.36',
     'Accept': 'application/json,text/plain,*/*',
@@ -39,7 +40,7 @@ def normalize(df):
         k = str(c).strip().lower().replace(' ', '').replace('_', '')
         if k in ('date','tradedate','timestamp') or 'timestamp' == k:
             mapping[c] = 'date'
-        elif k in ('close','closeprice','vix','indexclose','closevalue'):
+        elif k in ('close','closeprice','vix','indexclose','closeindex','closevalue'):
             mapping[c] = 'close'
     df = df.rename(columns=mapping)
     if 'date' not in df.columns or 'close' not in df.columns:
@@ -51,22 +52,44 @@ def normalize(df):
 
 def fetch_one(session, start, end):
     last = None
-    for attempt in range(5):
+    for attempt in range(3):
         try:
             r = session.get(
                 VIX_URL,
                 params={'from': start.strftime('%d-%m-%Y'), 'to': end.strftime('%d-%m-%Y')},
                 headers=HEADERS, timeout=(15, 45),
             )
-            r.raise_for_status()
-            rows = parse_rows(r.json())
-            if rows:
-                return rows
+            if r.status_code < 400:
+                rows = parse_rows(r.json())
+                if rows:
+                    return rows
+            last = RuntimeError(f'NSE endpoint status={r.status_code}')
             last = RuntimeError('empty NSE response')
         except Exception as exc:
             last = exc
         time.sleep(2 ** attempt)
-    raise RuntimeError(f'India VIX fetch failed {start}..{end}: {last}')
+    # Fallback: NSE Indices public historical VIX service documented by its Python client ecosystem.
+    body = "{'name':'India VIX','startDate':'%s','endDate':'%s'}" % (start.strftime('%d %b %Y'), end.strftime('%d %b %Y'))
+    h = dict(HEADERS)
+    h.update({'Content-Type':'application/json; charset=utf-8','Referer':'https://www.niftyindices.com/reports/historical-data','Origin':'https://www.niftyindices.com'})
+    for attempt in range(4):
+        try:
+            r = session.post(NIFTYINDICES_URL, data=body, headers=h, timeout=(15,45))
+            r.raise_for_status()
+            outer = r.json()
+            inner = outer.get('d','[]') if isinstance(outer,dict) else outer
+            if isinstance(inner,str):
+                if inner.lower() == 'false':
+                    raise RuntimeError('NiftyIndices returned false')
+                inner = json.loads(inner)
+            rows = inner if isinstance(inner,list) else []
+            if rows:
+                return rows
+            last = RuntimeError('empty NiftyIndices fallback response')
+        except Exception as exc:
+            last = exc
+        time.sleep(2 ** attempt)
+    raise RuntimeError(f'India VIX fetch failed for both NSE endpoints {start}..{end}: {last}')
 
 def main():
     ap = argparse.ArgumentParser()
@@ -78,8 +101,6 @@ def main():
     end = date.fromisoformat(args.end)
     session = requests.Session()
     session.headers.update(HEADERS)
-    home = session.get(NSE_HOME, timeout=(15, 30))
-    home.raise_for_status()
     rows = []
     for a, b in chunks(start, end):
         rows.extend(fetch_one(session, a, b))
