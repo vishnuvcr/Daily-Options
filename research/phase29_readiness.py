@@ -69,11 +69,11 @@ def get_json(url: str, retries: int = 4) -> object:
     raise RuntimeError(f"HF API request failed after {retries} attempts: {url}: {last}")
 
 
-def tree(repo: str, revision: str, path: str) -> list[dict]:
+def tree(repo: str, revision: str, path: str, recursive: bool = True) -> list[dict]:
     items: list[dict] = []
     cursor = None
     for _ in range(20):
-        params = {"path": path, "recursive": "false", "expand": "false"}
+        params = {"path": path, "recursive": "true" if recursive else "false", "expand": "false"}
         if cursor:
             params["cursor"] = cursor
         url = f"{HF_API}/{quote(repo, safe='/')}/tree/{quote(revision, safe='')}?{urlencode(params)}"
@@ -101,13 +101,15 @@ def inventory_source(name: str, spec: dict) -> dict:
             rows = tree(spec["repo"], spec["revision"], path)
             files = sorted(r.get("path", "") for r in rows if r.get("type") == "file")
             dirs = sorted(r.get("path", "") for r in rows if r.get("type") == "directory")
+            parquet = [p for p in files if p.lower().endswith(".parquet")]
             result["paths"][path] = {
                 "status": "PRESENT",
                 "file_count": len(files),
+                "parquet_file_count": len(parquet),
                 "directory_count": len(dirs),
-                "sample_files": files[:3] + (files[-3:] if len(files) > 3 else []),
-                "first_file": files[0] if files else None,
-                "last_file": files[-1] if files else None,
+                "sample_files": parquet[:3] + (parquet[-3:] if len(parquet) > 3 else []),
+                "first_file": parquet[0] if parquet else None,
+                "last_file": parquet[-1] if parquet else None,
             }
         except Exception as exc:
             result["api_status"] = "ERROR"
@@ -119,7 +121,7 @@ def classify(hint: str, inv: dict) -> tuple[str, str, str]:
     h = (hint or "").lower()
     if "covered_call" in h or "covered_or_equity" in h:
         stock = inv["trademarkk"]["paths"].get("stocks_options", {})
-        if stock.get("status") == "PRESENT" and stock.get("file_count", 0) > 0:
+        if stock.get("status") == "PRESENT" and stock.get("parquet_file_count", 0) > 0:
             return ("DATA_LIMITED", "STOCK_OPTIONS_NEED_RULE_SPECIFIC_CONTRACT_COVERAGE",
                     "Stock-option tree exists at the pinned source, but strategy-specific symbol/expiry/strike completeness is not proven.")
         return ("DATA_LIMITED", "STOCK_OPTIONS_NOT_VERIFIED_AT_PIN",
