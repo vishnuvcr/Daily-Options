@@ -1,1 +1,2 @@
 Phase 29 launcher trigger: build historical data-feasibility report for all candidate families.
+Phase 29 controlled execution trigger 2026-09-25.
