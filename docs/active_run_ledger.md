@@ -112,3 +112,11 @@ These are the first runs using exact branch-parent construction after E0078. No 
 | 11 v5e | phase-11-breakout-pullback-oi-v5e-authoritative | 35978104824 | 107563265459 | Tests/data passed; Base friction in progress | No |
 
 This is the sole authoritative Phase 11 execution at this checkpoint. No competing Phase 11 run should be started unless this run fails for infrastructure or engineering reasons.
+
+## 2026-09-25 — Current YouTube weekly frontier
+
+| Phase | Branch | Status | Accepted P&L |
+|---|---|---|---|
+| 30 | phase-30-equity-income-weekly-backtest-v7-corrected | Corrected Base→Stress execution triggered from frozen 12-cell rules | No |
+
+Phase 30 v7 corrects the exact-expiry option loader to use the full timestamp range through expiry and includes a multi-day loader regression test. Any run from the earlier malformed loader revisions is non-evidentiary. Promotion requires the ₹5,000/week consistency gates plus nested WFA and independent later-period OOS.
