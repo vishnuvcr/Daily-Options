@@ -76,3 +76,19 @@ equity-income-channel-archive-v2-hybrid-keyless is the keyless acquisition/data 
 The keyless implementation removes the GitHub secret blocker. The public key is repository-visible; the private key is intentionally kept outside the repository. Permanent archive activation still requires preserving that private key securely.
 
 GitHub Actions scheduled workflows only run from the repository default branch, so the automatic weekly schedule must be mirrored on `main` while the transcript data continues to live on the dedicated archive branch. citeturn445342search0turn445342search1
+
+
+## Acquisition hardening checkpoint — 2026-09-25
+
+The archive passed channel discovery (169 unique videos) but the first completed transcript pass returned 169/169 failures from YouTube anti-bot enforcement. The fixed branch now uses a bounded Python-only acquisition ladder:
+
+1. yt-dlp subtitle extraction with the running bgutil PO-token provider for web/mweb clients;
+2. additional tv/web_embedded/android_vr yt-dlp clients;
+3. youtube-transcript-api source-caption tracks;
+4. InnerTube caption-track retrieval;
+5. direct timedtext;
+6. one no-key third-party transcript endpoint as a last resort, with explicit provenance.
+
+The no-key endpoint is queried at most once per video in the fallback path to avoid unnecessary repeated external traffic.
+
+Partial successful encrypted transcripts are committed even when the full-channel pass remains incomplete. No weekly strategy testing is restarted until the archive completion gate is satisfied.
