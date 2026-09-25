@@ -1,15 +1,10 @@
-name: Equity Income - weekly channel archive
-# Transcript-first archive retry activated after E0257
-# Keyless archive syntax corrected on 2026-09-25
+name: Equity Income - channel archive (keyless canonical)
 
 on:
   workflow_dispatch:
-  pull_request:
-    paths:
-      - ".github/equity-income-archive-trigger.txt"
   push:
     paths:
-      - ".github/equity-income-archive-trigger.txt"
+      - ".github/equity-income-archive-keyless-trigger.txt"
   schedule:
     - cron: "30 2 * * 0"
 
@@ -17,18 +12,18 @@ permissions:
   contents: write
 
 concurrency:
-  group: equity-income-channel-archive
-  cancel-in-progress: true
+  group: equity-income-channel-archive-keyless
+  cancel-in-progress: false
 
 jobs:
   archive:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 180
     steps:
-      - name: Checkout fixed Equity Income archive branch
+      - name: Checkout fixed archive branch
         uses: actions/checkout@v4
         with:
-          ref: equity-income-channel-archive-v1
+          ref: equity-income-channel-archive-v2-hybrid-keyless
           fetch-depth: 0
 
       - name: Setup Python
@@ -39,43 +34,6 @@ jobs:
       - name: Install archive tooling
         run: python -m pip install -r requirements-equity-income-archive.txt
 
-      - name: Start YouTube PO-token provider
-        run: |
-          set -euo pipefail
-          docker pull brainicism/bgutil-ytdlp-pot-provider:2.0.0
-          docker run --name bgutil-provider --rm -d --init \
-            -p 127.0.0.1:4416:4416 \
-            brainicism/bgutil-ytdlp-pot-provider:2.0.0
-          python - <<'PY'
-          import socket
-          import time
-          for _ in range(30):
-              try:
-                  with socket.create_connection(("127.0.0.1", 4416), timeout=1):
-                      print("bgutil provider is listening")
-                      raise SystemExit(0)
-              except OSError:
-                  time.sleep(1)
-          raise SystemExit("bgutil provider did not become ready")
-          PY
-
-      - name: Probe public transcript fallbacks
-        run: |
-          set -euo pipefail
-          python - <<'PY'
-          import requests
-          probes = [
-              ("invidious", "https://inv.nadeko.net/api/v1/captions/boRpz56uI6o"),
-              ("transcript_proxy", "https://youtube-transcript.ai/transcript/boRpz56uI6o.txt?lang=en"),
-          ]
-          for name, url in probes:
-              try:
-                  r = requests.get(url, timeout=(3, 8), headers={"User-Agent": "Daily-Options-Equity-Income-Archive/1.0"})
-                  print(f"{name}: HTTP {r.status_code}, bytes={len(r.content)}")
-              except Exception as exc:
-                  print(f"{name}: ERROR {exc!r}")
-          PY
-
       - name: Verify archive public key
         run: |
           set -euo pipefail
@@ -83,19 +41,19 @@ jobs:
           sha256sum config/equity_income_archive_public_key.pem
 
       - name: Run Python archive
-        id: archive
-        continue-on-error: true
         run: |
           set -euo pipefail
-          PYTHONPATH=. python scripts/archive_equity_income_keyless.py             --channel-url "https://www.youtube.com/@equityincome"             --output-root "data/equity_income"             --public-key "config/equity_income_archive_public_key.pem"             --transcript-timeout-seconds 12             --workers 4
+          PYTHONPATH=. python scripts/archive_equity_income_keyless.py \
+            --channel-url "https://www.youtube.com/@equityincome" \
+            --output-root "data/equity_income" \
+            --public-key "config/equity_income_archive_public_key.pem"
 
       - name: Test archive tooling
         if: always()
-        continue-on-error: true
         run: PYTHONPATH=. pytest -q tests/test_equity_income_archive.py
 
-      - name: Commit archive progress even when incomplete
-        if: always()
+      - name: Commit new archive records
+        if: success()
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
@@ -106,10 +64,4 @@ jobs:
             exit 0
           fi
           git commit -m "Archive Equity Income channel metadata and transcripts"
-          git push origin HEAD:equity-income-channel-archive-v1
-
-      - name: Enforce archive completeness
-        if: steps.archive.outcome == 'failure'
-        run: |
-          echo "::error::Equity Income archive is incomplete. Partial encrypted successes were committed for resumable continuation."
-          exit 2
+          git push origin HEAD:equity-income-channel-archive-v2-hybrid-keyless
