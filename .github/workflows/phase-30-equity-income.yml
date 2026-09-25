@@ -1,0 +1,24 @@
+name: Phase 30 - Weekly deterministic backtest
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  manual-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-30-equity-income-weekly-backtest-v1
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Phase definition
+        run: |
+          echo "Phase 30: Weekly deterministic backtest"
+          echo "Manual execution branch: phase-30-equity-income-weekly-backtest-v1"
+          echo "Weekly target: INR 5,000 net per traded week at fixed reference sizing"
+          echo "Scope: Run frozen weekly strategies with Paytm Money/NSE costs and base/stress slippage."
