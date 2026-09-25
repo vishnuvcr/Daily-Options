@@ -1,0 +1,15 @@
+{
+  "candidate_members": 71,
+  "preliminary_feasible": 51,
+  "data_limited": 16,
+  "unresolved": 4,
+  "bid_ask_verified": 0,
+  "strategy_specific_quote_completeness_verified": 0,
+  "historical_lot_size_fully_verified": 0,
+  "backtest_allowed": 0,
+  "phase30_gate": "BLOCKED",
+  "source_revision_pins": {
+    "TradeMarkk": "51ca58c",
+    "Rissin": "78b1c5468255d18cf492984bfe6fe4e3ac874d7c"
+  }
+}
