@@ -199,3 +199,14 @@ The implemented DIAGONAL_PREMIUM family also depended on source-formalization ch
 **Falcon retirement is suspended.** The next step is source-fidelity reconstruction and a clean independent rerun of the exact strategy before any retirement or WFA/OOS decision.
 
 [Phase 25.1 strategy-fidelity audit](https://github.com/vishnuvcr/Daily-Options/blob/phase-25.1-strategy-fidelity-audit/docs/phase25.1_strategy_fidelity_audit.md)
+
+## Equity Income channel archive and weekly research program — 2026-09-25
+
+Trading research is **paused** while a dedicated fixed branch, `equity-income-channel-archive-v1`, builds a Python-only archive of every public upload on the Equity Income YouTube channel. The acquisition program covers videos, shorts and streams, stores metadata/provenance and transcript hashes, and commits encrypted transcript payloads rather than plaintext because this repository is public.
+
+- [Archive plan](https://github.com/vishnuvcr/Daily-Options/blob/equity-income-channel-archive-v1/docs/equity_income_channel_archive_plan.md)
+- [Python archive script](https://github.com/vishnuvcr/Daily-Options/blob/equity-income-channel-archive-v1/scripts/archive_equity_income.py)
+- [Strategy registry](https://github.com/vishnuvcr/Daily-Options/blob/equity-income-channel-archive-v1/docs/equity_income_strategy_registry.md)
+- [Weekly research plan](https://github.com/vishnuvcr/Daily-Options/blob/equity-income-channel-archive-v1/docs/equity_income_weekly_research_plan.md)
+
+The new research gate is **at least ₹5,000 net per traded week** at a fixed reference position size, with Base/Stress friction, weekly P&L distribution, drawdown, WFA/OOS and later-period validation. Position size will not be increased merely to hit the target. Every distinct strategy described in the channel will first be reconstructed and deduplicated before it enters numerical testing.
