@@ -113,3 +113,7 @@ Research resumed from the v7 invalidation. The active v8 branch isolates mutable
 ## 2026-09-25 — Phase 27.6 parallel continuation
 
 While Phase 30 v8 computes, a controlled launcher-only PR #86 was created to rerun the fixed Python aRj Air Defense transcript extraction. Actions run 36157884412 is queued. This is evidence-resolution work only; no P&L or strategy parameter is being selected.
+
+## 2026-09-25 — Phase 30 v8 closure / Air Defense launch
+
+Authoritative Iron Dome v8 Base+Stress execution completed. All 12 frozen cells failed the ₹5,000/week consistency gate; the family is retired without WFA or retuning. Research now advances to the Air Defense candidate because its Python-acquired transcript has yielded a clearer India-VIX expected-range mechanism and explicit expiry-exit timing.
