@@ -10,6 +10,12 @@ START_DATE="2024-10-01"; END_DATE="2025-12-31"
 RISSIN_REVISION="78b1c5468255d18cf492984bfe6fe4e3ac874d7c"
 _CHAIN_CACHE={}
 _SERIES_CACHE={}
+_STRIKE_CACHE={}
+_PRE_PANEL_CACHE={}
+_POST_PANEL_CACHE={}
+_PRE_STOP_CACHE={}
+_POST_STOP_CACHE={}
+_EXIT_CACHE={}
 
 def variant_grid():
     return [(e,p,f,a,s) for e in ENTRY_TIMES for p in TARGET_PREMIUMS for f in FAR_MODES for a in ADJUST_TIMES for s in STOP_MULTIPLES]
@@ -100,50 +106,94 @@ def costs(legs,lot,slip,ed,xd):
 
 def sim(c,S,s,v,slip):
     d,ne,fe,ad,xd=s["d"],s["ne"],s["fe"],s["ad"],s["xd"]; lot=lot_size(ne); start=s["fill"]; end=pd.Timestamp(f"{xd} 15:15")
+    setup_key=(S,d,ne,fe,ad,xd,s["et"],s["p"],s["f"],s["sce"],s["spe"],s["fce"],s["fpe"],s["fill"])
     I={k:series(c,S,d,ne,s[k],side,start,end) for k,side in [("sce","CE"),("spe","PE")]}
     I.update(fce=series(c,S,d,fe,s["fce"],"CE",start,end),fpe=series(c,S,d,fe,s["fpe"],"PE",start,end))
     if any(x.empty for x in I.values()):return None
-    q=f"SELECT DISTINCT CAST(strike AS DOUBLE) strike,UPPER(CAST(option_type AS VARCHAR)) option_type FROM {S} WHERE CAST(date AS DATE)=DATE '{ad}' AND CAST(expiry AS DATE)=DATE '{ne}' AND granularity='1min'"
-    st=c.execute(q).df(); ce=np.sort(st.loc[st.option_type=="CE","strike"].unique()); pe=np.sort(st.loc[st.option_type=="PE","strike"].unique())
+    strike_key=(S,ad,ne)
+    if strike_key not in _STRIKE_CACHE:
+        q=f"SELECT DISTINCT CAST(strike AS DOUBLE) strike,UPPER(CAST(option_type AS VARCHAR)) option_type FROM {S} WHERE CAST(date AS DATE)=DATE '{ad}' AND CAST(expiry AS DATE)=DATE '{ne}' AND granularity='1min'"
+        st=c.execute(q).df()
+        _STRIKE_CACHE[strike_key]=(np.sort(st.loc[st.option_type=="CE","strike"].unique()),np.sort(st.loc[st.option_type=="PE","strike"].unique()))
+    ce,pe=_STRIKE_CACHE[strike_key]
     cw=ce[ce>s["sce"]]; pw=pe[pe<s["spe"]]
     if len(cw)==0 or len(pw)==0:return None
-    wc,wp=float(cw[0]),float(pw[-1]); sig=pd.Timestamp(f"{ad} {v[3]}"); ex=sig+pd.Timedelta("1min")
-    pre=panel(I); stop=None
-    for r in pre.itertuples():
-        if r.ts>=sig:break
-        p=s["credit"]-5*r.sce-5*r.spe+3*r.fce+3*r.fpe
-        if p<=-v[4]*s["credit"]:stop=r.ts;break
+    wc,wp=float(cw[0]),float(pw[-1])
+    pre_key=setup_key
+    if pre_key not in _PRE_PANEL_CACHE:
+        _PRE_PANEL_CACHE[pre_key]=panel(I)
+    pre=_PRE_PANEL_CACHE[pre_key]
+    if pre_key not in _PRE_STOP_CACHE:
+        stops={m:None for m in STOP_MULTIPLES}
+        unresolved=set(stops)
+        for r in pre.itertuples():
+            for m in tuple(unresolved):
+                p=s["credit"]-5*r.sce-5*r.spe+3*r.fce+3*r.fpe
+                if p<=-m*s["credit"]:
+                    stops[m]=r.ts
+            unresolved={m for m,t in stops.items() if t is None}
+            if not unresolved:
+                break
+            if unresolved:
+                continue
+        _PRE_STOP_CACHE[pre_key]=stops
+    stop=_PRE_STOP_CACHE[pre_key][v[4]]
+    sig=pd.Timestamp(f"{ad} {v[3]}"); ex=sig+pd.Timedelta("1min")
     base=[(s["sce0"],None,5,-1,"sce"),(s["spe0"],None,5,-1,"spe"),(s["fce0"],None,3,1,"fce"),(s["fpe0"],None,3,1,"fpe")]
     if stop is not None:
         out=[]
+        exit_key=("pre",setup_key,stop)
         for a,b,qy,sg,n in base:
-            z=nxt(I[n],stop+pd.Timedelta("1min"))
-            if z is None:return None
-            out.append((a,float(z.open_px),qy,sg,n))
+            px_key=(exit_key,n)
+            if px_key not in _EXIT_CACHE:
+                z=nxt(I[n],stop+pd.Timedelta("1min"))
+                if z is None:return None
+                _EXIT_CACHE[px_key]=float(z.open_px)
+            out.append((a,_EXIT_CACHE[px_key],qy,sg,n))
+        xs=stop+pd.Timedelta("1min")
         gross=sum(sg*(b-a)*qy*lot for a,b,qy,sg,n in out)
-        return {"reason":"STOP_PRE_ADJUST","exit":stop+pd.Timedelta("1min"),"pnl":gross-costs(out,lot,slip,d,(stop+pd.Timedelta("1min")).date())}
+        return {"reason":"STOP_PRE_ADJUST","exit":xs,"pnl":gross-costs(out,lot,slip,d,xs.date())}
+    post_key=(setup_key,v[3])
     Wc=series(c,S,ad,ne,wc,"CE",ex,end); Wp=series(c,S,ad,ne,wp,"PE",ex,end)
     ec,ep=nxt(Wc,ex),nxt(Wp,ex)
     if ec is None or ep is None:return None
-    post=panel({"sce":I["sce"],"spe":I["spe"],"fce":I["fce"],"fpe":I["fpe"],"wc":Wc,"wp":Wp}); stop=None
-    for r in post.itertuples():
-        p=s["credit"]-5*r.sce-5*r.spe+3*r.fce+3*r.fpe+5*r.wc+5*r.wp-5*ec.open_px-5*ep.open_px
-        if p<=-v[4]*s["credit"]:stop=r.ts;break
-    legs=base+[(float(ec.open_px),None,5,1,"wc"),(float(ep.open_px),None,5,1,"wp")]; xs=stop if stop is not None else end
+    if post_key not in _POST_PANEL_CACHE:
+        _POST_PANEL_CACHE[post_key]=panel({"sce":I["sce"],"spe":I["spe"],"fce":I["fce"],"fpe":I["fpe"],"wc":Wc,"wp":Wp})
+    post=_POST_PANEL_CACHE[post_key]
+    if post_key not in _POST_STOP_CACHE:
+        stops={m:None for m in STOP_MULTIPLES}
+        unresolved=set(stops)
+        for r in post.itertuples():
+            p=s["credit"]-5*r.sce-5*r.spe+3*r.fce+3*r.fpe+5*r.wc+5*r.wp-5*ec.open_px-5*ep.open_px
+            for m in tuple(unresolved):
+                if p<=-m*s["credit"]:
+                    stops[m]=r.ts
+            unresolved={m for m,t in stops.items() if t is None}
+            if not unresolved:
+                break
+        _POST_STOP_CACHE[post_key]=stops
+    stop=_POST_STOP_CACHE[post_key][v[4]]
+    legs=base+[(float(ec.open_px),None,5,1,"wc"),(float(ep.open_px),None,5,1,"wp")]
+    xs=stop if stop is not None else end
     out=[]
     for a,b,qy,sg,n in legs:
-        z=nxt(Wc if n=="wc" else Wp if n=="wp" else I[n],xs+pd.Timedelta("1min"))
-        if z is None:
-            zz=(Wc if n=="wc" else Wp if n=="wp" else I[n]); zz=zz[zz.ts<=xs].tail(1)
-            if zz.empty:return None
-            px=float(zz.iloc[0].close_px)
-        else:px=float(z.open_px)
-        out.append((a,px,qy,sg,n))
+        px_key=("post",setup_key,v[3],xs,n)
+        if px_key not in _EXIT_CACHE:
+            zz=Wc if n=="wc" else Wp if n=="wp" else I[n]
+            z=nxt(zz,xs+pd.Timedelta("1min"))
+            if z is None:
+                zz=zz[zz.ts<=xs].tail(1)
+                if zz.empty:return None
+                px=float(zz.iloc[0].close_px)
+            else:
+                px=float(z.open_px)
+            _EXIT_CACHE[px_key]=px
+        out.append((a,_EXIT_CACHE[px_key],qy,sg,n))
     gross=sum(sg*(b-a)*qy*lot for a,b,qy,sg,n in out)
     return {"reason":"STOP_POST_ADJUST" if stop is not None else "PRE_EXPIRY_EXIT","exit":xs,"pnl":gross-costs(out,lot,slip,d,xs.date())}
 
 def run(data,out,slip):
-    _CHAIN_CACHE.clear(); _SERIES_CACHE.clear()
+    _CHAIN_CACHE.clear(); _SERIES_CACHE.clear(); _STRIKE_CACHE.clear(); _PRE_PANEL_CACHE.clear(); _POST_PANEL_CACHE.clear(); _PRE_STOP_CACHE.clear(); _POST_STOP_CACHE.clear(); _EXIT_CACHE.clear()
     out.mkdir(parents=True,exist_ok=True); S=src(data); c=duckdb.connect(); c.execute("SET TimeZone='Asia/Kolkata'")
     days=[pd.Timestamp(x).date() for x in c.execute(f"SELECT DISTINCT CAST(date AS DATE) d FROM {S} WHERE CAST(date AS DATE) BETWEEN DATE '{START_DATE}' AND DATE '{END_DATE}' AND granularity='1min' ORDER BY d").df().d]
     exps=[pd.Timestamp(x).date() for x in c.execute(f"SELECT DISTINCT CAST(expiry AS DATE) e FROM {S} WHERE CAST(date AS DATE) BETWEEN DATE '{START_DATE}' AND DATE '{END_DATE}' AND granularity='1min' ORDER BY e").df().e]
