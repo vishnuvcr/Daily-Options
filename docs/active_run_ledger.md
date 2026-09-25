@@ -144,3 +144,11 @@ This is source-evidence acquisition only. It cannot promote the aRj strategy to 
 | 30 v8 | phase-30-equity-income-weekly-backtest-v8-state-isolation | 36157105595 | Base + Stress complete; 0/12 cells pass | Yes — negative evidence only |
 
 Frozen family retired. Base and Stress artifacts were independently audited for duplicate setup keys; 0 duplicates. No WFA/OOS branch opened.
+
+## 2026-09-25 — Phase 30.1 current frontier
+
+| Phase | Branch | Workflow run | Status | Accepted P&L |
+|---|---|---:|---|---|
+| 30.1 | phase-30.1-equity-income-air-defense-v1 | 36159121044 | Unit tests/cache passed; exact-expiry acquisition in progress | No |
+
+Phase 30 v8 is retired. The Air Defense family is the sole active Equity Income numerical frontier.
