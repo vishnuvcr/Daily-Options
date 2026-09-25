@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "verified_at_utc": "2026-09-25T17:00:00+05:30",
+  "sources": [
+    {
+      "source_id": "nse_contracts",
+      "provider": "NSE India",
+      "url": "https://www.nseindia.com/static/products-services/equity-derivatives-contract-specifications",
+      "role": "current contract specifications / expiry rules",
+      "verified_facts": [
+        "Current NIFTY 50 index options have 4 weekly expiration contracts excluding monthly contracts.",
+        "NIFTY 50 index option weekly expiry day is Tuesday; if Tuesday is a trading holiday, the previous trading day is expiry."
+      ],
+      "limitations": [
+        "Historical expiry-regime changes must be represented from contract-level historical data/circulars rather than assuming the current weekday for the entire sample."
+      ]
+    },
+    {
+      "source_id": "tradeMarkk_1m",
+      "provider": "Hugging Face / thetrademarkk",
+      "url": "https://huggingface.co/datasets/thetrademarkk/india-index-options-1m",
+      "role": "primary public 1-minute historical index/options candidate source",
+      "verified_facts": [
+        "Dataset card reports 1-minute OHLCV(+OI) for NIFTY, BANKNIFTY and SENSEX around 2021-2026.",
+        "Option files contain strike, option_type and expiry, with open_interest in the schema.",
+        "Dataset card warns option coverage is partial and illiquid/far strikes can be sparse or absent."
+      ],
+      "limitations": [
+        "Coverage must be validated by strategy-specific expiry/strike/date completeness before numerical testing."
+      ]
+    },
+    {
+      "source_id": "rissin_intraday",
+      "provider": "Hugging Face / rissin",
+      "url": "https://huggingface.co/datasets/rissin/nse-options-intraday",
+      "role": "secondary independent 1-minute validation source",
+      "verified_facts": [
+        "Dataset card reports NIFTY, BANKNIFTY and SENSEX 1-minute intraday coverage from 2024 onward, with BANKNIFTY from March 2024.",
+        "Schema includes expiry, strike, option_type, OHLC, volume and oi fields.",
+        "The Upstox intraday track reports OI as NaN because the source API does not return intraday OI."
+      ],
+      "limitations": [
+        "Useful as an independent price/quote replication source; not sufficient where a strategy explicitly requires intraday OI."
+      ]
+    },
+    {
+      "source_id": "nse_reports",
+      "provider": "NSE India",
+      "url": "https://www.nseindia.com/all-reports-derivatives",
+      "role": "official EOD/contract/open-interest/report validation",
+      "verified_facts": [
+        "NSE publishes F&O bhavcopy/UDiFF, daily settlement prices, NCL open interest, participant-wise open interest/volumes and FII derivatives statistics reports."
+      ],
+      "limitations": [
+        "Some historical trade/order data is a paid NSE product; use public reports first and escalate only where essential."
+      ]
+    },
+    {
+      "source_id": "nse_vix",
+      "provider": "NSE India",
+      "url": "https://www.nseindia.com/reports-indices-historical-vix",
+      "role": "India VIX regime variable",
+      "verified_facts": [
+        "NSE provides historical India VIX data with downloadable CSV."
+      ],
+      "limitations": [
+        "Must be joined using an information-safe timestamp/date convention."
+      ]
+    },
+    {
+      "source_id": "nse_fii_dii",
+      "provider": "NSE India",
+      "url": "https://www.nseindia.com/reports/fii-dii",
+      "role": "FII/FPI and DII regime/context variables",
+      "verified_facts": [
+        "NSE provides daily FII/FPI and DII trading activity reports for NSE and combined NSE/BSE/MSEI views."
+      ],
+      "limitations": [
+        "Data is provisional and final FII/FPI data may require NSDL/CDSL confirmation; Phase 31 must avoid look-ahead."
+      ]
+    },
+    {
+      "source_id": "nse_historical_data",
+      "provider": "NSE India",
+      "url": "https://www.nseindia.com/static/market-data/eod-historical-data-subscription",
+      "role": "historical order/trade and EOD escalation source",
+      "verified_facts": [
+        "NSE documents historical F&O trade/order data availability and EOD data products."
+      ],
+      "limitations": [
+        "Paid access may be required; do not use as a default input when public validated data is sufficient."
+      ]
+    },
+    {
+      "source_id": "paytm_money_costs",
+      "provider": "Paytm Money",
+      "url": "https://www.paytmmoney.com/stocks/brokerage-calculator",
+      "role": "broker cost verification",
+      "verified_facts": [
+        "Current Paytm Money brokerage calculator has Options and Futures inputs.",
+        "The calculator notes it does not include platform fees, depository charges, auto square-off charges and other fees; detailed charges are in the account-opening/tariff documentation."
+      ],
+      "limitations": [
+        "Exact broker rates must be captured from the current tariff at the numerical phase start; do not hard-code old blog rates as current."
+      ]
+    }
+  ]
+}
