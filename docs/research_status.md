@@ -332,3 +332,11 @@ The repository's own Falcon source catalogue identifies the far-week strike rela
 **Status: Phase 25 retirement suspended.** Phase 25 remains a negative result for the tested formalization, but the exact Falcon strategy remains unresolved pending a source-fidelity reconstruction and rerun.
 
 Audit: docs/phase25.1_strategy_fidelity_audit.md
+
+## 2026-09-25 — Equity Income archive branch launched
+
+Trading tests are paused by user request. A dedicated fixed branch, equity-income-channel-archive-v1, now contains the Python-only channel acquisition program, encrypted transcript archive workflow, strategy registry schema and weekly research plan.
+
+The new research target is weekly trading with a minimum ₹5,000 net per traded week at fixed reference sizing. Every distinct strategy described by the channel will be reconstructed, deduplicated, tested with realistic Paytm Money/NSE costs and Base/Stress slippage, then subjected to WFA/OOS and later-period validation before promotion.
+
+Archive completion is blocked only on configuring the repository secret EQUITY_INCOME_ARCHIVE_KEY before the encrypted transcript workflow is run. No trading backtest is launched from this branch.
