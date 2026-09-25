@@ -371,3 +371,24 @@ All 71 rows remain `backtest_allowed=NO`. Phase 30 is still blocked pending exac
 ### Next phase
 
 Phase 29.3 will take the two NIFTY Iron Dome candidates into exact contract-content validation: reconstruct the leg sequence and adjustments from the archived evidence, map every leg to the pinned 1-minute option contracts, verify dated NIFTY expiry/lot-size rules, and establish a reproducible entry/adjustment/exit specification. No trading result will be accepted until this gate passes.
+
+
+## 2026-09-25 — Phase 29.3 NIFTY Iron Dome content validation
+
+Phase 29.3 workflow **36135786342** completed successfully on branch `phase-29.3-equity-income-iron-dome-content-v1` and pull request [#72](https://github.com/vishnuvcr/Daily-Options/pull/72).
+
+Both contract-ready Iron Dome videos were processed with Python transcript tooling. The primary `youtube-transcript-api` method was blocked by YouTube/cloud-IP restrictions, so the workflow used a deterministic `yt-dlp` auto-caption fallback. Seven relevant pinned TradeMarkk NIFTY expiry Parquet files were then content-inspected successfully; the verified schema includes timestamp, strike, option_type, expiry, OHLCV and open_interest.
+
+The source evidence now supports a **provisional** weekly Iron Fly/Iron Dome reconstruction: symmetric 200-point wings in an illustrated example, a 60% adjustment mark, no more than two planned adjustments, Monday/Tuesday adjustment examples, and an expiry-day theta-decay scenario. It does **not** yet freeze the exact entry timing, the mathematical definition of the 60% trigger, the complete adjustment formulas, lot ratios or the exact exit rule. Therefore no P&L result is being treated as source-faithful yet.
+
+### Phase 29.3 documents
+
+- [Iron Dome rule reconstruction](https://github.com/vishnuvcr/Daily-Options/blob/phase-29.3-equity-income-iron-dome-content-v1/reports/phase29_3_iron_dome_rule_reconstruction.md)
+- [Rule evidence](https://github.com/vishnuvcr/Daily-Options/blob/phase-29.3-equity-income-iron-dome-content-v1/reports/phase29_3_iron_dome_rule_evidence.json)
+- [Expiry content checks](https://github.com/vishnuvcr/Daily-Options/blob/phase-29.3-equity-income-iron-dome-content-v1/reports/phase29_3_expiry_content_checks.json)
+- [Phase 29.3 summary](https://github.com/vishnuvcr/Daily-Options/blob/phase-29.3-equity-income-iron-dome-content-v1/reports/phase29_3_summary.json)
+- [Phase 29.3 workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-29.3-equity-income-iron-dome-content-v1/.github/workflows/phase-29.3-equity-income-iron-dome-content-v1.yml)
+
+### Next phase
+
+Phase 29.4 will freeze a pre-registered **variant matrix** for the remaining source ambiguities instead of silently choosing one interpretation. Candidate dimensions are entry timing, the formal definition of the 60% trigger, first/second adjustment strike movement, and exit convention. Variants will be evaluated with historical lot-size rules and full transaction-cost/slippage modelling before any candidate is allowed into walk-forward testing.
