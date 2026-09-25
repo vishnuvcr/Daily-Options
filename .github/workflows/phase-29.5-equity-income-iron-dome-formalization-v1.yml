@@ -27,7 +27,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: \${{ github.head_ref || github.ref_name }}
+          ref: ${{ github.head_ref || github.ref_name }}
           fetch-depth: 0
 
       - name: Setup Python
@@ -64,5 +64,5 @@ jobs:
           git add reports/phase29_5_formalization_matrix.json
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "Phase 29.5: persist Iron Dome formalization matrix"
-          TARGET_REF="\${{ github.head_ref || github.ref_name }}"
+          TARGET_REF="${{ github.head_ref || github.ref_name }}"
           git push origin HEAD:"$TARGET_REF"
