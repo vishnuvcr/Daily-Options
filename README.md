@@ -189,3 +189,13 @@ The pinned Rissin source passes the current data gate at 84,280,469 1-minute row
 The next accepted numerical result must come from a clean Base + Stress run with adequate executable-date coverage. A positive replication advances unchanged to the next untouched WFA/OOS phase; otherwise Falcon is retired.
 
 [Phase 25 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-25-falcon-rissin-independent-v1/docs/phase25_plan.md) · [Phase 25 workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-25-falcon-rissin-independent-v1/.github/workflows/phase-25-falcon-rissin.yml) · [Phase 25 status](https://github.com/vishnuvcr/Daily-Options/blob/phase-25-falcon-rissin-independent-v1/docs/research_status.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/phase-25-falcon-rissin-independent-v1/docs/error_log.md)
+
+## Phase 25.1 strategy fidelity audit — 2026-09-25
+
+A detailed audit found that the Phase 25 artifact did **not** test the full 270-cell family: the Base and Stress leaderboards contain 135 variants, all DIAGONAL_PREMIUM; all 135 SAME_STRIKE variants produced no executable rows. The Phase 25 conclusion that all 270 variants were negative is therefore withdrawn.
+
+The implemented DIAGONAL_PREMIUM family also depended on source-formalization choices that were not established by the available transcript summary: independent premium-matched far strikes, a 0.5/1.0/1.5× gross-credit stop grid, and intraday entry/adjustment time sensitivities. These are valid research experiments but not proof of the exact video strategy.
+
+**Falcon retirement is suspended.** The next step is source-fidelity reconstruction and a clean independent rerun of the exact strategy before any retirement or WFA/OOS decision.
+
+[Phase 25.1 strategy-fidelity audit](https://github.com/vishnuvcr/Daily-Options/blob/phase-25.1-strategy-fidelity-audit/docs/phase25.1_strategy_fidelity_audit.md)
