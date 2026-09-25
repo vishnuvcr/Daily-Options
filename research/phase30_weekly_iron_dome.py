@@ -478,7 +478,7 @@ def run(data_root: Path, out: Path, slippage: float):
             con.execute("SET TimeZone='Asia/Kolkata'")
             options = con.execute(
                 f"""
-                SELECT CAST(timestamp AS TIMESTAMP) timestamp,
+                SELECT CAST(timestamp AS TIMESTAMP) raw_timestamp,
                        CAST(trading_day AS DATE) trading_day,
                        CAST(strike AS DOUBLE) strike,
                        UPPER(CAST(option_type AS VARCHAR)) option_type,
@@ -487,11 +487,11 @@ def run(data_root: Path, out: Path, slippage: float):
                 FROM read_parquet('{path}')
                 WHERE CAST(trading_day AS DATE) BETWEEN DATE '{entry_date}' AND DATE '{expiry}'
                   AND close > 0
-                ORDER BY timestamp, strike, option_type
+                ORDER BY raw_timestamp, strike, option_type
                 """
             ).df()
             con.close()
-            options = options.rename(columns={"open_px": "open", "close_px": "close"})
+            options = options.rename(columns={"raw_timestamp": "timestamp", "open_px": "open", "close_px": "close"})
             if options.empty:
                 coverage.append({"expiry": str(expiry), "entry_date": str(entry_date), "status": "NO_OPTION_ROWS"})
                 continue
