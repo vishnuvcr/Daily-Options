@@ -74,3 +74,18 @@ Controlled trigger PR: #36.
 Head commit: 1204ff2b0b4004eac29892df9c79b7d4cebfbcff.
 
 The workflow checks out only the fixed archive branch and may commit only resumable archive progress there. No strategy code or research parameters are changed.
+
+## Latest acquisition result — run 36126797339
+
+- Discovered videos: 169
+- Validated encrypted transcripts: 39
+- Integrity-verified encrypted transcripts: 39/39
+- Remaining transcript failures: 130
+- Successful acquisition method: youtube-transcript-ai
+- The remaining failures were dominated by 124 HTTP-200 responses with no parseable timestamp lines and 6 HTTP-429 responses; direct YouTube paths remained blocked.
+
+## Next acquisition correction
+
+A structured youtubegpt.ai JSON caption fallback has been added after the existing no-key transcript service and before Invidious/YouTube fallbacks. Its documented JSON format exposes millisecond segment timings and an explicit generated/human track flag, so the archive can preserve source timing/provenance without generating transcript text locally.
+
+The next run must reuse the fixed 39 successes, test only the 130 unresolved videos, and persist any additional encrypted successes. The archive completion gate remains 169/169 or explicit durable failure records for every unresolved video.
