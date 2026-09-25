@@ -82,6 +82,8 @@ jobs:
           print(row)
           assert row[1] >= 200
           assert row[2] >= 40
+          PY
+
       - name: Save validated Rissin NIFTY data
         if: success()
         uses: actions/cache/save@v4
