@@ -1,1 +1,2 @@
 Controlled Phase 26 launcher trigger: rebuild inventory from frozen 169-video archive.
+Phase 26 rerun after regression-test correction: 2026-09-25.
