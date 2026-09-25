@@ -20,3 +20,11 @@ All eight T1 candidates remain blocked. External YouTube descriptions are corrob
 ## Next action
 
 Use the matrix to perform targeted source-context reconciliation for each candidate, then freeze only candidates with complete rule cards before numerical testing.
+
+## 2026-09-25 — Execution result
+
+Launcher run **36133946055** passed all unit, matrix and hard-gate checks.
+
+All 8 T1 candidates remain blocked from numerical testing because each has at least one unresolved or conflicting economically material rule. This is an explicit evidence result, not a CI failure.
+
+Recommended next action is targeted source-context reconciliation, candidate by candidate, using archived source captions as primary and independent public descriptions as corroboration.
