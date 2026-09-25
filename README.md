@@ -179,3 +179,13 @@ The active corrected runtime is **Phase 19 v2** on `phase-19-nifty-short-strangl
 ## Phase 13 integrity correction — 2026-09-25
 
 A retrospective audit found that the authoritative Phase 13 Base/Stress trade artifacts contained exact two-for-one duplicates caused by the simulator expanding both risk profiles after `risk_id` was already part of the unique setup key. The published ₹285.45/₹225.45 near-miss is therefore invalid. Exact-deduplication recomputation gives a best full-sample mean active-day net of **₹142.72 base / ₹112.72 stress**, with 0 target-qualified cells and corrected nested-WFA mean test-window net of **₹121.82 base / ₹91.82 stress**. Phase 13 remains non-promoted; no tuning is authorized.
+
+## Phase 25 — current research frontier (2026-09-25)
+
+Phase 24's apparent high-profit Falcon leaderboard is rejected because its pinned TradeMarkk cache contained only five executable entry dates. Phase 25 is the independent Rissin replication of the frozen rule, with no result-driven retuning.
+
+The pinned Rissin source passes the current data gate at 84,280,469 1-minute rows across 311 trading dates and 76 expiries. Runs 36109400662 and 36109602872 were both rejected before P&L because of implementation defects logged in the repository. Those defects are now corrected, with regression tests and persistent cache handling added.
+
+The next accepted numerical result must come from a clean Base + Stress run with adequate executable-date coverage. A positive replication advances unchanged to the next untouched WFA/OOS phase; otherwise Falcon is retired.
+
+[Phase 25 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-25-falcon-rissin-independent-v1/docs/phase25_plan.md) · [Phase 25 workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-25-falcon-rissin-independent-v1/.github/workflows/phase-25-falcon-rissin.yml) · [Phase 25 status](https://github.com/vishnuvcr/Daily-Options/blob/phase-25-falcon-rissin-independent-v1/docs/research_status.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/phase-25-falcon-rissin-independent-v1/docs/error_log.md)
