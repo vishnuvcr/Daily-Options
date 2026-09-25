@@ -534,3 +534,19 @@ Phase 30 v8 Iron Dome is retired after clean Base+Stress failure of the frozen 1
 Authoritative workflow run **36159121044** is executing. Unit tests and the cached TradeMarkk source restore have passed; exact-expiry acquisition is in progress. The frozen 24-cell grid uses prior-day India VIX, 1/2-sigma range selection, expiry-relative entry offsets -2/-3 sessions, 09:30/10:00 entries, and NONE / 50%-distance / 75%-distance challenged-short reduction modes. Base brokerage is ₹10/order from the current Paytm Money F&O schedule; Base/Stress slippage remains ₹0.20/₹0.40.
 
 No Air Defense P&L is accepted until Base and Stress complete and the artifacts pass duplicate-key, coverage and information-barrier audit.
+
+## 2026-09-25 — Phase 30.1 Air Defense final closure
+
+Authoritative run **36159644022** completed Base and Stress successfully after deterministic NSE India VIX acquisition fallback/chunking corrections. The frozen 24-cell Air Defense family generated complete Base/Stress artifacts with **42 normal Tuesday expiries** and **236 VIX observations**. **0/24 cells passed** the ₹5,000/week preliminary gate in either friction setting.
+
+Best Base cell: **AD30_03_093000_S1_NONE**, 35 completed weeks, mean weekly net **₹2,126.52**, median **₹2,746.24**, positive-week rate **85.71%**, execution coverage **83.33%**, worst week **-₹23,467.55**, profit factor **3.00**, ES95 **-₹14,042.99**.
+
+Best Stress cell: same rule cell, mean weekly net **₹2,070.63**, median **₹2,686.24**, positive-week rate **85.71%**, execution coverage **83.33%**, worst week **-₹23,519.55**, profit factor **2.93**, ES95 **-₹14,094.99**.
+
+The family is **retired for the ₹5,000/week promotion gate**. No WFA/OOS or result-driven retuning is authorized. The source mechanism is economically positive in this sample but below the declared weekly target at the one-lot-per-short reference position.
+
+## 2026-09-25 — Phase 30.2 Falcon independent weekly replication launched
+
+New distinct branch: `phase-30.2-equity-income-falcon-weekly-v1`. This is the next source-faithful Equity Income candidate after Air Defense. The frozen 270-cell Falcon grid preserves the source's ratio-diagonal structure, current Tuesday-expiry timing analogue (Wednesday entry → Thursday adjustment → Monday exit), 25-point premium zone sensitivity, one-strike wing adjustment and hard-stop grid. The numerical gate has been rewritten for the current **₹5,000 net/week** objective rather than the retired ₹1,000/day criterion.
+
+Authoritative workflow run **36160694325** is queued/pending. No Falcon P&L is accepted yet.
