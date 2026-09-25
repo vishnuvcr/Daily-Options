@@ -322,3 +322,9 @@ Phase 24 next execution requirement: rebuild/reacquire a coverage-validated exac
 Run **36110262221** reached the full friction stage with both Base and Stress after **7/7 unit tests** and the full Rissin coverage gate passed. Static runtime review then identified repeated parquet scans across the 9 stop/adjust variants of each setup. The run is treated as non-evidentiary and superseded without using any partial P&L.
 
 The frozen 270-cell grid is unchanged. The simulator now caches exact-key chain/series loads in-process and groups variants by setup key, reducing repeated I/O without changing strategy parameters, timing, costs, slippage, or trade rules. A fresh Base + Stress run is now required.
+
+## 2026-09-25 — Phase 25 second runtime optimization
+
+Run **36110775799** reached Base/Stress friction after all seven unit tests and the Rissin coverage gates passed, but it was superseded before numerical acceptance after a complexity review found repeated panel construction, stop scans and strike-universe queries across the frozen variants.
+
+The frozen strategy is unchanged. The simulator now also caches exact-expiry strike universes, pre/post mark panels, all three frozen stop-trigger times, and exit prices, in addition to the earlier chain/series caches. A fresh run will be used for the first accepted Phase 25 numerical result.
