@@ -155,6 +155,13 @@ def select_track(transcript_list):
 
 
 def fetch_transcript(video_id: str, video_url: str, retries: int = 3):
+    # First try the direct caption endpoint. It only needs the stable video ID
+    # and can succeed even when full player-page extraction is challenged.
+    timed = fetch_timedtext(video_id)
+    if timed is not None:
+        snippets, lang, generated = timed
+        return snippets, lang, lang, generated, "youtube-timedtext"
+
     api = YouTubeTranscriptApi()
     last_error = None
 
@@ -173,20 +180,14 @@ def fetch_transcript(video_id: str, video_url: str, retries: int = 3):
             if attempt < retries:
                 time.sleep(attempt * 2)
 
-    timed = fetch_timedtext(video_id)
-    if timed is not None:
-        snippets, lang, generated = timed
-        return snippets, lang, lang, generated, "youtube-timedtext"
-
-    # Fallback: obtain a subtitle track directly from yt-dlp.
+    # Fallback: obtain a subtitle track directly from yt-dlp with clients that
+    # are less dependent on the currently enforced PO-token/player flow.
     opts = {
         "quiet": True,
         "no_warnings": True,
         "skip_download": True,
         "socket_timeout": 15,
         "retries": 2,
-        # Prefer clients that currently do not require YouTube PO tokens
-        # for the relevant request classes when yt-dlp falls back to captions.
         "extractor_args": {
             "youtube": {
                 "player_client": ["tv_simply", "web_embedded"],
