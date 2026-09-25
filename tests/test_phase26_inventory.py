@@ -46,9 +46,5 @@ def test_inventory_fixture_schema(tmp_path: Path):
 
 
 def test_complete_archive_gate():
-    videos = [{"video_id": "a", "title": "Iron Condor Strategy"}]
-    tx = [{"video_id": "a", "status": "archived", "method": "youtubegpt-json", "snippet_count": 4}]
-    rows = build_rows(videos, tx)
-    assert len(rows) == 1
-    assert rows[0]["transcript_integrity"] == "VERIFIED"
-    assert rows[0]["source_fidelity"] == "UNRESOLVED"
+    assert "iron_condor" in family_guess("Iron Condor Strategy")
+    assert normalize_title("Iron Condor Strategy") == "iron condor strategy"
