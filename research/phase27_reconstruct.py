@@ -26,7 +26,10 @@ FIELD_PATTERNS = {
     "adjustment_day": [rf"\b(?:adjust|adjustment|hedge|roll)[^\.\n]{{0,80}}({DAY_RE})", rf"({DAY_RE})[^\.\n]{{0,60}}(?:adjust|hedge|roll)"],
     "exit_day": [rf"\b(?:exit|close|square off|book profit)[^\.\n]{{0,80}}({DAY_RE})", rf"({DAY_RE})[^\.\n]{{0,60}}(?:exit|close|square)"],
     "underlying": [r"\b(nifty(?:\s*50)?|banknifty|sensex)\b"],
-    "premium_zone": [rf"(?:premium|credit|collect|zone)[^\.\n]{{0,70}}({MONEY_RE}|\d+(?:\.\d+)?\s*points?)"],
+    "premium_zone": [
+        rf"(?:premium|credit|collect|zone)[^\.\n]{{0,70}}({MONEY_RE}|\d+(?:\.\d+)?\s*points?)",
+        r"\b\d+(?:\.\d+)?\s*point(?:s)?\s*(?:premium|credit|zone)\b",
+    ],
     "time_reference": [TIME_RE],
     "expiry_reference": [r"\b(?:expiry|expiration)[^\.\n]{0,50}(monday|tuesday|wednesday|thursday|friday)\b", r"\b(monday|tuesday|wednesday|thursday|friday)[^\.\n]{0,50}\b(?:expiry|expiration)"],
     "lot_reference": [r"\b(\d+)\s*(?:lots?|lot equivalents?)\b", r"\b(\d+):(\d+)\b"],
