@@ -316,3 +316,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0283 | 2026-09-25 | Equity Income research-governance | The main research plan/status still exposed the legacy ₹1,000-per-active-lot/day stopping rule after the program had shifted to the Equity Income YouTube weekly research track | Risk of using the wrong promotion criterion for Phase 29.5/30; no strategy P&L was affected | Rebased the active YouTube program to a fixed declared reference position size with a ₹5,000 net/week target and explicit weekly consistency gates; retained the ₹1,000/day rule only as historical Phase 0–25 context | CLOSED — methodology/documentation correction |
+
+
+| E0284 | 2026-09-25 | Phase 30 CI | Initial Phase 30 v4 workflow persisted GitHub expression tokens with literal backslashes, causing actions/checkout to resolve a branch name prefixed with a backslash and fail before any tests or data acquisition | No numerical computation or P&L was produced; both Base and Stress jobs stopped at checkout | Remove the literal escape characters from the YAML while preserving GitHub expression syntax; rerun the unchanged frozen Phase 30 experiment before interpreting any result | OPEN — rerun required |
