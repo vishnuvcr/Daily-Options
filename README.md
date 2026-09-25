@@ -339,3 +339,35 @@ NSE currently specifies Tuesday expiry for NIFTY weekly contracts, with the prev
 ### Next research phase
 
 Phase 29.2 will perform strategy-specific contract coverage and exact-expiry joins for the 51 preliminary-feasible candidates, while preserving the hard execution-quality gate: no bid/ask inference, explicit slippage/transaction costs, historical lot sizes from dated exchange evidence, and no future information. Phase 30 cannot start from aggregate source availability alone.
+
+
+## 2026-09-25 — Phase 29.2 Equity-Income contract coverage
+
+Phase 29.2 workflow **36135151445** completed successfully on branch `phase-29.2-equity-income-contract-coverage-v1` and pull request [#70](https://github.com/vishnuvcr/Daily-Options/pull/70).
+
+The 71 Phase-28 candidate rows were cross-checked against the frozen Equity Income archive: 169 discovered videos and 169 archived transcript-manifest records. Contract-readiness was then tightened beyond Phase 29.1 aggregate source availability.
+
+| Contract-readiness state | Rows |
+|---|---:|
+| UNDERLYING_UNRESOLVED | 54 |
+| DATA_PARTIAL_INDEPENDENT_GAP | 10 |
+| RULE_RECONSTRUCTION_REQUIRED | 4 |
+| LONG_DATED_DATA_LIMITED | 1 |
+| CONTRACT_READY_FOR_CONTENT_JOIN | 2 |
+
+The two currently contract-ready rows are the duplicate **NIFTY Iron Dome** candidates (videos published Apr 30 and May 2, 2026). Their public YouTube descriptions describe an Ironfly-adjustment framework for market movement, but exact strike/leg/timing rules still need content-level reconstruction before any P&L test. citeturn650277youtube0turn650277youtube1
+
+All 71 rows remain `backtest_allowed=NO`. Phase 30 is still blocked pending exact leg composition, dated expiry/lot-size joins, contract-content coverage, and an executable-price model with explicit slippage, brokerage and statutory charges.
+
+### Phase 29.2 research documents
+
+- [Phase 29.2 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-29.2-equity-income-contract-coverage-v1/docs/phase29.2_contract_coverage_plan.md)
+- [Phase 29.2 contract matrix](https://github.com/vishnuvcr/Daily-Options/blob/phase-29.2-equity-income-contract-coverage-v1/reports/phase29_2_contract_coverage_matrix.csv)
+- [Phase 29.2 summary](https://github.com/vishnuvcr/Daily-Options/blob/phase-29.2-equity-income-contract-coverage-v1/reports/phase29_2_summary.json)
+- [Phase 29.2 source manifest](https://github.com/vishnuvcr/Daily-Options/blob/phase-29.2-equity-income-contract-coverage-v1/data/equity_income/phase29_2_contract_manifest.json)
+- [Phase 29.2 workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-29.2-equity-income-contract-coverage-v1/.github/workflows/phase-29.2-equity-income-contract-coverage-v1.yml)
+- [Phase 29.2 error log](https://github.com/vishnuvcr/Daily-Options/blob/phase-29.2-equity-income-contract-coverage-v1/docs/error_log.md)
+
+### Next phase
+
+Phase 29.3 will take the two NIFTY Iron Dome candidates into exact contract-content validation: reconstruct the leg sequence and adjustments from the archived evidence, map every leg to the pinned 1-minute option contracts, verify dated NIFTY expiry/lot-size rules, and establish a reproducible entry/adjustment/exit specification. No trading result will be accepted until this gate passes.
