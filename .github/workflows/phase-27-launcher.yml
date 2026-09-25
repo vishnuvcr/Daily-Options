@@ -1,0 +1,74 @@
+name: Phase 27 - launcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/phase27-launch-trigger.txt"
+  pull_request:
+    paths:
+      - ".github/phase27-launch-trigger.txt"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase27-equity-income-reconstruction-launcher
+  cancel-in-progress: true
+
+jobs:
+  reconstruct:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout Phase 27 branch
+        uses: actions/checkout@v4
+        with:
+          ref: phase-27-equity-income-reconstruction-v1
+          fetch-depth: 0
+
+      - name: Sync frozen Phase 26 input
+        run: |
+          set -euo pipefail
+          git fetch origin phase-26-equity-income-inventory-v1
+          git restore --source=origin/phase-26-equity-income-inventory-v1 -- data/equity_income
+          test -s data/equity_income/video_inventory.csv
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install reconstruction tooling
+        run: python -m pip install requests==2.34.2 pytest==8.4.2
+
+      - name: Unit tests
+        run: python -m pytest -q tests/test_phase27_reconstruct.py
+
+      - name: Extract deterministic source-rule evidence
+        run: |
+          python research/phase27_reconstruct.py             --inventory data/equity_income/video_inventory.csv             --out data/equity_income/phase27_rule_evidence.jsonl
+
+      - name: Validate Phase 27 evidence
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          s=json.load(open("data/equity_income/phase27_summary.json"))
+          assert s["candidate_videos"] >= 60
+          assert s["processed"] + s["errors"] >= s["candidate_videos"]
+          print(json.dumps(s, indent=2))
+          PY
+
+      - name: Persist Phase 27 evidence
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/equity_income/phase27_rule_evidence.jsonl                   data/equity_income/phase27_summary.json                   docs/equity_income_strategy_rules
+          if git diff --cached --quiet; then
+            echo "No Phase 27 changes."
+            exit 0
+          fi
+          git commit -m "Phase 27: persist source-rule evidence"
+          git push origin HEAD:phase-27-equity-income-reconstruction-v1
