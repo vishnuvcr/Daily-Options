@@ -406,3 +406,7 @@ The first vectorized result was quarantined after a pre-result audit found that 
 
 ### Phase 30 v7 invalidation / v8 correction — 2026-09-25
 The completed v7 Base/Stress run is permanently quarantined: a shared mutable-leg-state bug caused later parameter cells to skip closing orders and report opening-credit-only P&L. The active branch is `phase-30-equity-income-weekly-backtest-v8-state-isolation`, with state-isolation regression tests and the frozen rules unchanged. WFA/OOS remains blocked until v8 completes and passes the audit gate.
+
+### Phase 30 v8 execution checkpoint — 2026-09-25
+
+Authoritative v8 run **36157105595** is executing on `phase-30-equity-income-weekly-backtest-v8-state-isolation`. Unit tests and pinned-data coverage checks passed; Base friction is in progress. A prior v8 Base-only artifact (run 36153419405) is provisionally auditable: 262 exact-expiry files, 774 executable setups, 3,092 unique trade rows across all 12 frozen cells, and **0/12 preliminary-pass cells**. Best Base cell was **-₹585.85 mean weekly net**, with **39.77% positive weeks** and **98.85% execution coverage**. This is not yet the final Phase 30 result because the prior run failed before Stress; the current run is repeating Base then Stress cleanly.
