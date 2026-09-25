@@ -1,0 +1,28 @@
+{
+  "candidate_rows": 71,
+  "archive_discovered_videos": 169,
+  "archive_transcripts_status_archived": 169,
+  "candidate_archive_provenance": 71,
+  "readiness_state_counts": {
+    "UNDERLYING_UNRESOLVED": 54,
+    "LONG_DATED_DATA_LIMITED": 1,
+    "DATA_PARTIAL_INDEPENDENT_GAP": 10,
+    "RULE_RECONSTRUCTION_REQUIRED": 4,
+    "CONTRACT_READY_FOR_CONTENT_JOIN": 2
+  },
+  "underlying_counts": {
+    "UNKNOWN": 57,
+    "STOCK": 12,
+    "NIFTY": 2
+  },
+  "primary_trade_source_revision": "51ca58c",
+  "independent_source_revision": "78b1c5468255d18cf492984bfe6fe4e3ac874d7c",
+  "backtest_allowed": 0,
+  "phase30_gate": "BLOCKED",
+  "notes": [
+    "CONTRACT_READY_FOR_CONTENT_JOIN is not P&L readiness.",
+    "No transcript plaintext was decrypted by this phase.",
+    "Historical lot size and expiry remain date-specific official-exchange joins.",
+    "Bid/ask remains unverified; later simulations must use an explicit OHLC execution/slippage model."
+  ]
+}\n
