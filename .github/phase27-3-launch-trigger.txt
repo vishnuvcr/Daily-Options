@@ -1,1 +1,2 @@
 Phase 27.3 launcher trigger: build T1 source-fidelity rule sheets.
+Phase 27.3 execution trigger 2026-09-25.
