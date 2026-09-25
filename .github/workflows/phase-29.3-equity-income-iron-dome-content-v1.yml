@@ -36,7 +36,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install research tooling
-        run: python -m pip install --disable-pip-version-check pytest==8.4.2 youtube-transcript-api==1.2.4 huggingface_hub==1.33.0 pyarrow==20.0.0 yt-dlp==2026.8.19 requests==2.34.2 yt-dlp==2026.8.19
+        run: python -m pip install --disable-pip-version-check pytest==8.4.2 youtube-transcript-api==1.2.4 huggingface_hub==1.33.0 pyarrow==20.0.0 yt-dlp==2026.8.19 requests==2.34.2
 
       - name: Unit tests
         run: python -m pytest -q tests/test_phase29_3_iron_dome_content.py
@@ -65,4 +65,5 @@ jobs:
           git add reports/phase29_3_iron_dome_rule_evidence.json reports/phase29_3_expiry_file_inventory.json reports/phase29_3_expiry_content_checks.json reports/phase29_3_summary.json data/equity_income/phase29_3_transcript_fetch_manifest.json
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "Phase 29.3: persist Iron Dome content evidence"
-          git push origin HEAD:${{ github.ref_name }}
+          TARGET_REF="${{ github.head_ref || github.ref_name }}"
+          git push origin HEAD:"$TARGET_REF"
