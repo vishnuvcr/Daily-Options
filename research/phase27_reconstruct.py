@@ -193,6 +193,37 @@ def main() -> int:
     for row in good:
         for family in row.get("family_hits") or []:
             summary["family_hit_counts"][family] = summary["family_hit_counts"].get(family, 0) + 1
+    rules_root = Path("docs/equity_income_strategy_rules")
+    rules_root.mkdir(parents=True, exist_ok=True)
+    for row in good:
+        if row.get("status") == "ERROR":
+            continue
+        lines = [
+            f"# {row.get('title') or row['video_id']}",
+            "",
+            f"- Video ID: {row['video_id']}",
+            f"- Source: {row.get('source_url','')}",
+            f"- Candidate families detected: {', '.join(row.get('family_hits') or []) or 'UNCLASSIFIED'}",
+            f"- Transcript method used for reconstruction: {row.get('transcript_method','')}",
+            "",
+            "## Rule evidence",
+            "",
+        ]
+        for field, values in (row.get("fields") or {}).items():
+            status = (row.get("field_status") or {}).get(field, "UNSPECIFIED")
+            shown = "; ".join(values) if values else "UNSPECIFIED"
+            lines.append(f"- **{field}** — {status}: {shown}")
+        lines.extend([
+            "",
+            "## Reconstruction status",
+            "",
+            "- Source fidelity: SOURCE-EXPLICIT where deterministic evidence exists; otherwise UNSPECIFIED.",
+            "- Phase status: RECONSTRUCTING.",
+            "- No backtest or parameter tuning is performed in Phase 27 evidence extraction.",
+        ])
+        safe = re.sub(r"[^a-zA-Z0-9._-]+", "_", row["video_id"]).strip("_") or "video"
+        (rules_root / f"{safe}.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
     Path(args.out.parent / "phase27_summary.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(summary, sort_keys=True))
     return 0
