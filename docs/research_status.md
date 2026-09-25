@@ -340,3 +340,11 @@ Trading tests are paused by user request. A dedicated fixed branch, equity-incom
 The new research target is weekly trading with a minimum ₹5,000 net per traded week at fixed reference sizing. Every distinct strategy described by the channel will be reconstructed, deduplicated, tested with realistic Paytm Money/NSE costs and Base/Stress slippage, then subjected to WFA/OOS and later-period validation before promotion.
 
 Archive completion is blocked only on configuring the repository secret EQUITY_INCOME_ARCHIVE_KEY before the encrypted transcript workflow is run. No trading backtest is launched from this branch.
+
+## 2026-09-25 — Phase 27 active: source-rule reconstruction
+
+Phase 26 completed the deterministic inventory of all 169 archived videos. Phase 27 is now active.
+
+Current step: extract structured source-rule evidence from all title-identified strategy candidates using Python transcript retrieval. No plaintext transcript is committed and no backtest is performed.
+
+Promotion gate: every economically material field needed for simulation must be SOURCE-EXPLICIT or explicitly resolved as a preregistered inference; unresolved rules stay out of backtesting.
