@@ -329,7 +329,10 @@ def run_cell(con, setup, trigger, adjustment, slippage):
             for i, leg in enumerate(active):
                 if leg["active"] and leg["position"] == "SHORT" and leg["side"] == challenged:
                     target_idx = i
-                    target_strike = leg["strike"] + STRIKE_INTERVAL if challenged == "CE" else leg["strike"] - STRIKE_INTERVAL
+                    # "One strike inside" is interpreted literally as one strike
+                    # deeper ITM for the challenged short leg: lower CE strike on
+                    # an upside challenge, higher PE strike on a downside challenge.
+                    target_strike = leg["strike"] - STRIKE_INTERVAL if challenged == "CE" else leg["strike"] + STRIKE_INTERVAL
                     break
             if target_idx is None:
                 return None
