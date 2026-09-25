@@ -428,7 +428,7 @@ def metrics(trades: pd.DataFrame, slippage: float):
         "worst_week": float(vals.min()),
         "max_drawdown": float(dd.min()),
         "profit_factor": float(positive / negative) if negative > 0 else None,
-        "cvar95": float(vals.nsmallest(max(1, int(np.ceil(len(vals) * 0.05))).sum() / max(1, int(np.ceil(len(vals) * 0.05)))),
+        "cvar95": float(vals.nsmallest(max(1, int(np.ceil(len(vals) * 0.05)))).mean()),
         "target_qualified": bool(
             len(vals) >= 100
             and vals.mean() >= 5000
