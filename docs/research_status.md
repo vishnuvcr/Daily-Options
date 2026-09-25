@@ -340,3 +340,19 @@ Trading tests are paused by user request. A dedicated fixed branch, equity-incom
 The new research target is weekly trading with a minimum ₹5,000 net per traded week at fixed reference sizing. Every distinct strategy described by the channel will be reconstructed, deduplicated, tested with realistic Paytm Money/NSE costs and Base/Stress slippage, then subjected to WFA/OOS and later-period validation before promotion.
 
 Archive completion is blocked only on configuring the repository secret EQUITY_INCOME_ARCHIVE_KEY before the encrypted transcript workflow is run. No trading backtest is launched from this branch.
+
+## 2026-09-25 — Phase 29 data-feasibility result
+
+Authoritative Phase 29 launcher run **36132032411** completed successfully.
+
+- Candidate family members assessed: **71**
+- Preliminary 1-minute-data feasible: **51**
+- Data-limited: **16**
+- Unresolved family mapping: **4**
+- Backtest-eligible in Phase 29: **0**
+- Strategy-specific quote completeness verified: **0**
+- Historical lot-size series verified: **0**
+
+The public-source feasibility gate is therefore informative but not yet sufficient for numerical testing. Index-option families have a plausible 1-minute primary/secondary data path, while covered-call/stock-option and LEAPS candidates remain data-limited until file-level historical coverage is proven.
+
+Next research work stays on source fidelity and coverage validation, not performance tuning.
