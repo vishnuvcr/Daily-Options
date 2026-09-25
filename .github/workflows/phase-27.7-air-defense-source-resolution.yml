@@ -42,7 +42,7 @@ jobs:
           s=json.load(open("reports/phase27_7_air_defense_contexts.json"))
           assert s["video_id"]=="aRjY_O6U3nQ"
           assert s["backtest_allowed"] is False
-          assert len(s["contexts"]) == 8
+          assert len(s["contexts"]) == 12
           print({k: len(v) for k,v in s["contexts"].items()})
           PY
       - name: Persist evidence
