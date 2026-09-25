@@ -1,1 +1,2 @@
 Phase 27 controlled rerun: extract source-rule evidence for all Phase 26 candidates.
+Phase 27 execution trigger 2026-09-25: begin source-rule evidence extraction.
