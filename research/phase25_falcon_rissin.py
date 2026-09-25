@@ -23,11 +23,11 @@ def src(root):
     return "read_parquet(["+",".join("'"+str(p).replace("'","''") for p in ps)+"])"
 
 def target(df,side,p,ref=None,outward=False):
-    x=df[df.option_type==side].copy()
-    if ref is not None: x=x[x.strike>=ref] if side=="CE" and outward else x[x.strike<=ref] if side=="PE" and outward else x[x.strike==ref]
-    x=x[(x.open_px>0)&(x.close_px>0)]
+    x=df[df["option_type"]==side].copy()
+    if ref is not None: x=x[x["strike"]>=ref] if side=="CE" and outward else x[x["strike"]<=ref] if side=="PE" and outward else x[x["strike"]==ref]
+    x=x[(x["open_px"]>0)&(x["close_px"]>0)]
     if x.empty:return None
-    x["d"]=(x.close_px-p).abs(); return x.sort_values(["d","strike"]).iloc[0]
+    x["d"]=(x["close_px"]-p).abs(); return x.sort_values(["d","strike"]).iloc[0]
 
 def chain(c,S,e,d,a,b):
     q=f"""SELECT CAST(timestamp AS TIMESTAMP) ts,CAST(strike AS DOUBLE) strike,UPPER(CAST(option_type AS VARCHAR)) option_type,CAST(open AS DOUBLE) open_px,CAST(close AS DOUBLE) close_px FROM {S}
@@ -66,8 +66,8 @@ def setup(c,S,d,et,p,f,exps,sessions):
     nc,nf=n[n.ts==t],n[n.ts==ft]; fc,ff=z[z.ts==t],z[z.ts==ft]
     ce,pe=target(nc,"CE",p),target(nc,"PE",p)
     if ce is None or pe is None:return None
-    if f=="SAME_STRIKE": fce,fpe=target(fc,"CE",p,ce.strike),target(fc,"PE",p,pe.strike)
-    else: fce,fpe=target(fc,"CE",p,ce.strike,True),target(fc,"PE",p,pe.strike,True)
+    if f=="SAME_STRIKE": fce,fpe=target(fc,"CE",p,float(ce["strike"])),target(fc,"PE",p,float(pe["strike"]))
+    else: fce,fpe=target(fc,"CE",p,float(ce["strike"]),True),target(fc,"PE",p,float(pe["strike"]),True)
     vals=None if fce is None or fpe is None else [op(nf,"CE",ce.strike,ft),op(nf,"PE",pe.strike,ft),op(ff,"CE",fce.strike,ft),op(ff,"PE",fpe.strike,ft)]
     if not vals or any(x is None for x in vals):return None
     a,b,cc,d0=vals; credit=5*(a+b)-3*(cc+d0)
