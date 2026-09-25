@@ -43,9 +43,6 @@ def lot_size(expiry):
         return 75
     return 65
 
-def adjustment_fraction(mode):
-    return {'NONE': None, 'REDUCE_AT_50PCT': 0.50, 'REDUCE_AT_75PCT': 0.75}[mode]
-
 def order_cost(price, side, qty, lot, order_date, brokerage):
     gross = float(price) * qty * lot
     stt_rate = 0.001 if order_date < date(2026, 4, 1) else 0.0015
