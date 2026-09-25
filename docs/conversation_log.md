@@ -125,3 +125,10 @@ After the clean Phase 30 v8 retirement, research advanced to the source-resolved
 ## 2026-09-25 — Phase 30.1 closure / Falcon continuation
 
 The Air Defense family completed both Base and Stress. It achieved a high positive-week rate in the best frozen cell but only about ₹2.1k mean weekly net at the one-lot-per-short reference size, so it does not meet the declared ₹5k/week promotion gate. The research therefore advances without tuning to the Falcon Spread independent replication. This preserves the source-fidelity sequence and avoids repeating the earlier day-based target.
+
+
+
+## 2026-09-25 — Phase 30.2 Falcon monitoring checkpoint
+User command: **“Ok proceed”**.
+Action: resumed the active Equity Income research frontier from Phase 30.2 Falcon.
+Checkpoint: read the current run ledger/status/error documentation and the Phase 30.2 preregistration before proceeding. Verified authoritative workflow run **36160873596**. Both Base and Stress passed tests and Rissin data acquisition and are in the numerical friction stage. No P&L was accepted. This turn does not record hidden chain-of-thought; only the operational research status is logged.
