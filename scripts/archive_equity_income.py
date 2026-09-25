@@ -149,8 +149,15 @@ def fetch_transcript(video_id: str, video_url: str, retries: int = 3):
         "quiet": True,
         "no_warnings": True,
         "skip_download": True,
-        "socket_timeout": 30,
-        "retries": 3,
+        "socket_timeout": 15,
+        "retries": 2,
+        # Prefer clients that currently do not require YouTube PO tokens
+        # for the relevant request classes when yt-dlp falls back to captions.
+        "extractor_args": {
+            "youtube": {
+                "player_client": ["tv_simply", "web_embedded"],
+            }
+        },
     }
     for attempt in range(1, retries + 1):
         try:
