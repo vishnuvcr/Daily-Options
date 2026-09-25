@@ -29,62 +29,82 @@
     "intraday_oi_available": false,
     "paths": {
       "historical_daily/BANKNIFTY": {
-        "directory_count": 3,
-        "file_count": 3,
-        "first_file": ".gitattributes",
-        "last_file": "README.md",
+        "directory_count": 10,
+        "file_count": 51,
+        "first_file": "historical_daily/BANKNIFTY/BANKNIFTY_2005.parquet",
+        "last_file": "upstox_intraday/SENSEX/SENSEX_2026.parquet",
+        "parquet_file_count": 48,
         "sample_files": [
-          ".gitattributes",
-          ".gitkeep",
-          "README.md"
+          "historical_daily/BANKNIFTY/BANKNIFTY_2005.parquet",
+          "historical_daily/BANKNIFTY/BANKNIFTY_2006.parquet",
+          "historical_daily/BANKNIFTY/BANKNIFTY_2007.parquet",
+          "upstox_intraday/SENSEX/SENSEX_2024.parquet",
+          "upstox_intraday/SENSEX/SENSEX_2025.parquet",
+          "upstox_intraday/SENSEX/SENSEX_2026.parquet"
         ],
         "status": "PRESENT"
       },
       "historical_daily/NIFTY": {
-        "directory_count": 3,
-        "file_count": 3,
-        "first_file": ".gitattributes",
-        "last_file": "README.md",
+        "directory_count": 10,
+        "file_count": 51,
+        "first_file": "historical_daily/BANKNIFTY/BANKNIFTY_2005.parquet",
+        "last_file": "upstox_intraday/SENSEX/SENSEX_2026.parquet",
+        "parquet_file_count": 48,
         "sample_files": [
-          ".gitattributes",
-          ".gitkeep",
-          "README.md"
+          "historical_daily/BANKNIFTY/BANKNIFTY_2005.parquet",
+          "historical_daily/BANKNIFTY/BANKNIFTY_2006.parquet",
+          "historical_daily/BANKNIFTY/BANKNIFTY_2007.parquet",
+          "upstox_intraday/SENSEX/SENSEX_2024.parquet",
+          "upstox_intraday/SENSEX/SENSEX_2025.parquet",
+          "upstox_intraday/SENSEX/SENSEX_2026.parquet"
         ],
         "status": "PRESENT"
       },
       "upstox_intraday/BANKNIFTY": {
-        "directory_count": 3,
-        "file_count": 3,
-        "first_file": ".gitattributes",
-        "last_file": "README.md",
+        "directory_count": 10,
+        "file_count": 51,
+        "first_file": "historical_daily/BANKNIFTY/BANKNIFTY_2005.parquet",
+        "last_file": "upstox_intraday/SENSEX/SENSEX_2026.parquet",
+        "parquet_file_count": 48,
         "sample_files": [
-          ".gitattributes",
-          ".gitkeep",
-          "README.md"
+          "historical_daily/BANKNIFTY/BANKNIFTY_2005.parquet",
+          "historical_daily/BANKNIFTY/BANKNIFTY_2006.parquet",
+          "historical_daily/BANKNIFTY/BANKNIFTY_2007.parquet",
+          "upstox_intraday/SENSEX/SENSEX_2024.parquet",
+          "upstox_intraday/SENSEX/SENSEX_2025.parquet",
+          "upstox_intraday/SENSEX/SENSEX_2026.parquet"
         ],
         "status": "PRESENT"
       },
       "upstox_intraday/NIFTY": {
-        "directory_count": 3,
-        "file_count": 3,
-        "first_file": ".gitattributes",
-        "last_file": "README.md",
+        "directory_count": 10,
+        "file_count": 51,
+        "first_file": "historical_daily/BANKNIFTY/BANKNIFTY_2005.parquet",
+        "last_file": "upstox_intraday/SENSEX/SENSEX_2026.parquet",
+        "parquet_file_count": 48,
         "sample_files": [
-          ".gitattributes",
-          ".gitkeep",
-          "README.md"
+          "historical_daily/BANKNIFTY/BANKNIFTY_2005.parquet",
+          "historical_daily/BANKNIFTY/BANKNIFTY_2006.parquet",
+          "historical_daily/BANKNIFTY/BANKNIFTY_2007.parquet",
+          "upstox_intraday/SENSEX/SENSEX_2024.parquet",
+          "upstox_intraday/SENSEX/SENSEX_2025.parquet",
+          "upstox_intraday/SENSEX/SENSEX_2026.parquet"
         ],
         "status": "PRESENT"
       },
       "upstox_intraday/SENSEX": {
-        "directory_count": 3,
-        "file_count": 3,
-        "first_file": ".gitattributes",
-        "last_file": "README.md",
+        "directory_count": 10,
+        "file_count": 51,
+        "first_file": "historical_daily/BANKNIFTY/BANKNIFTY_2005.parquet",
+        "last_file": "upstox_intraday/SENSEX/SENSEX_2026.parquet",
+        "parquet_file_count": 48,
         "sample_files": [
-          ".gitattributes",
-          ".gitkeep",
-          "README.md"
+          "historical_daily/BANKNIFTY/BANKNIFTY_2005.parquet",
+          "historical_daily/BANKNIFTY/BANKNIFTY_2006.parquet",
+          "historical_daily/BANKNIFTY/BANKNIFTY_2007.parquet",
+          "upstox_intraday/SENSEX/SENSEX_2024.parquet",
+          "upstox_intraday/SENSEX/SENSEX_2025.parquet",
+          "upstox_intraday/SENSEX/SENSEX_2026.parquet"
         ],
         "status": "PRESENT"
       }
@@ -111,57 +131,82 @@
     "intraday_oi_available": true,
     "paths": {
       "index": {
-        "directory_count": 4,
-        "file_count": 2,
-        "first_file": ".gitattributes",
-        "last_file": "README.md",
+        "directory_count": 119,
+        "file_count": 881,
+        "first_file": "index/BANKNIFTY.parquet",
+        "last_file": "stocks_options/ASTRAL/2023-04-27.parquet",
+        "parquet_file_count": 879,
         "sample_files": [
-          ".gitattributes",
-          "README.md"
+          "index/BANKNIFTY.parquet",
+          "index/NIFTY.parquet",
+          "index/SENSEX.parquet",
+          "stocks_options/ASTRAL/2023-02-23.parquet",
+          "stocks_options/ASTRAL/2023-03-29.parquet",
+          "stocks_options/ASTRAL/2023-04-27.parquet"
         ],
         "status": "PRESENT"
       },
       "options/BANKNIFTY": {
-        "directory_count": 4,
-        "file_count": 2,
-        "first_file": ".gitattributes",
-        "last_file": "README.md",
+        "directory_count": 119,
+        "file_count": 881,
+        "first_file": "index/BANKNIFTY.parquet",
+        "last_file": "stocks_options/ASTRAL/2023-04-27.parquet",
+        "parquet_file_count": 879,
         "sample_files": [
-          ".gitattributes",
-          "README.md"
+          "index/BANKNIFTY.parquet",
+          "index/NIFTY.parquet",
+          "index/SENSEX.parquet",
+          "stocks_options/ASTRAL/2023-02-23.parquet",
+          "stocks_options/ASTRAL/2023-03-29.parquet",
+          "stocks_options/ASTRAL/2023-04-27.parquet"
         ],
         "status": "PRESENT"
       },
       "options/NIFTY": {
-        "directory_count": 4,
-        "file_count": 2,
-        "first_file": ".gitattributes",
-        "last_file": "README.md",
+        "directory_count": 119,
+        "file_count": 881,
+        "first_file": "index/BANKNIFTY.parquet",
+        "last_file": "stocks_options/ASTRAL/2023-04-27.parquet",
+        "parquet_file_count": 879,
         "sample_files": [
-          ".gitattributes",
-          "README.md"
+          "index/BANKNIFTY.parquet",
+          "index/NIFTY.parquet",
+          "index/SENSEX.parquet",
+          "stocks_options/ASTRAL/2023-02-23.parquet",
+          "stocks_options/ASTRAL/2023-03-29.parquet",
+          "stocks_options/ASTRAL/2023-04-27.parquet"
         ],
         "status": "PRESENT"
       },
       "options/SENSEX": {
-        "directory_count": 4,
-        "file_count": 2,
-        "first_file": ".gitattributes",
-        "last_file": "README.md",
+        "directory_count": 119,
+        "file_count": 881,
+        "first_file": "index/BANKNIFTY.parquet",
+        "last_file": "stocks_options/ASTRAL/2023-04-27.parquet",
+        "parquet_file_count": 879,
         "sample_files": [
-          ".gitattributes",
-          "README.md"
+          "index/BANKNIFTY.parquet",
+          "index/NIFTY.parquet",
+          "index/SENSEX.parquet",
+          "stocks_options/ASTRAL/2023-02-23.parquet",
+          "stocks_options/ASTRAL/2023-03-29.parquet",
+          "stocks_options/ASTRAL/2023-04-27.parquet"
         ],
         "status": "PRESENT"
       },
       "stocks_options": {
-        "directory_count": 4,
-        "file_count": 2,
-        "first_file": ".gitattributes",
-        "last_file": "README.md",
+        "directory_count": 119,
+        "file_count": 881,
+        "first_file": "index/BANKNIFTY.parquet",
+        "last_file": "stocks_options/ASTRAL/2023-04-27.parquet",
+        "parquet_file_count": 879,
         "sample_files": [
-          ".gitattributes",
-          "README.md"
+          "index/BANKNIFTY.parquet",
+          "index/NIFTY.parquet",
+          "index/SENSEX.parquet",
+          "stocks_options/ASTRAL/2023-02-23.parquet",
+          "stocks_options/ASTRAL/2023-03-29.parquet",
+          "stocks_options/ASTRAL/2023-04-27.parquet"
         ],
         "status": "PRESENT"
       }
