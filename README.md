@@ -195,3 +195,7 @@ The next accepted numerical result must come from a clean Base + Stress run with
 The independent Rissin replication is running on the frozen Falcon Spread rule. The current clean run is **36111174510** with Base and Stress friction active. Seven unit tests and the 311-date / 76-expiry data coverage gate have passed in the current run. Before this run, two performance-only optimizations were applied: exact chain/series caching, then strike-universe, mark-panel, stop-trigger and exit-price caching. No strategy parameter, timing, cost, slippage or selection rule was changed.
 
 No numerical P&L from Phase 25 has been accepted yet. Once the current run completes, the 270-cell leaderboard will be inspected for executable-date coverage, base/stress net P&L, and the promotion gate.
+
+
+### Phase 25 resume checkpoint — 2026-09-25
+Run **36111174510** remains active with both Base and Stress in friction. All seven unit tests and the Rissin 84,280,469-row / 311-date / 76-expiry coverage gate have passed. Earlier runs 36110262221 and 36110775799 were cancelled/superseded before numerical acceptance. The current run uses the frozen 270-cell Falcon grid and output-preserving execution caches; no strategy parameters have been retuned. **No Phase 25 P&L is accepted yet.**
