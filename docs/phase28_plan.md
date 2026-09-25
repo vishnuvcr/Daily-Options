@@ -1,23 +1,27 @@
 # Phase 28 — Deduplication and family clustering
 
 ## Objective
-Map videos to canonical payoff families and remove duplicate experiments.
+
+Reduce the 71 Phase 26 strategy-candidate videos into conservative canonical research families without promoting unresolved rules into backtests.
 
 ## Inputs
-Phase 27 rule sheets
+
+- Phase 26 video inventory
+- Phase 27 timestamped rule-evidence metadata
+
+## Method
+
+1. Use structural payoff-family hints from titles and Phase 27 metadata.
+2. Compare normalized titles and structural-family overlap.
+3. Merge only strong candidates above a preregistered similarity threshold.
+4. Mark each cluster HIGH or REVIEW_REQUIRED.
+5. Preserve unresolved source fidelity and prohibit backtesting.
 
 ## Outputs
-docs/equity_income_strategy_families.csv
 
-## Weekly research gate
-The program target is **₹5,000 net per traded week** at a fixed declared reference position size. Position size may not be increased solely to satisfy the target.
+- data/equity_income/strategy_families.csv
+- data/equity_income/phase28_summary.json
 
 ## Completion gate
-Every tested strategy has a unique canonical family ID.
 
-## Mandatory controls
-- Keep strategy rules frozen once the phase's test definition is registered.
-- Account for Paytm Money brokerage, NSE exchange charges, STT, SEBI fee, stamp duty, GST and explicit Base/Stress slippage.
-- Preserve information barriers and historical lot sizes.
-- Log every implementation/data error in `docs/error_log.md`.
-- Update `docs/research_status.md` after each execution.
+Every candidate has one family ID, every family has a review status, and zero rows are backtest-eligible.
