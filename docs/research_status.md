@@ -340,3 +340,10 @@ Trading tests are paused by user request. A dedicated fixed branch, equity-incom
 The new research target is weekly trading with a minimum ₹5,000 net per traded week at fixed reference sizing. Every distinct strategy described by the channel will be reconstructed, deduplicated, tested with realistic Paytm Money/NSE costs and Base/Stress slippage, then subjected to WFA/OOS and later-period validation before promotion.
 
 Archive completion is blocked only on configuring the repository secret EQUITY_INCOME_ARCHIVE_KEY before the encrypted transcript workflow is run. No trading backtest is launched from this branch.
+
+
+## 2026-09-25 — Archive infrastructure validation checkpoint
+
+The fixed archive branch now contains the deterministic Python discovery/transcript layer, unit tests, pinned dependencies, encrypted-archive workflow, strategy registry schema, and weekly Phase 26–35 research plan. The GitHub Actions archive job is deliberately not auto-triggered until the required `EQUITY_INCOME_ARCHIVE_KEY` secret is configured, so no incomplete archive run is treated as a result.
+
+All ten future research branches (Phase 26 through Phase 35) have been created with separate plan files and manual-run workflow buttons. Trading tests remain paused.
