@@ -1,7 +1,7 @@
 {
   "candidate_members": 71,
-  "preliminary_feasible": 51,
-  "data_limited": 16,
+  "preliminary_feasible": 0,
+  "data_limited": 67,
   "unresolved": 4,
   "bid_ask_verified": 0,
   "strategy_specific_quote_completeness_verified": 0,

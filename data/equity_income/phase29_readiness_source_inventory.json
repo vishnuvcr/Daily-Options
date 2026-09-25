@@ -29,79 +29,63 @@
     "intraday_oi_available": false,
     "paths": {
       "historical_daily/BANKNIFTY": {
-        "directory_count": 10,
-        "file_count": 51,
         "first_file": "historical_daily/BANKNIFTY/BANKNIFTY_2005.parquet",
-        "last_file": "upstox_intraday/SENSEX/SENSEX_2026.parquet",
-        "parquet_file_count": 48,
+        "last_file": "historical_daily/BANKNIFTY/BANKNIFTY_2026.parquet",
+        "parquet_file_count": 22,
         "sample_files": [
           "historical_daily/BANKNIFTY/BANKNIFTY_2005.parquet",
           "historical_daily/BANKNIFTY/BANKNIFTY_2006.parquet",
           "historical_daily/BANKNIFTY/BANKNIFTY_2007.parquet",
-          "upstox_intraday/SENSEX/SENSEX_2024.parquet",
-          "upstox_intraday/SENSEX/SENSEX_2025.parquet",
-          "upstox_intraday/SENSEX/SENSEX_2026.parquet"
+          "historical_daily/BANKNIFTY/BANKNIFTY_2024.parquet",
+          "historical_daily/BANKNIFTY/BANKNIFTY_2025.parquet",
+          "historical_daily/BANKNIFTY/BANKNIFTY_2026.parquet"
         ],
         "status": "PRESENT"
       },
       "historical_daily/NIFTY": {
-        "directory_count": 10,
-        "file_count": 51,
-        "first_file": "historical_daily/BANKNIFTY/BANKNIFTY_2005.parquet",
-        "last_file": "upstox_intraday/SENSEX/SENSEX_2026.parquet",
-        "parquet_file_count": 48,
+        "first_file": "historical_daily/NIFTY/NIFTY_2001.parquet",
+        "last_file": "historical_daily/NIFTY/NIFTY_2026.parquet",
+        "parquet_file_count": 14,
         "sample_files": [
-          "historical_daily/BANKNIFTY/BANKNIFTY_2005.parquet",
-          "historical_daily/BANKNIFTY/BANKNIFTY_2006.parquet",
-          "historical_daily/BANKNIFTY/BANKNIFTY_2007.parquet",
-          "upstox_intraday/SENSEX/SENSEX_2024.parquet",
-          "upstox_intraday/SENSEX/SENSEX_2025.parquet",
-          "upstox_intraday/SENSEX/SENSEX_2026.parquet"
+          "historical_daily/NIFTY/NIFTY_2001.parquet",
+          "historical_daily/NIFTY/NIFTY_2002.parquet",
+          "historical_daily/NIFTY/NIFTY_2003.parquet",
+          "historical_daily/NIFTY/NIFTY_2012.parquet",
+          "historical_daily/NIFTY/NIFTY_2025.parquet",
+          "historical_daily/NIFTY/NIFTY_2026.parquet"
         ],
         "status": "PRESENT"
       },
       "upstox_intraday/BANKNIFTY": {
-        "directory_count": 10,
-        "file_count": 51,
-        "first_file": "historical_daily/BANKNIFTY/BANKNIFTY_2005.parquet",
-        "last_file": "upstox_intraday/SENSEX/SENSEX_2026.parquet",
-        "parquet_file_count": 48,
+        "first_file": "upstox_intraday/BANKNIFTY/BANKNIFTY_2023.parquet",
+        "last_file": "upstox_intraday/BANKNIFTY/BANKNIFTY_2026.parquet",
+        "parquet_file_count": 3,
         "sample_files": [
-          "historical_daily/BANKNIFTY/BANKNIFTY_2005.parquet",
-          "historical_daily/BANKNIFTY/BANKNIFTY_2006.parquet",
-          "historical_daily/BANKNIFTY/BANKNIFTY_2007.parquet",
-          "upstox_intraday/SENSEX/SENSEX_2024.parquet",
-          "upstox_intraday/SENSEX/SENSEX_2025.parquet",
-          "upstox_intraday/SENSEX/SENSEX_2026.parquet"
+          "upstox_intraday/BANKNIFTY/BANKNIFTY_2023.parquet",
+          "upstox_intraday/BANKNIFTY/BANKNIFTY_2024.parquet",
+          "upstox_intraday/BANKNIFTY/BANKNIFTY_2026.parquet"
         ],
         "status": "PRESENT"
       },
       "upstox_intraday/NIFTY": {
-        "directory_count": 10,
-        "file_count": 51,
-        "first_file": "historical_daily/BANKNIFTY/BANKNIFTY_2005.parquet",
-        "last_file": "upstox_intraday/SENSEX/SENSEX_2026.parquet",
-        "parquet_file_count": 48,
+        "first_file": "upstox_intraday/NIFTY/NIFTY_2022.parquet",
+        "last_file": "upstox_intraday/NIFTY/NIFTY_2025.parquet",
+        "parquet_file_count": 4,
         "sample_files": [
-          "historical_daily/BANKNIFTY/BANKNIFTY_2005.parquet",
-          "historical_daily/BANKNIFTY/BANKNIFTY_2006.parquet",
-          "historical_daily/BANKNIFTY/BANKNIFTY_2007.parquet",
-          "upstox_intraday/SENSEX/SENSEX_2024.parquet",
-          "upstox_intraday/SENSEX/SENSEX_2025.parquet",
-          "upstox_intraday/SENSEX/SENSEX_2026.parquet"
+          "upstox_intraday/NIFTY/NIFTY_2022.parquet",
+          "upstox_intraday/NIFTY/NIFTY_2023.parquet",
+          "upstox_intraday/NIFTY/NIFTY_2024.parquet",
+          "upstox_intraday/NIFTY/NIFTY_2023.parquet",
+          "upstox_intraday/NIFTY/NIFTY_2024.parquet",
+          "upstox_intraday/NIFTY/NIFTY_2025.parquet"
         ],
         "status": "PRESENT"
       },
       "upstox_intraday/SENSEX": {
-        "directory_count": 10,
-        "file_count": 51,
-        "first_file": "historical_daily/BANKNIFTY/BANKNIFTY_2005.parquet",
+        "first_file": "upstox_intraday/SENSEX/SENSEX_2024.parquet",
         "last_file": "upstox_intraday/SENSEX/SENSEX_2026.parquet",
-        "parquet_file_count": 48,
+        "parquet_file_count": 3,
         "sample_files": [
-          "historical_daily/BANKNIFTY/BANKNIFTY_2005.parquet",
-          "historical_daily/BANKNIFTY/BANKNIFTY_2006.parquet",
-          "historical_daily/BANKNIFTY/BANKNIFTY_2007.parquet",
           "upstox_intraday/SENSEX/SENSEX_2024.parquet",
           "upstox_intraday/SENSEX/SENSEX_2025.parquet",
           "upstox_intraday/SENSEX/SENSEX_2026.parquet"
@@ -110,7 +94,8 @@
       }
     },
     "repo": "rissin/nse-options-intraday",
-    "revision": "78b1c5468255d18cf492984bfe6fe4e3ac874d7c"
+    "revision": "78b1c5468255d18cf492984bfe6fe4e3ac874d7c",
+    "tree_file_count": 51
   },
   "trademarkk": {
     "api_status": "OK",
@@ -131,87 +116,75 @@
     "intraday_oi_available": true,
     "paths": {
       "index": {
-        "directory_count": 119,
-        "file_count": 881,
         "first_file": "index/BANKNIFTY.parquet",
-        "last_file": "stocks_options/ASTRAL/2023-04-27.parquet",
-        "parquet_file_count": 879,
+        "last_file": "index/SENSEX.parquet",
+        "parquet_file_count": 3,
         "sample_files": [
           "index/BANKNIFTY.parquet",
           "index/NIFTY.parquet",
-          "index/SENSEX.parquet",
-          "stocks_options/ASTRAL/2023-02-23.parquet",
-          "stocks_options/ASTRAL/2023-03-29.parquet",
-          "stocks_options/ASTRAL/2023-04-27.parquet"
+          "index/SENSEX.parquet"
         ],
         "status": "PRESENT"
       },
       "options/BANKNIFTY": {
-        "directory_count": 119,
-        "file_count": 881,
-        "first_file": "index/BANKNIFTY.parquet",
-        "last_file": "stocks_options/ASTRAL/2023-04-27.parquet",
-        "parquet_file_count": 879,
+        "first_file": "options/BANKNIFTY/2021-05-27.parquet",
+        "last_file": "options/BANKNIFTY/2026-05-26.parquet",
+        "parquet_file_count": 61,
         "sample_files": [
-          "index/BANKNIFTY.parquet",
-          "index/NIFTY.parquet",
-          "index/SENSEX.parquet",
-          "stocks_options/ASTRAL/2023-02-23.parquet",
-          "stocks_options/ASTRAL/2023-03-29.parquet",
-          "stocks_options/ASTRAL/2023-04-27.parquet"
+          "options/BANKNIFTY/2021-05-27.parquet",
+          "options/BANKNIFTY/2021-06-24.parquet",
+          "options/BANKNIFTY/2021-07-29.parquet",
+          "options/BANKNIFTY/2026-03-30.parquet",
+          "options/BANKNIFTY/2026-04-28.parquet",
+          "options/BANKNIFTY/2026-05-26.parquet"
         ],
         "status": "PRESENT"
       },
       "options/NIFTY": {
-        "directory_count": 119,
-        "file_count": 881,
-        "first_file": "index/BANKNIFTY.parquet",
-        "last_file": "stocks_options/ASTRAL/2023-04-27.parquet",
-        "parquet_file_count": 879,
+        "first_file": "options/NIFTY/2021-05-27.parquet",
+        "last_file": "options/NIFTY/2026-08-04.parquet",
+        "parquet_file_count": 267,
         "sample_files": [
-          "index/BANKNIFTY.parquet",
-          "index/NIFTY.parquet",
-          "index/SENSEX.parquet",
-          "stocks_options/ASTRAL/2023-02-23.parquet",
-          "stocks_options/ASTRAL/2023-03-29.parquet",
-          "stocks_options/ASTRAL/2023-04-27.parquet"
+          "options/NIFTY/2021-05-27.parquet",
+          "options/NIFTY/2021-06-03.parquet",
+          "options/NIFTY/2021-06-10.parquet",
+          "options/NIFTY/2026-07-21.parquet",
+          "options/NIFTY/2026-07-28.parquet",
+          "options/NIFTY/2026-08-04.parquet"
         ],
         "status": "PRESENT"
       },
       "options/SENSEX": {
-        "directory_count": 119,
-        "file_count": 881,
-        "first_file": "index/BANKNIFTY.parquet",
-        "last_file": "stocks_options/ASTRAL/2023-04-27.parquet",
-        "parquet_file_count": 879,
+        "first_file": "options/SENSEX/2023-08-11.parquet",
+        "last_file": "options/SENSEX/2026-05-21.parquet",
+        "parquet_file_count": 144,
         "sample_files": [
-          "index/BANKNIFTY.parquet",
-          "index/NIFTY.parquet",
-          "index/SENSEX.parquet",
-          "stocks_options/ASTRAL/2023-02-23.parquet",
-          "stocks_options/ASTRAL/2023-03-29.parquet",
-          "stocks_options/ASTRAL/2023-04-27.parquet"
+          "options/SENSEX/2023-08-11.parquet",
+          "options/SENSEX/2023-08-18.parquet",
+          "options/SENSEX/2023-08-25.parquet",
+          "options/SENSEX/2026-05-07.parquet",
+          "options/SENSEX/2026-05-14.parquet",
+          "options/SENSEX/2026-05-21.parquet"
         ],
         "status": "PRESENT"
       },
       "stocks_options": {
-        "directory_count": 119,
-        "file_count": 881,
-        "first_file": "index/BANKNIFTY.parquet",
-        "last_file": "stocks_options/ASTRAL/2023-04-27.parquet",
-        "parquet_file_count": 879,
+        "first_file": "stocks_options/360ONE/2025-09-30.parquet",
+        "last_file": "stocks_options/WIPRO/2026-05-26.parquet",
+        "parquet_file_count": 2638,
         "sample_files": [
-          "index/BANKNIFTY.parquet",
-          "index/NIFTY.parquet",
-          "index/SENSEX.parquet",
-          "stocks_options/ASTRAL/2023-02-23.parquet",
-          "stocks_options/ASTRAL/2023-03-29.parquet",
-          "stocks_options/ASTRAL/2023-04-27.parquet"
+          "stocks_options/360ONE/2025-09-30.parquet",
+          "stocks_options/360ONE/2025-10-28.parquet",
+          "stocks_options/360ONE/2025-11-25.parquet",
+          "stocks_options/WIPRO/2026-03-30.parquet",
+          "stocks_options/WIPRO/2026-04-28.parquet",
+          "stocks_options/WIPRO/2026-05-26.parquet"
         ],
         "status": "PRESENT"
       }
     },
     "repo": "thetrademarkk/india-index-options-1m",
-    "revision": "51ca58c"
+    "revision": "51ca58c",
+    "tree_file_count": 3122
   }
 }
