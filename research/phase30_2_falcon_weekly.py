@@ -119,6 +119,8 @@ def expiry_setups(sessions, expiries):
 
 def load_snapshot_window(con, root, entry_date, near_expiry, far_expiry, signal_times):
     path = glob_expr(root)
+    start_ts = min(signal_times)
+    end_ts = max(signal_times) + pd.Timedelta(minutes=1)
     q = f"""
     SELECT CAST(timestamp AS TIMESTAMP) AS ts,
            CAST(expiry AS DATE) AS expiry,
@@ -131,12 +133,11 @@ def load_snapshot_window(con, root, entry_date, near_expiry, far_expiry, signal_
       AND granularity='1min'
       AND CAST(date AS DATE)=DATE '{entry_date}'
       AND CAST(expiry AS DATE) IN (DATE '{near_expiry}', DATE '{far_expiry}')
-      AND CAST(timestamp AS TIMESTAMP) BETWEEN TIMESTAMP '{ts}' AND TIMESTAMP '{fill_ts}'
+      AND CAST(timestamp AS TIMESTAMP) BETWEEN TIMESTAMP '{start_ts}' AND TIMESTAMP '{end_ts}'
       AND open > 0 AND close > 0
     ORDER BY expiry, option_type, strike, ts
     """
     return con.execute(q).df()
-
 
 def select_target(chain, expiry, side, target, ref_strike=None, far_otm=False):
     x = chain[(chain.expiry == pd.Timestamp(expiry).date()) & (chain.option_type == side)].copy()
