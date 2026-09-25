@@ -2,8 +2,6 @@ name: Equity Income - channel archive (keyless)
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "30 2 * * 0"
 
 permissions:
   contents: write
@@ -20,7 +18,7 @@ jobs:
       - name: Checkout fixed archive branch
         uses: actions/checkout@v4
         with:
-          ref: equity-income-channel-archive-v2-hybrid-keyless
+          ref: equity-income-channel-archive-v1
           fetch-depth: 0
 
       - name: Setup Python
@@ -56,4 +54,4 @@ jobs:
             exit 0
           fi
           git commit -m "Archive Equity Income channel metadata and transcripts"
-          git push origin HEAD:equity-income-channel-archive-v2-hybrid-keyless
+          git push origin HEAD:equity-income-channel-archive-v1
