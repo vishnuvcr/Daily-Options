@@ -118,3 +118,7 @@ Workflow 36135151445 passed. Final contract-readiness matrix has 71 rows and con
 ## 2026-09-25 — Phase 29.3 final result
 
 Run 36135786342 passed. Both Iron Dome transcripts were obtained programmatically; the primary transcript API was blocked by YouTube/cloud-IP restrictions, so the workflow used a deterministic yt-dlp auto-caption fallback. Contract-content inspection succeeded for seven relevant pinned NIFTY expiry files. The transcript evidence is strong enough to reconstruct a provisional weekly Iron Fly family but not strong enough to freeze a single exact trading rule without interpretation. A source-derived reconstruction document was committed, and the next research step is a pre-registered variant sweep rather than an unqualified single-rule backtest.
+
+## 2026-09-25 — Phase 29.4 final result
+
+Run 36136098466 passed. The research now has a frozen 36-variant Iron Dome interpretation matrix. No P&L, ranking or winner selection was performed in this phase. The next numerical phase can therefore evaluate the pre-registered variants without changing the hypothesis space after seeing results.
