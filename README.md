@@ -246,3 +246,7 @@ The fixed `equity-income-channel-archive-v1` branch now uses **RSA-OAEP + Fernet
 A weekly archive workflow is now on `main`. It checks out the fixed archive branch, runs the Python-only discovery/transcript program, verifies the encrypted envelopes, and pushes only new archive records back to the fixed branch. GitHub requires scheduled workflows to live on the default branch, so the schedule is intentionally hosted here while the research data remains isolated on the archive branch. citeturn445342search0turn445342search1
 
 [Equity Income archive branch](https://github.com/vishnuvcr/Daily-Options/tree/equity-income-channel-archive-v1) · [Key management](https://github.com/vishnuvcr/Daily-Options/blob/equity-income-channel-archive-v1/docs/equity_income_archive_key_management.md) · [Archive plan](https://github.com/vishnuvcr/Daily-Options/blob/equity-income-channel-archive-v1/docs/equity_income_channel_archive_plan.md)
+
+## 2026-09-25 — Equity Income archive retry correction
+
+The first live full-channel attempt enumerated 169 videos but was stopped by YouTube anti-bot challenges during per-video metadata enrichment. No transcript result was accepted. The archive was corrected to use channel discovery as the deterministic inventory and retrieve transcripts directly by video ID/URL, so metadata-page challenges no longer block transcript acquisition.
