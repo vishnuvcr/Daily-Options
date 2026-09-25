@@ -13,9 +13,6 @@ on:
 permissions:
   contents: write
 
-concurrency:
-  group: phase30-2-falcon-weekly-v1
-  cancel-in-progress: true
 
 jobs:
   backtest:
