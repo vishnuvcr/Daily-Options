@@ -109,3 +109,7 @@ The old ₹1,000/day criterion remains historical only for pre-YouTube intraday 
 ## 2026-09-25 — Current Phase 30 v8 checkpoint
 
 Research resumed from the v7 invalidation. The active v8 branch isolates mutable leg state per parameter cell. Authoritative run 36157105595 passed tests and data coverage and is executing Base. A prior v8 Base-only artifact was audited as internally consistent but is not treated as the final result because Stress was skipped after a persistence failure. No WFA/OOS tuning is permitted.
+
+## 2026-09-25 — Phase 27.6 parallel continuation
+
+While Phase 30 v8 computes, a controlled launcher-only PR #86 was created to rerun the fixed Python aRj Air Defense transcript extraction. Actions run 36157884412 is queued. This is evidence-resolution work only; no P&L or strategy parameter is being selected.
