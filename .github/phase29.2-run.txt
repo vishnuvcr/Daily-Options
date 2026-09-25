@@ -1,2 +1,2 @@
 run Phase 29.2 contract coverage audit
-triggered after E0263 script correction
+triggered with labeled gate diagnostics
