@@ -516,3 +516,13 @@ Controlled launcher-only PR **#86** created from `phase-27.6-trigger-rerun-20260
 ## 2026-09-25 — Phase 27.7 Air Defense source-resolution branch prepared
 
 A dedicated branch `phase-27.7-equity-income-air-defense-source-resolution-v1` now contains Python-only contextual transcript extraction for the Equity Income Air Defense candidate `aRjY_O6U3nQ`. The extractor records source-caption hashes plus timestamped context windows around delta, entry, adjustment, stop, structure, India-VIX/range and expiry-exit phrases. No numerical backtest is permitted until this evidence is reconciled into a deterministic rule card.
+
+## 2026-09-25 — Phase 30 v8 final closure
+
+Authoritative run **36157105595** completed all gates. Base and doubled-slippage Stress both completed successfully from the state-isolated engine. The frozen 12-cell Iron Dome family generated **3,092 unique rows**, 262 eligible expiry files and 774 executable setups. **0/12 cells passed** the weekly ₹5,000 mean/median/positive-rate/coverage gate in either friction setting.
+
+Best Base cell: ID30_02_WING_60_RECENTER_BOTH, mean weekly net **-₹585.85**, median **-₹1,193.72**, positive-week rate **39.77%**, execution coverage **98.85%**, worst week **-₹10,486.42**, profit factor **0.68**, ES95 **-₹7,036.14**.
+
+Best Stress cell: ID30_02_RISK_60_ONE_STRIKE_INSIDE, mean weekly net **-₹807.58**, median **-₹281.21**, positive-week rate **46.51%**, execution coverage **98.47%**, worst week **-₹9,274.17**, profit factor **0.62**, ES95 **-₹8,311.61**.
+
+Phase 30 is **RETIRED**. No WFA/OOS or parameter selection is authorized from this family. The next distinct source-faithful family is Air Defense.
