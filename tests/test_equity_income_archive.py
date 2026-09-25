@@ -35,3 +35,13 @@ def test_hybrid_encryption_round_trip():
     envelope = hybrid_encrypt(private.public_key(), plaintext)
     assert hybrid_decrypt(private, envelope) == plaintext
     assert envelope["encryption_scheme"] == "RSA-OAEP-SHA256+FERNET-SHA256"
+
+
+def test_parse_vtt_html_unescape():
+    vtt = """WEBVTT
+
+00:00.000 --> 00:01.000
+Less &amp; more &lt;than&gt;
+"""
+    out = parse_vtt(vtt)
+    assert out[0]["text"] == "Less & more <than>"
