@@ -1,0 +1,138 @@
+name: Phase 30 - Equity Income weekly Iron Dome backtest
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "research/phase30_weekly_iron_dome.py"
+      - "tests/test_phase30_weekly_iron_dome.py"
+      - "docs/phase30_weekly_iron_dome_plan.md"
+      - ".github/workflows/phase-30-equity-income-weekly-iron-dome-v2.yml"
+  push:
+    paths:
+      - ".github/phase30-v2-run.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase30-equity-income-weekly-iron-dome-v2
+  cancel-in-progress: false
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: \${{ github.head_ref || github.ref_name }}
+          fetch-depth: 1
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Unit tests
+        run: |
+          python -m pip install --disable-pip-version-check pytest==8.4.2 duckdb==1.3.2 pandas==2.3.2 numpy==2.2.6
+          PYTHONPATH=. python -m pytest -q tests/test_phase30_weekly_iron_dome.py
+
+  backtest:
+    needs: tests
+    strategy:
+      fail-fast: false
+      matrix:
+        friction: [base, stress]
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: \${{ github.head_ref || github.ref_name }}
+          fetch-depth: 1
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install runtime tooling
+        run: python -m pip install --disable-pip-version-check duckdb==1.3.2 pandas==2.3.2 numpy==2.2.6 huggingface_hub==1.33.0 pyarrow==20.0.0
+      - name: Restore pinned TradeMarkk cache
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase30_trademarkk
+          key: phase30-trademarkk-51ca58c-v1
+      - name: Acquire or reuse exact-expiry cache
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase30_trademarkk
+          if [ ! -f data/cache/phase30_trademarkk/index/NIFTY.parquet ]; then
+            for attempt in 1 2 3 4; do
+              python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="thetrademarkk/india-index-options-1m",repo_type="dataset",revision="51ca58c",local_dir="data/cache/phase30_trademarkk",allow_patterns=["index/NIFTY.parquet","options/NIFTY/*.parquet"])' && break
+              if [ "$attempt" -eq 4 ]; then exit 1; fi
+              sleep 5
+            done
+          fi
+          test -f data/cache/phase30_trademarkk/index/NIFTY.parquet
+          test -d data/cache/phase30_trademarkk/options/NIFTY
+          count=$(find data/cache/phase30_trademarkk/options/NIFTY -maxdepth 1 -type f -name '*.parquet' | wc -l)
+          test "$count" -ge 250
+      - name: Run frozen backtest
+        env:
+          SLIP: \${{ matrix.friction == 'base' && '0.20' || '0.40' }}
+        run: |
+          mkdir -p reports/phase30/\${{ matrix.friction }}
+          PYTHONPATH=. python research/phase30_weekly_iron_dome.py --data data/cache/phase30_trademarkk --out reports/phase30/\${{ matrix.friction }} --slippage "$SLIP"
+      - name: Upload raw results
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase30-\${{ matrix.friction }}
+          path: reports/phase30/\${{ matrix.friction }}
+
+  decision:
+    needs: backtest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: \${{ github.head_ref || github.ref_name }}
+          fetch-depth: 1
+      - name: Download Base artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: phase30-base
+          path: reports/phase30/base
+      - name: Download Stress artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: phase30-stress
+          path: reports/phase30/stress
+      - name: Build decision report
+        run: |
+          python - <<'PY'
+          import json, pathlib, pandas as pd
+          rows=[]
+          for f in ["base","stress"]:
+              s=json.load(open(f"reports/phase30/{f}/phase30_summary.json",encoding="utf-8"))
+              for m in s["metrics"]:
+                  rows.append({**m,"friction":f})
+          df=pd.DataFrame(rows)
+          out=pathlib.Path("reports/phase30/phase30_decision.json")
+          qualified=[]
+          for cid in sorted(df.cell_id.unique()):
+              z=df[df.cell_id==cid].set_index("friction")
+              ok=all(k in z.index for k in ["base","stress"])
+              if ok:
+                  b=z.loc["base"]; st=z.loc["stress"]
+                  qualified.append({
+                      "cell_id":cid,
+                      "base":{k:b[k] for k in ["traded_weeks","mean_weekly_net","median_weekly_net","profitable_week_rate","weeks_ge_5000_rate","worst_week","max_drawdown","profit_factor","cvar95"]},
+                      "stress":{k:st[k] for k in ["traded_weeks","mean_weekly_net","median_weekly_net","profitable_week_rate","weeks_ge_5000_rate","worst_week","max_drawdown","profit_factor","cvar95"]},
+                      "target_qualified":bool(b["target_qualified"] and st["target_qualified"])
+                  })
+          out.write_text(json.dumps(qualified,indent=2,default=str)+"\n",encoding="utf-8")
+          df.to_csv("reports/phase30/phase30_leaderboard_all.csv",index=False)
+          print(df.sort_values(["friction","mean_weekly_net"],ascending=[True,False]).to_string(index=False))
+          PY
+      - name: Upload decision
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase30-decision
+          path: reports/phase30
