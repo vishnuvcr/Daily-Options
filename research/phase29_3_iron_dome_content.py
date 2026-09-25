@@ -16,6 +16,18 @@ from datetime import date, timedelta
 from pathlib import Path
 
 from huggingface_hub import HfApi, hf_hub_download
+import requests
+from urllib.parse import quote
+from yt_dlp import YoutubeDL
+from yt_dlp.extractor.youtube._base import INNERTUBE_CLIENTS
+
+PREFERRED_LANGS = ("en", "en-IN", "hi")
+INVIDIOUS_INSTANCES = (
+    "https://inv.nadeko.net",
+    "https://invidious.nerdvpn.de",
+    "https://yt.chocolatemoo53.com",
+    "https://invidious.tiekoetter.com",
+)
 
 VIDEOS = [
     {
@@ -91,18 +103,378 @@ def transcript_with_ytdlp(video_id: str) -> dict:
         }
 
 
-def transcript(video_id: str) -> dict:
-    from youtube_transcript_api import YouTubeTranscriptApi
 
-    api = YouTubeTranscriptApi()
-    fetched = api.fetch(video_id, languages=["en"])
-    snippets = []
-    parts = []
-    for s in fetched.snippets:
-        txt = norm_text(s.text)
-        parts.append(txt)
-        snippets.append({"start": float(s.start), "duration": float(s.duration), "text": txt})
-    full = " ".join(parts)
+def clean_text(text: str) -> str:
+    return re.sub(r"\s+", " ", str(text or "")).strip()
+
+
+def normalize_snippets(items) -> list[dict]:
+    out = []
+    seen = set()
+    for item in items:
+        if isinstance(item, dict):
+            text = clean_text(item.get("text", ""))
+            start = float(item.get("start", 0))
+            duration = float(item.get("duration", 0))
+        else:
+            text = clean_text(getattr(item, "text", ""))
+            start = float(getattr(item, "start", 0))
+            duration = float(getattr(item, "duration", 0))
+        if not text:
+            continue
+        key = (round(start, 3), text)
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append({"start": round(start, 3), "duration": round(duration, 3), "text": text})
+    return out
+
+
+def parse_vtt_timestamp(value: str) -> float:
+    value = value.replace(",", ".")
+    parts = value.split(":")
+    if len(parts) == 2:
+        return float(parts[0]) * 60.0 + float(parts[1])
+    return float(parts[0]) * 3600.0 + float(parts[1]) * 60.0 + float(parts[2])
+
+
+def parse_vtt(vtt: str) -> list[dict]:
+    lines = [line.rstrip() for line in vtt.splitlines()]
+    out = []
+    i = 0
+    while i < len(lines):
+        if "-->" not in lines[i]:
+            i += 1
+            continue
+        left, right = [x.strip() for x in lines[i].split("-->", 1)]
+        try:
+            start = parse_vtt_timestamp(left)
+            stop = parse_vtt_timestamp(right.split()[0])
+        except (ValueError, IndexError):
+            i += 1
+            continue
+        i += 1
+        parts = []
+        while i < len(lines) and lines[i].strip():
+            parts.append(re.sub(r"<[^>]+>", "", lines[i].strip()))
+            i += 1
+        text = clean_text(" ".join(parts))
+        if text:
+            out.append({"start": start, "duration": max(0.0, stop - start), "text": text})
+    return normalize_snippets(out)
+
+
+def fetch_external_transcript_service(video_id: str):
+    endpoints = (
+        "https://youtube-transcript.ai/transcript/{video_id}.txt?lang=en",
+    )
+    errors = []
+    headers = {"User-Agent": "Daily-Options-Phase29.3/1.0"}
+    for template in endpoints:
+        url = template.format(video_id=quote(video_id, safe=""))
+        try:
+            response = requests.get(url, headers=headers, timeout=(5, 15))
+            if response.status_code != 200 or not response.text.strip():
+                errors.append(f"HTTP_{response.status_code}")
+                continue
+            snippets = parse_timestamped_markdown(response.text)
+            if snippets:
+                match = re.search(r"^Language:\s*([^\s·]+)", response.text, flags=re.MULTILINE)
+                lang = match.group(1) if match else "en"
+                return snippets, lang, lang, None, "youtube-transcript-ai"
+            errors.append("NO_TIMESTAMPED_SEGMENTS")
+        except requests.RequestException as exc:
+            errors.append(repr(exc))
+    return None, errors
+
+
+def fetch_youtubegpt(video_id: str):
+    url = "https://youtubegpt.ai/api/transcript"
+    try:
+        response = requests.get(
+            url,
+            params={"v": video_id, "format": "json", "lang": "en"},
+            headers={"User-Agent": "Daily-Options-Phase29.3/1.0"},
+            timeout=(5, 15),
+        )
+        if response.status_code != 200 or not response.text.strip():
+            return None, f"HTTP_{response.status_code}"
+        data = response.json()
+        if not data.get("ok"):
+            return None, str(data.get("code") or data.get("message") or "API_NOT_OK")
+        track = data.get("track") or {}
+        snippets = []
+        for seg in data.get("segments") or []:
+            if not isinstance(seg, dict):
+                continue
+            text = clean_text(seg.get("text", ""))
+            if not text:
+                continue
+            try:
+                start = float(seg.get("start", 0)) / 1000.0
+                duration = float(seg.get("dur", 0)) / 1000.0
+            except (TypeError, ValueError):
+                continue
+            snippets.append({"start": start, "duration": duration, "text": text})
+        snippets = normalize_snippets(snippets)
+        if not snippets:
+            return None, "NO_SEGMENTS"
+        lang = str(track.get("language") or "en")
+        return snippets, lang, str(track.get("name") or lang), track.get("generated"), "youtubegpt-json"
+    except (requests.RequestException, ValueError, TypeError, KeyError) as exc:
+        return None, repr(exc)
+
+
+def fetch_invidious(video_id: str):
+    headers = {"User-Agent": "Daily-Options-Phase29.3/1.0"}
+    errors = []
+    for instance in INVIDIOUS_INSTANCES:
+        base = instance.rstrip("/")
+        try:
+            index = requests.get(
+                f"{base}/api/v1/captions/{video_id}",
+                headers=headers,
+                timeout=(3, 10),
+            )
+            if index.status_code != 200:
+                errors.append(f"{base}:HTTP_{index.status_code}")
+                continue
+            data = index.json()
+            candidates = []
+            for cap in data.get("captions") or []:
+                lang = cap.get("languageCode", "")
+                label = cap.get("label", "")
+                url = cap.get("url")
+                if not lang or not url:
+                    continue
+                generated = "auto-generated" in str(label).lower()
+                rank_lang = PREFERRED_LANGS.index(lang) if lang in PREFERRED_LANGS else 99
+                candidates.append((int(generated), rank_lang, lang, label, url, generated))
+            candidates.sort()
+            for _, _, lang, label, url, generated in candidates:
+                target = url if str(url).startswith("http") else f"{base}{url}"
+                response = requests.get(target, headers=headers, timeout=(3, 10))
+                if response.status_code != 200 or not response.text.strip():
+                    continue
+                snippets = parse_vtt(response.text)
+                if snippets:
+                    return snippets, lang, label or lang, generated, "invidious-captions"
+            errors.append(f"{base}:NO_USABLE_CAPTION")
+        except (requests.RequestException, ValueError, TypeError, KeyError) as exc:
+            errors.append(f"{base}:{exc!r}")
+    return None, errors
+
+
+def fetch_ytdlp_subtitles(video_id: str):
+    profiles = ("tv", "tv_downgraded", "web_embedded", "android_vr")
+    errors = []
+    video_url = f"https://www.youtube.com/watch?v={video_id}"
+    for client_name in profiles:
+        opts = {
+            "quiet": True,
+            "no_warnings": True,
+            "skip_download": True,
+            "socket_timeout": 15,
+            "retries": 1,
+            "extractor_args": {"youtube": {"player_client": [client_name]}},
+        }
+        try:
+            with YoutubeDL(opts) as ydl:
+                info = ydl.extract_info(video_url, download=False)
+                tracks = []
+                for field, generated in (("subtitles", False), ("automatic_captions", True)):
+                    for lang, formats in (info.get(field) or {}).items():
+                        for track in formats or []:
+                            url = track.get("url")
+                            if not url:
+                                continue
+                            rank_lang = PREFERRED_LANGS.index(lang) if lang in PREFERRED_LANGS else 99
+                            rank_ext = 0 if track.get("ext") == "vtt" else 1
+                            tracks.append((int(generated), rank_lang, rank_ext, lang, generated, url))
+                tracks.sort()
+                for _, _, _, lang, generated, url in tracks:
+                    raw = ydl.urlopen(url).read().decode("utf-8", errors="replace")
+                    snippets = parse_vtt(raw)
+                    if snippets:
+                        return snippets, lang, lang, generated, f"yt-dlp-subtitles:{client_name}"
+                errors.append(f"{client_name}:NO_USABLE_SUBTITLE")
+        except Exception as exc:
+            errors.append(f"{client_name}:{exc!r}")
+    return None, errors
+
+
+def fetch_youtube_transcript_api(video_id: str):
+    try:
+        from youtube_transcript_api import YouTubeTranscriptApi
+        api = YouTubeTranscriptApi()
+        tracks = list(api.list(video_id))
+        ranked = []
+        for track in tracks:
+            code = getattr(track, "language_code", "")
+            generated = bool(getattr(track, "is_generated", False))
+            lang_rank = PREFERRED_LANGS.index(code) if code in PREFERRED_LANGS else 99
+            ranked.append((int(generated), lang_rank, code, track))
+        ranked.sort()
+        for _, _, code, track in ranked:
+            try:
+                fetched = track.fetch()
+                raw = fetched.to_raw_data() if hasattr(fetched, "to_raw_data") else list(fetched)
+                snippets = normalize_snippets(raw)
+                if snippets:
+                    return snippets, code, getattr(track, "language", code), bool(getattr(track, "is_generated", False)), "youtube-transcript-api"
+            except Exception:
+                continue
+        return None, "NO_USABLE_TRANSCRIPT_API_TRACK"
+    except Exception as exc:
+        return None, repr(exc)
+
+
+def parse_innertube_json3(data: dict) -> list[dict]:
+    out = []
+    for event in data.get("events") or []:
+        if not isinstance(event, dict) or not event.get("segs"):
+            continue
+        text = "".join(str(seg.get("utf8", "")) for seg in event.get("segs") or [] if isinstance(seg, dict))
+        if text.strip():
+            out.append({
+                "start": float(event.get("tStartMs", 0)) / 1000.0,
+                "duration": float(event.get("dDurationMs", 0)) / 1000.0,
+                "text": clean_text(text),
+            })
+    return normalize_snippets(out)
+
+
+def fetch_innertube(video_id: str):
+    session = requests.Session()
+    for client_name in ("tv", "tv_downgraded", "web_embedded"):
+        cfg = INNERTUBE_CLIENTS.get(client_name)
+        if not cfg:
+            continue
+        ctx = json.loads(json.dumps(cfg["INNERTUBE_CONTEXT"]))
+        client = ctx.setdefault("client", {})
+        headers = {
+            "Content-Type": "application/json",
+            "Origin": "https://www.youtube.com",
+            "User-Agent": client.get("userAgent") or "Mozilla/5.0",
+            "X-YouTube-Client-Name": str(cfg.get("INNERTUBE_CONTEXT_CLIENT_NAME", "")),
+            "X-YouTube-Client-Version": str(client.get("clientVersion", "")),
+        }
+        try:
+            response = session.post(
+                "https://www.youtube.com/youtubei/v1/player",
+                params={"prettyPrint": "false"},
+                json={"context": ctx, "videoId": video_id, "contentCheckOk": True, "racyCheckOk": True},
+                headers=headers,
+                timeout=(3, 8),
+            )
+            if response.status_code != 200:
+                continue
+            data = response.json()
+            tracks = data.get("captions", {}).get("playerCaptionsTracklistRenderer", {}).get("captionTracks", [])
+            ranked = []
+            for track in tracks or []:
+                code = track.get("languageCode", "")
+                generated = track.get("kind") == "asr"
+                rank_lang = PREFERRED_LANGS.index(code) if code in PREFERRED_LANGS else 99
+                ranked.append((int(generated), rank_lang, code, generated, track))
+            ranked.sort()
+            for _, _, code, generated, track in ranked:
+                base_url = track.get("baseUrl")
+                if not base_url:
+                    continue
+                cap = session.get(
+                    base_url,
+                    params={"fmt": "json3"},
+                    headers={"User-Agent": headers["User-Agent"]},
+                    timeout=(3, 8),
+                )
+                if cap.status_code == 200 and cap.text.strip():
+                    snippets = parse_innertube_json3(cap.json())
+                    if snippets:
+                        return snippets, code, code, generated, "youtube-innertube"
+        except (requests.RequestException, ValueError, TypeError, KeyError):
+            continue
+    return None, "INNER_TUBE_CAPTION_NOT_FOUND"
+
+
+def fetch_timedtext(video_id: str):
+    session = requests.Session()
+    for lang, generated in (("en", True), ("en", False), ("hi", True)):
+        try:
+            response = session.get(
+                "https://www.youtube.com/api/timedtext",
+                params={"v": video_id, "lang": lang, "fmt": "vtt", **({"kind": "asr"} if generated else {})},
+                headers={"User-Agent": "Mozilla/5.0"},
+                timeout=(3, 5),
+            )
+            if response.status_code == 200 and response.text.strip():
+                snippets = parse_vtt(response.text)
+                if snippets:
+                    return snippets, lang, lang, generated, "youtube-timedtext"
+        except requests.RequestException:
+            continue
+    return None, "TIMEDTEXT_NOT_FOUND"
+
+
+def parse_timestamped_markdown(text: str) -> list[dict]:
+    out = []
+    stamp = re.compile(r"^\[(\d{1,3}):(\d{2})(?::(\d{2}))?\]\s*(.+?)\s*$")
+    for line in text.splitlines():
+        match = stamp.match(line.strip())
+        if not match:
+            continue
+        a, b, c, caption = match.groups()
+        start = int(a) * (3600 if c else 60) + int(b) * (60 if c else 1) + (int(c) if c else 0)
+        caption = clean_text(caption)
+        if caption:
+            out.append({"start": float(start), "duration": 0.0, "text": caption})
+    return normalize_snippets(out)
+
+
+def fetch_transcript(video_id: str):
+    errors = []
+
+    external = fetch_external_transcript_service(video_id)
+    if external[0] is not None:
+        return external
+    errors.append(f"youtube-transcript-ai:{external[1]}")
+
+    youtubegpt = fetch_youtubegpt(video_id)
+    if youtubegpt[0] is not None:
+        return youtubegpt
+    errors.append(f"youtubegpt:{youtubegpt[1]}")
+
+    inv = fetch_invidious(video_id)
+    if inv[0] is not None:
+        return inv
+    errors.append(f"invidious:{inv[1]}")
+
+    ytdlp = fetch_ytdlp_subtitles(video_id)
+    if ytdlp[0] is not None:
+        return ytdlp
+    errors.append(f"yt-dlp:{ytdlp[1]}")
+
+    api = fetch_youtube_transcript_api(video_id)
+    if api[0] is not None:
+        return api
+    errors.append(f"youtube-transcript-api:{api[1]}")
+
+    inner = fetch_innertube(video_id)
+    if inner[0] is not None:
+        return inner
+    errors.append(f"youtube-innertube:{inner[1]}")
+
+    timed = fetch_timedtext(video_id)
+    if timed[0] is not None:
+        return timed
+    errors.append(f"youtube-timedtext:{timed[1]}")
+
+    raise RuntimeError("TRANSCRIPT_FETCH_FAILED: " + " | ".join(errors[-12:]))
+
+
+def transcript(video_id: str) -> dict:
+    snippets, language, label, generated, source = fetch_transcript(video_id)
+    full = " ".join(x["text"] for x in snippets)
     sha = hashlib.sha256(full.encode("utf-8")).hexdigest()
 
     evidence = []
@@ -122,9 +494,11 @@ def transcript(video_id: str) -> dict:
         "snippet_count": len(snippets),
         "evidence_count": len(evidence),
         "evidence": evidence[:160],
-        "language": getattr(fetched, "language_code", "en"),
+        "language": language,
+        "track_label": label,
+        "generated": generated,
+        "source": source,
     }
-
 
 def list_expiry_files() -> list[str]:
     api = HfApi()
