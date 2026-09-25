@@ -25,3 +25,9 @@ Reduce the 71 Phase 26 strategy-candidate videos into conservative canonical res
 ## Completion gate
 
 Every candidate has one family ID, every family has a review status, and zero rows are backtest-eligible.
+
+## 2026-09-25 — Execution result
+
+Run 36131564013 produced 69 conservative family clusters from 71 candidate videos.
+Automatic HIGH-confidence promotion remained at zero because the transcript-derived family labels overlap too broadly for safe automatic merging.
+No family is backtest-eligible from Phase 28.
