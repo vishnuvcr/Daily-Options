@@ -55,3 +55,11 @@ def test_src_quotes_both_parquet_paths(tmp_path):
     assert "NIFTY_2024.parquet'" in s
     assert "NIFTY_2025.parquet'" in s
     assert s.count("'") >= 4
+
+
+def test_setup_uses_scalar_strike_indexing():
+    src = Path('research/phase25_falcon_rissin.py').read_text()
+    assert 'ce.strike' not in src
+    assert 'pe.strike' not in src
+    assert 'fce.strike' not in src
+    assert 'fpe.strike' not in src
