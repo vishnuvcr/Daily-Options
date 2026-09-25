@@ -114,3 +114,7 @@ Run 36134943745 passed unit tests and matrix construction, then the standalone v
 ## 2026-09-25 — Phase 29.2 final result
 
 Workflow 36135151445 passed. Final contract-readiness matrix has 71 rows and confirms archive provenance for all 71 candidates. Only the duplicate NIFTY Iron Dome rows are contract-ready for the next content-level join under the current conservative metadata rules. Ten stock-option rows have primary data but lack an independent pinned stock-option source; 54 rows do not disclose a defensible underlying in the frozen candidate metadata; four require rule reconstruction; one is LEAPS/long-dated limited. All rows remain blocked from P&L. Phase 30 stays blocked.
+
+## 2026-09-25 — Phase 29.3 final result
+
+Run 36135786342 passed. Both Iron Dome transcripts were obtained programmatically; the primary transcript API was blocked by YouTube/cloud-IP restrictions, so the workflow used a deterministic yt-dlp auto-caption fallback. Contract-content inspection succeeded for seven relevant pinned NIFTY expiry files. The transcript evidence is strong enough to reconstruct a provisional weekly Iron Fly family but not strong enough to freeze a single exact trading rule without interpretation. A source-derived reconstruction document was committed, and the next research step is a pre-registered variant sweep rather than an unqualified single-rule backtest.
