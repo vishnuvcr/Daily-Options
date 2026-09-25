@@ -9,9 +9,9 @@ from __future__ import annotations
 
 import argparse
 import base64
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import logging
-import signal
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -110,16 +110,7 @@ class TranscriptTimeout(RuntimeError):
 
 
 def fetch_transcript_bounded(video_id: str, video_url: str, timeout_seconds: int):
-    def _handler(signum, frame):
-        raise TranscriptTimeout(f"TRANSCRIPT_TIMEOUT_{timeout_seconds}s")
-
-    previous = signal.signal(signal.SIGALRM, _handler)
-    signal.alarm(max(1, int(timeout_seconds)))
-    try:
-        return fetch_transcript(video_id, video_url, retries=2)
-    finally:
-        signal.alarm(0)
-        signal.signal(signal.SIGALRM, previous)
+    return fetch_transcript(video_id, video_url, retries=1)
 
 
 def archive_one(video: dict, out_root: Path, public_key, public_key_sha256: str,
