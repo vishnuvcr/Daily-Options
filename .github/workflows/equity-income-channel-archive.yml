@@ -56,6 +56,23 @@ jobs:
           raise SystemExit("bgutil provider did not become ready")
           PY
 
+      - name: Probe public transcript fallbacks
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import requests
+          probes = [
+              ("invidious", "https://inv.nadeko.net/api/v1/captions/boRpz56uI6o"),
+              ("transcript_proxy", "https://youtube-transcript.ai/transcript/boRpz56uI6o.txt?lang=en"),
+          ]
+          for name, url in probes:
+              try:
+                  r = requests.get(url, timeout=(3, 8), headers={"User-Agent": "Daily-Options-Equity-Income-Archive/1.0"})
+                  print(f"{name}: HTTP {r.status_code}, bytes={len(r.content)}")
+              except Exception as exc:
+                  print(f"{name}: ERROR {exc!r}")
+          PY
+
       - name: Verify archive public key
         run: |
           set -euo pipefail
@@ -87,3 +104,9 @@ jobs:
           fi
           git commit -m "Archive Equity Income channel metadata and transcripts"
           git push origin HEAD:equity-income-channel-archive-v1
+
+      - name: Enforce archive completeness
+        if: steps.archive.outcome == 'failure'
+        run: |
+          echo "::error::Equity Income archive is incomplete. Partial encrypted successes were committed for resumable continuation."
+          exit 2
