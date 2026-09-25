@@ -1,0 +1,7 @@
+{
+  "source": "NSE India historical India VIX",
+  "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+  "rows": 236,
+  "start": "2025-08-20",
+  "end": "2026-08-04"
+}
