@@ -4,6 +4,9 @@ name: Equity Income - weekly channel archive
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/equity-income-archive-trigger.txt"
   push:
     paths:
       - ".github/equity-income-archive-trigger.txt"
