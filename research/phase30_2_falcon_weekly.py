@@ -224,12 +224,12 @@ def settle(legs, lot, slippage, brokerage_per_order, entry_date=None, exit_date=
     return gross - cost(legs, lot, slippage, brokerage_per_order, entry_date, exit_date)
 
 
-def build_setup(con, root, cal, entry_time, target, far_mode):
+def build_setup(con, root, cal, entry_time, target, far_mode, snapshot_window):
     entry_date, adjust_date, exit_date = cal["entry_date"], cal["adjust_date"], cal["exit_date"]
     near_exp, far_exp = cal["near_expiry"], cal["far_expiry"]
     signal_ts = pd.Timestamp(f"{entry_date} {entry_time}")
     fill_ts = signal_ts + pd.Timedelta(minutes=1)
-    snap = load_snapshot(con, root, entry_date, near_exp, far_exp, signal_ts, fill_ts)
+    snap = snapshot_window
     if snap.empty:
         return None
 
