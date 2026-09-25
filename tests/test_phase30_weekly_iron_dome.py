@@ -20,3 +20,11 @@ def test_round_strike():
     assert round_strike(2499) == 2500
     assert round_strike(2501) == 2500
     assert round_strike(2526) == 2550
+
+from research.phase30_weekly_iron_dome import STRIKE_INTERVAL
+
+def test_one_strike_inside_moves_deeper_itm():
+    ce_strike = 25000.0
+    pe_strike = 25000.0
+    assert ce_strike - STRIKE_INTERVAL == 24950.0
+    assert pe_strike + STRIKE_INTERVAL == 25050.0
