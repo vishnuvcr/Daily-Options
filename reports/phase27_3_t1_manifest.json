@@ -1,0 +1,66 @@
+[
+  {
+    "video_id": "OvaJumYancs",
+    "title": "No More Straddles. This Strategy Is Smarter",
+    "priority_score": "15",
+    "family_hits": "strangle|straddle",
+    "rule_sheet": "docs/equity_income_strategy_rules/t1/OvaJumYancs__no-more-straddles-this-strategy-is-smarter.md",
+    "backtest_allowed": "NO"
+  },
+  {
+    "video_id": "Hk55IhMoYAQ",
+    "title": "Leaps Calendar pro Strategy for Working People",
+    "priority_score": "14",
+    "family_hits": "calendar|straddle|leaps",
+    "rule_sheet": "docs/equity_income_strategy_rules/t1/Hk55IhMoYAQ__leaps-calendar-pro-strategy-for-working-people.md",
+    "backtest_allowed": "NO"
+  },
+  {
+    "video_id": "aRjY_O6U3nQ",
+    "title": "Retail Option Sellers Need This First - STRANGLE AIR DEFENSE SYSTEM",
+    "priority_score": "13",
+    "family_hits": "iron_condor|ratio_spread|strangle|jade_lizard",
+    "rule_sheet": "docs/equity_income_strategy_rules/t1/aRjY_O6U3nQ__retail-option-sellers-need-this-first-strangle-air-defense-system.md",
+    "backtest_allowed": "NO"
+  },
+  {
+    "video_id": "hAy3T7sE5qo",
+    "title": "🔥 RR 1:5 LEAPS OPTIONS STRATEGY ¦ Professional Hedged Setup ¦ #equityincome ",
+    "priority_score": "13",
+    "family_hits": "ratio_spread|strangle|straddle|leaps",
+    "rule_sheet": "docs/equity_income_strategy_rules/t1/hAy3T7sE5qo__rr-1-5-leaps-options-strategy-professional-hedged-setup-equityincome.md",
+    "backtest_allowed": "NO"
+  },
+  {
+    "video_id": "1V-06qTH5Rc",
+    "title": "Iron Condor Adjustment ",
+    "priority_score": "12",
+    "family_hits": "iron_fly|iron_condor|leaps",
+    "rule_sheet": "docs/equity_income_strategy_rules/t1/1V-06qTH5Rc__iron-condor-adjustment.md",
+    "backtest_allowed": "NO"
+  },
+  {
+    "video_id": "UBk0f6HvXfg",
+    "title": "Bad-Trade Blocker ¦ Intraday Option Selling Indicator ",
+    "priority_score": "10",
+    "family_hits": "",
+    "rule_sheet": "docs/equity_income_strategy_rules/t1/UBk0f6HvXfg__bad-trade-blocker-intraday-option-selling-indicator.md",
+    "backtest_allowed": "NO"
+  },
+  {
+    "video_id": "EZZzwpLpghM",
+    "title": "LOSING-OPTION-TRADE? \"USE TIME'\" Method | Bear Put , Bull Call Adjustment",
+    "priority_score": "10",
+    "family_hits": "iron_fly",
+    "rule_sheet": "docs/equity_income_strategy_rules/t1/EZZzwpLpghM__losing-option-trade-use-time-method-bear-put-bull-call-adjustment.md",
+    "backtest_allowed": "NO"
+  },
+  {
+    "video_id": "_pDU1aqKivU",
+    "title": "🔥Aggressive Straddle Adjustment Plan ✅",
+    "priority_score": "10",
+    "family_hits": "iron_fly|straddle|debit_spread",
+    "rule_sheet": "docs/equity_income_strategy_rules/t1/_pDU1aqKivU__aggressive-straddle-adjustment-plan.md",
+    "backtest_allowed": "NO"
+  }
+]
