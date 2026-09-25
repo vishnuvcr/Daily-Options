@@ -199,3 +199,12 @@ No numerical P&L from Phase 25 has been accepted yet. Once the current run compl
 
 ### Phase 25 resume checkpoint — 2026-09-25
 Run **36111174510** remains active with both Base and Stress in friction. All seven unit tests and the Rissin 84,280,469-row / 311-date / 76-expiry coverage gate have passed. Earlier runs 36110262221 and 36110775799 were cancelled/superseded before numerical acceptance. The current run uses the frozen 270-cell Falcon grid and output-preserving execution caches; no strategy parameters have been retuned. **No Phase 25 P&L is accepted yet.**
+
+
+## Phase 25 final result — 2026-09-25
+
+Phase 25 independent Rissin replication is **complete and retired**. Authoritative run **36111174510** passed all tests and data gates and executed the frozen 270-cell Falcon family across 680 setups / 47 entry dates / 6,120 trades. Every variant was negative on mean active-day net.
+
+Base best: **-₹1,645.92/lot/day**. Stress best: **-₹2,219.25/lot/day**. No variant qualified for the ₹1,000/lot/day target. The complete result and provenance are in [Phase 25 final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-25-falcon-rissin-independent-v1/reports/phase25_falcon_rissin_final_result.md).
+
+Falcon is therefore retired without WFA/OOS promotion or result-driven tuning. Research continues with the next distinct hypothesis.
