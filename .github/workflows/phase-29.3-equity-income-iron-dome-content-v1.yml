@@ -1,0 +1,68 @@
+name: Phase 29.3 - Equity Income Iron Dome content validation
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/phase29.3-run.txt"
+  pull_request:
+    paths:
+      - ".github/phase29.3-run.txt"
+      - "research/phase29_3_iron_dome_content.py"
+      - "tests/test_phase29_3_iron_dome_content.py"
+      - ".github/workflows/phase-29.3-equity-income-iron-dome-content-v1.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase29.3-equity-income-iron-dome-content
+  cancel-in-progress: false
+
+jobs:
+  content_validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install research tooling
+        run: python -m pip install --disable-pip-version-check pytest==8.4.2 youtube-transcript-api==1.2.4 huggingface_hub==1.33.0 pyarrow==20.0.0
+
+      - name: Unit tests
+        run: python -m pytest -q tests/test_phase29_3_iron_dome_content.py
+
+      - name: Fetch transcripts and inspect exact NIFTY expiry partitions
+        run: python research/phase29_3_iron_dome_content.py
+
+      - name: Validate safety gate
+        run: |
+          python - <<'PY'
+          import json
+          s=json.load(open("reports/phase29_3_summary.json", encoding="utf-8"))
+          assert s["candidate_videos"] == 2
+          assert s["numerical_backtest_allowed"] == 0
+          assert s["phase30_gate"] == "BLOCKED"
+          assert s["nifty_expiry_parquet_files_at_pin"] > 0
+          print(json.dumps(s, indent=2))
+          PY
+
+      - name: Persist evidence
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/phase29_3_iron_dome_rule_evidence.json reports/phase29_3_expiry_file_inventory.json reports/phase29_3_summary.json data/equity_income/phase29_3_transcript_fetch_manifest.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Phase 29.3: persist Iron Dome content evidence"
+          git push origin HEAD:${{ github.ref_name }}
