@@ -11,6 +11,7 @@ import argparse
 import base64
 import json
 import logging
+import signal
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -104,7 +105,25 @@ def validate_envelope(path: Path, expected_ciphertext_sha256: str | None) -> boo
         return False
 
 
-def archive_one(video: dict, out_root: Path, public_key, public_key_sha256: str, force: bool) -> dict:
+class TranscriptTimeout(RuntimeError):
+    pass
+
+
+def fetch_transcript_bounded(video_id: str, video_url: str, timeout_seconds: int):
+    def _handler(signum, frame):
+        raise TranscriptTimeout(f"TRANSCRIPT_TIMEOUT_{timeout_seconds}s")
+
+    previous = signal.signal(signal.SIGALRM, _handler)
+    signal.alarm(max(1, int(timeout_seconds)))
+    try:
+        return fetch_transcript(video_id, video_url, retries=2)
+    finally:
+        signal.alarm(0)
+        signal.signal(signal.SIGALRM, previous)
+
+
+def archive_one(video: dict, out_root: Path, public_key, public_key_sha256: str,
+                force: bool, transcript_timeout_seconds: int) -> dict:
     video_id = video["video_id"]
     transcript_root = out_root / "transcripts_encrypted"
     archive_path = transcript_root / f"{video_id}.json.hybrid.json"
@@ -115,7 +134,9 @@ def archive_one(video: dict, out_root: Path, public_key, public_key_sha256: str,
             "archive_path": str(archive_path.relative_to(out_root)),
         }
 
-    snippets, lang_code, lang, generated, method = fetch_transcript(video_id, video["webpage_url"])
+    snippets, lang_code, lang, generated, method = fetch_transcript_bounded(
+        video_id, video["webpage_url"], transcript_timeout_seconds
+    )
     plain = payload(video_id, lang_code, lang, generated, method, snippets)
     envelope = hybrid_encrypt(public_key, plain)
     transcript_root.mkdir(parents=True, exist_ok=True)
@@ -150,6 +171,7 @@ def main() -> int:
     parser.add_argument("--public-key", type=Path, default=Path("config/equity_income_archive_public_key.pem"))
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--limit", type=int, default=0)
+    parser.add_argument("--transcript-timeout-seconds", type=int, default=45)
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
@@ -194,7 +216,8 @@ def main() -> int:
             continue
         try:
             transcript_manifest[video_id] = archive_one(
-                video_manifest[video_id], root, public_key, key_hash, args.force
+                video_manifest[video_id], root, public_key, key_hash, args.force,
+                args.transcript_timeout_seconds
             )
         except Exception as exc:
             transcript_manifest[video_id] = {
