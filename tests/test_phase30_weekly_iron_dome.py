@@ -36,4 +36,4 @@ def test_max_loss_budget_is_positive():
         type("P", (), {"side": "LONG", "strike": 24000, "option_type": "CE", "qty": 65, "entry_price": 40.0}),
         type("P", (), {"side": "LONG", "strike": 23600, "option_type": "PE", "qty": 65, "entry_price": 35.0}),
     ]
-    assert max_loss_budget(positions, date(2026, 5, 5), 0.0) > 0
+    assert max_loss_budget(positions, date(2026, 5, 5)) > 0
