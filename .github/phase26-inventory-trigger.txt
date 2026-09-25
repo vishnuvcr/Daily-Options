@@ -1,0 +1,2 @@
+Phase 26 metadata inventory trigger.
+Transcript completion gate remains pending.
