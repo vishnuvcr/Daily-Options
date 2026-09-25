@@ -39,31 +39,18 @@ jobs:
       - name: Unit tests
         run: PYTHONPATH=. pytest -q tests/test_phase25_falcon_rissin.py
 
-      - name: Cache Rissin NIFTY data
-        uses: actions/cache@v4
+      - name: Restore Rissin NIFTY data
+        uses: actions/cache/restore@v4
         with:
           path: data/cache/phase25_rissin
           key: phase25-rissin-78b1c546-nifty-2024-2025-v1
-          save-always: true
 
       - name: Acquire pinned Rissin data
         run: |
           set -euo pipefail
           mkdir -p data/cache/phase25_rissin
           if [ ! -s data/cache/phase25_rissin/upstox_intraday/NIFTY/NIFTY_2024.parquet ] || [ ! -s data/cache/phase25_rissin/upstox_intraday/NIFTY/NIFTY_2025.parquet ]; then
-            python - <<'PY'
-            from huggingface_hub import snapshot_download
-            snapshot_download(
-                repo_id="rissin/nse-options-intraday",
-                repo_type="dataset",
-                revision="78b1c5468255d18cf492984bfe6fe4e3ac874d7c",
-                local_dir="data/cache/phase25_rissin",
-                allow_patterns=[
-                    "upstox_intraday/NIFTY/NIFTY_2024.parquet",
-                    "upstox_intraday/NIFTY/NIFTY_2025.parquet",
-                ],
-            )
-            PY
+            python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="rissin/nse-options-intraday", repo_type="dataset", revision="78b1c5468255d18cf492984bfe6fe4e3ac874d7c", local_dir="data/cache/phase25_rissin", allow_patterns=["upstox_intraday/NIFTY/NIFTY_2024.parquet","upstox_intraday/NIFTY/NIFTY_2025.parquet"])'
           fi
 
       - name: Validate data coverage
@@ -95,7 +82,12 @@ jobs:
           print(row)
           assert row[1] >= 200
           assert row[2] >= 40
-          PY
+      - name: Save validated Rissin NIFTY data
+        if: success()
+        uses: actions/cache/save@v4
+        with:
+          path: data/cache/phase25_rissin
+          key: phase25-rissin-78b1c546-nifty-2024-2025-v1
 
       - name: Run friction
         env:
