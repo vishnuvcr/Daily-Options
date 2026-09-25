@@ -190,15 +190,19 @@ def portfolio_current_pnl(positions: list[Position], series_map, ts: pd.Timestam
     return total
 
 
-def max_loss_budget(positions: list[Position], expiry: date, realized_pnl: float) -> float:
-    # Conservative intrinsic-only worst-case scan at expiry. Because the
-    # portfolio is made of finite-strike calls/puts, the minimum occurs at a
-    # strike breakpoint or its immediate boundaries.
+def max_loss_budget(positions: list[Position], expiry: date) -> float:
+    # Conservative intrinsic-only worst-case loss of the currently open
+    # position, measured from its own entry cashflows. This keeps the RISK_60
+    # trigger dimensionally consistent and resets naturally after adjustment.
     strikes = sorted({p.strike for p in positions})
     test_spots = [0.0] + [float(x) for x in strikes] + [float(x + 1) for x in strikes]
+    base_cash = sum(
+        (p.entry_price * p.qty) if p.side == "SHORT" else (-p.entry_price * p.qty)
+        for p in positions
+    )
     worst = 0.0
     for spot in test_spots:
-        future = realized_pnl
+        future = base_cash
         for p in positions:
             intrinsic = max(0.0, spot - p.strike) if p.option_type == "CE" else max(0.0, p.strike - spot)
             future += intrinsic * p.qty if p.side == "LONG" else -intrinsic * p.qty
@@ -275,7 +279,7 @@ def simulate(options: pd.DataFrame, spot: pd.DataFrame, expiry: date, entry_date
 
     while trigger_count < 2 and not all_timestamps.empty:
         triggered = None
-        budget = max_loss_budget(positions, expiry, realized_cash + order_cashflow(orders))
+        budget = max_loss_budget(positions, expiry)
         for row in all_timestamps.itertuples(index=False):
             ts = pd.Timestamp(row.ts)
             if ts <= entry_signal:
@@ -290,7 +294,7 @@ def simulate(options: pd.DataFrame, spot: pd.DataFrame, expiry: date, entry_date
                 mkt = portfolio_current_pnl(positions, option_map, ts)
                 if mkt is None:
                     continue
-                fire = mkt <= -(0.60 * budget / lot)
+                fire = mkt <= -(0.60 * budget)
             if fire:
                 direction = "UP" if up and not down else "DOWN" if down and not up else ("UP" if s >= current_center else "DOWN")
                 triggered = (ts, s, direction)
