@@ -173,7 +173,7 @@ def main() -> int:
             "Bid/ask remains unverified; later simulations must use an explicit OHLC execution/slippage model.",
         ],
     }
-    Path("reports/phase29_2_summary.json").write_text(json.dumps(summary, indent=2) + "\\n", encoding="utf-8")
+    Path("reports/phase29_2_summary.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
 
     manifest = {
         "phase": "29.2",
@@ -184,7 +184,7 @@ def main() -> int:
         "independent": {"repo": INDEPENDENT, "revision": INDEPENDENT_REV},
         "contract_content_status": "NOT_YET_VALIDATED",
     }
-    Path("data/equity_income/phase29_2_contract_manifest.json").write_text(json.dumps(manifest, indent=2) + "\\n", encoding="utf-8")
+    Path("data/equity_income/phase29_2_contract_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(summary, sort_keys=True))
     return 0
 
