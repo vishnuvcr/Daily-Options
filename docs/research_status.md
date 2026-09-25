@@ -552,3 +552,11 @@ Authoritative workflow run **36160694325** is queued/pending. No Falcon P&L is a
 Phase 30.2 Falcon independent replication is executing under the frozen 270-cell weekly matrix. Both Base and doubled-slippage Stress have passed unit tests and exact Rissin acquisition; numerical friction is now running. No result is accepted until both jobs complete and the persisted summaries/leaderboards are audited.
 
 The registered promotion gate remains mean weekly net ≥ ₹5,000, median weekly net ≥ ₹5,000, ≥70% profitable weeks, ≥20 completed weeks and ≥80% execution coverage, with Base/Stress costs and risk statistics disclosed. If the gate is not met, Falcon is retired without result-driven tuning and the next distinct source-faithful Equity Income candidate is opened.
+
+
+## Parallel next-candidate research — 2026-09-25
+While Falcon is computing, the next distinct Equity Income candidate has been identified for source-resolution work: **Bear Put Spread Attack Plan: When to Enter and How to Adjust** (YouTube video, published 2026-01-04). The public video description confirms that the source presents a bear-put-spread setup, explicit entry/exit rules, adjustments and stop-loss/risk-management rules, but the public indexed page does not expose the numerical rule details needed for a source-faithful backtest. citeturn371664youtube0turn117451youtube28
+
+Research question: can the source-defined bear-put spread, once the archived Python-acquired transcript is deterministically recovered, be formalized into a current Tuesday-expiry NIFTY rule set that clears the ₹5,000/week consistency gate after realistic costs without contaminating the test set?
+
+No numerical Bear Put test has been started and no rule values are being invented from the public description. The existing channel catalogue records this candidate as distinct from the prior short-vol families but requiring exact adjustment-rule recovery before execution.
