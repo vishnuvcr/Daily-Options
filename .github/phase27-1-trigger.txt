@@ -1,0 +1,1 @@
+Phase 27.1 controlled trigger: context-aware timestamped rule evidence for 71 candidates.
