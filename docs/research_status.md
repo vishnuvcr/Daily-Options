@@ -3,7 +3,7 @@
 Last updated: 2026-09-25
 
 ## Overall
-**Phase 29.4 — Equity Income / NIFTY Iron Dome source-fidelity reconstruction**
+**Phase 30.2 — Equity Income / Falcon Spread weekly independent replication**
 
 ## Current research objective — 2026-09-25
 The active YouTube/Equity Income program has replaced the former ₹1,000/active-lot/day intraday stopping rule with a **₹5,000 NET per completed trading week** objective at a fixed declared reference strategy position size.
