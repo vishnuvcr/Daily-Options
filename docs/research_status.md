@@ -234,3 +234,70 @@ Retrospective audit of the authoritative Phase 13 artifact found exact two-for-o
 ## 2026-09-25 — Phase 20 closure / Phase 21 active
 
 Authoritative Phase 20 run 36045068043 completed Base and Stress for the frozen 384-cell global-gated Phase 13 interaction. It produced 3,872 trades; best mean active-day net was Rs 481.73 base and Rs 451.73 stress, with 0 target-qualified cells and 0 walk-forward windows. Phase 20 is retired without retuning. Phase 21 is now the active distinct hypothesis: fixed regime-switching long-gamma on expansion regimes and short-vega on calm regimes, with 60 frozen cells.
+
+## Phase 24 — Falcon Spread numerical validation started — 2026-09-25
+
+The user supplied a detailed transcript-derived rule set for Equity Income's Falcon Spread:
+- Friday 5:3 near-week/far-week ratio-diagonal strangle around the 25-point premium zone;
+- Monday purchase of five near-week outer wings on each side, one strike beyond the original shorts;
+- hard stop required;
+- full structure closed by Wednesday.
+
+Phase 24 is preregistered on branch phase-24-falcon-spread-backtest-v1 with 270 frozen cells covering only unspecified timing/stop/strike-interpretation sensitivities. The source-primary cell is 25-point premium, diagonal far-week strike selection, and fixed Friday/Monday execution conventions.
+
+No numerical result is accepted until Base and Stress runs complete and the artifact is inspected.
+
+## Phase 24 diagnostic checkpoint — 2026-09-25
+
+Run 36051595562 completed successfully through tests and data acquisition but produced 270 variants, 52 setups, and 0 trades in both Base and Stress. It was invalidated as evidence after E0224 identified a Friday-only trading_day filter in the multi-day series loader.
+
+Corrected run 36052354346 removed that filter but still returned 52 setups and 0 trades in Stress. E0226 identified exact-timestamp intersection across multiple option legs as a likely sparse-quote blocker for stop marking. The correction replaces exact inner joins with fixed one-minute backward-asof alignment only, without future quotes.
+
+The newest corrected code is committed on phase-24-falcon-spread-backtest-v1. Runs triggered by the latest correction are queued/active; no Falcon P&L is accepted until a clean corrected run completes.
+## Phase 24 current-expiry correction — 2026-09-25
+
+User clarification: the Falcon video is an older Thursday-expiry-era strategy. Current NIFTY weekly contracts expire Tuesday. NSE's June 25, 2025 circular revised NIFTY weekly expiry from Thursday to Tuesday for new contracts expiring on/after September 1, 2025; current NSE contract specifications list Tuesday as the weekly expiry day. citeturn431147search15turn431147search2
+
+Phase 24 has therefore been corrected so the source's old "close by Wednesday to avoid Thursday 0-DTE" rule becomes **close on Monday before Tuesday expiry** for the current regime. Historical validation is expiry-aware: the exit session is the actual trading session immediately preceding each contract's expiry; Monday-expiry transition contracts are skipped because the source's Monday adjustment cannot occur before a Monday expiry.
+
+The previously running Phase 24 computation using the old Wednesday timeout is superseded and will not be used for P&L. The new timing correction will be validated by the next clean Base/Stress run before any performance conclusion is accepted.
+## Phase 24 timing correction — 2026-09-25 (finalized)
+
+Correct current-rule geometry is now **Wednesday entry → Thursday adjustment → Monday exit** for present-day NIFTY weekly options that expire Tuesday. This is the exact expiry-relative translation of the source's old **Friday entry → Monday adjustment → Wednesday exit** under the former Thursday-expiry regime.
+
+The simulator no longer hard-codes weekdays for the strategy mechanics. It derives the event sessions from the actual contract expiry using trading-session offsets: entry = expiry − 4 sessions; adjustment = expiry − 3 sessions; exit = expiry − 1 session. This preserves the source geometry across the historical Thursday-to-Tuesday expiry transition.
+
+No P&L from the earlier incorrect timing implementation is accepted.
+
+## Phase 24 execution status — 2026-09-25
+The expiry-relative timing correction is implemented as Wednesday entry → Friday adjustment → Monday exit for current Tuesday-expiry NIFTY. A legacy `friday` variable defect in the strike-universe query was found and fixed before accepting any P&L. Latest corrected workflow runs are being re-executed after the timing, cost, caching and syntax fixes on GitHub Actions; no Phase 24 performance result is accepted yet.
+
+
+## Phase 24 CI recovery — 2026-09-25
+A stale pre-fix simulation run was holding the workflow concurrency group. CI was changed to cancel stale Phase 24 runs, and the corrected head is now queued as run **36054572240**. No performance result has been accepted from the cancelled/stale runs.
+
+
+## Phase 24 timing correction — 2026-09-25 (second correction)
+The expiry-relative mapping was rechecked against the source's historical Thursday-expiry sequence. The source geometry is **Friday entry → Monday adjustment → Wednesday exit**, corresponding to expiry−4, expiry−3, expiry−1 trading sessions. Therefore the current Tuesday-expiry analogue is **Wednesday entry → Thursday adjustment → Monday exit**. Earlier Friday-adjustment timing is superseded and produces no accepted P&L.
+
+
+## Phase 24 cost-model correction — 2026-09-25
+Current NSE STT rules are date-dependent: option-sale STT was 0.10% through 2026-03-31 and is 0.15% from 2026-04-01. The simulator now applies STT separately to entry and exit sale dates. Static-rate results are superseded. Corrected Phase 24 run **36055156251** is queued.
+
+
+## Phase 24 performance correction — 2026-09-25
+The simulator now caches repeated per-setup option series and mark panels across the 9 adjustment/stop combinations. This is an execution optimization only; it does not change strategy rules, timing or cost assumptions. Static-rate and pre-cache runs remain superseded.
+
+
+## Phase 24 cost-model correction — NSE March 2026 transaction charges
+The simulator now applies the NSE equity-options premium transaction charge date-wise: 0.03503% before 2026-03-01 and approximately 0.0355299% from 2026-03-01, in addition to date-aware STT. The pending prior run is superseded by the new correction.
+
+
+## Phase 24 data coverage audit — 2026-09-25
+The corrected TradeMarkk Stress artifact is **data-limited**: 270 variants, but only 32 executable setups / 5 unique entry dates across the nominal 2021-07 to 2026-08 window. The apparent 18 target-qualified variants are single-trade or otherwise tiny-sample observations and are rejected as evidence. External dataset documentation also states that TradeMarkk option coverage is partial. The family is therefore moving to an independent minute-data validation source before any strategy conclusion.
+
+
+## Phase 24 execution coverage audit — 2026-09-25
+Run **36056063674** completed the Stress friction job successfully. The Stress artifact reports 270 preregistered variants but only **32 executable setups / 5 unique entry dates** (2023-12-15, 2025-06-13, 2025-12-17, 2026-03-18, 2026-06-29) and 288 trade records. The apparent 18 target-qualified cells are dominated by single-trade observations and are rejected as strategy evidence. The audit indicates the restored exact-expiry cache was under-covered for the nominal research window; data-acquisition completeness must be validated before accepting any Phase 24 P&L. Base friction is still running from the same ref and will be treated as non-evidentiary until the cache problem is corrected.
+
+Phase 24 next execution requirement: rebuild/reacquire a coverage-validated exact-expiry cache, then rerun the unchanged 270-cell grid. No parameter retuning is authorized from the sparse Stress leaderboard.
