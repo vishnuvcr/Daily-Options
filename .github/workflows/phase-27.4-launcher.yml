@@ -2,6 +2,9 @@ name: Phase 27.4 - launcher
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - ".github/phase27-4-launch-trigger.txt"
   pull_request:
     paths:
       - ".github/phase27-4-launch-trigger.txt"
