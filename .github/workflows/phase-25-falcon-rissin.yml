@@ -44,24 +44,27 @@ jobs:
         with:
           path: data/cache/phase25_rissin
           key: phase25-rissin-78b1c546-nifty-2024-2025-v1
+          save-always: true
 
       - name: Acquire pinned Rissin data
         run: |
           set -euo pipefail
           mkdir -p data/cache/phase25_rissin
-          python - <<'PY'
-          from huggingface_hub import snapshot_download
-          snapshot_download(
-              repo_id="rissin/nse-options-intraday",
-              repo_type="dataset",
-              revision="78b1c5468255d18cf492984bfe6fe4e3ac874d7c",
-              local_dir="data/cache/phase25_rissin",
-              allow_patterns=[
-                  "upstox_intraday/NIFTY/NIFTY_2024.parquet",
-                  "upstox_intraday/NIFTY/NIFTY_2025.parquet",
-              ],
-          )
-          PY
+          if [ ! -s data/cache/phase25_rissin/upstox_intraday/NIFTY/NIFTY_2024.parquet ] || [ ! -s data/cache/phase25_rissin/upstox_intraday/NIFTY/NIFTY_2025.parquet ]; then
+            python - <<'PY'
+            from huggingface_hub import snapshot_download
+            snapshot_download(
+                repo_id="rissin/nse-options-intraday",
+                repo_type="dataset",
+                revision="78b1c5468255d18cf492984bfe6fe4e3ac874d7c",
+                local_dir="data/cache/phase25_rissin",
+                allow_patterns=[
+                    "upstox_intraday/NIFTY/NIFTY_2024.parquet",
+                    "upstox_intraday/NIFTY/NIFTY_2025.parquet",
+                ],
+            )
+            PY
+          fi
 
       - name: Validate data coverage
         run: |
