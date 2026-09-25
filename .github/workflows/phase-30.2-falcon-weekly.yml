@@ -51,7 +51,7 @@ jobs:
           import json
           from huggingface_hub import HfApi, hf_hub_download
           repo_id='rissin/nse-options-intraday'
-          info=HfApi().dataset_info(repo_id, repo_type='dataset')
+          info=HfApi().dataset_info(repo_id)
           sha=info.sha
           out=Path('data/cache/phase30_2_rissin')
           out.mkdir(parents=True,exist_ok=True)
