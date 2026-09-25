@@ -33,3 +33,14 @@ def test_series_spans_entry_to_exit_days():
     end=pd.Timestamp("2024-10-31 15:15:00")
     out=m.series(conn,"bars","2024-10-30","2024-11-07",24000,"CE",start,end)
     assert set(out.ts.dt.date)=={start.date(),end.date()}
+
+
+def test_target_strike_is_scalar_safe():
+    df = pd.DataFrame([
+        {"option_type": "CE", "strike": 24000.0, "open_px": 25.0, "close_px": 25.0},
+        {"option_type": "CE", "strike": 24100.0, "open_px": 26.0, "close_px": 26.0},
+        {"option_type": "PE", "strike": 24000.0, "open_px": 25.0, "close_px": 25.0},
+    ])
+    row = m.target(df, "CE", 25.0)
+    assert row is not None
+    assert float(row["strike"]) == 24000.0
