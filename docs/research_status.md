@@ -405,7 +405,7 @@ Confirmed source facts:
 - Both videos contain a directional/deeper-ITM adjustment concept; video 2 explicitly references a **one-strike-inside** leg movement.
 - Video 1 gives a Monday 09:30 adjustment example; video 2 gives a near-close/expiry-day theta-decay adjustment scenario and a 15:00 expiry-day illustration.
 
-The current NSE regime must be used when formalizing the strategy: NIFTY weekly options expire Tuesday, and this Tuesday regime has been in force since September 2025. Therefore the April/May 2026 source videos are already post-change; their Monday examples are not to be shifted back to the old Thursday calendar. citeturn626054search16turn626054search0
+The current NSE regime must be used when formalizing the strategy: NIFTY weekly options expire Tuesday, and this Tuesday regime has been in force since September 2025. Therefore the April/May 2026 source videos are already post-change; their Monday examples are not to be shifted back to the old Thursday calendar. NSE circular FAOP68685 (expiry-day transition) and current NIFTY contract specifications confirm this Tuesday regime.
 
 Still unresolved before numerical testing:
 - what the **60% metric** mathematically means;
