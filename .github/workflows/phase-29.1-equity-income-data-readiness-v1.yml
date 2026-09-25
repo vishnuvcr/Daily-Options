@@ -73,9 +73,16 @@ jobs:
           assert inv["rissin"]["paths"]["upstox_intraday/NIFTY"]["parquet_file_count"] > 0
           assert all(r["backtest_allowed"] == "NO" for r in rows)
           print(json.dumps(s, indent=2))
+          print(json.dumps({
+              "trademarkk_nifty": inv["trademarkk"]["paths"].get("options/NIFTY", {}),
+              "rissin_nifty": inv["rissin"]["paths"].get("upstox_intraday/NIFTY", {}),
+              "trademarkk_tree_files": inv["trademarkk"].get("tree_file_count"),
+              "rissin_tree_files": inv["rissin"].get("tree_file_count"),
+          }, indent=2))
           PY
 
       - name: Persist Phase 29.1 evidence
+        if: always()
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
