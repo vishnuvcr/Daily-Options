@@ -33,6 +33,14 @@ SURFACES = (
     "https://www.youtube.com/@equityincome/streams",
 )
 PREFERRED_LANGS = ("en", "en-IN", "hi")
+# Officially listed public Invidious instances. These are a fallback only;
+# the primary acquisition remains direct YouTube/yt-dlp.
+INVIDIOUS_INSTANCES = (
+    "https://inv.nadeko.net",
+    "https://invidious.nerdvpn.de",
+    "https://yt.chocolatemoo53.com",
+    "https://invidious.tiekoetter.com",
+)
 
 
 def now_utc() -> str:
@@ -203,6 +211,50 @@ def fetch_innertube(video_id: str) -> tuple[list[dict], str, bool] | None:
                 if snippets:
                     return snippets, lang, generated
         except (requests.RequestException, ValueError, KeyError, TypeError):
+            continue
+    return None
+
+
+def fetch_invidious(video_id: str) -> tuple[list[dict], str, str, bool] | None:
+    """Fetch source-provided captions through curated Invidious APIs.
+
+    Invidious exposes a captions API that returns the available caption tracks
+    and a selected track in WebVTT. This is a fallback for YouTube datacenter
+    blocks; no transcript text is generated locally.
+    """
+    session = requests.Session()
+    headers = {"User-Agent": "Daily-Options/1.0 transcript-archive"}
+    for instance in INVIDIOUS_INSTANCES:
+        base = instance.rstrip("/")
+        try:
+            index = session.get(
+                f"{base}/api/v1/captions/{video_id}",
+                headers=headers,
+                timeout=(3, 10),
+            )
+            if index.status_code != 200:
+                continue
+            data = index.json()
+            captions = data.get("captions") or []
+            ranked = []
+            for cap in captions:
+                lang = cap.get("languageCode", "")
+                label = cap.get("label", "")
+                if not lang or not cap.get("url"):
+                    continue
+                rank_lang = PREFERRED_LANGS.index(lang) if lang in PREFERRED_LANGS else 99
+                generated = "auto-generated" in label.lower()
+                ranked.append((int(generated), rank_lang, label, lang, generated, cap.get("url")))
+            ranked.sort()
+            for _, _, label, lang, generated, url in ranked:
+                target = url if url.startswith("http") else f"{base}{url}"
+                response = session.get(target, headers=headers, timeout=(3, 10))
+                if response.status_code != 200 or not response.text.strip():
+                    continue
+                snippets = parse_vtt(response.text)
+                if snippets:
+                    return snippets, lang, label, generated
+        except (requests.RequestException, ValueError, TypeError):
             continue
     return None
 
@@ -410,6 +462,11 @@ def fetch_transcript(video_id: str, video_url: str, retries: int = 1):
     if api_result[0] is not None:
         return api_result
     errors.append(f"youtube-transcript-api:{api_result[1]}")
+
+    invidious = fetch_invidious(video_id)
+    if invidious is not None:
+        snippets, lang, label, generated = invidious
+        return snippets, lang, label, generated, "invidious-captions"
 
     timed = fetch_innertube(video_id)
     if timed is not None:
