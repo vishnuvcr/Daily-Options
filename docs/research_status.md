@@ -340,3 +340,17 @@ Trading tests are paused by user request. A dedicated fixed branch, equity-incom
 The new research target is weekly trading with a minimum ₹5,000 net per traded week at fixed reference sizing. Every distinct strategy described by the channel will be reconstructed, deduplicated, tested with realistic Paytm Money/NSE costs and Base/Stress slippage, then subjected to WFA/OOS and later-period validation before promotion.
 
 Archive completion is blocked only on configuring the repository secret EQUITY_INCOME_ARCHIVE_KEY before the encrypted transcript workflow is run. No trading backtest is launched from this branch.
+
+## 2026-09-25 — Phase 28 family clustering result
+
+Authoritative launcher run 36131564013 passed all gates.
+
+- Candidate videos: 71
+- Candidate family clusters: 69
+- High-confidence automatic clusters: 0
+- Members requiring review: 71
+- Backtest-eligible members: 0
+
+The conservative clustering correctly avoided collapsing distinct strategies based only on generic keyword overlap. Two apparent duplicate-title pairs were grouped; the remaining candidates remain review-required until source rules are reconciled.
+
+Phase 28 is therefore complete as a conservative deduplication pass, but source-faithful rule reconstruction remains the gate before Phase 30 numerical testing.
