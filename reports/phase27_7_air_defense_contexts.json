@@ -1,0 +1,778 @@
+{
+  "video_id": "aRjY_O6U3nQ",
+  "segment_count": 315,
+  "transcript_text_sha256": "c7f42c2c603221dd5effe86dec122d9e84a57c08e624d2431994d564a2420178",
+  "contexts": {
+    "delta_02": [
+      {
+        "anchor_start_ms": 106720,
+        "anchor_text": "delta 0.2 delta. Right? These are the",
+        "context": [
+          {
+            "start_ms": 97840,
+            "text": "other strategy."
+          },
+          {
+            "start_ms": 99200,
+            "text": "Correct? Right? Am I near to your option"
+          },
+          {
+            "start_ms": 102000,
+            "text": "selling method? Is that's how we select"
+          },
+          {
+            "start_ms": 104000,
+            "text": "strikes? Or lot of people sell by the"
+          },
+          {
+            "start_ms": 106720,
+            "text": "delta 0.2 delta. Right? These are the"
+          },
+          {
+            "start_ms": 109800,
+            "text": "common methods to select the strike when"
+          },
+          {
+            "start_ms": 112280,
+            "text": "it comes to option selling. Is it the"
+          },
+          {
+            "start_ms": 115440,
+            "text": "professional way of selling is what I"
+          },
+          {
+            "start_ms": 117080,
+            "text": "want to ask you? Here we are on the"
+          }
+        ]
+      }
+    ],
+    "exit_325": [
+      {
+        "anchor_start_ms": 218040,
+        "anchor_text": "expiry, right? 3:25 p.m. Nifty spot, let",
+        "context": [
+          {
+            "start_ms": 209120,
+            "text": "date is 10th of April. Expiry date is"
+          },
+          {
+            "start_ms": 211840,
+            "text": "13th, so we going to put in here."
+          },
+          {
+            "start_ms": 213560,
+            "text": "Assuming the exit time is"
+          },
+          {
+            "start_ms": 215920,
+            "text": "5 minute before the"
+          },
+          {
+            "start_ms": 218040,
+            "text": "expiry, right? 3:25 p.m. Nifty spot, let"
+          },
+          {
+            "start_ms": 222160,
+            "text": "just double check. Nifty spot is 24110."
+          },
+          {
+            "start_ms": 225040,
+            "text": "So, we going to input here 24110."
+          },
+          {
+            "start_ms": 228320,
+            "text": "India VIX value is 18.85. Is it correct?"
+          },
+          {
+            "start_ms": 231040,
+            "text": "Yes, 18.85. So, this is where we are"
+          }
+        ]
+      }
+    ],
+    "exit_5min_before": [],
+    "adjust_near": [],
+    "structure": [
+      {
+        "anchor_start_ms": 93240,
+        "anchor_text": "or if you're making a condor, a batman,",
+        "context": [
+          {
+            "start_ms": 82920,
+            "text": "analysis, you can do your GAN theories,"
+          },
+          {
+            "start_ms": 85560,
+            "text": "you can do a lot of stuff to probably"
+          },
+          {
+            "start_ms": 87920,
+            "text": "figure out which is the right strike to"
+          },
+          {
+            "start_ms": 90280,
+            "text": "sell in the call side, in the put side,"
+          },
+          {
+            "start_ms": 93240,
+            "text": "or if you're making a condor, a batman,"
+          },
+          {
+            "start_ms": 95520,
+            "text": "or ratio spread, or jade lizard, or any"
+          },
+          {
+            "start_ms": 97840,
+            "text": "other strategy."
+          },
+          {
+            "start_ms": 99200,
+            "text": "Correct? Right? Am I near to your option"
+          },
+          {
+            "start_ms": 102000,
+            "text": "selling method? Is that's how we select"
+          }
+        ]
+      },
+      {
+        "anchor_start_ms": 95520,
+        "anchor_text": "or ratio spread, or jade lizard, or any",
+        "context": [
+          {
+            "start_ms": 85560,
+            "text": "you can do a lot of stuff to probably"
+          },
+          {
+            "start_ms": 87920,
+            "text": "figure out which is the right strike to"
+          },
+          {
+            "start_ms": 90280,
+            "text": "sell in the call side, in the put side,"
+          },
+          {
+            "start_ms": 93240,
+            "text": "or if you're making a condor, a batman,"
+          },
+          {
+            "start_ms": 95520,
+            "text": "or ratio spread, or jade lizard, or any"
+          },
+          {
+            "start_ms": 97840,
+            "text": "other strategy."
+          },
+          {
+            "start_ms": 99200,
+            "text": "Correct? Right? Am I near to your option"
+          },
+          {
+            "start_ms": 102000,
+            "text": "selling method? Is that's how we select"
+          },
+          {
+            "start_ms": 104000,
+            "text": "strikes? Or lot of people sell by the"
+          }
+        ]
+      },
+      {
+        "anchor_start_ms": 537800,
+        "anchor_text": "Probably they do ratio spreads, batman,",
+        "context": [
+          {
+            "start_ms": 529280,
+            "text": "the range as well. Now, a second very"
+          },
+          {
+            "start_ms": 532160,
+            "text": "strong point which I want to tell you. I"
+          },
+          {
+            "start_ms": 534160,
+            "text": "hope I have your attention. There are"
+          },
+          {
+            "start_ms": 535880,
+            "text": "many strategies which traders do."
+          },
+          {
+            "start_ms": 537800,
+            "text": "Probably they do ratio spreads, batman,"
+          },
+          {
+            "start_ms": 541240,
+            "text": "I've made few very intelligent"
+          },
+          {
+            "start_ms": 543400,
+            "text": "strategies in the past. A lot of people"
+          },
+          {
+            "start_ms": 545560,
+            "text": "appreciated that, right? Modification of"
+          },
+          {
+            "start_ms": 547960,
+            "text": "iron condor, modifications of fly. The"
+          }
+        ]
+      },
+      {
+        "anchor_start_ms": 547960,
+        "anchor_text": "iron condor, modifications of fly. The",
+        "context": [
+          {
+            "start_ms": 537800,
+            "text": "Probably they do ratio spreads, batman,"
+          },
+          {
+            "start_ms": 541240,
+            "text": "I've made few very intelligent"
+          },
+          {
+            "start_ms": 543400,
+            "text": "strategies in the past. A lot of people"
+          },
+          {
+            "start_ms": 545560,
+            "text": "appreciated that, right? Modification of"
+          },
+          {
+            "start_ms": 547960,
+            "text": "iron condor, modifications of fly. The"
+          },
+          {
+            "start_ms": 551040,
+            "text": "number one issue comes is which strike"
+          },
+          {
+            "start_ms": 552720,
+            "text": "to pick actually. Suppose if I'm doing"
+          },
+          {
+            "start_ms": 554400,
+            "text": "batman tomorrow, example."
+          },
+          {
+            "start_ms": 556440,
+            "text": "Number one issue is which strike to sell"
+          }
+        ]
+      },
+      {
+        "anchor_start_ms": 637280,
+        "anchor_text": "taking an example of a short strangle.",
+        "context": [
+          {
+            "start_ms": 628120,
+            "text": "value of VIX. VIX go up, the range going"
+          },
+          {
+            "start_ms": 631120,
+            "text": "to be even more bigger. This is a very"
+          },
+          {
+            "start_ms": 633200,
+            "text": "important point. Suppose that the market"
+          },
+          {
+            "start_ms": 635520,
+            "text": "comes towards the range and we are just"
+          },
+          {
+            "start_ms": 637280,
+            "text": "taking an example of a short strangle."
+          },
+          {
+            "start_ms": 639840,
+            "text": "Step number one, it's important to"
+          },
+          {
+            "start_ms": 642040,
+            "text": "reduce the size or hedge. Suppose if I"
+          },
+          {
+            "start_ms": 645360,
+            "text": "sold a call and market just keep on"
+          },
+          {
+            "start_ms": 647200,
+            "text": "going up, right? In two, three, four"
+          }
+        ]
+      },
+      {
+        "anchor_start_ms": 711480,
+        "anchor_text": "better to go with iron condor because",
+        "context": [
+          {
+            "start_ms": 703560,
+            "text": "your risk zone. Now, how do you control"
+          },
+          {
+            "start_ms": 705560,
+            "text": "your risk risk zone? How do I control"
+          },
+          {
+            "start_ms": 707760,
+            "text": "this is what I want to tell you now."
+          },
+          {
+            "start_ms": 709600,
+            "text": "Number one, for the range control, it's"
+          },
+          {
+            "start_ms": 711480,
+            "text": "better to go with iron condor because"
+          },
+          {
+            "start_ms": 713240,
+            "text": "that going to have some amount of"
+          },
+          {
+            "start_ms": 714720,
+            "text": "hedging in built into this. To get the"
+          },
+          {
+            "start_ms": 716760,
+            "text": "Excel free of cost, you got to fill the"
+          },
+          {
+            "start_ms": 718440,
+            "text": "form. If you want to know more about the"
+          }
+        ]
+      }
+    ],
+    "entry": [],
+    "stop": [],
+    "range_formula": [
+      {
+        "anchor_start_ms": 152720,
+        "anchor_text": "Now here, you see India VIX chart. This",
+        "context": [
+          {
+            "start_ms": 144800,
+            "text": "channel for that. I'm I'm aware of that."
+          },
+          {
+            "start_ms": 146800,
+            "text": "And how do you know? From your comments"
+          },
+          {
+            "start_ms": 148200,
+            "text": "which you put in. Your likes tell me"
+          },
+          {
+            "start_ms": 150000,
+            "text": "that you understanding advanced stuff."
+          },
+          {
+            "start_ms": 152720,
+            "text": "Now here, you see India VIX chart. This"
+          },
+          {
+            "start_ms": 154920,
+            "text": "is India VIX, right? India VIX is"
+          },
+          {
+            "start_ms": 156840,
+            "text": "currently 18.85. Every candle represents"
+          },
+          {
+            "start_ms": 160320,
+            "text": "one day. Now, who do analysis of India"
+          },
+          {
+            "start_ms": 163600,
+            "text": "VIX? What if I tell you India VIX gives"
+          }
+        ]
+      },
+      {
+        "anchor_start_ms": 154920,
+        "anchor_text": "is India VIX, right? India VIX is",
+        "context": [
+          {
+            "start_ms": 146800,
+            "text": "And how do you know? From your comments"
+          },
+          {
+            "start_ms": 148200,
+            "text": "which you put in. Your likes tell me"
+          },
+          {
+            "start_ms": 150000,
+            "text": "that you understanding advanced stuff."
+          },
+          {
+            "start_ms": 152720,
+            "text": "Now here, you see India VIX chart. This"
+          },
+          {
+            "start_ms": 154920,
+            "text": "is India VIX, right? India VIX is"
+          },
+          {
+            "start_ms": 156840,
+            "text": "currently 18.85. Every candle represents"
+          },
+          {
+            "start_ms": 160320,
+            "text": "one day. Now, who do analysis of India"
+          },
+          {
+            "start_ms": 163600,
+            "text": "VIX? What if I tell you India VIX gives"
+          },
+          {
+            "start_ms": 166800,
+            "text": "you a hint about the range of the market"
+          }
+        ]
+      },
+      {
+        "anchor_start_ms": 163600,
+        "anchor_text": "VIX? What if I tell you India VIX gives",
+        "context": [
+          {
+            "start_ms": 152720,
+            "text": "Now here, you see India VIX chart. This"
+          },
+          {
+            "start_ms": 154920,
+            "text": "is India VIX, right? India VIX is"
+          },
+          {
+            "start_ms": 156840,
+            "text": "currently 18.85. Every candle represents"
+          },
+          {
+            "start_ms": 160320,
+            "text": "one day. Now, who do analysis of India"
+          },
+          {
+            "start_ms": 163600,
+            "text": "VIX? What if I tell you India VIX gives"
+          },
+          {
+            "start_ms": 166800,
+            "text": "you a hint about the range of the market"
+          },
+          {
+            "start_ms": 169840,
+            "text": "where the market is expected to be. Now,"
+          },
+          {
+            "start_ms": 173480,
+            "text": "there is a confusion about India VIX"
+          },
+          {
+            "start_ms": 175440,
+            "text": "that people people take out the range of"
+          }
+        ]
+      },
+      {
+        "anchor_start_ms": 173480,
+        "anchor_text": "there is a confusion about India VIX",
+        "context": [
+          {
+            "start_ms": 160320,
+            "text": "one day. Now, who do analysis of India"
+          },
+          {
+            "start_ms": 163600,
+            "text": "VIX? What if I tell you India VIX gives"
+          },
+          {
+            "start_ms": 166800,
+            "text": "you a hint about the range of the market"
+          },
+          {
+            "start_ms": 169840,
+            "text": "where the market is expected to be. Now,"
+          },
+          {
+            "start_ms": 173480,
+            "text": "there is a confusion about India VIX"
+          },
+          {
+            "start_ms": 175440,
+            "text": "that people people take out the range of"
+          },
+          {
+            "start_ms": 178560,
+            "text": "annualized range. Like for example, next"
+          },
+          {
+            "start_ms": 181840,
+            "text": "year in April, where the market is going"
+          },
+          {
+            "start_ms": 184880,
+            "text": "to go as for the formula India VIX tells"
+          }
+        ]
+      },
+      {
+        "anchor_start_ms": 184880,
+        "anchor_text": "to go as for the formula India VIX tells",
+        "context": [
+          {
+            "start_ms": 173480,
+            "text": "there is a confusion about India VIX"
+          },
+          {
+            "start_ms": 175440,
+            "text": "that people people take out the range of"
+          },
+          {
+            "start_ms": 178560,
+            "text": "annualized range. Like for example, next"
+          },
+          {
+            "start_ms": 181840,
+            "text": "year in April, where the market is going"
+          },
+          {
+            "start_ms": 184880,
+            "text": "to go as for the formula India VIX tells"
+          },
+          {
+            "start_ms": 187800,
+            "text": "you. But I'm here to make things simple"
+          },
+          {
+            "start_ms": 190400,
+            "text": "for you. We going to talk about weekly"
+          },
+          {
+            "start_ms": 192360,
+            "text": "option selling. We will require an Excel"
+          },
+          {
+            "start_ms": 194760,
+            "text": "sheet. Let me load that for you and then"
+          }
+        ]
+      },
+      {
+        "anchor_start_ms": 228320,
+        "anchor_text": "India VIX value is 18.85. Is it correct?",
+        "context": [
+          {
+            "start_ms": 215920,
+            "text": "5 minute before the"
+          },
+          {
+            "start_ms": 218040,
+            "text": "expiry, right? 3:25 p.m. Nifty spot, let"
+          },
+          {
+            "start_ms": 222160,
+            "text": "just double check. Nifty spot is 24110."
+          },
+          {
+            "start_ms": 225040,
+            "text": "So, we going to input here 24110."
+          },
+          {
+            "start_ms": 228320,
+            "text": "India VIX value is 18.85. Is it correct?"
+          },
+          {
+            "start_ms": 231040,
+            "text": "Yes, 18.85. So, this is where we are"
+          },
+          {
+            "start_ms": 233320,
+            "text": "inputting whatever we know. For how much"
+          },
+          {
+            "start_ms": 235800,
+            "text": "duration do we plan to hold the trade?"
+          },
+          {
+            "start_ms": 237560,
+            "text": "That is"
+          }
+        ]
+      },
+      {
+        "anchor_start_ms": 252080,
+        "anchor_text": "expected range one sigma and two sigma.",
+        "context": [
+          {
+            "start_ms": 245080,
+            "text": "for us, right? We don't need to do"
+          },
+          {
+            "start_ms": 246720,
+            "text": "anything. And then when we scroll down,"
+          },
+          {
+            "start_ms": 248720,
+            "text": "it's going to give us something very"
+          },
+          {
+            "start_ms": 250360,
+            "text": "interesting. It's going to tell us"
+          },
+          {
+            "start_ms": 252080,
+            "text": "expected range one sigma and two sigma."
+          },
+          {
+            "start_ms": 256519,
+            "text": "This is basically telling us that if the"
+          },
+          {
+            "start_ms": 258840,
+            "text": "VIX remain constant, the upper range is"
+          },
+          {
+            "start_ms": 262760,
+            "text": "24,883."
+          },
+          {
+            "start_ms": 265880,
+            "text": "Market currently, as you can see, this"
+          }
+        ]
+      },
+      {
+        "anchor_start_ms": 285480,
+        "anchor_text": "So, the expected range by the decimal is",
+        "context": [
+          {
+            "start_ms": 273720,
+            "text": "95.4%"
+          },
+          {
+            "start_ms": 276240,
+            "text": "probability that the upper will not"
+          },
+          {
+            "start_ms": 278640,
+            "text": "break and the lower will not break."
+          },
+          {
+            "start_ms": 281080,
+            "text": "Lower is 23,336."
+          },
+          {
+            "start_ms": 285480,
+            "text": "So, the expected range by the decimal is"
+          },
+          {
+            "start_ms": 288880,
+            "text": "1,446.74."
+          },
+          {
+            "start_ms": 292680,
+            "text": "That much of a big range is where Nifty"
+          },
+          {
+            "start_ms": 295920,
+            "text": "is expected to stay as per the VIX"
+          },
+          {
+            "start_ms": 299600,
+            "text": "calculation, as per the days to expiry,"
+          }
+        ]
+      },
+      {
+        "anchor_start_ms": 342480,
+        "anchor_text": "what is the expected range of Nifty. We",
+        "context": [
+          {
+            "start_ms": 333000,
+            "text": "range. There is a lot of calculation"
+          },
+          {
+            "start_ms": 335200,
+            "text": "formula has gone into this, but we don't"
+          },
+          {
+            "start_ms": 337760,
+            "text": "have to go into the formula deep about"
+          },
+          {
+            "start_ms": 339920,
+            "text": "this. All we interested to know about"
+          },
+          {
+            "start_ms": 342480,
+            "text": "what is the expected range of Nifty. We"
+          },
+          {
+            "start_ms": 345600,
+            "text": "just input it and in 2 minutes it's"
+          },
+          {
+            "start_ms": 347760,
+            "text": "going to tell us which strike we should"
+          },
+          {
+            "start_ms": 350840,
+            "text": "look forward to. And we know very well"
+          },
+          {
+            "start_ms": 352720,
+            "text": "what happens if we sell real out of the"
+          }
+        ]
+      },
+      {
+        "anchor_start_ms": 420920,
+        "anchor_text": "formula is designed by India VIX",
+        "context": [
+          {
+            "start_ms": 407560,
+            "text": "if we sell the strike 25,700"
+          },
+          {
+            "start_ms": 410800,
+            "text": "or above, on the put side 25,550."
+          },
+          {
+            "start_ms": 415040,
+            "text": "This range, we are not calculating it."
+          },
+          {
+            "start_ms": 418200,
+            "text": "We are not doing hit and trial. This"
+          },
+          {
+            "start_ms": 420920,
+            "text": "formula is designed by India VIX"
+          },
+          {
+            "start_ms": 425099,
+            "text": ">> [snorts]"
+          },
+          {
+            "start_ms": 425400,
+            "text": ">> versus how many days are there for"
+          },
+          {
+            "start_ms": 427880,
+            "text": "expiry. It is important now. Now, I want"
+          },
+          {
+            "start_ms": 430160,
+            "text": "to show you an Upstox. If we sell this,"
+          }
+        ]
+      }
+    ]
+  },
+  "source_url": "https://www.youtube.com/watch?v=aRjY_O6U3nQ",
+  "backtest_allowed": false,
+  "retrieved_at_utc": "2026-09-25T16:02:04Z"
+}
