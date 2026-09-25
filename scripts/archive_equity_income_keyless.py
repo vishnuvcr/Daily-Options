@@ -263,6 +263,8 @@ def main() -> int:
     )
     if errors:
         write_jsonl(error_path, errors)
+    elif error_path.exists():
+        error_path.unlink()
 
     metadata_errors = sum("metadata_error" in x for x in video_manifest.values())
     transcript_errors = sum(x.get("status") == "error" for x in transcript_manifest.values())
