@@ -428,3 +428,8 @@ Phase 30.1 completed Base and Stress on 42 normal Tuesday expiries and 236 offic
 ### Phase 30.2 active frontier — Falcon Spread
 
 The next Equity Income family is the source-formalized Falcon Spread. The new branch `phase-30.2-equity-income-falcon-weekly-v1` uses the current Tuesday-expiry analogue **Wednesday entry → Thursday adjustment → Monday pre-expiry exit** and a frozen 270-cell grid. The gate is now the declared **₹5,000 net/week** target with weekly consistency and cost stress. [Phase 30.2 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.2-equity-income-falcon-weekly-v1/docs/phase30_2_falcon_weekly_plan.md)
+
+
+
+## 2026-09-25 — Phase 30.2 Falcon live checkpoint
+The former daily ₹1,000 objective is not being used for the Equity Income YouTube program. Falcon is being tested against the frozen **₹5,000 NET per completed trading week** consistency gate. Authoritative run **36160873596** is executing on `phase-30.2-equity-income-falcon-weekly-v1`: Base and Stress have passed unit tests and exact Rissin NIFTY acquisition, and both are running the numerical friction stage. No Falcon P&L is accepted until completion and artifact audit. See [active run ledger](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/active_run_ledger.md), [research status](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md), and [Phase 30.2 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.2-equity-income-falcon-weekly-v1/docs/phase30_2_falcon_weekly_plan.md).
