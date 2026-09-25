@@ -284,3 +284,11 @@ Trading research remains paused until the 169-video archive completion gate is s
 **Current frontier:** source-faithful strategy reconstruction/deduplication is still the gate before weekly numerical testing. Phase 29 data-feasibility work is next. The weekly objective remains ₹5,000 net per traded week at fixed reference sizing, with Paytm Money/NSE costs, Base/Stress slippage and WFA/OOS gates.
 
 [Phase 26 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-26-equity-income-inventory-v1/docs/phase26_plan.md) · [Phase 27 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-27-equity-income-reconstruction-v1/docs/phase27_plan.md) · [Phase 28 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-28-equity-income-dedup-v1/docs/phase28_plan.md) · [Research status](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md)
+
+## 2026-09-25 — Phase 29 data-feasibility result
+
+Phase 29 launcher run **36132032411** completed. Of 71 candidate family members, 51 have a preliminary 1-minute index-option data path, 16 are data-limited (primarily stock-option/LEAPS-type requirements), and 4 remain unresolved. Quote completeness and historical lot-size verification are still pending, so **0 are backtest-eligible**.
+
+Current research remains on source-fidelity reconstruction and coverage validation before weekly numerical testing.
+
+[Phase 29 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-29-equity-income-data-feasibility-v1/docs/phase29_plan.md) · [Phase 29 report](https://github.com/vishnuvcr/Daily-Options/blob/phase-29-equity-income-data-feasibility-v1/reports/phase29_data_feasibility.csv)
