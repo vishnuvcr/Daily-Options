@@ -501,3 +501,10 @@ Dedicated branch: `phase-30-equity-income-weekly-backtest-v7-corrected`.
 The frozen 12-cell Iron Dome rules are unchanged. The v7 numerical correction removes the invalid exact-expiry `trading_day` filter so option marks use the full timestamp range through expiry.
 A multi-day loader regression test and richer weekly metrics were added. CI has been held to manual dispatch during the staged correction; push-trigger execution will be restored only after the corrected engine and tests are present.
 No Phase 30 P&L is accepted yet.
+
+## 2026-09-25 — Phase 30 v7 invalidated; v8 state-isolation correction active
+
+Phase 30 v7 Base/Stress P&L is invalidated. Static and artifact-level audit identified a shared mutable-leg-state defect: after one parameter cell closed the setup legs, subsequent cells reused those closed dictionaries and effectively reported opening-credit-only results.
+Phase 30 v8 branch: `phase-30-equity-income-weekly-backtest-v8-state-isolation`.
+v8 clones leg state per cell, adds repeated-cell regression tests, and keeps the frozen 12-cell strategy/cost rules unchanged.
+No v7 result is accepted and no WFA/OOS selection has started.
