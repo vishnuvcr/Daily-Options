@@ -1,0 +1,47 @@
+{
+  "repo": "thetrademarkk/india-index-options-1m",
+  "revision": "51ca58c",
+  "total_nifty_expiry_parquet_files": 267,
+  "candidate_files": [
+    {
+      "video_id": "5xz7X5QsFv8",
+      "reference_date": "2026-04-30",
+      "candidate_expiry_files": [
+        {
+          "path": "options/NIFTY/2026-04-28.parquet",
+          "expiry": "2026-04-28"
+        },
+        {
+          "path": "options/NIFTY/2026-05-05.parquet",
+          "expiry": "2026-05-05"
+        },
+        {
+          "path": "options/NIFTY/2026-05-12.parquet",
+          "expiry": "2026-05-12"
+        },
+        {
+          "path": "options/NIFTY/2026-05-19.parquet",
+          "expiry": "2026-05-19"
+        }
+      ]
+    },
+    {
+      "video_id": "9cetNfglyO4",
+      "reference_date": "2026-05-02",
+      "candidate_expiry_files": [
+        {
+          "path": "options/NIFTY/2026-05-05.parquet",
+          "expiry": "2026-05-05"
+        },
+        {
+          "path": "options/NIFTY/2026-05-12.parquet",
+          "expiry": "2026-05-12"
+        },
+        {
+          "path": "options/NIFTY/2026-05-19.parquet",
+          "expiry": "2026-05-19"
+        }
+      ]
+    }
+  ]
+}
