@@ -2,11 +2,19 @@ name: Phase 30 - Equity Income Iron Dome weekly backtest
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - ".github/phase30-run.txt"
+      - "docs/phase30_weekly_backtest_plan.md"
+      - "research/phase30_weekly_iron_dome.py"
+      - "tests/test_phase30_weekly_iron_dome.py"
+      - ".github/workflows/phase-30-equity-income-weekly-backtest-v3.yml"
+      - ".github/phase30-run.txt"
 permissions:
   contents: write
 
 concurrency:
-  group: phase30-equity-income-weekly-backtest-v4
+  group: phase30-equity-income-weekly-backtest-v7
   cancel-in-progress: false
 
 jobs:
@@ -54,6 +62,18 @@ jobs:
           test -f data/cache/phase30_trademarkk/index/NIFTY.parquet
           test -d data/cache/phase30_trademarkk/options/NIFTY
           echo "option_files=$(find data/cache/phase30_trademarkk/options/NIFTY -maxdepth 1 -type f -name '*.parquet' | wc -l)"
+          python - <<'PY'
+          from pathlib import Path
+          import pandas as pd
+          root=Path("data/cache/phase30_trademarkk/options/NIFTY")
+          sample=sorted(root.glob("*.parquet"))
+          if not sample: raise SystemExit("No expiry files found")
+          for p in [sample[0], sample[len(sample)//2], sample[-1]]:
+              x=pd.read_parquet(p, columns=["timestamp"])
+              days=pd.to_datetime(x["timestamp"]).dt.date.nunique()
+              print({"sample_file":p.name,"distinct_timestamp_days":int(days)})
+              if days < 2: raise SystemExit(f"Expiry file {p.name} has insufficient multi-day option history")
+          PY
 
       - name: Validate coverage
         run: |
