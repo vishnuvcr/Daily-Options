@@ -36,7 +36,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install research tooling
-        run: python -m pip install --disable-pip-version-check pytest==8.4.2 youtube-transcript-api==1.2.4 huggingface_hub==1.33.0 pyarrow==20.0.0 yt-dlp==2026.8.19
+        run: python -m pip install --disable-pip-version-check pytest==8.4.2 youtube-transcript-api==1.2.4 huggingface_hub==1.33.0 pyarrow==20.0.0 yt-dlp==2026.8.19 requests==2.34.2 yt-dlp==2026.8.19
 
       - name: Unit tests
         run: python -m pytest -q tests/test_phase29_3_iron_dome_content.py
