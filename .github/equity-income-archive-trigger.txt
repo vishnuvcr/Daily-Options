@@ -8,3 +8,5 @@ Retry 2026-09-25b: direct YouTube timedtext fallback added; bounded transcript f
 Retry 2026-09-25c: direct caption endpoint attempted before transcript API.
 
 Retry 2026-09-25d: tightened direct caption HTTP timeouts.
+
+Retry 2026-09-25e: parallel transcript workers.
