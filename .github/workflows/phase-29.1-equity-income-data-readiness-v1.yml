@@ -56,13 +56,21 @@ jobs:
           python - <<'PY'
           import csv, json
           s = json.load(open("reports/phase29_readiness_summary.json", encoding="utf-8"))
+          inv = json.load(open("data/equity_income/phase29_readiness_source_inventory.json", encoding="utf-8"))
           rows = list(csv.DictReader(open("reports/phase29_readiness_matrix.csv", newline="", encoding="utf-8")))
           assert s["candidate_members"] == 71
           assert len(rows) == 71
+          assert s["preliminary_feasible"] == 51
+          assert s["data_limited"] == 16
+          assert s["unresolved"] == 4
           assert s["backtest_allowed"] == 0
           assert s["bid_ask_verified"] == 0
           assert s["strategy_specific_quote_completeness_verified"] == 0
           assert s["historical_lot_size_fully_verified"] == 0
+          assert inv["trademarkk"]["api_status"] == "OK"
+          assert inv["rissin"]["api_status"] == "OK"
+          assert inv["trademarkk"]["paths"]["options/NIFTY"]["file_count"] > 0
+          assert inv["rissin"]["paths"]["upstox_intraday/NIFTY"]["file_count"] > 0
           assert all(r["backtest_allowed"] == "NO" for r in rows)
           print(json.dumps(s, indent=2))
           PY
