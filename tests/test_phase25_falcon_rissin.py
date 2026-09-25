@@ -1,7 +1,11 @@
 from pathlib import Path
+import duckdb
 import importlib.util
+import pandas as pd
+
 spec=importlib.util.spec_from_file_location('p25',Path('research/phase25_falcon_rissin.py'))
 m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+
 def test_grid_is_frozen(): assert len(m.variant_grid())==270
 def test_offsets(): assert m.expiry_offsets()==(-4,-3,-1)
 def test_lot_sizes():
@@ -9,3 +13,23 @@ def test_lot_sizes():
  assert m.lot_size('2024-11-21')==75
  assert m.lot_size('2026-01-06')==65
 def test_pin(): assert m.RISSIN_REVISION.startswith('78b1c546')
+
+def test_series_spans_entry_to_exit_days():
+    conn=duckdb.connect()
+    rows=[]
+    for ts in ["2024-10-30 09:31:00","2024-10-31 09:31:00"]:
+        rows.append({
+            "timestamp":ts,
+            "date":ts[:10],
+            "expiry":"2024-11-07",
+            "strike":24000,
+            "option_type":"CE",
+            "open":100.0,
+            "close":101.0,
+            "granularity":"1min",
+        })
+    conn.register("bars",pd.DataFrame(rows))
+    start=pd.Timestamp("2024-10-30 09:31:00")
+    end=pd.Timestamp("2024-10-31 15:15:00")
+    out=m.series(conn,"bars","2024-10-30","2024-11-07",24000,"CE",start,end)
+    assert set(out.ts.dt.date)=={start.date(),end.date()}
