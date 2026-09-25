@@ -17,7 +17,7 @@ HEADERS = {
     'Origin': 'https://www.nseindia.com',
 }
 
-def chunks(start, end, days=330):
+def chunks(start, end, days=85):
     cur = start
     while cur <= end:
         nxt = min(cur + timedelta(days=days), end)
