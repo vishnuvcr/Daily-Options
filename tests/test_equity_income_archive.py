@@ -90,5 +90,5 @@ def test_parse_youtubegpt_segment_shape():
         {"start": data["segments"][1]["start"] / 1000, "duration": 0.0, "text": data["segments"][1]["text"]},
     ])
     assert snippets[0]["start"] == 1.25
-    assert snippets[0]["text"] == "Hello &amp; world"
+    assert snippets[0]["text"] == "Hello & world"
     assert snippets[1]["start"] == 2.0
