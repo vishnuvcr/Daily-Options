@@ -62,7 +62,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/equity_income/phase27_rule_evidence.jsonl data/equity_income/phase27_summary.json
+          git add data/equity_income/phase27_rule_evidence.jsonl data/equity_income/phase27_summary.json docs/equity_income_strategy_rules
           if git diff --cached --quiet; then
             echo "No new Phase 27 evidence."
             exit 0
