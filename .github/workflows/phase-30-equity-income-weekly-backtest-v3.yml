@@ -1,4 +1,4 @@
-name: Phase 30 - Equity Income Iron Dome weekly backtest
+name: Phase 30 v8 - Equity Income Iron Dome weekly backtest
 
 on:
   workflow_dispatch:
@@ -14,8 +14,8 @@ permissions:
   contents: write
 
 concurrency:
-  group: phase30-equity-income-weekly-backtest-v7
-  cancel-in-progress: false
+  group: phase30-equity-income-weekly-backtest-v8-state-isolation
+  cancel-in-progress: true
 
 jobs:
   backtest:
