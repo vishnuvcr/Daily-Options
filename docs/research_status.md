@@ -380,3 +380,9 @@ Run **36135151445** completed successfully after E0263/E0264 implementation corr
 - 2 CONTRACT_READY_FOR_CONTENT_JOIN (both are the duplicated NIFTY Iron Dome candidate)
 
 This is **not** numerical backtest readiness. Every row remains `backtest_allowed=NO`. Phase 30 remains BLOCKED because exact leg composition, dated expiry/lot-size joins, quote completeness and execution-cost modelling are not yet proven.
+
+## 2026-09-25 — Phase 29.3 completed
+
+Run **36135786342** passed. Python transcript acquisition succeeded for both NIFTY Iron Dome videos (the primary youtube-transcript-api attempt was blocked by YouTube/cloud-IP restrictions, and the deterministic yt-dlp auto-caption fallback succeeded). Seven relevant pinned TradeMarkk NIFTY expiry partitions were identified and content-inspected successfully; all contained the expected timestamp/strike/option_type/expiry/OHLCV/open-interest fields.
+
+The source evidence now supports a provisional Iron Dome reconstruction: NIFTY weekly Iron Fly/short-straddle core, an illustrated 200-point balanced-wing example, a 60% adjustment mark, a maximum of two adjustments, Monday/Tuesday adjustment examples, and an expiry-day theta-decay scenario. Entry timing, exact 60% definition, adjustment formulas, lot ratios and exact exit rule remain non-deterministic. Therefore numerical backtesting remains blocked and Phase 30 is not opened.
