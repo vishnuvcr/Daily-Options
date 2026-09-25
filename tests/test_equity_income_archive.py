@@ -73,3 +73,22 @@ def test_parse_timestamped_markdown():
         {"start": 0.0, "duration": 0.0, "text": "Hello world"},
         {"start": 62.0, "duration": 0.0, "text": "Second line"},
     ]
+
+
+
+def test_parse_youtubegpt_segment_shape():
+    data = {
+        "ok": True,
+        "track": {"language": "en", "name": "English", "generated": True},
+        "segments": [
+            {"start": 1250, "dur": 500, "text": "Hello &amp; world"},
+            {"start": 2000, "dur": None, "text": "Second"},
+        ],
+    }
+    snippets = normalize_snippets([
+        {"start": data["segments"][0]["start"] / 1000, "duration": data["segments"][0]["dur"] / 1000, "text": data["segments"][0]["text"]},
+        {"start": data["segments"][1]["start"] / 1000, "duration": 0.0, "text": data["segments"][1]["text"]},
+    ])
+    assert snippets[0]["start"] == 1.25
+    assert snippets[0]["text"] == "Hello &amp; world"
+    assert snippets[1]["start"] == 2.0
