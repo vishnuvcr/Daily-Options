@@ -1,0 +1,97 @@
+{
+  "nse_evidence": {
+    "current_nifty_weekly_expiry": "TUESDAY (previous trading day if Tuesday is a trading holiday)",
+    "historical_rule": "Use contract-level dated circulars/contract master; never back-project current expiry or lot size across the full sample.",
+    "nifty_lot_2024_04_26": 25,
+    "nifty_lot_2024_11_20_new_contracts": 75,
+    "nifty_lot_2026_01_06_first_weekly_revised_expiry": 65
+  },
+  "rissin": {
+    "api_status": "ERROR",
+    "expected_schema": [
+      "date",
+      "timestamp",
+      "underlying",
+      "expiry",
+      "strike",
+      "option_type",
+      "exercise_style",
+      "open",
+      "high",
+      "low",
+      "close",
+      "volume",
+      "oi",
+      "settle_price",
+      "source",
+      "granularity"
+    ],
+    "intraday_oi_available": false,
+    "paths": {
+      "historical_daily/BANKNIFTY": {
+        "error": "HF API request failed after 4 attempts: https://huggingface.co/api/datasets/rissin%2Fnse-options-intraday/tree/78b1c5468255d18cf492984bfe6fe4e3ac874d7c?path=historical_daily%2FBANKNIFTY&recursive=false&expand=false: HTTP Error 400: Bad Request",
+        "status": "ERROR"
+      },
+      "historical_daily/NIFTY": {
+        "error": "HF API request failed after 4 attempts: https://huggingface.co/api/datasets/rissin%2Fnse-options-intraday/tree/78b1c5468255d18cf492984bfe6fe4e3ac874d7c?path=historical_daily%2FNIFTY&recursive=false&expand=false: HTTP Error 400: Bad Request",
+        "status": "ERROR"
+      },
+      "upstox_intraday/BANKNIFTY": {
+        "error": "HF API request failed after 4 attempts: https://huggingface.co/api/datasets/rissin%2Fnse-options-intraday/tree/78b1c5468255d18cf492984bfe6fe4e3ac874d7c?path=upstox_intraday%2FBANKNIFTY&recursive=false&expand=false: HTTP Error 400: Bad Request",
+        "status": "ERROR"
+      },
+      "upstox_intraday/NIFTY": {
+        "error": "HF API request failed after 4 attempts: https://huggingface.co/api/datasets/rissin%2Fnse-options-intraday/tree/78b1c5468255d18cf492984bfe6fe4e3ac874d7c?path=upstox_intraday%2FNIFTY&recursive=false&expand=false: HTTP Error 400: Bad Request",
+        "status": "ERROR"
+      },
+      "upstox_intraday/SENSEX": {
+        "error": "HF API request failed after 4 attempts: https://huggingface.co/api/datasets/rissin%2Fnse-options-intraday/tree/78b1c5468255d18cf492984bfe6fe4e3ac874d7c?path=upstox_intraday%2FSENSEX&recursive=false&expand=false: HTTP Error 400: Bad Request",
+        "status": "ERROR"
+      }
+    },
+    "repo": "rissin/nse-options-intraday",
+    "revision": "78b1c5468255d18cf492984bfe6fe4e3ac874d7c"
+  },
+  "trademarkk": {
+    "api_status": "ERROR",
+    "expected_schema": [
+      "timestamp",
+      "open",
+      "high",
+      "low",
+      "close",
+      "volume",
+      "open_interest",
+      "trading_day",
+      "symbol",
+      "strike",
+      "option_type",
+      "expiry"
+    ],
+    "intraday_oi_available": true,
+    "paths": {
+      "index": {
+        "error": "HF API request failed after 4 attempts: https://huggingface.co/api/datasets/thetrademarkk%2Findia-index-options-1m/tree/51ca58c?path=index&recursive=false&expand=false: HTTP Error 400: Bad Request",
+        "status": "ERROR"
+      },
+      "options/BANKNIFTY": {
+        "error": "HF API request failed after 4 attempts: https://huggingface.co/api/datasets/thetrademarkk%2Findia-index-options-1m/tree/51ca58c?path=options%2FBANKNIFTY&recursive=false&expand=false: HTTP Error 400: Bad Request",
+        "status": "ERROR"
+      },
+      "options/NIFTY": {
+        "error": "HF API request failed after 4 attempts: https://huggingface.co/api/datasets/thetrademarkk%2Findia-index-options-1m/tree/51ca58c?path=options%2FNIFTY&recursive=false&expand=false: HTTP Error 400: Bad Request",
+        "status": "ERROR"
+      },
+      "options/SENSEX": {
+        "error": "HF API request failed after 4 attempts: https://huggingface.co/api/datasets/thetrademarkk%2Findia-index-options-1m/tree/51ca58c?path=options%2FSENSEX&recursive=false&expand=false: HTTP Error 400: Bad Request",
+        "status": "ERROR"
+      },
+      "stocks_options": {
+        "error": "HF API request failed after 4 attempts: https://huggingface.co/api/datasets/thetrademarkk%2Findia-index-options-1m/tree/51ca58c?path=stocks_options&recursive=false&expand=false: HTTP Error 400: Bad Request",
+        "status": "ERROR"
+      }
+    },
+    "repo": "thetrademarkk/india-index-options-1m",
+    "revision": "51ca58c"
+  }
+}
