@@ -26,7 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: \${{ github.head_ref || github.ref_name }}
+          ref: ${{ github.head_ref || github.ref_name }}
           fetch-depth: 1
       - uses: actions/setup-python@v6
         with:
@@ -47,7 +47,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: \${{ github.head_ref || github.ref_name }}
+          ref: ${{ github.head_ref || github.ref_name }}
           fetch-depth: 1
       - uses: actions/setup-python@v6
         with:
@@ -76,15 +76,15 @@ jobs:
           test "$count" -ge 250
       - name: Run frozen backtest
         env:
-          SLIP: \${{ matrix.friction == 'base' && '0.20' || '0.40' }}
+          SLIP: ${{ matrix.friction == 'base' && '0.20' || '0.40' }}
         run: |
-          mkdir -p reports/phase30/\${{ matrix.friction }}
-          PYTHONPATH=. python research/phase30_weekly_iron_dome.py --data data/cache/phase30_trademarkk --out reports/phase30/\${{ matrix.friction }} --slippage "$SLIP"
+          mkdir -p reports/phase30/${{ matrix.friction }}
+          PYTHONPATH=. python research/phase30_weekly_iron_dome.py --data data/cache/phase30_trademarkk --out reports/phase30/${{ matrix.friction }} --slippage "$SLIP"
       - name: Upload raw results
         uses: actions/upload-artifact@v4
         with:
-          name: phase30-\${{ matrix.friction }}
-          path: reports/phase30/\${{ matrix.friction }}
+          name: phase30-${{ matrix.friction }}
+          path: reports/phase30/${{ matrix.friction }}
 
   decision:
     needs: backtest
@@ -92,7 +92,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: \${{ github.head_ref || github.ref_name }}
+          ref: ${{ github.head_ref || github.ref_name }}
           fetch-depth: 1
       - name: Download Base artifact
         uses: actions/download-artifact@v4
