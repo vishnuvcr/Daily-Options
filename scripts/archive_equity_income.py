@@ -10,11 +10,13 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import html
 import json
 import logging
 import os
 import re
 import sys
+import requests
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -41,7 +43,7 @@ def sha256_bytes(data: bytes) -> str:
 
 
 def clean_text(text: str) -> str:
-    return re.sub(r"\s+", " ", text or "").strip()
+    return re.sub(r"\s+", " ", html.unescape(text or "")).strip()
 
 
 def normalize_snippets(items) -> list[dict]:
@@ -110,6 +112,33 @@ def parse_vtt(vtt: str) -> list[dict]:
     return normalize_snippets(out)
 
 
+def fetch_timedtext(video_id: str) -> tuple[list[dict], str, bool] | None:
+    """Try YouTube's caption endpoint directly before invoking a full extractor.
+
+    This intentionally requests only caption text by stable video ID. It avoids
+    per-video player-page extraction, which can be blocked by current YouTube
+    anti-bot/PO-token enforcement.
+    """
+    endpoint = "https://www.youtube.com/api/timedtext"
+    session = requests.Session()
+    headers = {"User-Agent": "Mozilla/5.0"}
+    for lang in PREFERRED_LANGS:
+        for generated in (False, True):
+            params = {"v": video_id, "lang": lang, "fmt": "vtt"}
+            if generated:
+                params["kind"] = "asr"
+            try:
+                response = session.get(endpoint, params=params, headers=headers, timeout=10)
+                if response.status_code != 200 or not response.text.strip():
+                    continue
+                snippets = parse_vtt(response.text)
+                if snippets:
+                    return snippets, lang, generated
+            except requests.RequestException:
+                continue
+    return None
+
+
 def select_track(transcript_list):
     tracks = list(transcript_list)
     ordered = []
@@ -143,6 +172,11 @@ def fetch_transcript(video_id: str, video_url: str, retries: int = 3):
             last_error = exc
             if attempt < retries:
                 time.sleep(attempt * 2)
+
+    timed = fetch_timedtext(video_id)
+    if timed is not None:
+        snippets, lang, generated = timed
+        return snippets, lang, lang, generated, "youtube-timedtext"
 
     # Fallback: obtain a subtitle track directly from yt-dlp.
     opts = {
