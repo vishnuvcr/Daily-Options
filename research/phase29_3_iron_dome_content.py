@@ -593,7 +593,7 @@ def main() -> int:
                 })
 
     archive_manifest = {
-        "tool": "youtube-transcript-api",
+        "tool": "deterministic-python-multi-source-caption-retrieval",
         "videos": transcript_rows,
         "plaintext_persisted": False,
     }
