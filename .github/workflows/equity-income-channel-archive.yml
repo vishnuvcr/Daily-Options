@@ -1,0 +1,59 @@
+name: Equity Income - weekly channel archive
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 2 * * 0"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: equity-income-channel-archive
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout fixed Equity Income archive branch
+        uses: actions/checkout@v4
+        with:
+          ref: equity-income-channel-archive-v1
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install archive tooling
+        run: python -m pip install -r requirements-equity-income-archive.txt
+
+      - name: Verify archive public key
+        run: |
+          set -euo pipefail
+          test -s config/equity_income_archive_public_key.pem
+          sha256sum config/equity_income_archive_public_key.pem
+
+      - name: Run Python archive
+        run: |
+          set -euo pipefail
+          PYTHONPATH=. python scripts/archive_equity_income_keyless.py             --channel-url "https://www.youtube.com/@equityincome"             --output-root "data/equity_income"             --public-key "config/equity_income_archive_public_key.pem"
+
+      - name: Test archive tooling
+        run: PYTHONPATH=. pytest -q tests/test_equity_income_archive.py
+
+      - name: Commit new archive records to fixed branch
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/equity_income
+          if git diff --cached --quiet; then
+            echo "No archive changes."
+            exit 0
+          fi
+          git commit -m "Archive Equity Income channel metadata and transcripts"
+          git push origin HEAD:equity-income-channel-archive-v1
