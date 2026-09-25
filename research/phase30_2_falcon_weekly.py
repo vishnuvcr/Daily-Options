@@ -416,13 +416,17 @@ def run(data: Path, out: Path, slippage: float, brokerage_per_order: float):
 
     setups = []
     for cal in cals:
+        base = pd.Timestamp(str(cal["entry_date"]))
+        signal_times = [base + pd.Timedelta(hours=int(t[:2]), minutes=int(t[3:5])) for t in ENTRY_TIMES]
+        snap = load_snapshot_window(con, data, cal["entry_date"], cal["near_expiry"], cal["far_expiry"], signal_times)
         for entry_time in ENTRY_TIMES:
             for target in TARGET_PREMIUMS:
                 for far_mode in FAR_MODES:
-                    s = build_setup(con, data, cal, entry_time, target, far_mode)
+                    s = build_setup(con, data, cal, entry_time, target, far_mode, snap)
                     if s is not None:
                         setups.append(s)
 
+    series_cache, strike_cache = {}, {}
     by_key = {}
     for v in variants:
         by_key.setdefault((v.entry_time, v.target_premium, v.far_mode), []).append(v)
@@ -431,7 +435,7 @@ def run(data: Path, out: Path, slippage: float, brokerage_per_order: float):
     for setup in setups:
         for v in by_key[(setup["entry_time"], setup["target_premium"], setup["far_mode"])]:
             try:
-                result = simulate_setup(con, data, setup, v, slippage, brokerage_per_order)
+                result = simulate_setup(con, data, setup, v, slippage, brokerage_per_order, series_cache, strike_cache)
             except Exception as exc:
                 errors.append({"entry_date": str(setup["entry_date"]), "variant_id": v.variant_id, "error": repr(exc)})
                 result = None
