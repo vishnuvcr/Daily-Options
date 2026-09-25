@@ -184,15 +184,11 @@ def main() -> int:
     transcript_manifest = read_jsonl(transcript_manifest_path)
     errors = {}
 
-    for index, (video_id, video) in enumerate(sorted(videos.items()), 1):
-        logging.info("[%d/%d] %s", index, len(videos), video_id)
+    items = sorted(videos.items())
 
-        # Do not perform 169 individual yt-dlp page extractions during the
-        # archive pass. YouTube may challenge repeated page extraction even
-        # when channel/playlist discovery succeeds. Discovery already gives us
-        # the stable video ID, URL, title and playlist provenance needed to
-        # retrieve the transcript directly.
-        video_manifest[video_id] = {
+    def process(item):
+        video_id, video = item
+        metadata_record = {
             "video_id": video_id,
             "title": video.get("title"),
             "webpage_url": video.get("webpage_url") or f"https://www.youtube.com/watch?v={video_id}",
@@ -202,26 +198,34 @@ def main() -> int:
             "metadata_status": "discovery_only",
             "harvested_at_utc": datetime.now(timezone.utc).isoformat(),
         }
-
-        if transcript_manifest.get(video_id, {}).get("status") in {"archived", "already_archived"} and not args.force:
-            continue
+        existing = transcript_manifest.get(video_id, {})
+        if existing.get("status") in {"archived", "already_archived"} and not args.force:
+            return video_id, metadata_record, existing
         try:
-            transcript_manifest[video_id] = archive_one(
-                video_manifest[video_id], root, public_key, key_hash, args.force,
-                args.transcript_timeout_seconds
-            )
+            record = archive_one(metadata_record, root, public_key, key_hash, args.force, args.transcript_timeout_seconds)
         except Exception as exc:
-            transcript_manifest[video_id] = {
+            record = {
                 "video_id": video_id,
                 "status": "error",
                 "error": repr(exc),
+                "failed_at_utc": datetime.now(timezone.utc).isoformat(),
             }
-            errors[video_id] = transcript_manifest[video_id]
+        return video_id, metadata_record, record
 
-        write_jsonl(video_manifest_path, video_manifest)
-        write_jsonl(transcript_manifest_path, transcript_manifest)
-        time.sleep(0.5)
-
+    workers = max(1, min(int(args.workers), 8))
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futures = {pool.submit(process, item): item[0] for item in items}
+        completed = 0
+        for future in as_completed(futures):
+            video_id, metadata_record, record = future.result()
+            video_manifest[video_id] = metadata_record
+            transcript_manifest[video_id] = record
+            if record.get("status") == "error":
+                errors[video_id] = record
+            completed += 1
+            logging.info("Completed %d/%d: %s -> %s", completed, len(items), video_id, record.get("status"))
+            write_jsonl(video_manifest_path, video_manifest)
+            write_jsonl(transcript_manifest_path, transcript_manifest)
     checked = ok = 0
     for rec in transcript_manifest.values():
         if rec.get("status") not in {"archived", "already_archived"}:
