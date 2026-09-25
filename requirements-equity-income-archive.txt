@@ -3,3 +3,4 @@ youtube-transcript-api==1.2.4
 cryptography==50.0.1
 pytest==8.4.2
 requests==2.34.2
+bgutil-ytdlp-pot-provider==2.0.0
