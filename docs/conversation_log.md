@@ -118,3 +118,17 @@ Workflow 36135151445 passed. Final contract-readiness matrix has 71 rows and con
 ## 2026-09-25 — Phase 29.3 final result
 
 Run 36135786342 passed. Both Iron Dome transcripts were obtained programmatically; the primary transcript API was blocked by YouTube/cloud-IP restrictions, so the workflow used a deterministic yt-dlp auto-caption fallback. Contract-content inspection succeeded for seven relevant pinned NIFTY expiry files. The transcript evidence is strong enough to reconstruct a provisional weekly Iron Fly family but not strong enough to freeze a single exact trading rule without interpretation. A source-derived reconstruction document was committed, and the next research step is a pre-registered variant sweep rather than an unqualified single-rule backtest.
+
+
+## 2026-09-25 — Research continuation after chat/network interruption
+
+The user reported a temporary ChatGPT network-connection loss and requested a status update plus continuation. Repository state was checked directly rather than relying on the stalled chat display.
+
+Current authoritative state:
+- Phase 29.2 run 36135151445 completed; 71 candidates remain non-numerical, with only the two duplicated NIFTY Iron Dome candidates contract-ready for content join.
+- Phase 29.3 run 36135816425 successfully acquired both Iron Dome transcripts through deterministic Python multi-source caption retrieval after direct YouTube transcript API access was blocked in CI; seven relevant pinned NIFTY expiry partitions passed content inspection.
+- Phase 29.4 run 36136592358 passed all tests and generated the structured rule-fact ledger.
+- Phase 29.4 found: NIFTY weekly Iron Fly/Iron Dome core; two adjustments; explicit 60% adjustment mark; illustrative 200-point wings; two-to-four-day holding concept; directional/deeper-ITM and one-strike-inside adjustment examples. Exact trigger metric, entry clock, exact leg mapping, universal wing width, lot ratio and hard exit remain unresolved.
+- No numerical P&L has been accepted. Phase 30 remains blocked.
+
+Engineering errors found during continuation were logged and corrected: E0266 (comma-formatted strike parsing) and E0267 (repository-root import path in CI). Phase 29.3 provenance/push-target metadata was also corrected and the workflow rerun.
