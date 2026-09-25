@@ -512,3 +512,7 @@ No WFA/OOS selection is permitted until the current Base+Stress execution and ar
 ## 2026-09-25 — Phase 27.6 aRj evidence rerun queued
 
 Controlled launcher-only PR **#86** created from `phase-27.6-trigger-rerun-20260925`; GitHub Actions run **36157884412** is queued. The workflow uses the fixed Python transcript extractor for video `aRjY_O6U3nQ` (Air Defense) and will persist only structured timestamped evidence/hashes. No strategy or P&L rule is changed and `backtest_allowed` remains false until the evidence is independently resolved.
+
+## 2026-09-25 — Phase 27.7 Air Defense source-resolution branch prepared
+
+A dedicated branch `phase-27.7-equity-income-air-defense-source-resolution-v1` now contains Python-only contextual transcript extraction for the Equity Income Air Defense candidate `aRjY_O6U3nQ`. The extractor records source-caption hashes plus timestamped context windows around delta, entry, adjustment, stop, structure, India-VIX/range and expiry-exit phrases. No numerical backtest is permitted until this evidence is reconciled into a deterministic rule card.
