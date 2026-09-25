@@ -1,2 +1,2 @@
 run Phase 29.1 readiness audit
-triggered after parquet classification binding correction
+triggered after diagnostics/persist-on-failure correction
