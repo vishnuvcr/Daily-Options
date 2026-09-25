@@ -104,3 +104,9 @@ Next source-preserving escalation:
 4. timedtext.
 
 No LLM-generated transcript is permitted. A third-party endpoint is accepted only when the service returns source caption segments and the manifest records the acquisition method explicitly.
+
+## Archive gate completion — 2026-09-25
+
+The fixed channel archive now satisfies the source-acquisition gate on run 36128134111: all 169 discovered uploads have validated encrypted transcript envelopes.
+
+Next phase begins only after the transcript inventory is frozen and deduplicated. The weekly strategy pipeline will use the archived source-caption payloads to reconstruct each distinct strategy, normalize current NSE expiry rules/costs, preregister formalizations, and then run cost-aware Base/Stress and WFA/OOS validation on separate Phase 26–35 branches.
