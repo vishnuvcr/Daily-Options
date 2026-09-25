@@ -242,56 +242,174 @@ def select_track(transcript_list):
         for lang in PREFERRED_LANGS:
             ordered.extend(
                 t for t in tracks
-                if bool(t.is_generated) == generated and t.language_code == lang
+                if bool(getattr(t, "is_generated", False)) == generated
+                and getattr(t, "language_code", "") == lang
             )
     if ordered:
         return ordered[0]
-    tracks.sort(key=lambda t: (bool(t.is_generated), t.language_code, t.language))
+    tracks.sort(
+        key=lambda t: (
+            bool(getattr(t, "is_generated", False)),
+            getattr(t, "language_code", ""),
+            getattr(t, "language", ""),
+        )
+    )
     return tracks[0] if tracks else None
 
 
-def fetch_transcript(video_id: str, video_url: str, retries: int = 1):
-    """Retrieve a source-provided YouTube transcript without LLM generation.
+def parse_timestamped_markdown(text: str) -> list[dict]:
+    """Parse the timestamped Markdown format used by the no-key fallback service."""
+    out = []
+    stamp = re.compile(r"^\[(\d{1,3}):(\d{2})(?::(\d{2}))?\]\s*(.+?)\s*$")
+    for line in text.splitlines():
+        match = stamp.match(line.strip())
+        if not match:
+            continue
+        first, second, third, caption = match.groups()
+        if third is None:
+            start = int(first) * 60 + int(second)
+        else:
+            start = int(first) * 3600 + int(second) * 60 + int(third)
+        caption = clean_text(caption)
+        if caption:
+            out.append({"start": float(start), "duration": 0.0, "text": caption})
+    return normalize_snippets(out)
 
-    Primary path uses yt-dlp with the pinned PO-token provider plugin. Secondary
-    paths use YouTube's InnerTube caption-track response and the legacy timedtext
-    endpoint. All paths preserve source timestamps and language provenance.
-    """
-    last_error = None
-    opts = {
-        "quiet": True,
-        "no_warnings": True,
-        "skip_download": True,
-        "socket_timeout": 10,
-        "retries": 1,
-        "extractor_args": {
-            "youtube": {
-                "player_client": ["web", "tv"],
-            }
-        },
-    }
+
+def fetch_youtube_transcript_api(video_id: str):
+    """Use the source-caption Python API as a separate first-party extraction path."""
     try:
-        with YoutubeDL(opts) as ydl:
-            info = ydl.extract_info(video_url, download=False)
-            candidates = []
-            for field, generated in (("subtitles", False), ("automatic_captions", True)):
-                for lang, tracks in (info.get(field) or {}).items():
-                    for track in tracks:
-                        rank_lang = PREFERRED_LANGS.index(lang) if lang in PREFERRED_LANGS else 99
-                        rank_ext = 0 if track.get("ext") == "vtt" else 1
-                        candidates.append((int(generated), rank_lang, rank_ext, lang, generated, track))
-            candidates.sort()
-            for _, _, _, lang, generated, track in candidates:
-                url = track.get("url")
-                if not url:
-                    continue
-                raw = ydl.urlopen(url).read().decode("utf-8", errors="replace")
-                snippets = parse_vtt(raw)
+        api = YouTubeTranscriptApi()
+        tracks = list(api.list(video_id))
+        ranked = []
+        for track in tracks:
+            language_code = getattr(track, "language_code", "")
+            language = getattr(track, "language", language_code)
+            generated = bool(getattr(track, "is_generated", False))
+            lang_rank = PREFERRED_LANGS.index(language_code) if language_code in PREFERRED_LANGS else 99
+            ranked.append((int(generated), lang_rank, language_code, track))
+        ranked.sort()
+        for _, _, language_code, track in ranked:
+            try:
+                fetched = track.fetch()
+                raw = fetched.to_raw_data() if hasattr(fetched, "to_raw_data") else list(fetched)
+                snippets = normalize_snippets(raw)
                 if snippets:
-                    return snippets, lang, lang, bool(generated), "yt-dlp-subtitles"
-            raise RuntimeError("NO_USABLE_YTDLP_SUBTITLE")
+                    return (
+                        snippets,
+                        language_code,
+                        getattr(track, "language", language_code),
+                        bool(getattr(track, "is_generated", False)),
+                        "youtube-transcript-api",
+                    )
+            except Exception:
+                continue
+        raise RuntimeError("NO_USABLE_TRANSCRIPT_API_TRACK")
     except Exception as exc:
-        last_error = exc
+        return None, repr(exc)
+
+
+def fetch_ytdlp_subtitles(video_url: str):
+    """Try yt-dlp caption extraction across clients with different current YouTube rules."""
+    profiles = (
+        ("web", True),
+        ("mweb", True),
+        ("tv", False),
+        ("web_embedded", False),
+        ("android_vr", False),
+    )
+    errors = []
+    for client_name, use_pot_provider in profiles:
+        opts = {
+            "quiet": True,
+            "no_warnings": True,
+            "skip_download": True,
+            "socket_timeout": 12,
+            "retries": 1,
+            "extractor_args": {
+                "youtube": {
+                    "player_client": [client_name],
+                },
+            },
+        }
+        if use_pot_provider:
+            opts["extractor_args"]["youtubepot-bgutilhttp"] = {
+                "base_url": ["http://127.0.0.1:4416"],
+            }
+        try:
+            with YoutubeDL(opts) as ydl:
+                info = ydl.extract_info(video_url, download=False)
+                candidates = []
+                for field, generated in (("subtitles", False), ("automatic_captions", True)):
+                    for lang, tracks in (info.get(field) or {}).items():
+                        for track in tracks:
+                            rank_lang = PREFERRED_LANGS.index(lang) if lang in PREFERRED_LANGS else 99
+                            rank_ext = 0 if track.get("ext") == "vtt" else 1
+                            candidates.append((int(generated), rank_lang, rank_ext, lang, generated, track))
+                candidates.sort()
+                for _, _, _, lang, generated, track in candidates:
+                    url = track.get("url")
+                    if not url:
+                        continue
+                    raw = ydl.urlopen(url).read().decode("utf-8", errors="replace")
+                    snippets = parse_vtt(raw)
+                    if snippets:
+                        return snippets, lang, lang, bool(generated), f"yt-dlp-subtitles:{client_name}"
+                raise RuntimeError("NO_USABLE_YTDLP_SUBTITLE")
+        except Exception as exc:
+            errors.append(f"{client_name}:{exc!r}")
+    return None, errors
+
+
+def fetch_external_transcript_service(video_id: str):
+    """Last-resort caption proxy; preserves service provenance and does not generate text locally."""
+    from urllib.parse import quote
+
+    endpoints = (
+        "https://youtube-transcript.ai/transcript/{video_id}.txt?lang=en",
+        "https://youtube-transcript.ai/transcript/{video_id}.txt?lang=hi",
+        "https://youtube-transcript.ai/transcript/{video_id}.txt",
+    )
+    errors = []
+    headers = {"User-Agent": "Daily-Options-Equity-Income-Archive/1.0"}
+    for template in endpoints:
+        url = template.format(video_id=quote(video_id, safe=""))
+        try:
+            response = requests.get(url, headers=headers, timeout=(5, 15))
+            if response.status_code != 200 or not response.text.strip():
+                errors.append(f"{response.status_code}:{url}")
+                continue
+            snippets = parse_timestamped_markdown(response.text)
+            if not snippets:
+                errors.append(f"NO_TIMESTAMPS:{url}")
+                continue
+            lang_match = re.search(r"^Language:\s*([^\s·]+)", response.text, flags=re.MULTILINE)
+            lang_code = lang_match.group(1) if lang_match else "en"
+            return snippets, lang_code, lang_code, None, "youtube-transcript-ai"
+        except requests.RequestException as exc:
+            errors.append(repr(exc))
+    return None, errors
+
+
+def fetch_transcript(video_id: str, video_url: str, retries: int = 1):
+    """Retrieve a source transcript with bounded, provenance-preserving Python fallbacks.
+
+    No transcript text is generated by an LLM. The order is:
+    1) yt-dlp subtitle extraction with several YouTube player clients,
+    2) youtube-transcript-api,
+    3) direct InnerTube caption tracks,
+    4) direct timedtext,
+    5) no-key third-party transcript proxy as a last resort.
+    """
+    ytdlp_result = fetch_ytdlp_subtitles(video_url)
+    if ytdlp_result[0] is not None:
+        return ytdlp_result
+    errors = [f"yt-dlp:{err}" for err in ytdlp_result[1]]
+
+    api_result = fetch_youtube_transcript_api(video_id)
+    if api_result[0] is not None:
+        return api_result
+    errors.append(f"youtube-transcript-api:{api_result[1]}")
 
     timed = fetch_innertube(video_id)
     if timed is not None:
@@ -303,7 +421,13 @@ def fetch_transcript(video_id: str, video_url: str, retries: int = 1):
         snippets, lang, generated = timed
         return snippets, lang, lang, generated, "youtube-timedtext"
 
-    raise RuntimeError(f"TRANSCRIPT_FETCH_FAILED: {last_error}") from last_error
+    external = fetch_external_transcript_service(video_id)
+    if external[0] is not None:
+        return external
+
+    errors.append(f"youtube-transcript-ai:{external[1]}")
+    detail = " | ".join(errors[-12:])
+    raise RuntimeError(f"TRANSCRIPT_FETCH_FAILED: {detail}")
 
 
 def discover() -> dict[str, dict]:
@@ -386,7 +510,7 @@ def write_jsonl(path: Path, records: dict[str, dict]) -> None:
     temp.replace(path)
 
 
-def payload(video_id: str, lang_code: str, lang: str, generated: bool,
+def payload(video_id: str, lang_code: str, lang: str, generated: bool | None,
             method: str, snippets: list[dict]) -> bytes:
     body = {
         "schema_version": 1,
