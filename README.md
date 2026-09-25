@@ -270,3 +270,17 @@ The next fixed-branch acquisition escalation adds a structured source-caption JS
 [Archive status](https://github.com/vishnuvcr/Daily-Options/blob/equity-income-channel-archive-v1/docs/equity_income_archive_status.md) · [Archive plan](https://github.com/vishnuvcr/Daily-Options/blob/equity-income-channel-archive-v1/docs/equity_income_channel_archive_plan.md)
 
 Trading research remains paused until the 169-video archive completion gate is satisfied.
+
+## 2026-09-25 — Equity Income archive → Phase 26 → Phase 27 → Phase 28 continuation
+
+**Archive gate passed:** 169/169 public channel uploads have encrypted transcript envelopes with 169/169 integrity checks.
+
+**Phase 26:** deterministic 169-video inventory completed successfully. 71 videos were flagged as strategy candidates from title/family hints; no backtests were run.
+
+**Phase 27:** run 36130444316 and its corrected segment-aware rerun 36130863898 completed successfully. 71 candidate videos were processed with zero acquisition errors. Structured evidence now preserves extracted facts plus source timestamps; 71/71 still require source-fidelity review because economically material rules remain incomplete.
+
+**Phase 28:** corrected launcher run 36131564013 completed successfully. 71 candidate videos were conservatively mapped to 69 family clusters. No cluster is automatically backtest-eligible; 71/71 remain review-required.
+
+**Current frontier:** source-faithful strategy reconstruction/deduplication is still the gate before weekly numerical testing. Phase 29 data-feasibility work is next. The weekly objective remains ₹5,000 net per traded week at fixed reference sizing, with Paytm Money/NSE costs, Base/Stress slippage and WFA/OOS gates.
+
+[Phase 26 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-26-equity-income-inventory-v1/docs/phase26_plan.md) · [Phase 27 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-27-equity-income-reconstruction-v1/docs/phase27_plan.md) · [Phase 28 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-28-equity-income-dedup-v1/docs/phase28_plan.md) · [Research status](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md)
