@@ -358,3 +358,16 @@ However, deterministic evidence extraction marked all 71 candidates for manual r
 Detected family terms are discovery hints only and are not treated as canonical classifications. No backtest has been run in Phase 27.
 
 Next research step: strengthen source-context extraction with timestamped keyword context, then construct frozen rule sheets and deduplicate strategy families before numerical testing.
+
+## 2026-09-25 — Phase 27.4 precision cleanup result
+
+Authoritative launcher run **36133569295** completed successfully.
+
+- T1 candidates processed: **8**
+- Acquisition errors: **0**
+- Backtest allowed: **0**
+- Evidence records with at least one conflicting material field: **8/8**
+
+The semantic cleanup removed clock-as-ratio/lot errors and filtered zero-premium matches, but it also confirmed that the remaining T1 source records still contain genuine material ambiguity. Phase 27 remains a reconstruction gate; no numerical testing is authorized from these sheets.
+
+Next step: create a frozen T1 source-resolution matrix and reconcile conflicts/unknowns using archived source evidence plus independent corroborating descriptions. Only candidates with all economically material rules resolved can advance.
