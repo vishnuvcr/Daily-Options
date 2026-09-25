@@ -1,3 +1,4 @@
 Phase 30.2 Falcon weekly independent replication — 2026-09-25
 Phase 30.2 rerun after HF dataset_info API correction — 2026-09-25
 Phase 30.2 rerun after matrix concurrency correction — 2026-09-25
+Phase 30.2 safe snapshot-cache optimization rerun — 2026-09-25
