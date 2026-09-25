@@ -1,0 +1,72 @@
+name: Phase 29.2 - Equity Income contract coverage
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/phase29.2-run.txt"
+  pull_request:
+    paths:
+      - ".github/phase29.2-run.txt"
+      - "research/phase29_2_contract_coverage.py"
+      - "tests/test_phase29_2_contract_coverage.py"
+      - ".github/workflows/phase-29.2-equity-income-contract-coverage-v1.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase29.2-equity-income-contract-coverage
+  cancel-in-progress: false
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+          fetch-depth: 0
+
+      - name: Sync frozen Phase 28 family registry
+        run: |
+          set -euo pipefail
+          git fetch origin phase-28-equity-income-dedup-v1
+          git show origin/phase-28-equity-income-dedup-v1:data/equity_income/strategy_families.csv > data/equity_income/strategy_families.csv
+
+      - name: Sync Equity Income archive manifests
+        run: |
+          set -euo pipefail
+          git fetch origin equity-income-channel-archive-v1
+          git show origin/equity-income-channel-archive-v1:data/equity_income/video_manifest.jsonl > data/equity_income/video_manifest.jsonl
+          git show origin/equity-income-channel-archive-v1:data/equity_income/transcript_manifest.jsonl > data/equity_income/transcript_manifest.jsonl
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install test tooling
+        run: python -m pip install --disable-pip-version-check pytest==8.4.2
+
+      - name: Unit tests
+        run: python -m pytest -q tests/test_phase29_2_contract_coverage.py
+
+      - name: Build deterministic contract coverage matrix
+        run: python research/phase29_2_contract_coverage.py
+
+      - name: Validate hard gate
+        run: python research/validate_phase29_2.py
+
+      - name: Persist evidence
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/phase29_2_contract_coverage_matrix.csv reports/phase29_2_summary.json data/equity_income/phase29_2_contract_manifest.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Phase 29.2: persist contract coverage evidence"
+          git push origin HEAD:${{ github.ref_name }}

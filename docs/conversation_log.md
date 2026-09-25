@@ -102,3 +102,15 @@ Phase 29.1 source-readiness audit was implemented with pinned TradeMarkk 51ca58c
 ## 2026-09-25 — Phase 29.1 completed
 
 Phase 29.1 run 36133844640 completed successfully after correcting E0252 (HF repo ID encoding), E0253 (non-recursive tree metadata), E0254 (parquet-aware unit-test fixtures), E0255 (fragile raw HF tree parser), and E0256 (classifier still reading the retired file_count field). The final audit uses pinned TradeMarkk revision 51ca58c and Rissin revision 78b1c5468255d18cf492984bfe6fe4e3ac874d7c through the official Hugging Face Python client. It verified actual Parquet partitions rather than directory metadata. The 71-row candidate registry resolves to 51 preliminary-feasible index families, 16 data-limited families and 4 unresolved families. No candidate is promoted to numerical backtesting because bid/ask verification, strategy-specific quote completeness and full historical lot-size validation remain incomplete. Phase 30 remains BLOCKED.
+
+## 2026-09-25 — Phase 29.2 execution
+
+Phase 29.2 was started on dedicated branch `phase-29.2-equity-income-contract-coverage-v1`. The plan and manual-run workflow were created. Run 36134416123 stopped at unit tests because of malformed newline literals in the new Python artifact-writing lines (E0263). No data result was accepted. The script was corrected and will be rerun; the contract-content and numerical gates remain locked.
+
+## 2026-09-25 — Phase 29.2 validator diagnosis
+
+Run 36134943745 passed unit tests and matrix construction, then the standalone validator failed because the generated JSON artifacts ended with literal \\n text rather than a real newline. The validator log exposed the exact JSONDecodeError. E0264 was logged; the producer is now corrected to write a valid newline terminator. No trading result has been accepted.
+
+## 2026-09-25 — Phase 29.2 final result
+
+Workflow 36135151445 passed. Final contract-readiness matrix has 71 rows and confirms archive provenance for all 71 candidates. Only the duplicate NIFTY Iron Dome rows are contract-ready for the next content-level join under the current conservative metadata rules. Ten stock-option rows have primary data but lack an independent pinned stock-option source; 54 rows do not disclose a defensible underlying in the frozen candidate metadata; four require rule reconstruction; one is LEAPS/long-dated limited. All rows remain blocked from P&L. Phase 30 stays blocked.

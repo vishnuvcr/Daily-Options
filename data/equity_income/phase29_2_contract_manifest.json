@@ -1,0 +1,15 @@
+{
+  "phase": "29.2",
+  "archive_discovered_videos": 169,
+  "archive_transcript_records": 169,
+  "archive_transcripts_status_archived": 169,
+  "primary": {
+    "repo": "thetrademarkk/india-index-options-1m",
+    "revision": "51ca58c"
+  },
+  "independent": {
+    "repo": "rissin/nse-options-intraday",
+    "revision": "78b1c5468255d18cf492984bfe6fe4e3ac874d7c"
+  },
+  "contract_content_status": "NOT_YET_VALIDATED"
+}

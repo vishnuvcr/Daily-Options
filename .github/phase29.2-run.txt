@@ -1,0 +1,2 @@
+run Phase 29.2 contract coverage audit
+final rerun after E0264 JSON newline correction
