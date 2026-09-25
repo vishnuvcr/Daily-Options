@@ -1,0 +1,143 @@
+name: Phase 30 - Equity Income Iron Dome weekly backtest
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/phase30-run.txt"
+      - "docs/phase30_weekly_backtest_plan.md"
+      - "research/phase30_weekly_iron_dome.py"
+      - "tests/test_phase30_weekly_iron_dome.py"
+      - ".github/workflows/phase-30-equity-income-weekly-backtest-v3.yml"
+permissions:
+  contents: write
+
+concurrency:
+  group: phase30-equity-income-weekly-backtest-v4
+  cancel-in-progress: false
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: python -m pip install --disable-pip-version-check pandas==2.3.2 numpy==2.1.3 duckdb==1.3.2 pyarrow==19.0.1 pytest==8.4.2 huggingface_hub==0.35.3
+
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_phase30_weekly_iron_dome.py
+
+      - name: Cache pinned TradeMarkk source
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase30_trademarkk
+          key: phase30-trademarkk-51ca58c-v2
+          restore-keys: |
+            phase29-trademarkk-51ca58c-
+            phase24-trademarkk-51ca58c-
+
+      - name: Acquire or reuse exact-expiry NIFTY data
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase30_trademarkk
+          if [ ! -f data/cache/phase30_trademarkk/index/NIFTY.parquet ]; then
+            for attempt in 1 2 3 4; do
+              python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="thetrademarkk/india-index-options-1m", repo_type="dataset", revision="51ca58c", local_dir="data/cache/phase30_trademarkk", allow_patterns=["index/NIFTY.parquet","options/NIFTY/*.parquet"])' && break
+              if [ "$attempt" -eq 4 ]; then exit 1; fi
+              sleep $((attempt*15))
+            done
+          fi
+          test -f data/cache/phase30_trademarkk/index/NIFTY.parquet
+          test -d data/cache/phase30_trademarkk/options/NIFTY
+          echo "option_files=$(find data/cache/phase30_trademarkk/options/NIFTY -maxdepth 1 -type f -name '*.parquet' | wc -l)"
+
+      - name: Validate coverage
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from datetime import date
+          from pathlib import Path
+          import pandas as pd
+
+          root=Path("data/cache/phase30_trademarkk")
+          idx=root/"index"/"NIFTY.parquet"
+          files=sorted((root/"options"/"NIFTY").glob("*.parquet"))
+          if not idx.exists() or not files: raise SystemExit("Required NIFTY data missing")
+          sessions=pd.to_datetime(pd.read_parquet(idx,columns=["trading_day"])["trading_day"]).dt.date.drop_duplicates()
+          expiry_dates=[]
+          for p in files:
+              try: d=pd.Timestamp(p.stem).date()
+              except Exception: continue
+              if date(2021,7,1) <= d <= date(2026,8,4): expiry_dates.append(d)
+          expiry_dates=sorted(set(expiry_dates))
+          print({"expiry_files":len(expiry_dates),"first":str(expiry_dates[0]) if expiry_dates else None,"last":str(expiry_dates[-1]) if expiry_dates else None,"index_sessions":int(len(sessions))})
+          if len(expiry_dates) < 180: raise SystemExit("Insufficient exact-expiry file coverage")
+          if len(sessions) < 800: raise SystemExit("Insufficient NIFTY index-session coverage")
+          Path("reports").mkdir(exist_ok=True)
+          Path("reports/coverage.json").write_text(pd.Series({"expiry_files":len(expiry_dates),"first_expiry":str(expiry_dates[0]),"last_expiry":str(expiry_dates[-1]),"index_sessions":int(len(sessions))}).to_json(indent=2),encoding="utf-8")
+          PY
+
+      - name: Run Base friction
+        run: |
+          set -euo pipefail
+          rm -rf reports/base
+          PYTHONPATH=. python research/phase30_weekly_iron_dome.py --data data/cache/phase30_trademarkk --out reports/base --slippage 0.20
+
+      - name: Persist Base results
+        if: always()
+        run: |
+          set -euo pipefail
+          if [ -d reports/base ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add reports/base
+            if ! git diff --cached --quiet; then
+              git commit -m "Phase 30: persist Base weekly Iron Dome results"
+              git push origin HEAD:"${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+            fi
+          fi
+
+      - name: Upload Base results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase30-iron-dome-base
+          path: reports/base/
+
+      - name: Run Stress friction
+        run: |
+          set -euo pipefail
+          rm -rf reports/stress
+          PYTHONPATH=. python research/phase30_weekly_iron_dome.py --data data/cache/phase30_trademarkk --out reports/stress --slippage 0.40
+
+      - name: Persist Stress results
+        if: always()
+        run: |
+          set -euo pipefail
+          if [ -d reports/stress ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add reports/stress
+            if ! git diff --cached --quiet; then
+              git commit -m "Phase 30: persist Stress weekly Iron Dome results"
+              git push origin HEAD:"${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+            fi
+          fi
+
+      - name: Upload Stress results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase30-iron-dome-stress
+          path: reports/stress/
