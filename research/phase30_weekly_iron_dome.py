@@ -452,7 +452,7 @@ def run(data_root: Path, out: Path, slippage: float):
         f"""
         SELECT CAST(timestamp AS TIMESTAMP) ts,
                CAST(trading_day AS DATE) trading_day,
-               CAST(close AS DOUBLE) close
+               CAST(close AS DOUBLE) spot_close
         FROM read_parquet('{idx}')
         WHERE CAST(trading_day AS DATE) BETWEEN DATE '{START_DATE}' AND DATE '{END_DATE}'
           AND close > 0
@@ -461,6 +461,7 @@ def run(data_root: Path, out: Path, slippage: float):
     ).df()
     con.close()
     spot["ts"] = pd.to_datetime(spot["ts"])
+    spot = spot.rename(columns={"spot_close": "close"})
     sessions = trading_sessions(spot)
     files = expiry_files(root)
 
@@ -481,8 +482,8 @@ def run(data_root: Path, out: Path, slippage: float):
                        CAST(trading_day AS DATE) trading_day,
                        CAST(strike AS DOUBLE) strike,
                        UPPER(CAST(option_type AS VARCHAR)) option_type,
-                       CAST(open AS DOUBLE) open,
-                       CAST(close AS DOUBLE) close
+                       CAST(open AS DOUBLE) open_px,
+                       CAST(close AS DOUBLE) close_px
                 FROM read_parquet('{path}')
                 WHERE CAST(trading_day AS DATE) BETWEEN DATE '{entry_date}' AND DATE '{expiry}'
                   AND close > 0
@@ -490,6 +491,7 @@ def run(data_root: Path, out: Path, slippage: float):
                 """
             ).df()
             con.close()
+            options = options.rename(columns={"open_px": "open", "close_px": "close"})
             if options.empty:
                 coverage.append({"expiry": str(expiry), "entry_date": str(entry_date), "status": "NO_OPTION_ROWS"})
                 continue
