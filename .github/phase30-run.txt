@@ -1,1 +1,2 @@
 run Phase 30 Iron Dome weekly backtest — target ₹5000/week — authoritative-main-20260925
+run Phase 30 v8 state-isolation correction — 2026-09-25-control-01
