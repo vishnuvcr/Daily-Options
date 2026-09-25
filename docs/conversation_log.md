@@ -110,3 +110,7 @@ Phase 29.2 was started on dedicated branch `phase-29.2-equity-income-contract-co
 ## 2026-09-25 — Phase 29.2 validator diagnosis
 
 Run 36134943745 passed unit tests and matrix construction, then the standalone validator failed because the generated JSON artifacts ended with literal \\n text rather than a real newline. The validator log exposed the exact JSONDecodeError. E0264 was logged; the producer is now corrected to write a valid newline terminator. No trading result has been accepted.
+
+## 2026-09-25 — Phase 29.2 final result
+
+Workflow 36135151445 passed. Final contract-readiness matrix has 71 rows and confirms archive provenance for all 71 candidates. Only the duplicate NIFTY Iron Dome rows are contract-ready for the next content-level join under the current conservative metadata rules. Ten stock-option rows have primary data but lack an independent pinned stock-option source; 54 rows do not disclose a defensible underlying in the frozen candidate metadata; four require rule reconstruction; one is LEAPS/long-dated limited. All rows remain blocked from P&L. Phase 30 stays blocked.
