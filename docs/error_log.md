@@ -269,3 +269,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0238 | 2026-09-25 | Phase 25 independent-source transition | Phase 24 was numerically executable but had only 5 unique entry dates despite a nominal 2021-2026 cache; treating its single-trade target-qualified cells as evidence would be sample-selection error | Phase 24 P&L is quarantined and not used for promotion | Replicate the exact frozen Falcon rules on the independently sourced Rissin/Upstox NIFTY 1-minute dataset at pinned revision 78b1c54, with a >=20-entry-date gate and the same cost/stress model | OPEN — Phase 25 running |
+
+| E0255 | 2026-09-25 | Equity Income archive scheduling | The keyless workflow was initially placed only on the dedicated archive branch, but GitHub scheduled workflows run only from the default branch | Weekly unattended archiving would not occur from the dedicated branch alone | Added the same keyless archive workflow to `main`; it checks out and updates `equity-income-channel-archive-v1` while keeping archive data isolated | CLOSED — scheduling corrected |
