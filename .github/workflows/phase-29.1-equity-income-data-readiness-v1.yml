@@ -69,8 +69,8 @@ jobs:
           assert s["historical_lot_size_fully_verified"] == 0
           assert inv["trademarkk"]["api_status"] == "OK"
           assert inv["rissin"]["api_status"] == "OK"
-          assert inv["trademarkk"]["paths"]["options/NIFTY"]["file_count"] > 0
-          assert inv["rissin"]["paths"]["upstox_intraday/NIFTY"]["file_count"] > 0
+          assert inv["trademarkk"]["paths"]["options/NIFTY"]["parquet_file_count"] > 0
+          assert inv["rissin"]["paths"]["upstox_intraday/NIFTY"]["parquet_file_count"] > 0
           assert all(r["backtest_allowed"] == "NO" for r in rows)
           print(json.dumps(s, indent=2))
           PY
