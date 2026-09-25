@@ -3,6 +3,8 @@
   "archive_discovered_videos": 169,
   "archive_transcripts_status_archived": 169,
   "candidate_archive_provenance": 71,
+  "all_rows_backtest_no": true,
+  "matrix_row_count": 71,
   "readiness_state_counts": {
     "UNDERLYING_UNRESOLVED": 54,
     "LONG_DATED_DATA_LIMITED": 1,
