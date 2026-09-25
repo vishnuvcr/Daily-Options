@@ -90,15 +90,29 @@ def transcript_text(data: dict) -> str:
     return " ".join(seg.get("text", "") for seg in data.get("segments") or [] if isinstance(seg, dict))
 
 
-def evidence(field: str, text: str) -> list[str]:
+def evidence(field: str, segments: list[dict]) -> list[dict]:
     out = []
-    for pat in FIELD_PATTERNS[field]:
-        for m in re.finditer(pat, text, flags=re.IGNORECASE):
-            value = (m.group(1) if m.lastindex else m.group(0)).strip()
-            value = re.sub(r"\s+", " ", value)
-            if value and value not in out:
-                out.append(value[:200])
-    return out[:12]
+    seen = set()
+    patterns = FIELD_PATTERNS[field]
+    for seg in segments:
+        text = str(seg.get("text") or "")
+        start_sec = float(seg.get("start") or 0.0)
+        for pat in patterns:
+            for m in re.finditer(pat, text, flags=re.IGNORECASE):
+                value = (m.group(1) if m.lastindex else m.group(0)).strip()
+                value = re.sub(r"\s+", " ", value)
+                if not value:
+                    continue
+                # Persist only the extracted fact and its source timestamp, never
+                # the surrounding transcript sentence.
+                key = (value.lower(), round(start_sec, 3))
+                if key in seen:
+                    continue
+                seen.add(key)
+                out.append({"value": value[:100], "start_sec": round(start_sec, 3)})
+                if len(out) >= 12:
+                    return out
+    return out
 
 
 def family_hits(text: str) -> list[str]:
@@ -107,14 +121,17 @@ def family_hits(text: str) -> list[str]:
 
 
 def build_record(video: dict, data: dict) -> dict:
-    text = transcript_text(data)
-    low = norm(text)
+    segments = [
+        s for s in (data.get("segments") or [])
+        if isinstance(s, dict) and str(s.get("text") or "").strip()
+    ]
+    text = " ".join(str(s.get("text") or "") for s in segments)
     record = {
         "video_id": video["video_id"],
         "title": video.get("title", ""),
         "source_url": video.get("webpage_url", ""),
         "transcript_method": "youtubegpt-json",
-        "segment_count": len(data.get("segments") or []),
+        "segment_count": len(segments),
         "transcript_character_count": len(text),
         "family_hits": family_hits(text),
         "fields": {},
@@ -124,7 +141,7 @@ def build_record(video: dict, data: dict) -> dict:
         "retrieved_at_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
     }
     for field in FIELD_PATTERNS:
-        vals = evidence(field, text)
+        vals = evidence(field, segments)
         record["fields"][field] = vals
         record["field_status"][field] = "SOURCE-EXPLICIT" if vals else "UNSPECIFIED"
     material = ("entry_day", "adjustment_day", "exit_day", "strike_reference", "stop_reference", "target_reference")
@@ -167,10 +184,8 @@ def main() -> int:
     if args.max:
         candidates = candidates[:args.max]
 
-    existing = load_jsonl(args.out)
+    existing = {}
     for video in candidates:
-        if video["video_id"] in existing:
-            continue
         try:
             data = fetch_json(video["video_id"])
             existing[video["video_id"]] = build_record(video, data)
@@ -214,7 +229,7 @@ def main() -> int:
         ]
         for field, values in (row.get("fields") or {}).items():
             status = (row.get("field_status") or {}).get(field, "UNSPECIFIED")
-            shown = "; ".join(values) if values else "UNSPECIFIED"
+            shown = "; ".join(f"{v["value"]}@{v["start_sec"]:.1f}s" for v in values) if values else "UNSPECIFIED"
             lines.append(f"- **{field}** — {status}: {shown}")
         lines.extend([
             "",
