@@ -189,3 +189,9 @@ The pinned Rissin source passes the current data gate at 84,280,469 1-minute row
 The next accepted numerical result must come from a clean Base + Stress run with adequate executable-date coverage. A positive replication advances unchanged to the next untouched WFA/OOS phase; otherwise Falcon is retired.
 
 [Phase 25 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-25-falcon-rissin-independent-v1/docs/phase25_plan.md) · [Phase 25 workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-25-falcon-rissin-independent-v1/.github/workflows/phase-25-falcon-rissin.yml) · [Phase 25 status](https://github.com/vishnuvcr/Daily-Options/blob/phase-25-falcon-rissin-independent-v1/docs/research_status.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/phase-25-falcon-rissin-independent-v1/docs/error_log.md)
+
+## Phase 25 execution checkpoint — 2026-09-25
+
+The independent Rissin replication is running on the frozen Falcon Spread rule. The current clean run is **36111174510** with Base and Stress friction active. Seven unit tests and the 311-date / 76-expiry data coverage gate have passed in the current run. Before this run, two performance-only optimizations were applied: exact chain/series caching, then strike-universe, mark-panel, stop-trigger and exit-price caching. No strategy parameter, timing, cost, slippage or selection rule was changed.
+
+No numerical P&L from Phase 25 has been accepted yet. Once the current run completes, the 270-cell leaderboard will be inspected for executable-date coverage, base/stress net P&L, and the promotion gate.
