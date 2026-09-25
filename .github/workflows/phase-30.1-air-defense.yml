@@ -1,0 +1,146 @@
+name: Phase 30.1 - Equity Income Air Defense weekly backtest
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/phase30-1-run.txt'
+      - 'research/phase30_1_air_defense.py'
+      - 'tests/test_phase30_1_air_defense.py'
+      - 'scripts/fetch_india_vix.py'
+      - 'docs/phase30_1_air_defense_plan.md'
+      - '.github/workflows/phase-30.1-air-defense.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase30-1-equity-income-air-defense-v1
+  cancel-in-progress: true
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: python -m pip install --disable-pip-version-check pandas==2.3.2 numpy==2.1.3 duckdb==1.3.2 pyarrow==19.0.1 pytest==8.4.2 requests==2.34.2 huggingface_hub==0.35.3
+
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_phase30_1_air_defense.py
+
+      - name: Cache pinned TradeMarkk source
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase30_trademarkk
+          key: phase30-trademarkk-51ca58c-v2
+          restore-keys: |
+            phase29-trademarkk-51ca58c-
+            phase24-trademarkk-51ca58c-
+
+      - name: Acquire or reuse exact-expiry NIFTY data
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase30_trademarkk
+          if [ ! -f data/cache/phase30_trademarkk/index/NIFTY.parquet ]; then
+            python - <<'PY'
+          from huggingface_hub import snapshot_download
+          snapshot_download(repo_id='thetrademarkk/india-index-options-1m',repo_type='dataset',revision='51ca58c',local_dir='data/cache/phase30_trademarkk',allow_patterns=['index/NIFTY.parquet','options/NIFTY/*.parquet'])
+          PY
+          fi
+          test -f data/cache/phase30_trademarkk/index/NIFTY.parquet
+          test -d data/cache/phase30_trademarkk/options/NIFTY
+
+      - name: Acquire or reuse official NSE India VIX cache
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase30_trademarkk/vix
+          if [ ! -f data/cache/phase30_trademarkk/vix/india_vix.csv ]; then
+            PYTHONPATH=. python scripts/fetch_india_vix.py --start 2025-08-20 --end 2026-08-04 --out data/cache/phase30_trademarkk/vix/india_vix.csv
+          fi
+          python - <<'PY'
+          import pandas as pd
+          p='data/cache/phase30_trademarkk/vix/india_vix.csv'
+          x=pd.read_csv(p)
+          assert {'date','close'}.issubset(x.columns)
+          assert len(x)>=150
+          print({'rows':len(x),'start':x['date'].min(),'end':x['date'].max()})
+          PY
+
+      - name: Validate normal Tuesday-expiry coverage
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import pandas as pd
+          root=Path('data/cache/phase30_trademarkk')
+          dates=[]
+          for p in sorted((root/'options'/'NIFTY').glob('*.parquet')):
+              try: d=pd.Timestamp(p.stem).date()
+              except: continue
+              if pd.Timestamp('2025-09-02').date() <= d <= pd.Timestamp('2026-08-04').date() and d.weekday()==1: dates.append(d)
+          if len(dates)<35: raise SystemExit(f'Insufficient normal Tuesday expiry coverage: {len(dates)}')
+          print({'normal_tuesday_expiries':len(dates),'first':str(dates[0]),'last':str(dates[-1])})
+          PY
+
+      - name: Run Base friction
+        run: |
+          set -euo pipefail
+          rm -rf reports/phase30_1_air_defense/base
+          PYTHONPATH=. python research/phase30_1_air_defense.py --data data/cache/phase30_trademarkk --out reports/phase30_1_air_defense/base --slippage 0.20 --brokerage 10.0
+
+      - name: Persist Base results
+        if: always()
+        run: |
+          if [ -d reports/phase30_1_air_defense/base ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -f reports/phase30_1_air_defense/base data/cache/phase30_trademarkk/vix
+            if ! git diff --cached --quiet; then
+              git commit -m 'Phase 30.1: persist Air Defense Base results'
+              git push origin HEAD:${GITHUB_REF_NAME}
+            fi
+          fi
+
+      - name: Upload Base
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase30-1-air-defense-base
+          path: reports/phase30_1_air_defense/base/
+
+      - name: Run Stress friction
+        run: |
+          set -euo pipefail
+          rm -rf reports/phase30_1_air_defense/stress
+          PYTHONPATH=. python research/phase30_1_air_defense.py --data data/cache/phase30_trademarkk --out reports/phase30_1_air_defense/stress --slippage 0.40 --brokerage 10.0
+
+      - name: Persist Stress results
+        if: always()
+        run: |
+          if [ -d reports/phase30_1_air_defense/stress ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -f reports/phase30_1_air_defense/stress
+            if ! git diff --cached --quiet; then
+              git commit -m 'Phase 30.1: persist Air Defense Stress results'
+              git push origin HEAD:${GITHUB_REF_NAME}
+            fi
+          fi
+
+      - name: Upload Stress
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase30-1-air-defense-stress
+          path: reports/phase30_1_air_defense/stress/
