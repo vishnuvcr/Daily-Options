@@ -7,7 +7,7 @@
     "nifty_lot_2026_01_06_first_weekly_revised_expiry": 65
   },
   "rissin": {
-    "api_status": "ERROR",
+    "api_status": "OK",
     "expected_schema": [
       "date",
       "timestamp",
@@ -29,31 +29,71 @@
     "intraday_oi_available": false,
     "paths": {
       "historical_daily/BANKNIFTY": {
-        "error": "HF API request failed after 4 attempts: https://huggingface.co/api/datasets/rissin%2Fnse-options-intraday/tree/78b1c5468255d18cf492984bfe6fe4e3ac874d7c?path=historical_daily%2FBANKNIFTY&recursive=false&expand=false: HTTP Error 400: Bad Request",
-        "status": "ERROR"
+        "directory_count": 3,
+        "file_count": 3,
+        "first_file": ".gitattributes",
+        "last_file": "README.md",
+        "sample_files": [
+          ".gitattributes",
+          ".gitkeep",
+          "README.md"
+        ],
+        "status": "PRESENT"
       },
       "historical_daily/NIFTY": {
-        "error": "HF API request failed after 4 attempts: https://huggingface.co/api/datasets/rissin%2Fnse-options-intraday/tree/78b1c5468255d18cf492984bfe6fe4e3ac874d7c?path=historical_daily%2FNIFTY&recursive=false&expand=false: HTTP Error 400: Bad Request",
-        "status": "ERROR"
+        "directory_count": 3,
+        "file_count": 3,
+        "first_file": ".gitattributes",
+        "last_file": "README.md",
+        "sample_files": [
+          ".gitattributes",
+          ".gitkeep",
+          "README.md"
+        ],
+        "status": "PRESENT"
       },
       "upstox_intraday/BANKNIFTY": {
-        "error": "HF API request failed after 4 attempts: https://huggingface.co/api/datasets/rissin%2Fnse-options-intraday/tree/78b1c5468255d18cf492984bfe6fe4e3ac874d7c?path=upstox_intraday%2FBANKNIFTY&recursive=false&expand=false: HTTP Error 400: Bad Request",
-        "status": "ERROR"
+        "directory_count": 3,
+        "file_count": 3,
+        "first_file": ".gitattributes",
+        "last_file": "README.md",
+        "sample_files": [
+          ".gitattributes",
+          ".gitkeep",
+          "README.md"
+        ],
+        "status": "PRESENT"
       },
       "upstox_intraday/NIFTY": {
-        "error": "HF API request failed after 4 attempts: https://huggingface.co/api/datasets/rissin%2Fnse-options-intraday/tree/78b1c5468255d18cf492984bfe6fe4e3ac874d7c?path=upstox_intraday%2FNIFTY&recursive=false&expand=false: HTTP Error 400: Bad Request",
-        "status": "ERROR"
+        "directory_count": 3,
+        "file_count": 3,
+        "first_file": ".gitattributes",
+        "last_file": "README.md",
+        "sample_files": [
+          ".gitattributes",
+          ".gitkeep",
+          "README.md"
+        ],
+        "status": "PRESENT"
       },
       "upstox_intraday/SENSEX": {
-        "error": "HF API request failed after 4 attempts: https://huggingface.co/api/datasets/rissin%2Fnse-options-intraday/tree/78b1c5468255d18cf492984bfe6fe4e3ac874d7c?path=upstox_intraday%2FSENSEX&recursive=false&expand=false: HTTP Error 400: Bad Request",
-        "status": "ERROR"
+        "directory_count": 3,
+        "file_count": 3,
+        "first_file": ".gitattributes",
+        "last_file": "README.md",
+        "sample_files": [
+          ".gitattributes",
+          ".gitkeep",
+          "README.md"
+        ],
+        "status": "PRESENT"
       }
     },
     "repo": "rissin/nse-options-intraday",
     "revision": "78b1c5468255d18cf492984bfe6fe4e3ac874d7c"
   },
   "trademarkk": {
-    "api_status": "ERROR",
+    "api_status": "OK",
     "expected_schema": [
       "timestamp",
       "open",
@@ -71,24 +111,59 @@
     "intraday_oi_available": true,
     "paths": {
       "index": {
-        "error": "HF API request failed after 4 attempts: https://huggingface.co/api/datasets/thetrademarkk%2Findia-index-options-1m/tree/51ca58c?path=index&recursive=false&expand=false: HTTP Error 400: Bad Request",
-        "status": "ERROR"
+        "directory_count": 4,
+        "file_count": 2,
+        "first_file": ".gitattributes",
+        "last_file": "README.md",
+        "sample_files": [
+          ".gitattributes",
+          "README.md"
+        ],
+        "status": "PRESENT"
       },
       "options/BANKNIFTY": {
-        "error": "HF API request failed after 4 attempts: https://huggingface.co/api/datasets/thetrademarkk%2Findia-index-options-1m/tree/51ca58c?path=options%2FBANKNIFTY&recursive=false&expand=false: HTTP Error 400: Bad Request",
-        "status": "ERROR"
+        "directory_count": 4,
+        "file_count": 2,
+        "first_file": ".gitattributes",
+        "last_file": "README.md",
+        "sample_files": [
+          ".gitattributes",
+          "README.md"
+        ],
+        "status": "PRESENT"
       },
       "options/NIFTY": {
-        "error": "HF API request failed after 4 attempts: https://huggingface.co/api/datasets/thetrademarkk%2Findia-index-options-1m/tree/51ca58c?path=options%2FNIFTY&recursive=false&expand=false: HTTP Error 400: Bad Request",
-        "status": "ERROR"
+        "directory_count": 4,
+        "file_count": 2,
+        "first_file": ".gitattributes",
+        "last_file": "README.md",
+        "sample_files": [
+          ".gitattributes",
+          "README.md"
+        ],
+        "status": "PRESENT"
       },
       "options/SENSEX": {
-        "error": "HF API request failed after 4 attempts: https://huggingface.co/api/datasets/thetrademarkk%2Findia-index-options-1m/tree/51ca58c?path=options%2FSENSEX&recursive=false&expand=false: HTTP Error 400: Bad Request",
-        "status": "ERROR"
+        "directory_count": 4,
+        "file_count": 2,
+        "first_file": ".gitattributes",
+        "last_file": "README.md",
+        "sample_files": [
+          ".gitattributes",
+          "README.md"
+        ],
+        "status": "PRESENT"
       },
       "stocks_options": {
-        "error": "HF API request failed after 4 attempts: https://huggingface.co/api/datasets/thetrademarkk%2Findia-index-options-1m/tree/51ca58c?path=stocks_options&recursive=false&expand=false: HTTP Error 400: Bad Request",
-        "status": "ERROR"
+        "directory_count": 4,
+        "file_count": 2,
+        "first_file": ".gitattributes",
+        "last_file": "README.md",
+        "sample_files": [
+          ".gitattributes",
+          "README.md"
+        ],
+        "status": "PRESENT"
       }
     },
     "repo": "thetrademarkk/india-index-options-1m",
