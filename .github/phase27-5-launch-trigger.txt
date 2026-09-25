@@ -1,1 +1,2 @@
 Phase 27.5 launcher trigger: validate T1 source-resolution matrix.
+Phase 27.5 execution trigger 2026-09-25.
