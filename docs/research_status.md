@@ -500,3 +500,11 @@ The ₹1,000/day objective remains retired for the Equity Income YouTube program
 Branch: `phase-30-equity-income-weekly-backtest-v7-corrected`.
 The frozen 12-cell Iron Dome rules remain unchanged. v7 removes the invalid exact-expiry `trading_day` filter, preserves the full timestamp range through expiry, adds a multi-day loader regression test, and retains sequential Base then Stress execution.
 No Phase 30 P&L is accepted until the corrected Base/Stress run completes and the resulting weekly distribution passes review.
+
+## 2026-09-25 — Phase 30 v8 authoritative execution
+
+Run **36157105595** on `phase-30-equity-income-weekly-backtest-v8-state-isolation` is the authoritative Phase 30 execution. Unit tests, pinned TradeMarkk acquisition/reuse and coverage validation passed; Base friction is currently executing.
+
+A prior v8 Base artifact from run **36153419405** completed before persistence failed. Its numerical output is provisionally auditable but not a full Phase 30 conclusion: 262 eligible expiry files, 774 executable setups, 3,092 unique rows, no duplicate trade keys, and 0/12 cells meeting the weekly ₹5,000 preliminary gate. Best Base mean weekly net was **-₹585.85**, median **-₹1,193.72**, positive-week rate **39.77%**, execution coverage **98.85%**. Stress was not executed in that run.
+
+No WFA/OOS selection is permitted until the current Base+Stress execution and artifact audit complete.
