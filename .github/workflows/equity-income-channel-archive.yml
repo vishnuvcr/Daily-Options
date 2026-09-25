@@ -18,7 +18,7 @@ permissions:
 
 concurrency:
   group: equity-income-channel-archive
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   archive:
@@ -87,7 +87,7 @@ jobs:
         continue-on-error: true
         run: |
           set -euo pipefail
-          PYTHONPATH=. python scripts/archive_equity_income_keyless.py             --channel-url "https://www.youtube.com/@equityincome"             --output-root "data/equity_income"             --public-key "config/equity_income_archive_public_key.pem"             --transcript-timeout-seconds 20             --workers 2
+          PYTHONPATH=. python scripts/archive_equity_income_keyless.py             --channel-url "https://www.youtube.com/@equityincome"             --output-root "data/equity_income"             --public-key "config/equity_income_archive_public_key.pem"             --transcript-timeout-seconds 12             --workers 4
 
       - name: Test archive tooling
         if: always()
