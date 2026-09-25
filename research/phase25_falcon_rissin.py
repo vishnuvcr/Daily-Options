@@ -68,7 +68,7 @@ def setup(c,S,d,et,p,f,exps,sessions):
     if ce is None or pe is None:return None
     if f=="SAME_STRIKE": fce,fpe=target(fc,"CE",p,float(ce["strike"])),target(fc,"PE",p,float(pe["strike"]))
     else: fce,fpe=target(fc,"CE",p,float(ce["strike"]),True),target(fc,"PE",p,float(pe["strike"]),True)
-    vals=None if fce is None or fpe is None else [op(nf,"CE",ce.strike,ft),op(nf,"PE",pe.strike,ft),op(ff,"CE",fce.strike,ft),op(ff,"PE",fpe.strike,ft)]
+    vals=None if fce is None or fpe is None else [op(nf,"CE",float(ce["strike"]),ft),op(nf,"PE",float(pe["strike"]),ft),op(ff,"CE",float(fce["strike"]),ft),op(ff,"PE",float(fpe["strike"]),ft)]
     if not vals or any(x is None for x in vals):return None
     a,b,cc,d0=vals; credit=5*(a+b)-3*(cc+d0)
     return None if credit<=0 else {"d":d,"et":et,"p":p,"f":f,"ne":ne,"fe":fe,"ad":ad,"xd":xd,"fill":ft,"credit":credit,
