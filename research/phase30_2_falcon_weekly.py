@@ -199,13 +199,13 @@ def mark_panel(series_map, tolerance_minutes=1):
     return pd.DataFrame() if base is None else base.dropna().sort_values("ts")
 
 
-def cost(legs, lot, slippage, entry_date=None, exit_date=None):
+def cost(legs, lot, slippage, brokerage_per_order, entry_date=None, exit_date=None):
     turnover = sum((leg["entry"] + leg["exit"]) * leg["qty"] * lot for leg in legs)
     sell_entry = sum(leg["entry"] * leg["qty"] * lot for leg in legs if leg["sign"] < 0)
     sell_exit = sum(leg["exit"] * leg["qty"] * lot for leg in legs if leg["sign"] > 0)
     buy_entry = sum(leg["entry"] * leg["qty"] * lot for leg in legs if leg["sign"] > 0)
     buy_exit = sum(leg["exit"] * leg["qty"] * lot for leg in legs if leg["sign"] < 0)
-    brokerage = 40.0 * len(legs)
+    brokerage = 2.0 * brokerage_per_order * len(legs)
     exchange_rate = 0.0003503 if (entry_date is None or pd.Timestamp(entry_date).date() < date(2026, 3, 1)) else 0.000355299
     exchange = turnover * exchange_rate
     sebi = turnover * 0.000001
@@ -218,9 +218,9 @@ def cost(legs, lot, slippage, entry_date=None, exit_date=None):
     return brokerage + exchange + sebi + stt + stamp + gst + slip
 
 
-def settle(legs, lot, slippage, entry_date=None, exit_date=None):
+def settle(legs, lot, slippage, brokerage_per_order, entry_date=None, exit_date=None):
     gross = sum(leg["sign"] * (leg["exit"] - leg["entry"]) * leg["qty"] * lot for leg in legs)
-    return gross - cost(legs, lot, slippage, entry_date, exit_date)
+    return gross - cost(legs, lot, slippage, brokerage_per_order, entry_date, exit_date)
 
 
 def build_setup(con, root, cal, entry_time, target, far_mode):
@@ -270,7 +270,7 @@ def build_setup(con, root, cal, entry_time, target, far_mode):
     }
 
 
-def simulate_setup(con, root, setup, variant, slippage):
+def simulate_setup(con, root, setup, variant, slippage, brokerage_per_order):
     c = setup["_cache"]
     lot = lot_size(setup["near_expiry"])
     start = setup["entry_fill_ts"]
@@ -316,7 +316,7 @@ def simulate_setup(con, root, setup, variant, slippage):
             leg["exit"] = float(row.open_px)
         return {
             "reason": "STOP_PRE_ADJUST", "exit_ts": exit_ts,
-            "net_pnl": settle(base_legs, lot, slippage, setup["entry_date"], exit_ts.date()),
+            "net_pnl": settle(base_legs, lot, slippage, brokerage_per_order, setup["entry_date"], exit_ts.date()),
             "active_legs": 4,
         }
 
@@ -387,7 +387,7 @@ def simulate_setup(con, root, setup, variant, slippage):
     return {
         "reason": "STOP_POST_ADJUST" if post_stop is not None else "PRE_EXPIRY_EXIT",
         "exit_ts": exit_signal,
-        "net_pnl": settle(legs, lot, slippage, setup["entry_date"], exit_signal.date()),
+        "net_pnl": settle(legs, lot, slippage, brokerage_per_order, setup["entry_date"], exit_signal.date()),
         "active_legs": 6,
     }
 
@@ -399,7 +399,7 @@ def max_drawdown(values):
     return float(np.min(c - np.maximum.accumulate(c)))
 
 
-def run(data: Path, out: Path, slippage: float):
+def run(data: Path, out: Path, slippage: float, brokerage_per_order: float):
     out.mkdir(parents=True, exist_ok=True)
     variants = variant_grid()
     con = duckdb.connect()
@@ -424,7 +424,7 @@ def run(data: Path, out: Path, slippage: float):
     for setup in setups:
         for v in by_key[(setup["entry_time"], setup["target_premium"], setup["far_mode"])]:
             try:
-                result = simulate_setup(con, data, setup, v, slippage)
+                result = simulate_setup(con, data, setup, v, slippage, brokerage_per_order)
             except Exception as exc:
                 errors.append({"entry_date": str(setup["entry_date"]), "variant_id": v.variant_id, "error": repr(exc)})
                 result = None
@@ -492,11 +492,13 @@ def run(data: Path, out: Path, slippage: float):
     weekly_stats["positive_week_rate"] = weekly.groupby("variant_id").net_pnl.apply(lambda x: float((x>0).mean())).values
     weekly_stats["completed_weeks"] = weekly.groupby("variant_id").size().values
     leaderboard = leaderboard.merge(weekly_stats,on="variant_id",how="left")
+    leaderboard["execution_coverage"] = leaderboard["completed_weeks"] / max(len(cals), 1)
     leaderboard["target_qualified"] = (
         (leaderboard["mean_weekly_net"] >= WEEKLY_TARGET) &
         (leaderboard["median_weekly_net"] >= WEEKLY_TARGET) &
         (leaderboard["positive_week_rate"] >= POSITIVE_WEEK_RATE_TARGET) &
-        (leaderboard["completed_weeks"] >= 20)
+        (leaderboard["completed_weeks"] >= 20) &
+        (leaderboard["execution_coverage"] >= EXECUTION_COVERAGE_TARGET)
     )
     leaderboard = leaderboard.sort_values(["mean_active_day_net", "profit_factor"], ascending=False)
     leaderboard.to_csv(out / "phase24_rissin_leaderboard.csv", index=False)
@@ -514,6 +516,7 @@ def run(data: Path, out: Path, slippage: float):
         "unique_entry_dates": int(pd.Series(trades["entry_date"]).nunique()),
         "best": best,
         "slippage": slippage,
+        "brokerage_per_order": brokerage_per_order,
         "coverage": coverage,
     }
     (out / "phase24_rissin_summary.json").write_text(json.dumps(summary, indent=2, default=str))
@@ -526,5 +529,6 @@ if __name__ == "__main__":
     ap.add_argument("--data", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--slippage", type=float, default=0.20)
+    ap.add_argument("--brokerage", type=float, default=10.0)
     args = ap.parse_args()
-    print(json.dumps(run(args.data, args.out, args.slippage), indent=2, default=str))
+    print(json.dumps(run(args.data, args.out, args.slippage, args.brokerage), indent=2, default=str))
