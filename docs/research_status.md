@@ -322,3 +322,13 @@ Phase 24 next execution requirement: rebuild/reacquire a coverage-validated exac
 Run **36110262221** reached the full friction stage with both Base and Stress after **7/7 unit tests** and the full Rissin coverage gate passed. Static runtime review then identified repeated parquet scans across the 9 stop/adjust variants of each setup. The run is treated as non-evidentiary and superseded without using any partial P&L.
 
 The frozen 270-cell grid is unchanged. The simulator now caches exact-key chain/series loads in-process and groups variants by setup key, reducing repeated I/O without changing strategy parameters, timing, costs, slippage, or trade rules. A fresh Base + Stress run is now required.
+
+## Phase 25.1 — strategy fidelity audit — 2026-09-25
+
+The Phase 25 negative result is **not being used to retire Falcon**. Audit of the actual artifact shows that only **135 of the 270 frozen variants** appeared in the leaderboard; all 135 missing variants were SAME_STRIKE cells with no executable trades. Therefore the accepted result only evaluates the DIAGONAL_PREMIUM formalization.
+
+The repository's own Falcon source catalogue identifies the far-week strike relationship, hard-stop threshold, and exact intraday timing as incompletely recovered source details. Phase 25 filled these gaps with modelling choices: premium-matched outward far strikes, 0.5/1.0/1.5× gross-credit stops, and 5×3 time sensitivities. These choices mean the numerical result is formalization-specific.
+
+**Status: Phase 25 retirement suspended.** Phase 25 remains a negative result for the tested formalization, but the exact Falcon strategy remains unresolved pending a source-fidelity reconstruction and rerun.
+
+Audit: docs/phase25.1_strategy_fidelity_audit.md
