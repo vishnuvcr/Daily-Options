@@ -38,9 +38,9 @@ def normalize(df):
     mapping = {}
     for c in df.columns:
         k = str(c).strip().lower().replace(' ', '').replace('_', '')
-        if k in ('date','tradedate','timestamp') or 'timestamp' == k:
+        if k in ('date','tradedate','timestamp','eodtimestamp'):
             mapping[c] = 'date'
-        elif k in ('close','closeprice','vix','indexclose','closeindex','closevalue'):
+        elif k in ('close','closeprice','vix','indexclose','closeindex','closevalue','eodcloseindexval'):
             mapping[c] = 'close'
     df = df.rename(columns=mapping)
     if 'date' not in df.columns or 'close' not in df.columns:
