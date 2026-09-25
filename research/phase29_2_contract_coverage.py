@@ -158,6 +158,8 @@ def main() -> int:
         "archive_discovered_videos": len(videos),
         "archive_transcripts_status_archived": sum(r.get("status") == "archived" for r in transcripts),
         "candidate_archive_provenance": sum(r["archive_provenance_present"] == "YES" for r in rows),
+        "all_rows_backtest_no": all(r["backtest_allowed"] == "NO" for r in rows),
+        "matrix_row_count": len(rows),
         "readiness_state_counts": states,
         "underlying_counts": underlying_counts,
         "primary_trade_source_revision": PRIMARY_REV,
