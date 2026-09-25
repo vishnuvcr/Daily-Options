@@ -30,8 +30,11 @@ jobs:
       - name: Sync Phase 27 inputs
         run: |
           set -euo pipefail
+          git fetch origin phase-26-equity-income-inventory-v1
           git fetch origin phase-27-equity-income-reconstruction-v1
-          git restore --source=origin/phase-27-equity-income-reconstruction-v1 -- data/equity_income
+          git restore --source=origin/phase-26-equity-income-inventory-v1 -- data/equity_income
+          git fetch origin phase-27-equity-income-reconstruction-v1:refs/remotes/origin/phase27-evidence
+          git restore --source=origin/phase27-evidence -- data/equity_income/phase27_rule_evidence.jsonl
           test -s data/equity_income/video_inventory.csv
           test -s data/equity_income/phase27_rule_evidence.jsonl
 
