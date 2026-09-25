@@ -128,3 +128,11 @@ Phase 30 v7 corrects the exact-expiry option loader to use the full timestamp ra
 | 30 v8 | phase-30-equity-income-weekly-backtest-v8-state-isolation | 36157105595 | 108144213864 | Base friction executing; tests/data/coverage passed | No |
 
 Provisional prior v8 Base audit (run 36153419405): 3,092 unique trade rows, no duplicate trade keys, 12/12 cells below the weekly target, best mean weekly net -₹585.85, positive-week rate 39.77%, execution coverage 98.85%. Stress was skipped in that run because Base persistence failed. This artifact is not the final Phase 30 result.
+
+## 2026-09-25 — Parallel Phase 27.6 evidence run
+
+| Phase | Branch/launcher | Run | Status | Accepted P&L |
+|---|---|---:|---|---|
+| 27.6 | phase-27.6-trigger-rerun-20260925 → fixed aRj branch | 36157884412 | Queued | No |
+
+This is source-evidence acquisition only. It cannot promote the aRj strategy to numerical testing by itself.
