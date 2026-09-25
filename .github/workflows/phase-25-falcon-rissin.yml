@@ -2,6 +2,7 @@ name: Phase 25 - Falcon Rissin independent replication
 
 on:
   workflow_dispatch:
+  pull_request:
   push:
     paths:
       - research/phase25_falcon_rissin.py
