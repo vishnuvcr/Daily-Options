@@ -56,5 +56,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -f reports/phase27_2_reconstruction_priority.csv reports/phase27_2_summary.json data/equity_income/phase27_2_external_evidence.json
+          if git diff --cached --quiet; then
+            echo "No Phase 27.2 output changes."
+            exit 0
+          fi
           git commit -m "Phase 27.2: persist reconstruction priority"
           git push origin HEAD:phase-27.2-equity-income-reconstruction-priority-v1
