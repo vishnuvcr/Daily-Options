@@ -356,3 +356,16 @@ Authoritative Phase 29 launcher run **36132032411** completed successfully.
 The public-source feasibility gate is therefore informative but not yet sufficient for numerical testing. Index-option families have a plausible 1-minute primary/secondary data path, while covered-call/stock-option and LEAPS candidates remain data-limited until file-level historical coverage is proven.
 
 Next research work stays on source fidelity and coverage validation, not performance tuning.
+
+
+## 2026-09-25 — Phase 29.1 completed
+
+Phase 29.1 run 36133844640 completed successfully after correcting E0252 (HF repo ID encoding), E0253 (non-recursive tree metadata), E0254 (parquet-aware unit-test fixtures), E0255 (fragile raw HF tree parser), and E0256 (classifier still reading the retired file_count field). The final audit uses pinned TradeMarkk revision 51ca58c and Rissin revision 78b1c5468255d18cf492984bfe6fe4e3ac874d7c through the official Hugging Face Python client. It verified actual Parquet partitions rather than directory metadata. The 71-row candidate registry resolves to 51 preliminary-feasible index families, 16 data-limited families and 4 unresolved families. No candidate is promoted to numerical backtesting because bid/ask verification, strategy-specific quote completeness and full historical lot-size validation remain incomplete. Phase 30 remains BLOCKED.
+
+### Phase 29.1 evidence
+- Workflow: 36133844640
+- Candidate registry: 71 rows
+- Actual pinned Parquet coverage: TradeMarkk NIFTY 267 expiry files, BANKNIFTY 61, SENSEX 144; TradeMarkk stock-options 2,638 files.
+- Rissin pinned tree: 51 Parquet files total; Upstox NIFTY 4, BANKNIFTY 3, SENSEX 3; historical NIFTY 14 and BANKNIFTY 22.
+- Preliminary feasibility classification: 51 index-family candidates; data-limited 16; unresolved 4.
+- Numerical backtest gate: BLOCKED. Bid/ask verified = 0; strategy-specific quote completeness = 0; full historical lot-size verification = 0.
