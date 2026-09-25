@@ -437,3 +437,11 @@ No Equity Income backtest is being accepted yet. The next step is timestamped tr
 Phase 29 run 36132032411 completed successfully. The 71 Equity Income candidate members split into 51 preliminary index-option-feasible, 16 data-limited, and 4 unresolved mappings. No member is backtest-eligible because strategy-specific quote completeness and historical lot-size validation remain outstanding.
 
 Current research focus remains source-faithful rule reconstruction plus per-family data validation; no performance tuning is being used to fill unresolved rules.
+
+## 2026-09-25 — Phase 27.2 reconstruction-priority result
+
+Clean idempotent run **36132902868** completed all gates.
+
+Evidence-completeness prioritization now identifies **8 T1**, **10 T2**, and **53 T3** candidates out of 71. This is an evidence-quality triage only; it is not a performance ranking and **0 candidates are backtest-eligible**.
+
+The T1 set is the next source-fidelity reconstruction workload. Four T1/near-T1 candidates already have independent YouTube-description evidence cached in the repository; exact source rules remain transcript-dependent.
