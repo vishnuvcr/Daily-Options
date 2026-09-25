@@ -1,2 +1,2 @@
 run Phase 29.2 contract coverage audit
-triggered after persisted gate diagnostics correction
+triggered after standalone gate validator correction
