@@ -9,7 +9,7 @@ on:
       - "research/phase30_weekly_iron_dome.py"
       - "tests/test_phase30_weekly_iron_dome.py"
       - ".github/workflows/phase-30-equity-income-weekly-backtest-v3.yml"
-      - ".github/phase30-run.txt"
+
 permissions:
   contents: write
 
