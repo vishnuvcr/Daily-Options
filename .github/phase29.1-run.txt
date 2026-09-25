@@ -1,2 +1,2 @@
 run Phase 29.1 readiness audit
-triggered after official HfApi tree-client correction
+triggered after parquet classification binding correction
