@@ -392,3 +392,16 @@ The source evidence now supports a **provisional** weekly Iron Fly/Iron Dome rec
 ### Next phase
 
 Phase 29.4 will freeze a pre-registered **variant matrix** for the remaining source ambiguities instead of silently choosing one interpretation. Candidate dimensions are entry timing, the formal definition of the 60% trigger, first/second adjustment strike movement, and exit convention. Variants will be evaluated with historical lot-size rules and full transaction-cost/slippage modelling before any candidate is allowed into walk-forward testing.
+
+
+## Research frontier — 2026-09-25 — Equity Income / Iron Dome
+
+The current Equity Income research frontier is **Phase 29.4: NIFTY Iron Dome source-fidelity reconstruction**. Phase 29.1 established source/data feasibility, Phase 29.2 established strict contract-content readiness for the two duplicated Iron Dome candidates, and Phase 29.3 programmatically acquired and content-checked both source videos plus seven relevant pinned NIFTY expiry partitions. Phase 29.4 then converted the source captions into a structured rule-fact ledger.
+
+The current evidence supports a weekly NIFTY Iron Fly / Iron Dome family with two adjustments and a source-described 60% adjustment mark. The source also contains a 200-point balanced-wing illustration and directional/deeper-ITM adjustment examples. The exact mathematical meaning of the 60% trigger, initial entry clock, precise leg movements, universal wing width, lot ratio and hard exit remain unresolved, so **no numerical backtest has been accepted and Phase 30 remains blocked**.
+
+NIFTY weekly options currently expire on Tuesday; NSE moved the weekly expiry from Thursday to Tuesday effective September 2025. The April/May 2026 Iron Dome videos are therefore already in the Tuesday-expiry regime and should not be shifted back to Thursday-based day labels. Current NIFTY weekly/monthly strikes use a 50-point interval. The October 2025 NSE lot-size revision set NIFTY's revised market lot at 65, with the existing weekly/monthly lot continuing through the December 30, 2025 expiry; the Phase 29.5 contract-readiness work will therefore use date-specific lot files rather than a hard-coded lot size.
+
+**Next bounded phase: Phase 29.5 — source-fidelity formalization + contract/lot readiness.** It will freeze a small, preregistered set of source-anchored interpretations, verify dated Tuesday-expiry/lot mapping, and only then open the numerical Phase 30 weekly backtest with Paytm Money/NSE costs and Base/Stress slippage.
+
+[Research status](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md) · [Phase 29.4 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-29.4-equity-income-iron-dome-rule-reconstruction-v1/docs/phase29.4_iron_dome_rule_reconstruction_plan.md)
