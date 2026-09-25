@@ -73,7 +73,6 @@ def main() -> int:
             "rationale":rationale,
             "backtest_allowed":"NO",
         })
-    ]
     out=Path("reports/phase29_data_feasibility.csv")
     out.parent.mkdir(parents=True,exist_ok=True)
     with out.open("w",encoding="utf-8",newline="") as fh:
