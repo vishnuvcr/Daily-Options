@@ -1,4 +1,4 @@
-from scripts.archive_equity_income import normalize_snippets, parse_vtt, parse_innertube_json3, sha256_bytes
+from scripts.archive_equity_income import normalize_snippets, parse_vtt, parse_innertube_json3, parse_timestamped_markdown, sha256_bytes
 from scripts.archive_equity_income_keyless import hybrid_decrypt, hybrid_encrypt
 
 def test_normalize_snippets_collapses_duplicate_caption():
@@ -59,4 +59,17 @@ def test_parse_innertube_json3():
     assert out == [
         {"start": 1.25, "duration": 0.5, "text": "Hello world"},
         {"start": 2.0, "duration": 0.5, "text": "ignored"},
+    ]
+
+
+def test_parse_timestamped_markdown():
+    text = """Language: en
+
+[0:00] Hello world
+[1:02] Second line
+"""
+    out = parse_timestamped_markdown(text)
+    assert out == [
+        {"start": 0.0, "duration": 0.0, "text": "Hello world"},
+        {"start": 62.0, "duration": 0.0, "text": "Second line"},
     ]
