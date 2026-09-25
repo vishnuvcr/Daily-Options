@@ -1,4 +1,5 @@
 name: Equity Income - weekly channel archive
+# Keyless archive syntax corrected on 2026-09-25
 
 on:
   workflow_dispatch:
