@@ -340,3 +340,11 @@ Trading tests are paused by user request. A dedicated fixed branch, equity-incom
 The new research target is weekly trading with a minimum ₹5,000 net per traded week at fixed reference sizing. Every distinct strategy described by the channel will be reconstructed, deduplicated, tested with realistic Paytm Money/NSE costs and Base/Stress slippage, then subjected to WFA/OOS and later-period validation before promotion.
 
 Archive completion is blocked only on configuring the repository secret EQUITY_INCOME_ARCHIVE_KEY before the encrypted transcript workflow is run. No trading backtest is launched from this branch.
+
+## 2026-09-25 — Phase 26 active: complete channel inventory
+
+Archive completion is confirmed: 169/169 transcripts encrypted and integrity-verified. Phase 26 is now the active Equity Income research phase.
+
+Current phase objective: deterministic inventory of all 169 uploads, transcript status, title-family hints, duplicate title groups and candidate registry. No backtesting is permitted in Phase 26.
+
+Next promotion gate: Phase 26 output must contain 169 rows with VERIFIED transcript integrity and a frozen candidate registry. Phase 27 then reconstructs economically material rules from the archived source captions.
