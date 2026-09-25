@@ -420,3 +420,24 @@ Still unresolved before numerical testing:
 ## Current research frontier — Phase 29.5
 
 The next bounded phase is **source-fidelity formalization + contract/lot readiness**, not a free-form parameter search. It will convert the remaining ambiguities into a small preregistered formalization matrix, verify Tuesday-expiry contract/lot rules against the historical dates, and enforce the existing Paytm Money/NSE cost + Base/Stress execution gate before opening numerical testing.
+
+
+## 2026-09-25 — Phase 29.5 completed / Phase 30 active
+
+Phase 29.5 authoritative run **36137187200** completed successfully. The source-anchored Iron Dome formalization matrix is frozen at **12 cells**: 3 entry offsets (T-4/T-3/T-2 sessions) × 2 trigger interpretations × 2 adjustment interpretations. The formalization gate verified the April/May 2026 source dates are in the Tuesday-expiry regime and uses date-specific NIFTY lot logic; no P&L was produced.
+
+### Phase 30 current execution
+
+Current authoritative run: **36138255062** on branch `phase-30-equity-income-weekly-backtest-v2`.
+
+- Unit tests: **PASSED**
+- Base: **in progress — exact-expiry cache acquisition**
+- Stress: **in progress — exact-expiry cache acquisition**
+- Exact-expiry pinned source: TradeMarkk revision `51ca58c`
+- Cache acquisition currently fetching **268 NIFTY expiry Parquet files**
+- Numerical backtest stage has **not yet started** in the current run.
+- **No P&L is accepted yet.**
+
+Runs 36137605517, 36137711599 and 36137888638 were rejected as non-evidentiary implementation failures (E0270–E0272). Their failures did not change any strategy parameter.
+
+Phase 30 remains governed by the frozen 12-cell definition, Paytm Money/NSE costs, Base/Stress slippage, date-valid NIFTY lots and information-barrier controls. The weekly target gate is evaluated only after both friction runs complete.
