@@ -1,2 +1,2 @@
 run Phase 29.2 contract coverage audit
-triggered after standalone gate validator correction
+final rerun after E0264 JSON newline correction
