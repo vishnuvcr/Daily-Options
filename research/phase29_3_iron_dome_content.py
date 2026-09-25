@@ -622,7 +622,7 @@ def main() -> int:
             content_checks.append(inspect_one(cand["path"]))
 
     Path("reports/phase29_3_expiry_content_checks.json").write_text(
-        json.dumps({"checks": content_checks}, indent=2) + "\n",
+        json.dumps({"checks": content_checks}, indent=2, default=str) + "\n",
         encoding="utf-8",
     )
 
