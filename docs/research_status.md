@@ -431,3 +431,9 @@ Phase 26 inventory passed with 169/169 verified transcripts. Phase 27 run 361304
 The automatic extractor intentionally did not promote any strategy to testing: all 71 candidates still require source-faithful manual reconstruction of economically material entry, adjustment, strike, stop, target and exit rules.
 
 No Equity Income backtest is being accepted yet. The next step is timestamped transcript-context extraction and frozen rule-sheet construction.
+
+## 2026-09-25 — Phase 29 data-feasibility checkpoint
+
+Phase 29 run 36132032411 completed successfully. The 71 Equity Income candidate members split into 51 preliminary index-option-feasible, 16 data-limited, and 4 unresolved mappings. No member is backtest-eligible because strategy-specific quote completeness and historical lot-size validation remain outstanding.
+
+Current research focus remains source-faithful rule reconstruction plus per-family data validation; no performance tuning is being used to fill unresolved rules.
