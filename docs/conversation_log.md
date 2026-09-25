@@ -94,3 +94,14 @@ The prior Phase 13 result was revisited during candidate-audit work. Every trade
 ## 2026-09-25 — Phase 20 final result / Phase 21 launch
 
 Authoritative Phase 20 run 36045068043 completed Base and Stress cleanly. The frozen 384-cell global-gated late-day volatility-acceleration family produced 3,872 trades; best mean active-day net was Rs 481.73 base and Rs 451.73 stress, with 0 target-qualified cells and 0 nested-WFA windows. Phase 20 is retired without retuning. Phase 21 is the active frontier: a preregistered regime switch between long ATM straddles on fixed expansion regimes and short OTM strangles on fixed calm regimes.
+
+
+## 2026-09-25 — Equity Income target change
+
+### User requirement
+For the Equity Income YouTube channel analysis, the prior ₹1,000-per-day objective is dropped. The new aim is **at least ₹5,000 NET per week with consistent trading every week**.
+
+### Research decision
+Rebase the active YouTube promotion gate around completed trading weeks at a fixed, disclosed reference strategy position size. Evaluate mean and median weekly net, profitable-week rate, execution coverage, Base/Stress costs, drawdown and tail risk, nested walk-forward validation and independent later-period OOS.
+
+The old ₹1,000/day criterion remains historical only for pre-YouTube intraday phases. This change does not alter any already-accepted historical result or select parameters from test data.

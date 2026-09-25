@@ -2,8 +2,11 @@
 
 ## 1. Research questions
 
-Primary question:
-Can a reproducible intraday NSE options strategy be identified that, under realistic Paytm Money costs and conservative execution assumptions, produces at least Rs 1,000 net P&L per active lot per trading day on average in a genuinely out-of-sample period?
+### Current Equity Income weekly question
+Can a source-faithful weekly NSE options strategy reconstructed from the Equity Income YouTube archive produce **at least ₹5,000 net per completed trading week** at a fixed declared reference position size, after realistic Paytm Money/NSE costs and conservative Base/Stress execution assumptions, while trading consistently across weeks and surviving untouched walk-forward/out-of-sample validation?
+
+### Legacy intraday question
+The earlier Phase 0–25 program asked whether an intraday strategy could produce at least ₹1,000 net per active lot per trading day. That target remains historical only and is **not** the current promotion criterion for the Equity Income program.
 
 Secondary questions:
 1. Which underlying/expiry regime is most amenable to the target?
@@ -12,7 +15,7 @@ Secondary questions:
 4. How much performance disappears after spread, slippage, delay, brokerage and statutory charges?
 5. Can the strategy survive parameter, regime and cost perturbations?
 
-## 2. Hypotheses
+## 2. Research hypotheses
 
 H1: A regime-conditioned directional signal on the underlying, executed via a liquid option or defined-risk spread, can outperform an unfiltered option-buying baseline.
 
@@ -34,6 +37,21 @@ H5: A strategy that survives realistic costs and walk-forward validation is more
 - Academic 0DTE studies show that option-market structure, gamma and liquidity-provider hedging can affect intraday volatility; this motivates gamma/flow regime tests.
 
 ## 4. Scientific methodology
+
+### Current weekly economic target and consistency gate
+
+For Equity Income strategies, the primary economic unit is a fixed, declared **reference strategy position** because the source may specify four-leg or ratio structures rather than a single option lot.
+
+Promotion target for a frozen strategy on untouched OOS weeks:
+- mean weekly net P&L ≥ ₹5,000;
+- median weekly net P&L ≥ ₹5,000;
+- ≥70% of eligible OOS weeks net-positive;
+- ≥80% of eligible OOS weeks executed, unless the source rule itself explicitly defines a no-trade week;
+- Base and doubled-slippage Stress both reported;
+- no test-period parameter selection;
+- weekly worst loss, drawdown, expected shortfall/CVaR, profit factor and concentration reported.
+
+The ₹5,000 threshold is evaluated **after** Paytm Money brokerage, date-aware NSE/statutory charges and the registered slippage model. Hidden scaling, selective week omission and lot-size cherry-picking are prohibited.
 
 ### Universe
 Primary: liquid NSE index options. Secondary: liquid stock/index options when reliable historical contract-level intraday data are available.
@@ -101,6 +119,20 @@ E. Hybrid/regime-conditioned:
 
 ## 6. Phase gates
 
+For the current Equity Income weekly program:
+
+**Phase 26:** Python-only archive completeness and transcript-integrity gate.
+
+**Phase 27–29:** source-rule reconstruction, data readiness, exact-expiry contract coverage and evidence-quality gates. No P&L accepted while material entry/adjustment/exit fields remain unresolved.
+
+**Phase 29.5:** freeze a bounded, source-anchored interpretation matrix; verify date-specific expiry/lot mappings; verify mandatory contract-leg coverage; freeze the execution/cost model. No P&L.
+
+**Phase 30:** run the frozen weekly candidates with Base/Stress friction, then nested WFA and independent later-period OOS. Primary target is ₹5,000 net per completed trading week at the declared reference size.
+
+**Phase 31+:** only after a weekly candidate survives Phase 30 should robustness, paper/shadow execution and final-manuscript promotion be opened. Any new source-faithful family gets its own branch and preregistered grid.
+
+Legacy Phase 1–7 gates below are retained for audit continuity.
+
 Phase 1:
 Coverage, timestamps, contract identity, expiry/strike/lot-size integrity, duplicates, missingness and liquidity checks pass.
 
@@ -124,7 +156,15 @@ Complete manuscript with methods, provenance, results, uncertainty, limitations 
 
 ## 7. Continue/stop logic
 
-The search is open-ended within the scientific phases but not unbounded. A research family is retired after repeated OOS/cost/robustness failure. A new branch is created for a materially new hypothesis. The program terminates with either a strategy that clears promotion gates or a reproducible negative/near-miss result plus the highest-value next hypothesis.
+The Equity Income search is bounded by the phase plan and does not revert to the old ₹1,000/day rule.
+
+A candidate family is retired after repeated OOS/cost/robustness failure. A materially new source-faithful mechanism becomes a new branch with a frozen hypothesis grid. No weekly candidate is promoted from a raw leaderboard alone.
+
+The search terminates when a candidate either:
+1. clears the ₹5,000/week economic and consistency gate plus robustness/OOS requirements; or
+2. reaches the end of the defined Equity Income phases with a reproducible negative/near-miss result and a documented next research direction.
+
+The program must not tune endlessly toward a weekly target. A research family is retired after repeated OOS/cost/robustness failure. A new branch is created for a materially new hypothesis. The program terminates with either a strategy that clears promotion gates or a reproducible negative/near-miss result plus the highest-value next hypothesis.
 
 ## 8. Final deliverables
 

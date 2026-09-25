@@ -1,9 +1,25 @@
 # Research Status
 
-Last updated: 2026-09-23
+Last updated: 2026-09-25
 
 ## Overall
-Phase 0 — BOOTSTRAPPED
+**Phase 29.4 — Equity Income / NIFTY Iron Dome source-fidelity reconstruction**
+
+## Current research objective — 2026-09-25
+The active YouTube/Equity Income program has replaced the former ₹1,000/active-lot/day intraday stopping rule with a **₹5,000 NET per completed trading week** objective at a fixed declared reference strategy position size.
+
+The active consistency gate is:
+- mean weekly net ≥ ₹5,000 on untouched OOS weeks;
+- median weekly net ≥ ₹5,000;
+- ≥70% of eligible OOS weeks net-positive;
+- ≥80% of eligible OOS weeks executed unless a source-frozen no-trade rule applies;
+- Base and doubled-slippage Stress both disclosed;
+- weekly drawdown/worst week/expected shortfall/CVaR/profit factor and concentration reported.
+
+The old ₹1,000/day threshold remains historical for Phases 0–25 and must not be used for Phase 29.5/30 decisions.
+
+## Current blocker
+Phase 29.4/29.5 source-fidelity and contract readiness must finish before any weekly P&L is accepted. The Iron Dome formalization branch already contains the bounded 12-cell matrix; Phase 30 remains blocked until its contract/lot and execution-cost gates pass.
 
 ## Step log
 
@@ -451,3 +467,14 @@ The T1 set is the next source-fidelity reconstruction workload. Four T1/near-T1 
 Phase 27.4 run 36133569295 succeeded for all 8 T1 candidates. The parser now rejects clock-as-ratio/lot false positives, but **8/8 T1 records still contain at least one conflicting material rule field**. Therefore no T1 strategy is yet backtest-ready.
 
 Next: frozen T1 source-resolution matrix and conflict reconciliation. Backtesting remains blocked until entry, strike, adjustment, stop/target, exit and contract-timing fields are source-resolved.
+
+## 2026-09-25 — Target realignment for Equity Income YouTube research
+
+User instruction: drop the former ₹1,000/day criterion for the YouTube-channel analysis and pursue at least ₹5,000 net per week with consistent weekly execution.
+
+Research decision:
+- Weekly target is measured at a fixed declared reference strategy position size, not by silently multiplying lots.
+- Primary OOS economic targets are mean weekly net ≥ ₹5,000 and median weekly net ≥ ₹5,000.
+- Consistency is measured with ≥70% positive eligible OOS weeks and ≥80% execution coverage unless the source rule explicitly defines a no-trade week.
+- Paytm Money/NSE costs, date-specific lot sizes, Base/Stress slippage, WFA and later-period OOS remain mandatory.
+- No existing Phase 29.4 source evidence or P&L conclusion is changed by this target update.
