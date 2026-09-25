@@ -292,3 +292,11 @@ Phase 29 launcher run **36132032411** completed. Of 71 candidate family members,
 Current research remains on source-fidelity reconstruction and coverage validation before weekly numerical testing.
 
 [Phase 29 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-29-equity-income-data-feasibility-v1/docs/phase29_plan.md) · [Phase 29 report](https://github.com/vishnuvcr/Daily-Options/blob/phase-29-equity-income-data-feasibility-v1/reports/phase29_data_feasibility.csv)
+
+## 2026-09-25 — Phase 27.1 / 27.2 source-fidelity continuation
+
+Phase 27.1 context-aware evidence extraction completed for all 71 strategy candidates with zero acquisition errors. It now retains structured facts with source timestamps rather than flattening transcript context.
+
+Phase 27.2 then produced an evidence-completeness triage of **8 T1 / 10 T2 / 53 T3** candidates. This is only a reconstruction-priority metric; **no backtesting is permitted yet**.
+
+The next step is frozen rule-sheet reconstruction of the highest-information T1 candidates, with external YouTube-description evidence used only as corroboration; the archived source captions remain primary.
