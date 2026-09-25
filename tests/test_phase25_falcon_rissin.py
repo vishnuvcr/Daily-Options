@@ -46,8 +46,12 @@ def test_target_strike_is_scalar_safe():
     assert float(row["strike"]) == 24000.0
 
 
-def test_src_quotes_both_parquet_paths():
-    s = m.src(Path('/tmp/phase25'))
+def test_src_quotes_both_parquet_paths(tmp_path):
+    root = tmp_path / 'upstox_intraday' / 'NIFTY'
+    root.mkdir(parents=True)
+    (root / 'NIFTY_2024.parquet').touch()
+    (root / 'NIFTY_2025.parquet').touch()
+    s = m.src(tmp_path)
     assert "NIFTY_2024.parquet'" in s
     assert "NIFTY_2025.parquet'" in s
     assert s.count("'") >= 4
