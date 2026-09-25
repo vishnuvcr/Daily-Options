@@ -1,0 +1,90 @@
+name: Phase 30.2 - Equity Income Falcon weekly independent replication
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/phase30-2-run.txt'
+      - 'research/phase30_2_falcon_weekly.py'
+      - 'tests/test_phase30_2_falcon_weekly.py'
+      - 'docs/phase30_2_falcon_weekly_plan.md'
+      - '.github/workflows/phase-30.2-falcon-weekly.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase30-2-falcon-weekly-v1
+  cancel-in-progress: true
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        friction: [base, stress]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install --disable-pip-version-check pandas numpy duckdb pyarrow pytest huggingface_hub
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_phase30_2_falcon_weekly.py
+      - name: Cache Rissin NIFTY data
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase30_2_rissin
+          key: phase30-2-rissin-nifty-runtime-resolved-v1
+      - name: Resolve and acquire exact Rissin NIFTY files
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase30_2_rissin
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          from huggingface_hub import HfApi, hf_hub_download
+          repo_id='rissin/nse-options-intraday'
+          info=HfApi().dataset_info(repo_id, repo_type='dataset')
+          sha=info.sha
+          out=Path('data/cache/phase30_2_rissin')
+          out.mkdir(parents=True,exist_ok=True)
+          for year in ('2025','2026'):
+              p=hf_hub_download(repo_id=repo_id,filename=f'upstox_intraday/NIFTY/NIFTY_{year}.parquet',repo_type='dataset',revision=sha,local_dir=str(out),local_dir_use_symlinks=False)
+              target=out/f'NIFTY_{year}.parquet'
+              Path(p).replace(target) if Path(p) != target else None
+          (out/'source_manifest.json').write_text(json.dumps({'repo':repo_id,'revision':sha,'files':['NIFTY_2025.parquet','NIFTY_2026.parquet']},indent=2)+'\n')
+          PY
+          test -s data/cache/phase30_2_rissin/NIFTY_2025.parquet
+          test -s data/cache/phase30_2_rissin/NIFTY_2026.parquet
+      - name: Run friction
+        env:
+          SLIP: ${{ matrix.friction == 'base' && '0.20' || '0.40' }}
+          BROKERAGE: '10.0'
+          LABEL: ${{ matrix.friction }}
+        run: |
+          PYTHONPATH=. python -m research.phase30_2_falcon_weekly --data data/cache/phase30_2_rissin --out reports/phase30_2_${LABEL} --slippage "${SLIP}" --brokerage "${BROKERAGE}"
+      - name: Persist results
+        if: always()
+        run: |
+          if [ -d reports/phase30_2_${LABEL} ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -f reports/phase30_2_${LABEL} data/cache/phase30_2_rissin/source_manifest.json
+            if ! git diff --cached --quiet; then
+              git commit -m "Phase 30.2: persist Falcon ${LABEL} results"
+              git push origin HEAD:"${GITHUB_REF_NAME}"
+            fi
+          fi
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase30-2-falcon-${{ matrix.friction }}
+          path: reports/phase30_2_${{ matrix.friction }}/
