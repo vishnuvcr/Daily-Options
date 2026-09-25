@@ -1,0 +1,37 @@
+{
+  "status": "COMPLETE",
+  "slippage": 0.2,
+  "weekly_target": 5000.0,
+  "positive_week_rate_target": 0.7,
+  "execution_coverage_target": 0.8,
+  "cell_count": 12,
+  "eligible_expiry_files": 262,
+  "executable_setup_count": 770,
+  "result_rows": 2328,
+  "preliminary_pass_cells": 6,
+  "best": {
+    "cell_id": "ID30_04_RISK_60_RECENTER_BOTH",
+    "entry_offset": -4,
+    "trigger": "RISK_60",
+    "adjustment": "RECENTER_BOTH",
+    "executed_weeks": 255,
+    "mean_weekly_net": 8202.610590297127,
+    "median_weekly_net": 7670.99947908,
+    "positive_week_rate": 1.0,
+    "total_net": 2091665.7005257674,
+    "worst_week": 3672.167369980001,
+    "executed_week_coverage": 0.9732824427480916,
+    "target_pass_mean": true,
+    "target_pass_median": true,
+    "target_pass_positive_rate": true,
+    "target_pass_execution_coverage": true,
+    "preliminary_pass": true
+  },
+  "coverage": {
+    "eligible_expiry_files": 262,
+    "executable_setup_count": 770,
+    "observed_result_rows": 2328,
+    "data_window_start": "2021-07-01",
+    "data_window_end": "2026-08-04"
+  }
+}
