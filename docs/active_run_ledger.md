@@ -136,3 +136,11 @@ Provisional prior v8 Base audit (run 36153419405): 3,092 unique trade rows, no d
 | 27.6 | phase-27.6-trigger-rerun-20260925 → fixed aRj branch | 36157884412 | Queued | No |
 
 This is source-evidence acquisition only. It cannot promote the aRj strategy to numerical testing by itself.
+
+## 2026-09-25 — Phase 30 v8 final closure
+
+| Phase | Branch | Run | Result | Accepted P&L |
+|---|---|---:|---|---|
+| 30 v8 | phase-30-equity-income-weekly-backtest-v8-state-isolation | 36157105595 | Base + Stress complete; 0/12 cells pass | Yes — negative evidence only |
+
+Frozen family retired. Base and Stress artifacts were independently audited for duplicate setup keys; 0 duplicates. No WFA/OOS branch opened.
