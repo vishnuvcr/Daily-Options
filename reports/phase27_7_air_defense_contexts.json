@@ -770,9 +770,479 @@
           }
         ]
       }
+    ],
+    "hold_duration": [
+      {
+        "anchor_start_ms": 235800,
+        "anchor_text": "duration do we plan to hold the trade?",
+        "context": [
+          {
+            "start_ms": 225040,
+            "text": "So, we going to input here 24110."
+          },
+          {
+            "start_ms": 228320,
+            "text": "India VIX value is 18.85. Is it correct?"
+          },
+          {
+            "start_ms": 231040,
+            "text": "Yes, 18.85. So, this is where we are"
+          },
+          {
+            "start_ms": 233320,
+            "text": "inputting whatever we know. For how much"
+          },
+          {
+            "start_ms": 235800,
+            "text": "duration do we plan to hold the trade?"
+          },
+          {
+            "start_ms": 237560,
+            "text": "That is"
+          },
+          {
+            "start_ms": 238640,
+            "text": "if we are trading weekly, we only have a"
+          },
+          {
+            "start_ms": 240680,
+            "text": "weekend and then 13th it is expiry. It"
+          },
+          {
+            "start_ms": 243600,
+            "text": "will automatically calculate everything"
+          }
+        ]
+      },
+      {
+        "anchor_start_ms": 299600,
+        "anchor_text": "calculation, as per the days to expiry,",
+        "context": [
+          {
+            "start_ms": 285480,
+            "text": "So, the expected range by the decimal is"
+          },
+          {
+            "start_ms": 288880,
+            "text": "1,446.74."
+          },
+          {
+            "start_ms": 292680,
+            "text": "That much of a big range is where Nifty"
+          },
+          {
+            "start_ms": 295920,
+            "text": "is expected to stay as per the VIX"
+          },
+          {
+            "start_ms": 299600,
+            "text": "calculation, as per the days to expiry,"
+          },
+          {
+            "start_ms": 302960,
+            "text": "as per the where the Nifty spot is. In"
+          },
+          {
+            "start_ms": 306560,
+            "text": "other words, it's telling us if I scroll"
+          },
+          {
+            "start_ms": 309080,
+            "text": "down even more,"
+          },
+          {
+            "start_ms": 310600,
+            "text": "outside two sigma range. That means it's"
+          }
+        ]
+      },
+      {
+        "anchor_start_ms": 425400,
+        "anchor_text": ">> versus how many days are there for",
+        "context": [
+          {
+            "start_ms": 415040,
+            "text": "This range, we are not calculating it."
+          },
+          {
+            "start_ms": 418200,
+            "text": "We are not doing hit and trial. This"
+          },
+          {
+            "start_ms": 420920,
+            "text": "formula is designed by India VIX"
+          },
+          {
+            "start_ms": 425099,
+            "text": ">> [snorts]"
+          },
+          {
+            "start_ms": 425400,
+            "text": ">> versus how many days are there for"
+          },
+          {
+            "start_ms": 427880,
+            "text": "expiry. It is important now. Now, I want"
+          },
+          {
+            "start_ms": 430160,
+            "text": "to show you an Upstox. If we sell this,"
+          },
+          {
+            "start_ms": 432560,
+            "text": "then how much of an ROI are we"
+          },
+          {
+            "start_ms": 434360,
+            "text": "expecting? It's going to be interesting,"
+          }
+        ]
+      }
+    ],
+    "expiry_date": [
+      {
+        "anchor_start_ms": 209120,
+        "anchor_text": "date is 10th of April. Expiry date is",
+        "context": [
+          {
+            "start_ms": 199480,
+            "text": "feel about this? So, here we are on the"
+          },
+          {
+            "start_ms": 201720,
+            "text": "Excel. This is not just an Excel, but"
+          },
+          {
+            "start_ms": 203680,
+            "text": "this is your battlefield map. Now, we"
+          },
+          {
+            "start_ms": 206760,
+            "text": "got to input some parameters. Today's"
+          },
+          {
+            "start_ms": 209120,
+            "text": "date is 10th of April. Expiry date is"
+          },
+          {
+            "start_ms": 211840,
+            "text": "13th, so we going to put in here."
+          },
+          {
+            "start_ms": 213560,
+            "text": "Assuming the exit time is"
+          },
+          {
+            "start_ms": 215920,
+            "text": "5 minute before the"
+          },
+          {
+            "start_ms": 218040,
+            "text": "expiry, right? 3:25 p.m. Nifty spot, let"
+          }
+        ]
+      }
+    ],
+    "strike_example": [
+      {
+        "anchor_start_ms": 347760,
+        "anchor_text": "going to tell us which strike we should",
+        "context": [
+          {
+            "start_ms": 337760,
+            "text": "have to go into the formula deep about"
+          },
+          {
+            "start_ms": 339920,
+            "text": "this. All we interested to know about"
+          },
+          {
+            "start_ms": 342480,
+            "text": "what is the expected range of Nifty. We"
+          },
+          {
+            "start_ms": 345600,
+            "text": "just input it and in 2 minutes it's"
+          },
+          {
+            "start_ms": 347760,
+            "text": "going to tell us which strike we should"
+          },
+          {
+            "start_ms": 350840,
+            "text": "look forward to. And we know very well"
+          },
+          {
+            "start_ms": 352720,
+            "text": "what happens if we sell real out of the"
+          },
+          {
+            "start_ms": 354920,
+            "text": "money call, out of the money put. If"
+          },
+          {
+            "start_ms": 356960,
+            "text": "market stays in the range, the theta"
+          }
+        ]
+      },
+      {
+        "anchor_start_ms": 407560,
+        "anchor_text": "if we sell the strike 25,700",
+        "context": [
+          {
+            "start_ms": 398440,
+            "text": "going to give us two sigma, which is"
+          },
+          {
+            "start_ms": 400800,
+            "text": "different. Now, the the range has"
+          },
+          {
+            "start_ms": 402680,
+            "text": "obviously gone bigger. Now, it's telling"
+          },
+          {
+            "start_ms": 405560,
+            "text": "us"
+          },
+          {
+            "start_ms": 407560,
+            "text": "if we sell the strike 25,700"
+          },
+          {
+            "start_ms": 410800,
+            "text": "or above, on the put side 25,550."
+          },
+          {
+            "start_ms": 415040,
+            "text": "This range, we are not calculating it."
+          },
+          {
+            "start_ms": 418200,
+            "text": "We are not doing hit and trial. This"
+          },
+          {
+            "start_ms": 420920,
+            "text": "formula is designed by India VIX"
+          }
+        ]
+      },
+      {
+        "anchor_start_ms": 410800,
+        "anchor_text": "or above, on the put side 25,550.",
+        "context": [
+          {
+            "start_ms": 400800,
+            "text": "different. Now, the the range has"
+          },
+          {
+            "start_ms": 402680,
+            "text": "obviously gone bigger. Now, it's telling"
+          },
+          {
+            "start_ms": 405560,
+            "text": "us"
+          },
+          {
+            "start_ms": 407560,
+            "text": "if we sell the strike 25,700"
+          },
+          {
+            "start_ms": 410800,
+            "text": "or above, on the put side 25,550."
+          },
+          {
+            "start_ms": 415040,
+            "text": "This range, we are not calculating it."
+          },
+          {
+            "start_ms": 418200,
+            "text": "We are not doing hit and trial. This"
+          },
+          {
+            "start_ms": 420920,
+            "text": "formula is designed by India VIX"
+          },
+          {
+            "start_ms": 425099,
+            "text": ">> [snorts]"
+          }
+        ]
+      },
+      {
+        "anchor_start_ms": 556440,
+        "anchor_text": "Number one issue is which strike to sell",
+        "context": [
+          {
+            "start_ms": 547960,
+            "text": "iron condor, modifications of fly. The"
+          },
+          {
+            "start_ms": 551040,
+            "text": "number one issue comes is which strike"
+          },
+          {
+            "start_ms": 552720,
+            "text": "to pick actually. Suppose if I'm doing"
+          },
+          {
+            "start_ms": 554400,
+            "text": "batman tomorrow, example."
+          },
+          {
+            "start_ms": 556440,
+            "text": "Number one issue is which strike to sell"
+          },
+          {
+            "start_ms": 558680,
+            "text": "because option selling is a sweet spot"
+          },
+          {
+            "start_ms": 560960,
+            "text": "between being aggressive and being"
+          },
+          {
+            "start_ms": 562600,
+            "text": "defensive."
+          },
+          {
+            "start_ms": 564000,
+            "text": "If I just pick any random strike, I'm"
+          }
+        ]
+      }
+    ],
+    "range_probability": [
+      {
+        "anchor_start_ms": 273720,
+        "anchor_text": "95.4%",
+        "context": [
+          {
+            "start_ms": 262760,
+            "text": "24,883."
+          },
+          {
+            "start_ms": 265880,
+            "text": "Market currently, as you can see, this"
+          },
+          {
+            "start_ms": 267920,
+            "text": "is around 24,110."
+          },
+          {
+            "start_ms": 270920,
+            "text": "So, the VIX is telling us that there is"
+          },
+          {
+            "start_ms": 273720,
+            "text": "95.4%"
+          },
+          {
+            "start_ms": 276240,
+            "text": "probability that the upper will not"
+          },
+          {
+            "start_ms": 278640,
+            "text": "break and the lower will not break."
+          },
+          {
+            "start_ms": 281080,
+            "text": "Lower is 23,336."
+          },
+          {
+            "start_ms": 285480,
+            "text": "So, the expected range by the decimal is"
+          }
+        ]
+      },
+      {
+        "anchor_start_ms": 276240,
+        "anchor_text": "probability that the upper will not",
+        "context": [
+          {
+            "start_ms": 265880,
+            "text": "Market currently, as you can see, this"
+          },
+          {
+            "start_ms": 267920,
+            "text": "is around 24,110."
+          },
+          {
+            "start_ms": 270920,
+            "text": "So, the VIX is telling us that there is"
+          },
+          {
+            "start_ms": 273720,
+            "text": "95.4%"
+          },
+          {
+            "start_ms": 276240,
+            "text": "probability that the upper will not"
+          },
+          {
+            "start_ms": 278640,
+            "text": "break and the lower will not break."
+          },
+          {
+            "start_ms": 281080,
+            "text": "Lower is 23,336."
+          },
+          {
+            "start_ms": 285480,
+            "text": "So, the expected range by the decimal is"
+          },
+          {
+            "start_ms": 288880,
+            "text": "1,446.74."
+          }
+        ]
+      },
+      {
+        "anchor_start_ms": 278640,
+        "anchor_text": "break and the lower will not break.",
+        "context": [
+          {
+            "start_ms": 267920,
+            "text": "is around 24,110."
+          },
+          {
+            "start_ms": 270920,
+            "text": "So, the VIX is telling us that there is"
+          },
+          {
+            "start_ms": 273720,
+            "text": "95.4%"
+          },
+          {
+            "start_ms": 276240,
+            "text": "probability that the upper will not"
+          },
+          {
+            "start_ms": 278640,
+            "text": "break and the lower will not break."
+          },
+          {
+            "start_ms": 281080,
+            "text": "Lower is 23,336."
+          },
+          {
+            "start_ms": 285480,
+            "text": "So, the expected range by the decimal is"
+          },
+          {
+            "start_ms": 288880,
+            "text": "1,446.74."
+          },
+          {
+            "start_ms": 292680,
+            "text": "That much of a big range is where Nifty"
+          }
+        ]
+      }
     ]
   },
   "source_url": "https://www.youtube.com/watch?v=aRjY_O6U3nQ",
   "backtest_allowed": false,
-  "retrieved_at_utc": "2026-09-25T16:02:04Z"
+  "retrieved_at_utc": "2026-09-25T16:03:58Z"
 }
