@@ -18,6 +18,9 @@ ADJUSTMENTS = ("RECENTER_BOTH", "ONE_STRIKE_INSIDE")
 WING_POINTS = 200
 STRIKE_INTERVAL = 50
 LOT_RATIO = (1, 1, 1, 1)
+WEEKLY_NET_TARGET = 5000
+POSITIVE_WEEK_RATE_TARGET = 0.70
+EXECUTED_WEEK_COVERAGE_TARGET = 0.80
 
 
 def lot_size(expiry: date) -> int:
@@ -79,6 +82,9 @@ def main() -> int:
         "formalization_cells": matrix,
         "cell_count": len(matrix),
         "contract_checks": contract_checks,
+        "weekly_economic_target_net": WEEKLY_NET_TARGET,
+        "weekly_positive_rate_target": POSITIVE_WEEK_RATE_TARGET,
+        "weekly_execution_coverage_target": EXECUTED_WEEK_COVERAGE_TARGET,
         "numerical_backtest_allowed": 0,
         "phase30_gate": "BLOCKED",
         "gate_reason": [
