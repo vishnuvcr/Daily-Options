@@ -370,3 +370,26 @@ Run **36123998811** produced the first partial transcript success: **1/169** vid
 The latest canonical archive snapshot currently records **169 discovered videos, 0 archived, 169 transcript errors** because the next run's new fallbacks were added after that snapshot. The next run will test the new acquisition ladder, now including curated Invidious caption APIs and a no-key transcript proxy, while retaining direct yt-dlp/PO-token, YouTube Transcript API, InnerTube and timedtext paths.
 
 No trading/backtest phase has started; Phase 26 remains metadata-only until transcript acquisition is adequately resolved.
+
+## 2026-09-25 — Equity Income archive continuation after 169 transcript failures
+
+The latest completed archive snapshot established a stable 169-video inventory but 0 validated transcripts. All 169 transcript attempts were rejected by the GitHub runner's YouTube anti-bot layer; no transcript text was accepted as evidence.
+
+The fixed archive branch equity-income-channel-archive-v1 has now been hardened with a single bounded Python acquisition ladder:
+- PO-token-aware yt-dlp clients using the pinned bgutil provider;
+- additional TV/embedded/VR client paths;
+- youtube-transcript-api;
+- direct InnerTube caption tracks;
+- direct timedtext;
+- one no-key third-party transcript endpoint as a last resort, with explicit provenance.
+
+A regression test covers the timestamped fallback parser. Partial encrypted successes remain resumable and are committed even when the full-channel pass is incomplete.
+
+Latest archive code commits:
+- c644494194672a08f11c27822b8d81c099305fc8 — transcript acquisition ladder hardening
+- 0e1bbf61ef1b354743eefcfe6cc7b2d66f4f69b0 — fallback parser regression test
+- e1e5284dd4eed5af0b22b5a097919cd6659a87bd — bounded third-party fallback
+- 524168276d4c7da28fc3ad0beef1674048224249 — fixed-branch manual workflow hardening
+- 55e2e893a0bc3992a5395c3db14e130b0e2243f0 — archive status checkpoint
+
+Trading/strategy testing remains PAUSED until the archive completion gate is passed. No transcript-derived strategy interpretation is promoted from the pre-archive catalogue.
