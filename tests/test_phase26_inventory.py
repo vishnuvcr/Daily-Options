@@ -25,7 +25,7 @@ def test_inventory_fixture_schema(tmp_path: Path):
         encoding="utf-8",
     )
     (root / "transcript_manifest.jsonl").write_text(
-        json.dumps({"video_id": "abc123", "status": "error", "error": "TEST"}) + "\n",
+        json.dumps({"video_id": "abc123", "status": "archived", "method": "youtubegpt-json", "snippet_count": 5}) + "\n",
         encoding="utf-8",
     )
 
@@ -40,4 +40,15 @@ def test_inventory_fixture_schema(tmp_path: Path):
 
     snapshot = json.loads((root / "inventory_snapshot.json").read_text(encoding="utf-8"))
     assert snapshot["videos"] == 1
-    assert snapshot["transcript_status_counts"]["error"] == 1
+    assert snapshot["transcript_status_counts"]["archived"] == 1
+    assert snapshot["transcript_verified"] == 1
+
+
+
+def test_complete_archive_gate():
+    videos = [{"video_id": "a", "title": "Iron Condor Strategy"}]
+    tx = [{"video_id": "a", "status": "archived", "method": "youtubegpt-json", "snippet_count": 4}]
+    rows = build_rows(videos, tx)
+    assert len(rows) == 1
+    assert rows[0]["transcript_integrity"] == "VERIFIED"
+    assert rows[0]["source_fidelity"] == "UNRESOLVED"
