@@ -117,7 +117,7 @@ def expiry_setups(sessions, expiries):
     return out
 
 
-def load_snapshot(con, root, entry_date, near_expiry, far_expiry, ts, fill_ts):
+def load_snapshot_window(con, root, entry_date, near_expiry, far_expiry, signal_times):
     path = glob_expr(root)
     q = f"""
     SELECT CAST(timestamp AS TIMESTAMP) AS ts,
