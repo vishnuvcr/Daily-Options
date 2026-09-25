@@ -24,8 +24,8 @@ The Python archive program:
 6. Falls back to subtitle tracks exposed by yt-dlp.
 7. Preserves timestamps and transcript provenance.
 8. SHA-256 hashes the exact plaintext transcript payload.
-9. Encrypts the payload with Fernet in the public repository workflow.
-10. Validates the stored ciphertext and recovered plaintext hash after the run.
+9. Encrypts the payload with a random Fernet data key and wraps that key with the committed RSA-OAEP public key (hybrid encryption).
+10. Validates the stored ciphertext envelope and SHA-256 ciphertext hash after the run.
 11. Maintains resumable JSONL manifests.
 
 The current transcript API documents direct transcript fetching and transcript-list inspection, while yt-dlp supports flat playlist extraction for channel discovery. citeturn256822search1turn256822search0
@@ -39,15 +39,20 @@ The current transcript API documents direct transcript fetching and transcript-l
 
 The versions were frozen for reproducibility against current package releases. citeturn291056search1turn256822search1turn791995search0
 
-## Secret setup
+## Keyless encryption design
 
-Generate a key once:
+No GitHub repository secret is required.
 
-python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+- The repository contains only the RSA public key at `config/equity_income_archive_public_key.pem`.
+- Each transcript gets a fresh Fernet data key.
+- The transcript is encrypted with that data key.
+- The data key is wrapped with RSA-OAEP-SHA256 using the committed public key.
+- GitHub Actions can encrypt but cannot decrypt.
+- The matching RSA private key is stored outside GitHub and is used only by the local decrypt utility.
+- The private key must never be committed to the repository.
+- The local utility is `scripts/decrypt_equity_income_transcript.py`.
 
-Store it as the GitHub repository secret EQUITY_INCOME_ARCHIVE_KEY.
-
-Never commit the key.
+The ciphertext is authenticated by Fernet, and the archive records SHA-256 hashes for both plaintext provenance and ciphertext integrity.
 
 ## Completion criteria
 
@@ -63,4 +68,11 @@ The archive phase is complete only when:
 
 ## Fixed-branch rule
 
-equity-income-channel-archive-v1 is a dedicated acquisition/data branch. Strategy testing stays paused while this branch is being completed.
+equity-income-channel-archive-v2-hybrid-keyless is the keyless acquisition/data branch. The earlier v1 Fernet-secret design is retained as audit history. Strategy testing stays paused while this branch is being completed.
+
+
+## Key management checkpoint — 2026-09-25
+
+The keyless implementation removes the GitHub secret blocker. The public key is repository-visible; the private key is intentionally kept outside the repository. Permanent archive activation still requires preserving that private key securely.
+
+GitHub Actions scheduled workflows only run from the repository default branch, so the automatic weekly schedule must be mirrored on `main` while the transcript data continues to live on the dedicated archive branch. citeturn445342search0turn445342search1
