@@ -112,3 +112,12 @@ These are the first runs using exact branch-parent construction after E0078. No 
 | 11 v5e | phase-11-breakout-pullback-oi-v5e-authoritative | 35978104824 | 107563265459 | Tests/data passed; Base friction in progress | No |
 
 This is the sole authoritative Phase 11 execution at this checkpoint. No competing Phase 11 run should be started unless this run fails for infrastructure or engineering reasons.
+
+
+## 2026-09-25 — Phase 30 v8 execution handoff
+
+| Phase | Execution branch | Workflow run | Status | Accepted P&L |
+|---|---|---:|---|---|
+| 30 v8 | phase-30-equity-income-weekly-backtest-v8-state-isolation | pending | Triggering controlled run after state-isolation tests | No |
+
+v8 is the sole authoritative Phase 30 execution. The frozen 12-cell grid and economic/cost model are unchanged. WFA/OOS remains blocked until Base and Stress complete and pass the numerical audit.
