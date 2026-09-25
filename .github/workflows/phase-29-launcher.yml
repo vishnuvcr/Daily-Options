@@ -1,0 +1,68 @@
+name: Phase 29 - launcher
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/phase29-launch-trigger.txt"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase29-equity-income-launcher
+  cancel-in-progress: true
+
+jobs:
+  feasibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout Phase 29 branch
+        uses: actions/checkout@v4
+        with:
+          ref: phase-29-equity-income-data-feasibility-v1
+          fetch-depth: 0
+
+      - name: Sync Phase 28 family clusters
+        run: |
+          set -euo pipefail
+          git fetch origin phase-28-equity-income-dedup-v1
+          git restore --source=origin/phase-28-equity-income-dedup-v1 -- data/equity_income/strategy_families.csv
+          test -s data/equity_income/strategy_families.csv
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install test tooling
+        run: python -m pip install pytest==8.4.2
+
+      - name: Unit tests
+        run: python -m pytest -q tests/test_phase29_feasibility.py
+
+      - name: Build feasibility report
+        run: python research/phase29_feasibility.py
+
+      - name: Validate outputs
+        run: |
+          python - <<'PY'
+          import csv, json
+          s=json.load(open("reports/phase29_summary.json"))
+          rows=list(csv.DictReader(open("reports/phase29_data_feasibility.csv", newline="", encoding="utf-8")))
+          assert len(rows)==71
+          assert s["backtest_allowed"]==0
+          assert all(r["backtest_allowed"]=="NO" for r in rows)
+          print(json.dumps(s, indent=2))
+          PY
+
+      - name: Persist report
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/phase29_data_feasibility.csv reports/phase29_summary.json data/equity_income/phase29_source_manifest.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Phase 29: persist data feasibility report"
+          git push origin HEAD:phase-29-equity-income-data-feasibility-v1
