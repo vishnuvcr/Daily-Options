@@ -46,14 +46,14 @@ def pick(segs, patterns, value_pattern=None, limit=20):
 def main():
     segs=fetch_segments()
     facts={
-      'expiry_day_context':pick(segs,[r'\bexpiry day\b',r'\bweekly expiry\b',r'\bexpiry-day\b']),
-      'entry_context':pick(segs,[r'\b(?:entry|enter|start the trade|take the trade)\b[^.!?]{0,120}',r'\b(?:sell|short)\b[^.!?]{0,120}\b(?:strangle|call|put|option)\b']),
+      'expiry_day_context':pick(segs,[r'\bexpiry day\b',r'\bweekly expiry\b',r'\bexpiry-day\b',r'\b(?:on|during)\s+(?:monday|tuesday|wednesday|thursday|friday)\b[^.!?]{0,50}\bexpiry\b']),
+      'entry_context':pick(segs,[r'\b(?:entry|enter|start the trade|take the trade)\b[^.!?]{0,160}',r'\b(?:sell|short)\b[^.!?]{0,160}\b(?:strangle|call|put|option)\b',r'\b(?:monday|tuesday|wednesday|thursday|friday)\b[^.!?]{0,100}\b(?:enter|entry|trade|sell|short)\b']),
       'expiry_timing':pick(segs,[r'\b\d+\s*minutes?\s*(?:before|to)\s*(?:expiry|expiration)\b',r'\b\d{1,2}:\d{2}\s*(?:am|pm)?\b[^.!?]{0,80}(?:expiry|exit|close)']),
       'delta':pick(segs,[r'\b(0?\.\d+|\d+(?:\.\d+)?)\s*(?:delta|Δ)\b'],limit=20),
       'strike':pick(segs,[r'\b(?:out of the money|OTM|ATM|at the money)\b',r'\bone strike\b',r'\bshort strike\b',r'\bshort strikes\b']),
       'adjustment_trigger':pick(segs,[r'\b(?:adjust|adjustment)\b[^.!?]{0,120}',r'\b(?:when price|price)\b[^.!?]{0,120}\b(?:short strike|short strikes|approach|near)\b']),
       'adjustment_action':pick(segs,[r'\b(?:add|hedge|move|roll|widen|narrow)\b[^.!?]{0,100}']),
-      'stop':pick(segs,[r'\b(?:stop loss|stop-loss|hard stop|soft stop|SL)\b[^.!?]{0,120}',r'\b(?:loss)\b[^.!?]{0,60}\b(?:percent|%)\b']),
+      'stop':pick(segs,[r'\b(?:stop loss|stop-loss|hard stop|soft stop|SL)\b[^.!?]{0,120}',r'\b(?:loss)\b[^.!?]{0,80}(?:percent|%|points?|rupees?|₹)',r'\b(?:risk|maximum loss|max loss)\b[^.!?]{0,100}(?:percent|%|points?|rupees?|₹)']),
       'target':pick(segs,[r'\b(?:target|take profit|book profit|profit target)\b[^.!?]{0,120}']),
       'structure':pick(segs,[r'\b(?:short strangle|iron condor|ratio spread|jade lizard|strangle|condor)\b']),
       'time_refs':pick(segs,[r'\b(?:at|around)\s+\d{1,2}:\d{2}\b',r'\b\d{1,2}:\d{2}\b']),
