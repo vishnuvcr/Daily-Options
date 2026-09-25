@@ -508,3 +508,8 @@ Phase 30 v7 Base/Stress P&L is invalidated. Static and artifact-level audit iden
 Phase 30 v8 branch: `phase-30-equity-income-weekly-backtest-v8-state-isolation`.
 v8 clones leg state per cell, adds repeated-cell regression tests, and keeps the frozen 12-cell strategy/cost rules unchanged.
 No v7 result is accepted and no WFA/OOS selection has started.
+
+
+## 2026-09-25 — Phase 30 v8 execution handoff
+
+The v8 state-isolation correction is ready for authoritative execution. The frozen 12-cell Iron Dome grid, expiry-relative entry rules, Paytm Money/NSE date-aware cost model, and Base/Stress slippage assumptions are unchanged. v8 adds per-cell leg-state cloning plus repeated-cell regression tests specifically to prevent cross-cell mutation. No v7 P&L is accepted. The next evidence checkpoint is the v8 GitHub Actions run and its persisted Base/Stress artifacts.
