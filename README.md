@@ -410,3 +410,9 @@ The completed v7 Base/Stress run is permanently quarantined: a shared mutable-le
 ### Phase 30 v8 execution checkpoint — 2026-09-25
 
 Authoritative v8 run **36157105595** is executing on `phase-30-equity-income-weekly-backtest-v8-state-isolation`. Unit tests and pinned-data coverage checks passed; Base friction is in progress. A prior v8 Base-only artifact (run 36153419405) is provisionally auditable: 262 exact-expiry files, 774 executable setups, 3,092 unique trade rows across all 12 frozen cells, and **0/12 preliminary-pass cells**. Best Base cell was **-₹585.85 mean weekly net**, with **39.77% positive weeks** and **98.85% execution coverage**. This is not yet the final Phase 30 result because the prior run failed before Stress; the current run is repeating Base then Stress cleanly.
+
+### Phase 30 v8 final closure — 2026-09-25
+
+Authoritative run **36157105595** completed Base and doubled-slippage Stress successfully. The frozen 12-cell Iron Dome family produced **3,092 unique trade rows** across 262 eligible expiry files and 774 executable setups. **0/12 cells met the ₹5,000/week preliminary gate** in either friction setting. Best Base mean weekly net was **-₹585.85**; best Stress mean weekly net was **-₹807.58**. No cell reached the 70% positive-week target; execution coverage was high, so the failure is economic rather than primarily a coverage failure. Phase 30 is retired without WFA/OOS selection or retuning.
+
+The next distinct Equity Income family is the source-resolved **Air Defense / India-VIX expected-range weekly short-volatility system**; its Python transcript evidence is being converted into a bounded numerical grid before testing.
