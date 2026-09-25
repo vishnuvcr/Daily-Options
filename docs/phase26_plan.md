@@ -21,3 +21,11 @@ Archive must be complete: zero unresolved acquisition failures.
 - Preserve information barriers and historical lot sizes.
 - Log every implementation/data error in `docs/error_log.md`.
 - Update `docs/research_status.md` after each execution.
+
+## 2026-09-25 — Phase 26 activation
+
+The fixed Equity Income archive completion gate has passed on run 36128134111: 169/169 public uploads discovered, 169/169 encrypted transcript envelopes validated, 0 transcript errors.
+
+Phase 26 now builds a deterministic video inventory and title-based candidate registry. Title-derived payoff-family labels are hints only. Source rules remain UNRESOLVED until Phase 27 transcript-driven reconstruction.
+
+Phase 26 must not perform any backtest or parameter tuning.
