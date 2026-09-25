@@ -20,7 +20,7 @@ def lot_size(e):
 def src(root):
     ps=[root/"upstox_intraday/NIFTY/NIFTY_2024.parquet",root/"upstox_intraday/NIFTY/NIFTY_2025.parquet"]
     if any(not p.exists() for p in ps): raise FileNotFoundError("missing pinned Rissin NIFTY files")
-    return "read_parquet(["+",".join("'"+str(p).replace("'","''") for p in ps)+"])"
+    return "read_parquet([" + ",".join("'" + str(p).replace("'","''") + "'" for p in ps) + "])""
 
 def target(df,side,p,ref=None,outward=False):
     x=df[df["option_type"]==side].copy()
