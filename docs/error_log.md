@@ -368,3 +368,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 | E0313 | 2026-09-25 | Phase 30.2 CI | Workflow-level concurrency caused the Base/Stress matrix to cancel one another under the same group | No Falcon P&L was accepted | Removed workflow-level cancel-in-progress so Base and Stress can execute independently; authoritative run 36160873596 uses the corrected branch head | CLOSED — orchestration |
 | E0314 | 2026-09-25 | Phase 30.2 data acquisition | `HfApi.dataset_info()` was called with an unsupported `repo_type` argument in the runner's installed huggingface_hub version | No Falcon P&L was accepted | Removed the unsupported argument and reran | CLOSED — pre-result |
+
+| E0315 | 2026-09-25 | Phase 30.2 monitoring/tooling | GitHub Actions job-log download for authoritative Falcon job 108156817844 returned BlobNotFound while the job was still running | No research/P&L impact; workflow step state remained available and authoritative | Do not infer a failure from missing live log blobs; continue monitoring job-step state and inspect artifacts only after completion | CLOSED |
