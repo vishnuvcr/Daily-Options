@@ -407,3 +407,11 @@ The connected GitHub tool surface does not expose workflow dispatch. A tightly s
 PR #36 head: 1204ff2b0b4004eac29892df9c79b7d4cebfbcff. The workflow checks out the fixed equity-income-channel-archive-v1 branch and can persist partial encrypted results there.
 
 No trading research has resumed; the next evidence checkpoint is the archive snapshot produced by this controlled run.
+
+## 2026-09-25 — Hardened archive run currently executing
+
+Controlled PR run 36125157622 is active on GitHub Actions. Job 108039526067 has successfully completed checkout, Python setup, dependency installation, PO-token provider startup, fallback probe, and public-key verification.
+
+The Python archive acquisition step is currently executing. No transcript count, P&L, or strategy conclusion is accepted until the job completes and the encrypted archive manifest/snapshot is persisted.
+
+Current fixed branch inventory remains 169 discovered videos and 0 persisted encrypted transcripts from the prior completed snapshot.
