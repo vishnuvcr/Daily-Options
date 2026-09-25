@@ -399,3 +399,11 @@ Trading/strategy testing remains PAUSED until the archive completion gate is pas
 After the 169/169 transcript failure snapshot, the fixed archive branch was hardened with the bounded source-preserving transcript ladder, parser regression coverage, resumable partial writes and a fixed-branch manual workflow using the same PO-token provider.
 
 Main trigger commit a26be8c4f9ca3c07b0bbe40732557e362edc63ed has been pushed. The next acceptance checkpoint is the resulting GitHub Actions run and its persisted archive snapshot. No trading research has resumed.
+
+## 2026-09-25 — Archive CI trigger workaround
+
+The connected GitHub tool surface does not expose workflow dispatch. A tightly scoped pull_request trigger was therefore added to the main archive workflow, and PR #36 was opened with only the archive trigger-file change.
+
+PR #36 head: 1204ff2b0b4004eac29892df9c79b7d4cebfbcff. The workflow checks out the fixed equity-income-channel-archive-v1 branch and can persist partial encrypted results there.
+
+No trading research has resumed; the next evidence checkpoint is the archive snapshot produced by this controlled run.
