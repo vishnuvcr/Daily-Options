@@ -155,73 +155,50 @@ def select_track(transcript_list):
     return tracks[0] if tracks else None
 
 
-def fetch_transcript(video_id: str, video_url: str, retries: int = 3):
-    # First try the direct caption endpoint. It only needs the stable video ID
-    # and can succeed even when full player-page extraction is challenged.
+def fetch_transcript(video_id: str, video_url: str, retries: int = 1):
+    # Prefer direct caption retrieval; then use yt-dlp subtitle metadata.
+    # Avoid long full-player API calls that are vulnerable to current YouTube
+    # anti-bot / PO-token enforcement.
     timed = fetch_timedtext(video_id)
     if timed is not None:
         snippets, lang, generated = timed
         return snippets, lang, lang, generated, "youtube-timedtext"
 
-    api = YouTubeTranscriptApi()
     last_error = None
-
-    for attempt in range(1, retries + 1):
-        try:
-            track = select_track(api.list(video_id))
-            if track is None:
-                raise RuntimeError("NO_TRANSCRIPT")
-            fetched = track.fetch()
-            snippets = normalize_snippets(fetched)
-            if not snippets:
-                raise RuntimeError("EMPTY_TRANSCRIPT")
-            return snippets, track.language_code, track.language, bool(track.is_generated), "youtube-transcript-api"
-        except Exception as exc:
-            last_error = exc
-            if attempt < retries:
-                time.sleep(attempt * 2)
-
-    # Fallback: obtain a subtitle track directly from yt-dlp with clients that
-    # are less dependent on the currently enforced PO-token/player flow.
     opts = {
         "quiet": True,
         "no_warnings": True,
         "skip_download": True,
-        "socket_timeout": 15,
-        "retries": 2,
+        "socket_timeout": 10,
+        "retries": 1,
         "extractor_args": {
             "youtube": {
                 "player_client": ["tv_simply", "web_embedded"],
             }
         },
     }
-    for attempt in range(1, retries + 1):
-        try:
-            with YoutubeDL(opts) as ydl:
-                info = ydl.extract_info(video_url, download=False)
-                candidates = []
-                for field, generated in (("subtitles", False), ("automatic_captions", True)):
-                    for lang, tracks in (info.get(field) or {}).items():
-                        for track in tracks:
-                            rank_lang = PREFERRED_LANGS.index(lang) if lang in PREFERRED_LANGS else 99
-                            rank_ext = 0 if track.get("ext") == "vtt" else 1
-                            candidates.append((int(generated), rank_lang, rank_ext, lang, generated, track))
-                if not candidates:
-                    raise RuntimeError(f"NO_SUBTITLE_FALLBACK: {last_error}")
-                candidates.sort()
-                _, _, _, lang, generated, track = candidates[0]
-                raw = ydl.urlopen(track["url"]).read().decode("utf-8", errors="replace")
-                snippets = parse_vtt(raw)
-                if not snippets:
-                    raise RuntimeError("EMPTY_VTT")
-                return snippets, lang, lang, bool(generated), "yt-dlp-subtitles"
-        except Exception as exc:
-            last_error = exc
-            if attempt < retries:
-                time.sleep(attempt * 2)
-
+    try:
+        with YoutubeDL(opts) as ydl:
+            info = ydl.extract_info(video_url, download=False)
+            candidates = []
+            for field, generated in (("subtitles", False), ("automatic_captions", True)):
+                for lang, tracks in (info.get(field) or {}).items():
+                    for track in tracks:
+                        rank_lang = PREFERRED_LANGS.index(lang) if lang in PREFERRED_LANGS else 99
+                        rank_ext = 0 if track.get("ext") == "vtt" else 1
+                        candidates.append((int(generated), rank_lang, rank_ext, lang, generated, track))
+            if not candidates:
+                raise RuntimeError("NO_SUBTITLE_FALLBACK")
+            candidates.sort()
+            _, _, _, lang, generated, track = candidates[0]
+            raw = ydl.urlopen(track["url"]).read().decode("utf-8", errors="replace")
+            snippets = parse_vtt(raw)
+            if not snippets:
+                raise RuntimeError("EMPTY_VTT")
+            return snippets, lang, lang, bool(generated), "yt-dlp-subtitles"
+    except Exception as exc:
+        last_error = exc
     raise RuntimeError(f"TRANSCRIPT_FETCH_FAILED: {last_error}") from last_error
-
 
 def discover() -> dict[str, dict]:
     opts = {
