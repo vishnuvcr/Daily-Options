@@ -58,27 +58,7 @@ jobs:
         run: python research/phase29_2_contract_coverage.py
 
       - name: Validate hard gate
-        run: |
-          python - <<'PY'
-          import csv, json
-          s = json.load(open("reports/phase29_2_summary.json", encoding="utf-8"))
-          rows = list(csv.DictReader(open("reports/phase29_2_contract_coverage_matrix.csv", newline="", encoding="utf-8")))
-          checks = {
-              "candidate_rows": s.get("candidate_rows") == 71,
-              "matrix_rows": len(rows) == 71 and s.get("matrix_row_count") == 71,
-              "backtest_allowed": s.get("backtest_allowed") == 0,
-              "archive_discovered_videos": s.get("archive_discovered_videos") == 169,
-              "archive_transcripts_status_archived": s.get("archive_transcripts_status_archived") == 169,
-              "candidate_archive_provenance": s.get("candidate_archive_provenance") == 71,
-              "all_rows_backtest_no": s.get("all_rows_backtest_no") is True and all(r.get("backtest_allowed") == "NO" for r in rows),
-          }
-          print("PHASE29.2 GATE CHECKS")
-          print(json.dumps(checks, indent=2))
-          print(json.dumps(s, indent=2))
-          failed = [k for k, v in checks.items() if not v]
-          if failed:
-              raise AssertionError("Failed hard-gate checks: " + ", ".join(failed))
-          PY
+        run: python research/validate_phase29_2.py
 
       - name: Persist evidence
         if: always()
