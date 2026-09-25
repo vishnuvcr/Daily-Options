@@ -494,3 +494,10 @@ The corrected rerun must:
 5. only then open the WFA/OOS gate.
 
 The ₹1,000/day objective remains retired for the Equity Income YouTube program.
+
+## 2026-09-25 — Phase 30 v7 corrected rerun prepared
+
+Dedicated branch: `phase-30-equity-income-weekly-backtest-v7-corrected`.
+The frozen 12-cell Iron Dome rules are unchanged. The v7 numerical correction removes the invalid exact-expiry `trading_day` filter so option marks use the full timestamp range through expiry.
+A multi-day loader regression test and richer weekly metrics were added. CI has been held to manual dispatch during the staged correction; push-trigger execution will be restored only after the corrected engine and tests are present.
+No Phase 30 P&L is accepted yet.
