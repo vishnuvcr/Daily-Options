@@ -8,7 +8,10 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from research.phase29_3_iron_dome_content import VIDEOS, fetch_transcript
 
@@ -16,7 +19,7 @@ WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", 
 TIME_PAT = re.compile(r"(?<!\d)(\d{1,2})[:.](\d{2})\s*(a\.?m\.?|p\.?m\.?)?", re.I)
 PCT_PAT = re.compile(r"(?<!\d)(\d{1,3})\s*%")
 POINT_PAT = re.compile(r"(?<!\d)(\d{2,4})\s*(?:points?|point)")
-STRIKE_PAT = re.compile(r"(?<!\d)(\d{4,5})(?!\d)")
+STRIKE_PAT = re.compile(r"(?<!\d)(\d[\d,]{3,})(?!\d)")
 HOLD_PAT = re.compile(r"\b(two|three|four)\b(?:\s*,)?\s*(?:or\s*)?(?:\s*maybe\s*)?(?:four\b\s*)?days?\b", re.I)
 
 def extract_fact_candidates(snippets: list[dict]) -> dict:
@@ -50,7 +53,7 @@ def extract_fact_candidates(snippets: list[dict]) -> dict:
         point_values.update(int(m.group(1)) for m in POINT_PAT.finditer(text))
 
         for value in STRIKE_PAT.findall(text):
-            ivalue = int(value)
+            ivalue = int(value.replace(",", ""))
             if 10000 <= ivalue <= 50000 and ivalue not in (2026,):
                 strike_like.add(ivalue)
 
