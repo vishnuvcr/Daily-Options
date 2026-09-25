@@ -271,9 +271,15 @@ def build_setup(con, root, cal, entry_time, target, far_mode, snapshot_window):
     }
 
 
-def simulate_setup(con, root, setup, variant, slippage, brokerage_per_order):
+def simulate_setup(con, root, setup, variant, slippage, brokerage_per_order, series_cache, strike_cache):
     c = setup["_cache"]
     lot = lot_size(setup["near_expiry"])
+
+    def cached_series(trade_start, trade_end, expiry, strike, side):
+        key = (str(trade_start), str(trade_end), str(expiry), float(strike), side)
+        if key not in series_cache:
+            series_cache[key] = load_series(con, root, trade_start, trade_end, expiry, strike, side)
+        return series_cache[key]
     start = setup["entry_fill_ts"]
     end = pd.Timestamp(f"{setup['exit_date']} 15:15:00")
     adjust_signal = pd.Timestamp(f"{setup['adjust_date']} {variant.adjust_time}")
