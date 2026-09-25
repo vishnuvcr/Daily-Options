@@ -1,4 +1,4 @@
-name: Equity Income - channel archive
+name: Equity Income - channel archive (keyless)
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: equity-income-channel-archive-v1
+  group: equity-income-channel-archive-keyless
   cancel-in-progress: false
 
 jobs:
@@ -20,7 +20,7 @@ jobs:
       - name: Checkout fixed archive branch
         uses: actions/checkout@v4
         with:
-          ref: equity-income-channel-archive-v1
+          ref: equity-income-channel-archive-v2-hybrid-keyless
           fetch-depth: 0
 
       - name: Setup Python
@@ -31,22 +31,16 @@ jobs:
       - name: Install archive tooling
         run: python -m pip install -r requirements-equity-income-archive.txt
 
-      - name: Require archive key
-        env:
-          ARCHIVE_KEY: ${{ secrets.EQUITY_INCOME_ARCHIVE_KEY }}
+      - name: Verify archive public key
         run: |
           set -euo pipefail
-          test -n "$ARCHIVE_KEY" || {
-            echo "::error::EQUITY_INCOME_ARCHIVE_KEY repository secret is not configured."
-            exit 2
-          }
+          test -s config/equity_income_archive_public_key.pem
+          sha256sum config/equity_income_archive_public_key.pem
 
       - name: Run Python archive
-        env:
-          EQUITY_INCOME_ARCHIVE_KEY: ${{ secrets.EQUITY_INCOME_ARCHIVE_KEY }}
         run: |
           set -euo pipefail
-          PYTHONPATH=. python scripts/archive_equity_income.py             --channel-url "https://www.youtube.com/@equityincome"             --output-root "data/equity_income"             --mode encrypted
+          PYTHONPATH=. python scripts/archive_equity_income_keyless.py             --channel-url "https://www.youtube.com/@equityincome"             --output-root "data/equity_income"             --public-key "config/equity_income_archive_public_key.pem"
 
       - name: Test archive tooling
         run: PYTHONPATH=. pytest -q tests/test_equity_income_archive.py
@@ -62,4 +56,4 @@ jobs:
             exit 0
           fi
           git commit -m "Archive Equity Income channel metadata and transcripts"
-          git push origin HEAD:equity-income-channel-archive-v1
+          git push origin HEAD:equity-income-channel-archive-v2-hybrid-keyless
