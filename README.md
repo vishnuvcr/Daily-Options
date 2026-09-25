@@ -220,3 +220,12 @@ The frozen 270-cell Falcon grid is now being rerun without parameter retuning on
 Latest v2 Actions run: 36057816149. The first data-acquisition attempts on revision c97e450 were rejected because that revision exposed auto-converted default/train shards instead of the documented raw file paths; this is logged as E0239. The workflow is now pinned to the raw-parquet revision and rerunning. No Phase 24 v2 P&L is accepted yet.
 
 [Phase 24 v1 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-24-falcon-spread-backtest-v1/docs/phase24_plan.md) · [Phase 24 v1 simulator](https://github.com/vishnuvcr/Daily-Options/blob/phase-24-falcon-spread-backtest-v1/research/phase24_falcon_spread.py) · [Phase 24 v2 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-24-falcon-spread-backtest-v2-rissin/docs/phase24_v2_plan.md) · [Phase 24 v2 simulator](https://github.com/vishnuvcr/Daily-Options/blob/phase-24-falcon-spread-backtest-v2-rissin/research/phase24_falcon_spread_rissin.py) · [Phase 24 v2 workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-24-falcon-spread-backtest-v2-rissin/.github/workflows/phase24-falcon-spread-v2-rissin.yml)
+
+
+## 2026-09-25 — Phase 24 audit and Phase 25 independent replication
+
+Phase 24 Falcon results are quarantined after execution audit: only 5 unique executable entry dates were present in the nominal 2021-2026 TradeMarkk run, so single-trade target-qualified cells are not evidentiary. The exact frozen Falcon rules are being independently replicated in Phase 25 using Rissin/Upstox NIFTY 1-minute data, exact expiry metadata, the unchanged 270-cell grid, realistic Paytm Money/NSE costs and doubled slippage. The current-rule timing remains Wednesday entry → Thursday adjustment → Monday exit.
+
+- [Phase 25 plan](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/phase25_plan.md)
+- [Research status](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md)
+- [Error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md)
