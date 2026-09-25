@@ -57,3 +57,11 @@ Trigger the default-branch archive workflow against the fixed equity-income-chan
 ## Strategy research status
 
 Weekly trading research remains PAUSED. Phase 26+ strategy branches remain pre-registered and must not be evaluated using transcript interpretations until the channel archive is complete.
+
+## Execution trigger checkpoint — 2026-09-25
+
+The hardened archive code and fixed-branch manual workflow are committed. A new push to the default-branch trigger file has also been committed, which invokes the unattended workflow that checks out the fixed archive branch.
+
+Trigger commit on main: a26be8c4f9ca3c07b0bbe40732557e362edc63ed.
+
+Acceptance remains pending until the resulting GitHub Actions archive snapshot reports validated encrypted transcript envelopes and passes the full inventory/integrity gate.
