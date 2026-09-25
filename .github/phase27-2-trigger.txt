@@ -1,0 +1,1 @@
+Phase 27.2 controlled trigger: prioritize source-fidelity reconstruction by evidence completeness, never by performance.
