@@ -8,6 +8,8 @@ TARGET_PREMIUMS=(20.,25.,30.); FAR_MODES=("DIAGONAL_PREMIUM","SAME_STRIKE")
 ADJUST_TIMES=("09:30:00","10:00:00","11:00:00"); STOP_MULTIPLES=(.5,1.,1.5)
 START_DATE="2024-10-01"; END_DATE="2025-12-31"
 RISSIN_REVISION="78b1c5468255d18cf492984bfe6fe4e3ac874d7c"
+_CHAIN_CACHE={}
+_SERIES_CACHE={}
 
 def variant_grid():
     return [(e,p,f,a,s) for e in ENTRY_TIMES for p in TARGET_PREMIUMS for f in FAR_MODES for a in ADJUST_TIMES for s in STOP_MULTIPLES]
@@ -30,19 +32,33 @@ def target(df,side,p,ref=None,outward=False):
     x["d"]=(x["close_px"]-p).abs(); return x.sort_values(["d","strike"]).iloc[0]
 
 def chain(c,S,e,d,a,b):
+    key=(S,e,d,str(a),str(b))
+    if key in _CHAIN_CACHE:
+        return _CHAIN_CACHE[key]
     q=f"""SELECT CAST(timestamp AS TIMESTAMP) ts,CAST(strike AS DOUBLE) strike,UPPER(CAST(option_type AS VARCHAR)) option_type,CAST(open AS DOUBLE) open_px,CAST(close AS DOUBLE) close_px FROM {S}
     WHERE CAST(date AS DATE)=DATE '{d}' AND CAST(expiry AS DATE)=DATE '{e}' AND CAST(timestamp AS TIMESTAMP) BETWEEN TIMESTAMP '{a}' AND TIMESTAMP '{b}' AND granularity='1min' AND close>0 ORDER BY ts,strike"""
-    return c.execute(q).df()
+    out=c.execute(q).df()
+    _CHAIN_CACHE[key]=out
+    return out
 
 def series(c,S,d,e,k,side,a,b):
+    key=(S,d,e,float(k),side,str(a),str(b))
+    if key in _SERIES_CACHE:
+        return _SERIES_CACHE[key]
     start_day=pd.Timestamp(a).date()
     end_day=pd.Timestamp(b).date()
     q=f"""SELECT CAST(timestamp AS TIMESTAMP) ts,CAST(open AS DOUBLE) open_px,CAST(close AS DOUBLE) close_px FROM {S}
     WHERE CAST(date AS DATE) BETWEEN DATE '{start_day}' AND DATE '{end_day}' AND CAST(expiry AS DATE)=DATE '{e}' AND CAST(timestamp AS TIMESTAMP) BETWEEN TIMESTAMP '{a}' AND TIMESTAMP '{b}'
     AND CAST(strike AS DOUBLE)={float(k)} AND UPPER(CAST(option_type AS VARCHAR))='{side}' AND granularity='1min' AND close>0 ORDER BY ts"""
     x=c.execute(q).df()
-    if x.empty:return pd.DataFrame(columns=["ts","open_px","close_px"])
-    x.ts=pd.to_datetime(x.ts).dt.floor("min"); return x.drop_duplicates("ts")
+    if x.empty:
+        out=pd.DataFrame(columns=["ts","open_px","close_px"])
+        _SERIES_CACHE[key]=out
+        return out
+    x.ts=pd.to_datetime(x.ts).dt.floor("min")
+    out=x.drop_duplicates("ts")
+    _SERIES_CACHE[key]=out
+    return out
 def op(df,side,k,t):
     x=df[(df.option_type==side)&(df.strike==float(k))&(df.ts==pd.Timestamp(t))]
     return None if x.empty or x.iloc[0].open_px<=0 else float(x.iloc[0].open_px)
@@ -127,6 +143,7 @@ def sim(c,S,s,v,slip):
     return {"reason":"STOP_POST_ADJUST" if stop is not None else "PRE_EXPIRY_EXIT","exit":xs,"pnl":gross-costs(out,lot,slip,d,xs.date())}
 
 def run(data,out,slip):
+    _CHAIN_CACHE.clear(); _SERIES_CACHE.clear()
     out.mkdir(parents=True,exist_ok=True); S=src(data); c=duckdb.connect(); c.execute("SET TimeZone='Asia/Kolkata'")
     days=[pd.Timestamp(x).date() for x in c.execute(f"SELECT DISTINCT CAST(date AS DATE) d FROM {S} WHERE CAST(date AS DATE) BETWEEN DATE '{START_DATE}' AND DATE '{END_DATE}' AND granularity='1min' ORDER BY d").df().d]
     exps=[pd.Timestamp(x).date() for x in c.execute(f"SELECT DISTINCT CAST(expiry AS DATE) e FROM {S} WHERE CAST(date AS DATE) BETWEEN DATE '{START_DATE}' AND DATE '{END_DATE}' AND granularity='1min' ORDER BY e").df().e]
@@ -141,9 +158,11 @@ def run(data,out,slip):
     nd=len({x["d"] for x in setups})
     if nd<20:raise RuntimeError(f"setup coverage gate failed: {nd} entry dates")
     rows=[]
+    variants_by_setup={}
+    for v in variant_grid():
+        variants_by_setup.setdefault(v[:3],[]).append(v)
     for s in setups:
-        for v in variant_grid():
-            if v[0]!=s["et"] or v[1]!=s["p"] or v[2]!=s["f"]:continue
+        for v in variants_by_setup[(s["et"],s["p"],s["f"])]:
             try:r=sim(c,S,s,v,slip)
             except Exception as e:r=None
             if r:rows.append({"variant_id":vid(v),"trade_date":s["d"],"net_pnl":r["pnl"],"reason":r["reason"],"exit_ts":r["exit"],"near_expiry":s["ne"],"far_expiry":s["fe"]})
