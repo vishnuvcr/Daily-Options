@@ -1,4 +1,5 @@
 name: Equity Income - weekly channel archive
+# Transcript-first archive retry activated after E0257
 # Keyless archive syntax corrected on 2026-09-25
 
 on:
