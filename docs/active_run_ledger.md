@@ -1,7 +1,9 @@
 # Active Run Ledger — 2026-09-24
 
-## Target
-Rs 1,000 net per active lot per trading day, after brokerage, statutory/exchange charges and conservative slippage, with untouched out-of-sample validation.
+## Current target — Equity Income weekly program
+₹5,000 NET per completed trading week at a fixed declared reference strategy position size, after brokerage, statutory/exchange charges and conservative Base/Stress slippage, with subsequent untouched OOS validation.
+
+The historical ₹1,000 net per active lot per trading day objective remains archived for Phases 0–25 and is not the active YouTube-program gate.
 
 ## Current runs
 
