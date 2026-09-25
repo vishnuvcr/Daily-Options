@@ -251,17 +251,12 @@ def select_track(transcript_list):
 
 
 def fetch_transcript(video_id: str, video_url: str, retries: int = 1):
-    # Prefer InnerTube caption-track retrieval using yt-dlp's pinned client
-    # definitions, then the legacy timedtext endpoint, then yt-dlp subtitles.
-    timed = fetch_innertube(video_id)
-    if timed is not None:
-        snippets, lang, generated = timed
-        return snippets, lang, lang, generated, "youtube-innertube"
-    timed = fetch_timedtext(video_id)
-    if timed is not None:
-        snippets, lang, generated = timed
-        return snippets, lang, lang, generated, "youtube-timedtext"
+    """Retrieve a source-provided YouTube transcript without LLM generation.
 
+    Primary path uses yt-dlp with the pinned PO-token provider plugin. Secondary
+    paths use YouTube's InnerTube caption-track response and the legacy timedtext
+    endpoint. All paths preserve source timestamps and language provenance.
+    """
     last_error = None
     opts = {
         "quiet": True,
@@ -271,7 +266,7 @@ def fetch_transcript(video_id: str, video_url: str, retries: int = 1):
         "retries": 1,
         "extractor_args": {
             "youtube": {
-                "player_client": ["tv_simply", "web_embedded"],
+                "player_client": ["web", "tv"],
             }
         },
     }
@@ -285,18 +280,31 @@ def fetch_transcript(video_id: str, video_url: str, retries: int = 1):
                         rank_lang = PREFERRED_LANGS.index(lang) if lang in PREFERRED_LANGS else 99
                         rank_ext = 0 if track.get("ext") == "vtt" else 1
                         candidates.append((int(generated), rank_lang, rank_ext, lang, generated, track))
-            if not candidates:
-                raise RuntimeError("NO_SUBTITLE_FALLBACK")
             candidates.sort()
-            _, _, _, lang, generated, track = candidates[0]
-            raw = ydl.urlopen(track["url"]).read().decode("utf-8", errors="replace")
-            snippets = parse_vtt(raw)
-            if not snippets:
-                raise RuntimeError("EMPTY_VTT")
-            return snippets, lang, lang, bool(generated), "yt-dlp-subtitles"
+            for _, _, _, lang, generated, track in candidates:
+                url = track.get("url")
+                if not url:
+                    continue
+                raw = ydl.urlopen(url).read().decode("utf-8", errors="replace")
+                snippets = parse_vtt(raw)
+                if snippets:
+                    return snippets, lang, lang, bool(generated), "yt-dlp-subtitles"
+            raise RuntimeError("NO_USABLE_YTDLP_SUBTITLE")
     except Exception as exc:
         last_error = exc
+
+    timed = fetch_innertube(video_id)
+    if timed is not None:
+        snippets, lang, generated = timed
+        return snippets, lang, lang, generated, "youtube-innertube"
+
+    timed = fetch_timedtext(video_id)
+    if timed is not None:
+        snippets, lang, generated = timed
+        return snippets, lang, lang, generated, "youtube-timedtext"
+
     raise RuntimeError(f"TRANSCRIPT_FETCH_FAILED: {last_error}") from last_error
+
 
 def discover() -> dict[str, dict]:
     opts = {
