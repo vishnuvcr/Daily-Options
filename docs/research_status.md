@@ -317,3 +317,16 @@ At the user's direction, the previous daily/intraday strategy tournament is paus
 A fixed acquisition branch `equity-income-channel-archive-v1` contains Python-only channel discovery and transcript-fetching infrastructure, metadata/provenance manifests, integrity checks and an encrypted transcript archive design. The archive workflow requires the user-configured `EQUITY_INCOME_ARCHIVE_KEY` secret before its first execution.
 
 Separate branches for Phases 26–35 are created. The new weekly economic target is **₹5,000 net per traded week at a fixed declared reference position size**, with Base/Stress friction, weekly risk statistics, nested WFA and later-period OOS validation.
+
+## 2026-09-25 — Keyless archive activation
+
+The Equity Income archive is now converted from the blocked GitHub-secret design to a keyless hybrid-encryption design.
+
+- Canonical fixed branch: `equity-income-channel-archive-v1`
+- Public key committed at `config/equity_income_archive_public_key.pem`
+- Local decrypt utility: `scripts/decrypt_equity_income_transcript.py`
+- No `EQUITY_INCOME_ARCHIVE_KEY` secret is required.
+- A default-branch weekly workflow now runs the keyless Python archive and pushes encrypted transcript records to the fixed archive branch.
+- Local hybrid-encryption round-trip test passed; the actual full-channel GitHub Actions acquisition has not yet been executed.
+
+Trading research remains paused until the channel inventory/transcript archive is complete.
