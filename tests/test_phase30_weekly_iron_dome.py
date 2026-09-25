@@ -73,3 +73,61 @@ def test_option_loader_uses_full_expiry_file(tmp_path):
     con.close()
     assert len(series) == 2
     assert series["ts"].dt.date.tolist() == [date(2026, 1, 2), date(2026, 1, 5)]
+
+def test_clone_initial_legs_isolates_state():
+    import research.phase30_weekly_iron_dome as mod
+
+    series = pd.DataFrame({"ts": pd.to_datetime(["2026-01-02 09:31:00"]), "open_px": [100.0], "close_px": [99.0]})
+    original = [{
+        "side": "CE", "strike": 25000.0, "position": "SHORT",
+        "qty": 1, "lot": 65, "entry_price": 100.0,
+        "series": series, "active": True,
+    }]
+    cloned = mod.clone_initial_legs(original)
+    cloned[0]["active"] = False
+    cloned[0]["exit_price"] = 95.0
+
+    assert original[0]["active"] is True
+    assert "exit_price" not in original[0]
+    assert cloned[0]["series"] is original[0]["series"]
+
+def test_run_cell_does_not_mutate_setup_legs(monkeypatch):
+    import research.phase30_weekly_iron_dome as mod
+
+    series = pd.DataFrame({"ts": pd.to_datetime(["2026-01-02 09:31:00"]), "open_px": [100.0], "close_px": [99.0]})
+    legs = [{
+        "side": side, "strike": strike, "position": position, "qty": 1, "lot": 65,
+        "entry_price": 100.0, "series": series, "active": True
+    } for side, strike, position in [
+        ("CE", 25000.0, "SHORT"),
+        ("PE", 25000.0, "SHORT"),
+        ("CE", 25200.0, "LONG"),
+        ("PE", 24800.0, "LONG"),
+    ]]
+    setup = {
+        "initial_legs": legs, "fill_ts": pd.Timestamp("2026-01-02 09:31:00"),
+        "expiry": date(2026, 1, 6), "entry_date": date(2026, 1, 2),
+        "entry_offset": -2, "lot": 65, "initial_center": 25000.0,
+        "end_ts": "2026-01-06 15:31:00",
+    }
+
+    def fake_open(trade, active, exec_ts, slippage):
+        trade["opened"] = trade.get("opened", 0) + len(active)
+
+    def fake_close(trade, leg, ts, slippage):
+        trade["closed"] = trade.get("closed", 0) + 1
+        leg["active"] = False
+        return True
+
+    monkeypatch.setattr(mod, "open_active_structure", fake_open)
+    monkeypatch.setattr(mod, "close_leg", fake_close)
+    monkeypatch.setattr(mod, "cycle_anchor", lambda trade, active: 0.0)
+    monkeypatch.setattr(mod, "max_loss_inr", lambda active: 1000.0)
+    monkeypatch.setattr(mod, "first_trigger", lambda *args, **kwargs: None)
+
+    empty = pd.DataFrame(columns=["ts", "spot"])
+    first = mod.run_cell(None, setup, "RISK_60", "RECENTER_BOTH", 0.20, initial_panel=empty)
+    second = mod.run_cell(None, setup, "RISK_60", "RECENTER_BOTH", 0.20, initial_panel=empty)
+
+    assert first is not None and second is not None
+    assert all(leg["active"] is True for leg in setup["initial_legs"])
