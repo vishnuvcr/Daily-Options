@@ -21,17 +21,13 @@ permissions:
   contents: write
 
 concurrency:
-  group: phase30-equity-income-weekly-backtest-v3
+  group: phase30-equity-income-weekly-backtest-v4
   cancel-in-progress: false
 
 jobs:
   backtest:
-    strategy:
-      fail-fast: false
-      matrix:
-        friction: [base, stress]
     runs-on: ubuntu-latest
-    timeout-minutes: 240
+    timeout-minutes: 360
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -54,7 +50,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: data/cache/phase30_trademarkk
-          key: phase30-trademarkk-51ca58c-v1
+          key: phase30-trademarkk-51ca58c-v2
           restore-keys: |
             phase29-trademarkk-51ca58c-
             phase24-trademarkk-51ca58c-
@@ -85,56 +81,71 @@ jobs:
           root=Path("data/cache/phase30_trademarkk")
           idx=root/"index"/"NIFTY.parquet"
           files=sorted((root/"options"/"NIFTY").glob("*.parquet"))
-          if not idx.exists() or not files:
-              raise SystemExit("Required NIFTY data missing")
+          if not idx.exists() or not files: raise SystemExit("Required NIFTY data missing")
           sessions=pd.to_datetime(pd.read_parquet(idx,columns=["trading_day"])["trading_day"]).dt.date.drop_duplicates()
           expiry_dates=[]
           for p in files:
-              try:
-                  d=pd.Timestamp(p.stem).date()
-              except Exception:
-                  continue
-              if date(2021,7,1) <= d <= date(2026,8,4):
-                  expiry_dates.append(d)
+              try: d=pd.Timestamp(p.stem).date()
+              except Exception: continue
+              if date(2021,7,1) <= d <= date(2026,8,4): expiry_dates.append(d)
           expiry_dates=sorted(set(expiry_dates))
           print({"expiry_files":len(expiry_dates),"first":str(expiry_dates[0]) if expiry_dates else None,"last":str(expiry_dates[-1]) if expiry_dates else None,"index_sessions":int(len(sessions))})
-          if len(expiry_dates) < 180:
-              raise SystemExit("Insufficient exact-expiry file coverage")
-          if len(sessions) < 800:
-              raise SystemExit("Insufficient NIFTY index-session coverage")
+          if len(expiry_dates) < 180: raise SystemExit("Insufficient exact-expiry file coverage")
+          if len(sessions) < 800: raise SystemExit("Insufficient NIFTY index-session coverage")
           Path("reports").mkdir(exist_ok=True)
-          Path("reports/coverage.json").write_text(pd.Series({
-              "expiry_files": len(expiry_dates),
-              "first_expiry": str(expiry_dates[0]),
-              "last_expiry": str(expiry_dates[-1]),
-              "index_sessions": int(len(sessions)),
-          }).to_json(indent=2),encoding="utf-8")
+          Path("reports/coverage.json").write_text(pd.Series({"expiry_files":len(expiry_dates),"first_expiry":str(expiry_dates[0]),"last_expiry":str(expiry_dates[-1]),"index_sessions":int(len(sessions))}).to_json(indent=2),encoding="utf-8")
           PY
 
-      - name: Run friction
-        env:
-          SLIP: ${{ matrix.friction == 'base' && '0.20' || '0.40' }}
-          LABEL: ${{ matrix.friction }}
+      - name: Run Base friction
         run: |
-          PYTHONPATH=. python research/phase30_weekly_iron_dome.py \
-            --data data/cache/phase30_trademarkk \
-            --out reports/${LABEL} \
-            --slippage "${SLIP}"
+          set -euo pipefail
+          rm -rf reports/base
+          PYTHONPATH=. python research/phase30_weekly_iron_dome.py --data data/cache/phase30_trademarkk --out reports/base --slippage 0.20
 
-      - name: Upload run reports
+      - name: Persist Base results
+        if: always()
+        run: |
+          set -euo pipefail
+          if [ -d reports/base ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add reports/base
+            if ! git diff --cached --quiet; then
+              git commit -m "Phase 30: persist Base weekly Iron Dome results"
+              git push origin HEAD:"${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+            fi
+          fi
+
+      - name: Upload Base results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: phase30-iron-dome-${{ matrix.friction }}
-          path: reports/${{ matrix.friction }}/
+          name: phase30-iron-dome-base
+          path: reports/base/
 
-      - name: Persist machine-readable summary
-        if: always() && matrix.friction == 'base'
+      - name: Run Stress friction
         run: |
           set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reports/base/summary.json reports/base/leaderboard.csv reports/base/weekly.csv reports/base/trades.csv 2>/dev/null || true
-          if git diff --cached --quiet; then exit 0; fi
-          git commit -m "Phase 30: persist Base weekly Iron Dome results"
-          git push origin HEAD:${{ github.head_ref || github.ref_name }}
+          rm -rf reports/stress
+          PYTHONPATH=. python research/phase30_weekly_iron_dome.py --data data/cache/phase30_trademarkk --out reports/stress --slippage 0.40
+
+      - name: Persist Stress results
+        if: always()
+        run: |
+          set -euo pipefail
+          if [ -d reports/stress ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add reports/stress
+            if ! git diff --cached --quiet; then
+              git commit -m "Phase 30: persist Stress weekly Iron Dome results"
+              git push origin HEAD:"${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+            fi
+          fi
+
+      - name: Upload Stress results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase30-iron-dome-stress
+          path: reports/stress/
