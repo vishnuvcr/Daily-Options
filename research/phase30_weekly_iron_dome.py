@@ -329,9 +329,20 @@ def first_trigger(panel, active, trigger, center_ref, cycle_start, cycle_max):
     }
 
 
+
+def clone_initial_legs(legs):
+    """Create a fresh leg-state list for one parameter cell without copying market series."""
+    cloned = []
+    for leg in legs:
+        item = dict(leg)
+        item["series"] = leg["series"]
+        item["active"] = True
+        item.pop("exit_price", None)
+        cloned.append(item)
+    return cloned
 def run_cell(con, setup, trigger, adjustment, slippage, initial_panel=None):
     trade = {"cash": 0.0, "costs": 0.0, "adjustments": 0}
-    active = setup["initial_legs"]
+    active = clone_initial_legs(setup["initial_legs"])
     open_active_structure(trade, active, setup["fill_ts"], slippage)
     center_ref = float(setup["initial_center"])
     cycle_start = cycle_anchor(trade, active)
