@@ -1,0 +1,88 @@
+name: Phase 26 - Equity Income complete channel inventory
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/phase26-trigger.txt"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase26-equity-income-inventory
+  cancel-in-progress: true
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout Phase 26 branch
+        uses: actions/checkout@v4
+        with:
+          ref: phase-26-equity-income-inventory-v1
+          fetch-depth: 0
+
+      - name: Sync frozen archive input
+        run: |
+          set -euo pipefail
+          git fetch origin equity-income-channel-archive-v1
+          git restore --source=origin/equity-income-channel-archive-v1 -- data/equity_income
+          python - <<'PY'
+          import json
+          s=json.load(open("data/equity_income/channel_snapshot.json"))
+          assert s["discovered_videos"] == 169
+          assert s["transcript_archived"] == 169
+          assert s["integrity_ok"] == 169
+          assert s["transcript_errors"] == 0
+          print("frozen archive gate: PASS")
+          PY
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install test tooling
+        run: python -m pip install pytest==8.4.2
+
+      - name: Run Phase 26 unit tests
+        run: python -m pytest -q tests/test_phase26_inventory.py
+
+      - name: Build deterministic strategy inventory
+        run: python scripts/build_equity_income_inventory.py --root data/equity_income
+
+      - name: Validate Phase 26 outputs
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import csv, json
+          root="data/equity_income"
+          s=json.load(open(f"{root}/inventory_snapshot.json"))
+          assert s["videos"] == 169
+          assert s["transcript_verified"] == 169
+          with open(f"{root}/video_inventory.csv", newline="", encoding="utf-8") as fh:
+              rows=list(csv.DictReader(fh))
+          with open(f"{root}/strategy_registry.csv", newline="", encoding="utf-8") as fh:
+              registry=list(csv.DictReader(fh))
+          assert len(rows) == 169
+          assert len(registry) == 169
+          assert all(r["transcript_integrity"] == "VERIFIED" for r in rows)
+          assert s["backtesting_started"] is False
+          print("Phase 26 output gate: PASS")
+          print(json.dumps(s, indent=2))
+          PY
+
+      - name: Commit Phase 26 outputs
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/equity_income/video_inventory.csv                   data/equity_income/strategy_registry.csv                   data/equity_income/inventory_snapshot.json
+          if git diff --cached --quiet; then
+            echo "No Phase 26 output changes."
+            exit 0
+          fi
+          git commit -m "Phase 26: build complete Equity Income strategy inventory"
+          git push origin HEAD:phase-26-equity-income-inventory-v1
