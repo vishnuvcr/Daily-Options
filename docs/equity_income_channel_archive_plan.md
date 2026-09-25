@@ -92,3 +92,15 @@ The archive passed channel discovery (169 unique videos) but the first completed
 The no-key endpoint is queried at most once per video in the fallback path to avoid unnecessary repeated external traffic.
 
 Partial successful encrypted transcripts are committed even when the full-channel pass remains incomplete. No weekly strategy testing is restarted until the archive completion gate is satisfied.
+
+## Acquisition escalation checkpoint — 2026-09-25
+
+The first proxy-first retry produced 39 validated transcripts, demonstrating that the archive pipeline and hybrid encryption are functioning. The remaining failures are now concentrated in source/service access rather than archive serialization.
+
+Next source-preserving escalation:
+1. youtubegpt.ai documented JSON caption endpoint, preserving segment timings and generated/human provenance;
+2. existing Invidious clients;
+3. direct yt-dlp/PO-token and YouTube caption APIs;
+4. timedtext.
+
+No LLM-generated transcript is permitted. A third-party endpoint is accepted only when the service returns source caption segments and the manifest records the acquisition method explicitly.
