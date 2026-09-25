@@ -328,3 +328,9 @@ The frozen 270-cell grid is unchanged. The simulator now caches exact-key chain/
 Run **36110775799** reached Base/Stress friction after all seven unit tests and the Rissin coverage gates passed, but it was superseded before numerical acceptance after a complexity review found repeated panel construction, stop scans and strike-universe queries across the frozen variants.
 
 The frozen strategy is unchanged. The simulator now also caches exact-expiry strike universes, pre/post mark panels, all three frozen stop-trigger times, and exit prices, in addition to the earlier chain/series caches. A fresh run will be used for the first accepted Phase 25 numerical result.
+
+## Resume checkpoint — 2026-09-25
+
+User requested continuation. Repository control files were re-read before resuming. Authoritative Phase 25 run **36111174510** remains **in progress**; both Base and Stress jobs are in the **Run friction** step. All prerequisite steps visible in the jobs have passed: checkout, Python setup, dependencies, **7/7 unit tests**, cached Rissin restore/acquisition, coverage validation, and cache save. The previous runs 36110262221 and 36110775799 are cancelled/superseded and contribute no P&L.
+
+No new strategy tuning is permitted while this frozen-grid friction run is active. The next action is to wait for completion and inspect the produced Base/Stress artifacts, executable-date coverage, trade count, active-day net P&L, drawdown, win rate, and the preregistered promotion gate. If the run fails or times out, the failure is logged and corrected before numerical interpretation.
