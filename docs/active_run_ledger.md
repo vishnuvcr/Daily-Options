@@ -120,3 +120,11 @@ This is the sole authoritative Phase 11 execution at this checkpoint. No competi
 | 30 | phase-30-equity-income-weekly-backtest-v7-corrected | Corrected Base→Stress execution triggered from frozen 12-cell rules | No |
 
 Phase 30 v7 corrects the exact-expiry option loader to use the full timestamp range through expiry and includes a multi-day loader regression test. Any run from the earlier malformed loader revisions is non-evidentiary. Promotion requires the ₹5,000/week consistency gates plus nested WFA and independent later-period OOS.
+
+## 2026-09-25 — Phase 30 v8 current authoritative run
+
+| Phase | Execution branch | Workflow run | Job | Status | Accepted P&L |
+|---|---|---:|---:|---|---|
+| 30 v8 | phase-30-equity-income-weekly-backtest-v8-state-isolation | 36157105595 | 108144213864 | Base friction executing; tests/data/coverage passed | No |
+
+Provisional prior v8 Base audit (run 36153419405): 3,092 unique trade rows, no duplicate trade keys, 12/12 cells below the weekly target, best mean weekly net -₹585.85, positive-week rate 39.77%, execution coverage 98.85%. Stress was skipped in that run because Base persistence failed. This artifact is not the final Phase 30 result.
