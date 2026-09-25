@@ -2,23 +2,54 @@ name: Phase 26 - Complete channel inventory
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - ".github/phase26-inventory-trigger.txt"
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: phase-26-equity-income-inventory
+  cancel-in-progress: false
 
 jobs:
-  manual-gate:
+  inventory:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Phase 26 branch
+        uses: actions/checkout@v4
         with:
           ref: phase-26-equity-income-inventory-v1
-      - uses: actions/setup-python@v6
+          fetch-depth: 0
+
+      - name: Fetch canonical archive manifests
+        run: |
+          set -euo pipefail
+          git fetch origin equity-income-channel-archive-v1
+          git checkout origin/equity-income-channel-archive-v1 --             data/equity_income/video_manifest.jsonl             data/equity_income/transcript_manifest.jsonl
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-      - name: Phase definition
+
+      - name: Build deterministic inventory
+        run: PYTHONPATH=. python scripts/build_equity_income_inventory.py --root data/equity_income
+
+      - name: Test inventory builder
         run: |
-          echo "Phase 26: Complete channel inventory"
-          echo "Manual execution branch: phase-26-equity-income-inventory-v1"
-          echo "Weekly target: INR 5,000 net per traded week at fixed reference sizing"
-          echo "Scope: Enumerate every public video, transcript status, and strategy candidate. No backtesting."
+          PYTHONPATH=. pytest -q tests/test_phase26_inventory.py
+
+      - name: Commit inventory checkpoint
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/equity_income/video_manifest.jsonl             data/equity_income/transcript_manifest.jsonl             data/equity_income/video_inventory.csv             data/equity_income/strategy_registry.csv             data/equity_income/inventory_snapshot.json
+          if git diff --cached --quiet; then
+            echo "No inventory changes."
+            exit 0
+          fi
+          git commit -m "Build Phase 26 Equity Income metadata inventory"
+          git push origin HEAD:phase-26-equity-income-inventory-v1
