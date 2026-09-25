@@ -121,7 +121,7 @@ def classify(hint: str, inv: dict) -> tuple[str, str, str]:
     ]):
         tm = inv["trademarkk"]["paths"].get("options/NIFTY", {})
         ri = inv["rissin"]["paths"].get("upstox_intraday/NIFTY", {})
-        if tm.get("file_count", 0) > 0 and ri.get("file_count", 0) > 0:
+        if tm.get("parquet_file_count", 0) > 0 and ri.get("parquet_file_count", 0) > 0:
             return ("PRELIMINARY_FEASIBLE", "INDEX_1M_PINNED_SOURCE_PRESENT",
                     "Pinned TradeMarkk and independent Rissin index-option partitions exist; strategy-specific expiry/strike/date quote completeness still requires validation.")
         return ("DATA_LIMITED", "INDEX_1M_PARTITION_MISSING",
