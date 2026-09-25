@@ -10,12 +10,12 @@
 - **entry_day** — UNSPECIFIED: UNSPECIFIED
 - **adjustment_day** — UNSPECIFIED: UNSPECIFIED
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
-- **underlying** — SOURCE-EXPLICIT: nifty
+- **underlying** — SOURCE-EXPLICIT: nifty@134400.0s
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
-- **time_reference** — SOURCE-EXPLICIT: 3:30
+- **time_reference** — SOURCE-EXPLICIT: 3:30@128399.0s
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
-- **lot_reference** — SOURCE-EXPLICIT: 3
-- **strike_reference** — SOURCE-EXPLICIT: at the money; one strike
+- **lot_reference** — SOURCE-EXPLICIT: 3@128399.0s
+- **strike_reference** — SOURCE-EXPLICIT: at the money@62879.0s; at the money@197200.0s; one strike@325440.0s
 - **stop_reference** — UNSPECIFIED: UNSPECIFIED
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 

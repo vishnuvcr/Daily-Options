@@ -12,11 +12,11 @@
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
 - **underlying** — UNSPECIFIED: UNSPECIFIED
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
-- **time_reference** — SOURCE-EXPLICIT: 15:20
+- **time_reference** — SOURCE-EXPLICIT: 15:20@357520.0s
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
-- **lot_reference** — SOURCE-EXPLICIT: 15; 2
-- **strike_reference** — SOURCE-EXPLICIT: at the money; out of the money; 500 strike; 450 strike
-- **stop_reference** — SOURCE-EXPLICIT: stop loss; stop losses one give to the market
+- **lot_reference** — SOURCE-EXPLICIT: 15@357520.0s; 2@569839.0s
+- **strike_reference** — SOURCE-EXPLICIT: at the money@84920.0s; at the money@189040.0s; at the money@191400.0s; at the money@207400.0s; at the money@421720.0s; 450 strike@612080.0s
+- **stop_reference** — SOURCE-EXPLICIT: stop loss@275400.0s; stop losses one give to@761240.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status

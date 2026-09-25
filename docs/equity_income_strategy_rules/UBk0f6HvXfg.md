@@ -10,13 +10,13 @@
 - **entry_day** — UNSPECIFIED: UNSPECIFIED
 - **adjustment_day** — UNSPECIFIED: UNSPECIFIED
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
-- **underlying** — SOURCE-EXPLICIT: nifty
+- **underlying** — SOURCE-EXPLICIT: nifty@85759.0s; nifty@151440.0s; nifty@195280.0s; nifty@198480.0s
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
-- **time_reference** — SOURCE-EXPLICIT: 3:30
+- **time_reference** — SOURCE-EXPLICIT: 3:30@185440.0s; 3:30@395520.0s
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
-- **lot_reference** — SOURCE-EXPLICIT: 3
-- **strike_reference** — SOURCE-EXPLICIT: out of the money; in the money; Out of the money
-- **stop_reference** — SOURCE-EXPLICIT: stop- losses, but at the same time very clean and clear way to trade; stop-loss because when we sell options, we got to keep a very tight stop-loss; stop-loss just you know above the signal candle; stop loss just above you know the signal candle and what do we see the maximum it has gone up till; stop-loss probably; stop losses very tiny; stop- losses as well as you can see; stop-loss because you know market closed over here and the whole point of uh trading is that w; stop-loss is there in the system at all times; stop-loss like we have it with this particular indicator and respect that stop-loss as well
+- **lot_reference** — SOURCE-EXPLICIT: 3@185440.0s; 3@395520.0s
+- **strike_reference** — SOURCE-EXPLICIT: out of the money@169760.0s; out of the money@172160.0s; in the money@177680.0s; out of the money@181840.0s
+- **stop_reference** — SOURCE-EXPLICIT: stop- losses, but at@5359.0s; stop-loss@62320.0s; stop-loss@66640.0s; stop-loss just@242080.0s; stop loss just above you know the@272000.0s; stop-loss@350080.0s; stop losses very tiny@354160.0s; stop- losses as well as@378960.0s; stop-loss because you know@389280.0s; stop-loss is there in the system at all@526320.0s; stop-loss like we have it@608480.0s; stop-loss as well@612399.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status

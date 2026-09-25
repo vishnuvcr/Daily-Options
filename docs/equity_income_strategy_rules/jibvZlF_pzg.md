@@ -7,16 +7,16 @@
 
 ## Rule evidence
 
-- **entry_day** — SOURCE-EXPLICIT: Monday
+- **entry_day** — UNSPECIFIED: UNSPECIFIED
 - **adjustment_day** — UNSPECIFIED: UNSPECIFIED
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
 - **underlying** — UNSPECIFIED: UNSPECIFIED
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
 - **time_reference** — UNSPECIFIED: UNSPECIFIED
-- **expiry_reference** — SOURCE-EXPLICIT: Monday; Tuesday
+- **expiry_reference** — SOURCE-EXPLICIT: Monday@367760.0s; Tuesday@367760.0s
 - **lot_reference** — UNSPECIFIED: UNSPECIFIED
-- **strike_reference** — SOURCE-EXPLICIT: at the money; out of the money; in the money
-- **stop_reference** — SOURCE-EXPLICIT: stop loss in the market; stop loss; exit the market, adjustments, stop loss
+- **strike_reference** — SOURCE-EXPLICIT: at the money@39520.0s; out of the money@70800.0s; in the money@310320.0s
+- **stop_reference** — SOURCE-EXPLICIT: stop loss in the@573800.0s; stop loss@599840.0s; stop loss@685480.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status

@@ -15,7 +15,7 @@
 - **time_reference** — UNSPECIFIED: UNSPECIFIED
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
 - **lot_reference** — UNSPECIFIED: UNSPECIFIED
-- **strike_reference** — SOURCE-EXPLICIT: at the money; out of the money; one strike; two strike; same strike; different strike
+- **strike_reference** — SOURCE-EXPLICIT: at the money@116799.0s; at the money@134879.0s; same strike@183519.0s; different strike@288720.0s; one strike@459680.0s; two strike@459680.0s
 - **stop_reference** — UNSPECIFIED: UNSPECIFIED
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 

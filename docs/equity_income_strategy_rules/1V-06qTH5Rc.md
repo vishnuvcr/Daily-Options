@@ -10,13 +10,13 @@
 - **entry_day** — UNSPECIFIED: UNSPECIFIED
 - **adjustment_day** — UNSPECIFIED: UNSPECIFIED
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
-- **underlying** — SOURCE-EXPLICIT: Nifty
+- **underlying** — SOURCE-EXPLICIT: Nifty@281160.0s
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
-- **time_reference** — SOURCE-EXPLICIT: 10:00
+- **time_reference** — SOURCE-EXPLICIT: 10:00@581240.0s
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
-- **lot_reference** — SOURCE-EXPLICIT: 10
-- **strike_reference** — SOURCE-EXPLICIT: out of the money; at the money
-- **stop_reference** — SOURCE-EXPLICIT: stop here, because now I'm going to tell you some negative points; stop loss is handed over
+- **lot_reference** — SOURCE-EXPLICIT: 10@581240.0s
+- **strike_reference** — SOURCE-EXPLICIT: out of the money@60080.0s; out of the money@209920.0s; out of the money@482800.0s; at the money@487800.0s
+- **stop_reference** — SOURCE-EXPLICIT: stop@146959.0s; stop loss is@222840.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status

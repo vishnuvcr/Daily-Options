@@ -7,16 +7,16 @@
 
 ## Rule evidence
 
-- **entry_day** — SOURCE-EXPLICIT: Wednesday
+- **entry_day** — UNSPECIFIED: UNSPECIFIED
 - **adjustment_day** — UNSPECIFIED: UNSPECIFIED
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
-- **underlying** — SOURCE-EXPLICIT: nifty
+- **underlying** — SOURCE-EXPLICIT: nifty@769120.0s
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
 - **time_reference** — UNSPECIFIED: UNSPECIFIED
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
-- **lot_reference** — SOURCE-EXPLICIT: 10
-- **strike_reference** — SOURCE-EXPLICIT: at the money; out of the money; same strike
-- **stop_reference** — SOURCE-EXPLICIT: stop at this adjustment and if you're wondering what if market really just keep on going in on
+- **lot_reference** — SOURCE-EXPLICIT: 10@532640.0s
+- **strike_reference** — SOURCE-EXPLICIT: at the money@400800.0s; at the money@425360.0s; at the money@454479.0s; same strike@477759.0s; at the money@557760.0s; out of the money@781200.0s; out of the money@793519.0s
+- **stop_reference** — SOURCE-EXPLICIT: stop at@723920.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status

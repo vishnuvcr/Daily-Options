@@ -15,8 +15,8 @@
 - **time_reference** — UNSPECIFIED: UNSPECIFIED
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
 - **lot_reference** — UNSPECIFIED: UNSPECIFIED
-- **strike_reference** — SOURCE-EXPLICIT: at the money; one strike; same strike
-- **stop_reference** — SOURCE-EXPLICIT: stop-loss because there there's no strategy which is holy grail
+- **strike_reference** — SOURCE-EXPLICIT: same strike@79600.0s; at the money@82080.0s; at the money@189360.0s; same strike@203360.0s; same strike@371440.0s; one strike@483120.0s; same strike@499039.0s
+- **stop_reference** — SOURCE-EXPLICIT: stop-loss because@405520.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status

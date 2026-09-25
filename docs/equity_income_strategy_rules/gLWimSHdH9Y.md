@@ -15,9 +15,9 @@
 - **time_reference** — UNSPECIFIED: UNSPECIFIED
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
 - **lot_reference** — UNSPECIFIED: UNSPECIFIED
-- **strike_reference** — SOURCE-EXPLICIT: four strike
-- **stop_reference** — SOURCE-EXPLICIT: stopping us to do it? Both both sides call as well as put
-- **target_reference** — SOURCE-EXPLICIT: book profit just like that
+- **strike_reference** — SOURCE-EXPLICIT: four strike@265440.0s
+- **stop_reference** — SOURCE-EXPLICIT: stopping us to do it? Both both sides@564480.0s
+- **target_reference** — SOURCE-EXPLICIT: book profit@424400.0s
 
 ## Reconstruction status
 

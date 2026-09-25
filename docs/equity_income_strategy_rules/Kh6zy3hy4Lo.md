@@ -11,11 +11,11 @@
 - **adjustment_day** — UNSPECIFIED: UNSPECIFIED
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
 - **underlying** — UNSPECIFIED: UNSPECIFIED
-- **premium_zone** — SOURCE-EXPLICIT: 0 points
+- **premium_zone** — UNSPECIFIED: UNSPECIFIED
 - **time_reference** — UNSPECIFIED: UNSPECIFIED
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
-- **lot_reference** — SOURCE-EXPLICIT: 10
-- **strike_reference** — SOURCE-EXPLICIT: at the money; out of the money; one strike
+- **lot_reference** — SOURCE-EXPLICIT: 10@289600.0s; 10@380960.0s; 10@598560.0s
+- **strike_reference** — SOURCE-EXPLICIT: at the money@59840.0s; at the money@62160.0s; out of the money@64479.0s; at the money@188400.0s; out of the money@203840.0s; one strike@438639.0s; at the money@484800.0s
 - **stop_reference** — UNSPECIFIED: UNSPECIFIED
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 

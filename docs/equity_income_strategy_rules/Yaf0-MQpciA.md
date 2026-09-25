@@ -10,13 +10,13 @@
 - **entry_day** — UNSPECIFIED: UNSPECIFIED
 - **adjustment_day** — UNSPECIFIED: UNSPECIFIED
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
-- **underlying** — SOURCE-EXPLICIT: Nifty
+- **underlying** — SOURCE-EXPLICIT: Nifty@20080.0s
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
-- **time_reference** — SOURCE-EXPLICIT: 9:30
+- **time_reference** — SOURCE-EXPLICIT: 9:30@367880.0s
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
-- **lot_reference** — SOURCE-EXPLICIT: 9
-- **strike_reference** — SOURCE-EXPLICIT: out of the money; at the money
-- **stop_reference** — SOURCE-EXPLICIT: stop loss, respect the strategy
+- **lot_reference** — SOURCE-EXPLICIT: 9@367880.0s
+- **strike_reference** — SOURCE-EXPLICIT: out of the money@212200.0s; at the money@480920.0s; out of the money@720560.0s
+- **stop_reference** — SOURCE-EXPLICIT: stop loss,@1003640.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status

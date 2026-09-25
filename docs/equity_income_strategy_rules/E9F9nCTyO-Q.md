@@ -15,8 +15,8 @@
 - **time_reference** — UNSPECIFIED: UNSPECIFIED
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
 - **lot_reference** — UNSPECIFIED: UNSPECIFIED
-- **strike_reference** — SOURCE-EXPLICIT: at the money
-- **stop_reference** — SOURCE-EXPLICIT: stop loss is 10, 20, 30,000 get hit; stopping a trader to learn more you see this now right this is done loss is taken 300 p; stopping? It can happen in stock
+- **strike_reference** — SOURCE-EXPLICIT: at the money@222560.0s
+- **stop_reference** — SOURCE-EXPLICIT: stop loss is 10, 20,@120880.0s; stopping a trader to@186159.0s; stopping? It can happen in@301919.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status

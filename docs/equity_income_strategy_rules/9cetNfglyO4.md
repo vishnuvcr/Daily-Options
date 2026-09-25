@@ -8,15 +8,15 @@
 ## Rule evidence
 
 - **entry_day** — UNSPECIFIED: UNSPECIFIED
-- **adjustment_day** — SOURCE-EXPLICIT: Monday
+- **adjustment_day** — UNSPECIFIED: UNSPECIFIED
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
-- **underlying** — SOURCE-EXPLICIT: Nifty
+- **underlying** — SOURCE-EXPLICIT: Nifty@40920.0s
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
-- **time_reference** — SOURCE-EXPLICIT: 9:30; 3:00
+- **time_reference** — SOURCE-EXPLICIT: 9:30@261680.0s; 3:00@282760.0s; 3:00@331240.0s
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
-- **lot_reference** — SOURCE-EXPLICIT: 9; 3
-- **strike_reference** — SOURCE-EXPLICIT: in the money; one strike
-- **stop_reference** — SOURCE-EXPLICIT: stop loss
+- **lot_reference** — SOURCE-EXPLICIT: 9@261680.0s; 3@282760.0s; 3@331240.0s
+- **strike_reference** — SOURCE-EXPLICIT: one strike@62000.0s; in the money@173640.0s; in the money@186680.0s; in the money@298480.0s; in the money@301360.0s; in the money@304120.0s; in the money@362040.0s
+- **stop_reference** — SOURCE-EXPLICIT: stop loss@448480.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status

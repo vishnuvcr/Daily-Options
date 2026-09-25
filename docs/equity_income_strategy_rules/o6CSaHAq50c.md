@@ -12,12 +12,12 @@
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
 - **underlying** — UNSPECIFIED: UNSPECIFIED
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
-- **time_reference** — SOURCE-EXPLICIT: 10:00; 12:30
-- **expiry_reference** — SOURCE-EXPLICIT: Monday; Tuesday
-- **lot_reference** — SOURCE-EXPLICIT: 10; 12
-- **strike_reference** — SOURCE-EXPLICIT: at the money; out of the money
+- **time_reference** — SOURCE-EXPLICIT: 10:00@655839.0s; 12:30@659080.0s
+- **expiry_reference** — SOURCE-EXPLICIT: Tuesday@235000.0s; Monday@237360.0s; Tuesday@259480.0s
+- **lot_reference** — SOURCE-EXPLICIT: 10@655839.0s; 12@659080.0s
+- **strike_reference** — SOURCE-EXPLICIT: at the money@45200.0s; out of the money@99200.0s; at the money@109200.0s; at the money@208440.0s; out of the money@423640.0s
 - **stop_reference** — UNSPECIFIED: UNSPECIFIED
-- **target_reference** — SOURCE-EXPLICIT: target 1% 2% of ROI; target is no profit, no loss in this particular trade is what I'm eyeing
+- **target_reference** — SOURCE-EXPLICIT: target 1% 2% of ROI@307760.0s; target is no profit, no loss in this@522520.0s
 
 ## Reconstruction status
 

@@ -16,7 +16,7 @@
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
 - **lot_reference** — UNSPECIFIED: UNSPECIFIED
 - **strike_reference** — UNSPECIFIED: UNSPECIFIED
-- **stop_reference** — SOURCE-EXPLICIT: stop- losses and you can try to figure it out by yourself or you could request for part two; stop- losses are random
+- **stop_reference** — SOURCE-EXPLICIT: stop- losses and you can try to@831760.0s; stop- losses are@889920.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status

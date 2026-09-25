@@ -12,12 +12,12 @@
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
 - **underlying** — UNSPECIFIED: UNSPECIFIED
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
-- **time_reference** — SOURCE-EXPLICIT: 12:30
+- **time_reference** — SOURCE-EXPLICIT: 12:30@1048799.0s
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
-- **lot_reference** — SOURCE-EXPLICIT: 12
-- **strike_reference** — SOURCE-EXPLICIT: at the money; out of the money; one strike
-- **stop_reference** — SOURCE-EXPLICIT: stop us booking the profit and I want to tell you one more thing are you ready for that as soo; stop the profit; stop it right now? Let's talk about your favorite VIP points; stop you
-- **target_reference** — SOURCE-EXPLICIT: book profit
+- **lot_reference** — SOURCE-EXPLICIT: 12@1048799.0s
+- **strike_reference** — SOURCE-EXPLICIT: out of the money@314000.0s; at the money@556959.0s; at the money@566399.0s; one strike@949920.0s; one strike@959680.0s
+- **stop_reference** — SOURCE-EXPLICIT: stop us booking the profit and I@458720.0s; stop the profit@1060960.0s; stop@1100240.0s; stop you@1286000.0s
+- **target_reference** — SOURCE-EXPLICIT: book profit@603839.0s
 
 ## Reconstruction status
 

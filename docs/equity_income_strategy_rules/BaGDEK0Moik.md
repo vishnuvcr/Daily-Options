@@ -12,10 +12,10 @@
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
 - **underlying** — UNSPECIFIED: UNSPECIFIED
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
-- **time_reference** — SOURCE-EXPLICIT: 3:30
+- **time_reference** — SOURCE-EXPLICIT: 3:30@101760.0s
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
-- **lot_reference** — SOURCE-EXPLICIT: 3
-- **strike_reference** — SOURCE-EXPLICIT: at the money; out of the money; same strike
+- **lot_reference** — SOURCE-EXPLICIT: 3@101760.0s
+- **strike_reference** — SOURCE-EXPLICIT: out of the money@221519.0s
 - **stop_reference** — UNSPECIFIED: UNSPECIFIED
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 

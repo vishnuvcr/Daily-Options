@@ -10,13 +10,13 @@
 - **entry_day** — UNSPECIFIED: UNSPECIFIED
 - **adjustment_day** — UNSPECIFIED: UNSPECIFIED
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
-- **underlying** — SOURCE-EXPLICIT: Nifty
+- **underlying** — SOURCE-EXPLICIT: Nifty@345040.0s
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
 - **time_reference** — UNSPECIFIED: UNSPECIFIED
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
 - **lot_reference** — UNSPECIFIED: UNSPECIFIED
-- **strike_reference** — SOURCE-EXPLICIT: at the money; in the money; In the money
-- **stop_reference** — SOURCE-EXPLICIT: stopping from today if you watch this video carefully and note down all the points
+- **strike_reference** — SOURCE-EXPLICIT: at the money@207560.0s; at the money@209920.0s; at the money@325160.0s; at the money@327600.0s; at the money@331440.0s; in the money@337120.0s; in the money@349520.0s; in the money@353680.0s; in the money@355240.0s
+- **stop_reference** — SOURCE-EXPLICIT: stopping from today if you watch this@21560.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status

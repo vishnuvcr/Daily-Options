@@ -8,16 +8,16 @@
 ## Rule evidence
 
 - **entry_day** — UNSPECIFIED: UNSPECIFIED
-- **adjustment_day** — SOURCE-EXPLICIT: Sunday
+- **adjustment_day** — UNSPECIFIED: UNSPECIFIED
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
-- **underlying** — SOURCE-EXPLICIT: Nifty
+- **underlying** — SOURCE-EXPLICIT: Nifty@616680.0s; Nifty@621880.0s; Nifty@630160.0s; Nifty@638280.0s; Nifty@654880.0s
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
-- **time_reference** — SOURCE-EXPLICIT: 9:15; 9:48; 10:00; 9:30
+- **time_reference** — SOURCE-EXPLICIT: 9:15@55160.0s; 9:48@172400.0s; 10:00@477520.0s; 9:30@584120.0s
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
-- **lot_reference** — SOURCE-EXPLICIT: 9; 10
+- **lot_reference** — SOURCE-EXPLICIT: 9@55160.0s; 9@172400.0s; 10@477520.0s; 9@584120.0s
 - **strike_reference** — UNSPECIFIED: UNSPECIFIED
-- **stop_reference** — SOURCE-EXPLICIT: stop losses are triggered
-- **target_reference** — SOURCE-EXPLICIT: target the stock which give me a massive gap up
+- **stop_reference** — SOURCE-EXPLICIT: stop losses are@7720.0s
+- **target_reference** — SOURCE-EXPLICIT: target the@65040.0s
 
 ## Reconstruction status
 

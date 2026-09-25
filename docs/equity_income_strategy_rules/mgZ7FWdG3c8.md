@@ -10,13 +10,13 @@
 - **entry_day** — UNSPECIFIED: UNSPECIFIED
 - **adjustment_day** — UNSPECIFIED: UNSPECIFIED
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
-- **underlying** — SOURCE-EXPLICIT: nifty
+- **underlying** — SOURCE-EXPLICIT: nifty@90000.0s; nifty@191519.0s
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
-- **time_reference** — SOURCE-EXPLICIT: 9:15; 1:00
+- **time_reference** — SOURCE-EXPLICIT: 9:15@111040.0s; 1:00@315440.0s
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
-- **lot_reference** — SOURCE-EXPLICIT: 9; 1
+- **lot_reference** — SOURCE-EXPLICIT: 9@111040.0s; 1@315440.0s
 - **strike_reference** — UNSPECIFIED: UNSPECIFIED
-- **stop_reference** — SOURCE-EXPLICIT: Stop using VWAP as a support and resistance; stop- loss, but uh is it a stop loss? I don't think so, but you can consider it; stop losses in this is very tiny; stop loss here; stop loss hits or something if not that's not your day how you can come out scratchless it is possi
+- **stop_reference** — SOURCE-EXPLICIT: Stop using VWAP as a support and@121200.0s; stop- loss, but uh is it a stop loss? I@444319.0s; stop@588399.0s; stop loss@590880.0s; stop loss hits or@699440.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status

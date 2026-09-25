@@ -10,14 +10,14 @@
 - **entry_day** — UNSPECIFIED: UNSPECIFIED
 - **adjustment_day** — UNSPECIFIED: UNSPECIFIED
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
-- **underlying** — SOURCE-EXPLICIT: Nifty
+- **underlying** — SOURCE-EXPLICIT: Nifty@660720.0s
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
-- **time_reference** — SOURCE-EXPLICIT: 9:30
+- **time_reference** — SOURCE-EXPLICIT: 9:30@155599.0s
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
-- **lot_reference** — SOURCE-EXPLICIT: 10; 9
-- **strike_reference** — SOURCE-EXPLICIT: at the money; out of the money; in the money; different strike
-- **stop_reference** — SOURCE-EXPLICIT: exit the put which is making a loss
-- **target_reference** — SOURCE-EXPLICIT: targeting the peak profit but we get better theta DK when you selling the put option I'm sure if
+- **lot_reference** — SOURCE-EXPLICIT: 9@155599.0s
+- **strike_reference** — SOURCE-EXPLICIT: different strike@20080.0s; at the money@79040.0s; at the money@290479.0s; out of the money@290479.0s; in the money@292720.0s; at the money@349039.0s; in the money@485280.0s; out of the money@620959.0s
+- **stop_reference** — UNSPECIFIED: UNSPECIFIED
+- **target_reference** — SOURCE-EXPLICIT: targeting the peak profit but we get@397039.0s
 
 ## Reconstruction status
 

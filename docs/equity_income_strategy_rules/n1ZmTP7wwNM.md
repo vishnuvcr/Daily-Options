@@ -15,8 +15,8 @@
 - **time_reference** — UNSPECIFIED: UNSPECIFIED
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
 - **lot_reference** — UNSPECIFIED: UNSPECIFIED
-- **strike_reference** — SOURCE-EXPLICIT: at the money; out of the money
-- **stop_reference** — SOURCE-EXPLICIT: stop doing over adjustments in iron fly; stop loss, right? You did your best to adjust your trade if it's going out of control
+- **strike_reference** — SOURCE-EXPLICIT: at the money@65519.0s; at the money@301440.0s; out of the money@304960.0s
+- **stop_reference** — SOURCE-EXPLICIT: stop doing over adjustments in iron fly@540240.0s; stop loss,@589600.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status

@@ -15,8 +15,8 @@
 - **time_reference** — UNSPECIFIED: UNSPECIFIED
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
 - **lot_reference** — UNSPECIFIED: UNSPECIFIED
-- **strike_reference** — SOURCE-EXPLICIT: at the money; out of the money
-- **stop_reference** — SOURCE-EXPLICIT: Stop wasting your premium
+- **strike_reference** — SOURCE-EXPLICIT: at the money@59039.0s; at the money@159840.0s; at the money@162720.0s; out of the money@174959.0s
+- **stop_reference** — SOURCE-EXPLICIT: Stop wasting your@15360.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status

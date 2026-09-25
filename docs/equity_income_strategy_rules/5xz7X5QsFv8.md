@@ -10,13 +10,13 @@
 - **entry_day** — UNSPECIFIED: UNSPECIFIED
 - **adjustment_day** — UNSPECIFIED: UNSPECIFIED
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
-- **underlying** — SOURCE-EXPLICIT: Nifty
+- **underlying** — SOURCE-EXPLICIT: Nifty@27600.0s; Nifty@44280.0s
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
-- **time_reference** — SOURCE-EXPLICIT: 9:30; 3:00
+- **time_reference** — SOURCE-EXPLICIT: 9:30@320560.0s; 9:30@433240.0s; 3:00@456720.0s
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
-- **lot_reference** — SOURCE-EXPLICIT: 9; 3
-- **strike_reference** — SOURCE-EXPLICIT: at the money; in the money; out of the money; one strike
-- **stop_reference** — SOURCE-EXPLICIT: stop being your problem; stop loss for your own learning, maybe buy a books any of your favorite author online, take out a S; stop losses; exit the trade in loss
+- **lot_reference** — SOURCE-EXPLICIT: 9@320560.0s; 9@433240.0s; 3@456720.0s
+- **strike_reference** — SOURCE-EXPLICIT: at the money@327360.0s; one strike@359680.0s; out of the money@476680.0s
+- **stop_reference** — SOURCE-EXPLICIT: stop being your problem@27600.0s; exit the trade in loss@645800.0s; stop loss for your own learning,@730120.0s; stop@781800.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status

@@ -14,9 +14,9 @@
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
 - **time_reference** — UNSPECIFIED: UNSPECIFIED
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
-- **lot_reference** — SOURCE-EXPLICIT: 1
-- **strike_reference** — SOURCE-EXPLICIT: at the money; out of the money; in the money; three strikes; one strike
-- **stop_reference** — SOURCE-EXPLICIT: stops, and then go up; stop losses to the market; stop loss for the own learning; stop loss, that's the part of the game; exit or market gives you a stop loss
+- **lot_reference** — SOURCE-EXPLICIT: 1@852079.0s
+- **strike_reference** — SOURCE-EXPLICIT: at the money@67800.0s; out of the money@72080.0s; three strikes@74040.0s; at the money@160280.0s; at the money@213040.0s; out of the money@284160.0s; out of the money@287240.0s; in the money@297920.0s; in the money@328840.0s; at the money@361840.0s; out of the money@365440.0s; out of the money@609160.0s
+- **stop_reference** — SOURCE-EXPLICIT: stops, and then go up@554520.0s; stop losses to@822800.0s; stop@824720.0s; stop loss, that's the part of the@840960.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status

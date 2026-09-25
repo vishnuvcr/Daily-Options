@@ -10,13 +10,13 @@
 - **entry_day** — UNSPECIFIED: UNSPECIFIED
 - **adjustment_day** — UNSPECIFIED: UNSPECIFIED
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
-- **underlying** — SOURCE-EXPLICIT: nifty
+- **underlying** — SOURCE-EXPLICIT: nifty@38320.0s; nifty@476240.0s
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
-- **time_reference** — SOURCE-EXPLICIT: 10:00; 11:44
+- **time_reference** — SOURCE-EXPLICIT: 10:00@64559.0s; 11:44@438720.0s
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
-- **lot_reference** — SOURCE-EXPLICIT: 10; 11
-- **strike_reference** — SOURCE-EXPLICIT: at the money; out of the money; in the money; same strike
-- **stop_reference** — SOURCE-EXPLICIT: stop loss worth it, or learning it first, and then trying is worth? I want you to compare both the; stop loss
+- **lot_reference** — SOURCE-EXPLICIT: 10@64559.0s; 11@438720.0s
+- **strike_reference** — SOURCE-EXPLICIT: at the money@262160.0s; at the money@264800.0s; at the money@372320.0s; same strike@508480.0s; same strike@511520.0s; out of the money@530000.0s; in the money@532920.0s
+- **stop_reference** — SOURCE-EXPLICIT: stop loss worth it, or learning@485640.0s; stop loss@779839.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status

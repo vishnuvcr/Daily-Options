@@ -7,16 +7,16 @@
 
 ## Rule evidence
 
-- **entry_day** — SOURCE-EXPLICIT: Wednesday; Friday
+- **entry_day** — SOURCE-EXPLICIT: Thursday@423039.0s
 - **adjustment_day** — UNSPECIFIED: UNSPECIFIED
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
 - **underlying** — UNSPECIFIED: UNSPECIFIED
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
-- **time_reference** — SOURCE-EXPLICIT: 9:30; 11:00
-- **expiry_reference** — SOURCE-EXPLICIT: Tuesday
-- **lot_reference** — SOURCE-EXPLICIT: 9; 11
+- **time_reference** — SOURCE-EXPLICIT: 9:30@260079.0s; 11:00@403360.0s
+- **expiry_reference** — UNSPECIFIED: UNSPECIFIED
+- **lot_reference** — SOURCE-EXPLICIT: 9@260079.0s; 11@403360.0s
 - **strike_reference** — UNSPECIFIED: UNSPECIFIED
-- **stop_reference** — SOURCE-EXPLICIT: stop by just checking one expiry? No
+- **stop_reference** — SOURCE-EXPLICIT: stop by just checking one@352080.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status

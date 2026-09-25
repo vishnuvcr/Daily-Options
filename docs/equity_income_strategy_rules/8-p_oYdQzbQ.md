@@ -13,9 +13,9 @@
 - **underlying** — UNSPECIFIED: UNSPECIFIED
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
 - **time_reference** — UNSPECIFIED: UNSPECIFIED
-- **expiry_reference** — SOURCE-EXPLICIT: Tuesday
-- **lot_reference** — SOURCE-EXPLICIT: 1
-- **strike_reference** — SOURCE-EXPLICIT: at the money; out of the money; Out of the money; two strike; one strike; same strike
+- **expiry_reference** — UNSPECIFIED: UNSPECIFIED
+- **lot_reference** — SOURCE-EXPLICIT: 1@807839.0s; 1@823160.0s
+- **strike_reference** — SOURCE-EXPLICIT: at the money@101280.0s; at the money@175400.0s; Out of the money@205040.0s; Out of the money@206600.0s; at the money@306000.0s; same strike@325480.0s; at the money@415040.0s; same strike@433560.0s; two strike@503480.0s; one strike@503480.0s; one strike@545840.0s; one strike@572560.0s
 - **stop_reference** — UNSPECIFIED: UNSPECIFIED
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 

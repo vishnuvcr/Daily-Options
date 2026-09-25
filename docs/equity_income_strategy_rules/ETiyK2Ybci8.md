@@ -14,9 +14,9 @@
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
 - **time_reference** — UNSPECIFIED: UNSPECIFIED
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
-- **lot_reference** — SOURCE-EXPLICIT: 5
-- **strike_reference** — SOURCE-EXPLICIT: at the money; in the money; out of the money; two strikes; same strike
-- **stop_reference** — SOURCE-EXPLICIT: stop, this is index
+- **lot_reference** — SOURCE-EXPLICIT: 5@567680.0s
+- **strike_reference** — SOURCE-EXPLICIT: same strike@28520.0s; at the money@55680.0s; two strikes@179519.0s; same strike@188560.0s; in the money@207480.0s; out of the money@330840.0s; out of the money@354600.0s; out of the money@366560.0s
+- **stop_reference** — SOURCE-EXPLICIT: stop, this is index@508040.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status

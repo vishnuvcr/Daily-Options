@@ -8,14 +8,14 @@
 ## Rule evidence
 
 - **entry_day** — UNSPECIFIED: UNSPECIFIED
-- **adjustment_day** — SOURCE-EXPLICIT: Monday
+- **adjustment_day** — UNSPECIFIED: UNSPECIFIED
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
 - **underlying** — UNSPECIFIED: UNSPECIFIED
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
-- **time_reference** — SOURCE-EXPLICIT: 9:30
+- **time_reference** — SOURCE-EXPLICIT: 9:30@356720.0s
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
-- **lot_reference** — SOURCE-EXPLICIT: 9
-- **strike_reference** — SOURCE-EXPLICIT: out of the money; Out of the money; Same strike; same strike
+- **lot_reference** — SOURCE-EXPLICIT: 9@356720.0s
+- **strike_reference** — SOURCE-EXPLICIT: out of the money@118680.0s; Same strike@261920.0s; same strike@324000.0s; same strike@331040.0s; Out of the money@384360.0s; out of the money@523719.0s
 - **stop_reference** — UNSPECIFIED: UNSPECIFIED
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 

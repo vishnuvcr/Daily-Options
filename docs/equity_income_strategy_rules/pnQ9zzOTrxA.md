@@ -12,11 +12,11 @@
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
 - **underlying** — UNSPECIFIED: UNSPECIFIED
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
-- **time_reference** — SOURCE-EXPLICIT: 10:00; 12:30
-- **expiry_reference** — SOURCE-EXPLICIT: Wednesday; Tuesday
-- **lot_reference** — SOURCE-EXPLICIT: 10; 12
-- **strike_reference** — SOURCE-EXPLICIT: at the money; out of the money
-- **stop_reference** — SOURCE-EXPLICIT: stop here I right at the peak
+- **time_reference** — SOURCE-EXPLICIT: 10:00@432680.0s; 12:30@432680.0s
+- **expiry_reference** — SOURCE-EXPLICIT: Wednesday@165840.0s; Tuesday@165840.0s
+- **lot_reference** — SOURCE-EXPLICIT: 10@229800.0s; 10@432680.0s; 12@432680.0s
+- **strike_reference** — SOURCE-EXPLICIT: at the money@56760.0s; at the money@58920.0s; out of the money@211239.0s; out of the money@337440.0s; out of the money@421360.0s
+- **stop_reference** — SOURCE-EXPLICIT: stop here I right at the@110720.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status

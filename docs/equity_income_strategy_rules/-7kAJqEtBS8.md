@@ -10,13 +10,13 @@
 - **entry_day** — UNSPECIFIED: UNSPECIFIED
 - **adjustment_day** — UNSPECIFIED: UNSPECIFIED
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
-- **underlying** — SOURCE-EXPLICIT: nifty; Nifty
+- **underlying** — SOURCE-EXPLICIT: nifty@40800.0s; nifty@84200.0s; Nifty@187080.0s
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
 - **time_reference** — UNSPECIFIED: UNSPECIFIED
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
 - **lot_reference** — UNSPECIFIED: UNSPECIFIED
 - **strike_reference** — UNSPECIFIED: UNSPECIFIED
-- **stop_reference** — SOURCE-EXPLICIT: stop loss; stop loss in the market and always try to do things which is not very common, popular
+- **stop_reference** — SOURCE-EXPLICIT: stop loss@423400.0s; stop loss in the@440120.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status

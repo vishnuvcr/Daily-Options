@@ -12,12 +12,12 @@
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
 - **underlying** — UNSPECIFIED: UNSPECIFIED
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
-- **time_reference** — SOURCE-EXPLICIT: 9:15; 9:20; 10:30; 3:30; 2:20
+- **time_reference** — SOURCE-EXPLICIT: 9:15@158560.0s; 9:20@161040.0s; 10:30@443919.0s; 3:30@447599.0s; 2:20@831760.0s
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
-- **lot_reference** — SOURCE-EXPLICIT: 10; 9; 3; 2
-- **strike_reference** — SOURCE-EXPLICIT: at the money; out of the money; one strike; same strike
-- **stop_reference** — SOURCE-EXPLICIT: stop somewhere around 4,000 4,500; stop around 50% of the net profit which we get here; stops; stop-loss in mind in the trade; exit the trade keeping some amount of stop-loss
-- **target_reference** — SOURCE-EXPLICIT: target the entire premium at 9,000 because that can be really brutal especially the last couple; book profit around the 50% of the profit which they get and the stop somewhere around 4,000 4,500
+- **lot_reference** — SOURCE-EXPLICIT: 9@158560.0s; 9@161040.0s; 10@443919.0s; 3@447599.0s; 2@831760.0s; 10@1034319.0s
+- **strike_reference** — SOURCE-EXPLICIT: at the money@169840.0s; at the money@171680.0s; same strike@325919.0s; one strike@377600.0s; one strike@384800.0s; one strike@403199.0s; out of the money@587600.0s; same strike@685279.0s; same strike@687680.0s
+- **stop_reference** — SOURCE-EXPLICIT: stop somewhere around 4,000 4,500@242319.0s; stop around 50% of the@250080.0s; stops@918639.0s; stop-loss in mind in the trade@1070320.0s
+- **target_reference** — SOURCE-EXPLICIT: target the entire premium at@224239.0s; book profit around the@237040.0s
 
 ## Reconstruction status
 

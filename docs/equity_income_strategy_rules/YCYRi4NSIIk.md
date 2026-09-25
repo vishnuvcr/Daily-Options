@@ -12,10 +12,10 @@
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
 - **underlying** — UNSPECIFIED: UNSPECIFIED
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
-- **time_reference** — SOURCE-EXPLICIT: 9:16
+- **time_reference** — SOURCE-EXPLICIT: 9:16@267280.0s
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
-- **lot_reference** — SOURCE-EXPLICIT: 9
-- **strike_reference** — SOURCE-EXPLICIT: at the money; in the money; same strike
+- **lot_reference** — SOURCE-EXPLICIT: 9@267280.0s
+- **strike_reference** — SOURCE-EXPLICIT: at the money@186239.0s; in the money@362000.0s; same strike@370800.0s; same strike@372639.0s
 - **stop_reference** — UNSPECIFIED: UNSPECIFIED
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 

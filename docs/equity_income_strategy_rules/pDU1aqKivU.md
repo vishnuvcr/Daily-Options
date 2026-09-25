@@ -9,14 +9,14 @@
 
 - **entry_day** — UNSPECIFIED: UNSPECIFIED
 - **adjustment_day** — UNSPECIFIED: UNSPECIFIED
-- **exit_day** — SOURCE-EXPLICIT: Monday
+- **exit_day** — UNSPECIFIED: UNSPECIFIED
 - **underlying** — UNSPECIFIED: UNSPECIFIED
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
 - **time_reference** — UNSPECIFIED: UNSPECIFIED
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
 - **lot_reference** — UNSPECIFIED: UNSPECIFIED
-- **strike_reference** — SOURCE-EXPLICIT: at the money; out of the money
-- **stop_reference** — SOURCE-EXPLICIT: stop-losses to the market back to back wherein some people look forward to use that one stop-l
+- **strike_reference** — SOURCE-EXPLICIT: at the money@144480.0s; at the money@257440.0s; at the money@272800.0s
+- **stop_reference** — SOURCE-EXPLICIT: stop-losses to@585120.0s; stop-loss for their own trading and@592160.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status

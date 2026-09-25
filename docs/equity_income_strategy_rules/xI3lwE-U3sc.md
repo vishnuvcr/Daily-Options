@@ -12,12 +12,12 @@
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
 - **underlying** — UNSPECIFIED: UNSPECIFIED
 - **premium_zone** — UNSPECIFIED: UNSPECIFIED
-- **time_reference** — SOURCE-EXPLICIT: 2:00; 2:30; 3:00; 3:15; 10:00; 12:30
-- **expiry_reference** — SOURCE-EXPLICIT: Tuesday
-- **lot_reference** — SOURCE-EXPLICIT: 1; 2; 3; 10; 12
-- **strike_reference** — SOURCE-EXPLICIT: out of the money; one strike
+- **time_reference** — SOURCE-EXPLICIT: 2:00@201000.0s; 2:30@201000.0s; 3:00@204320.0s; 3:15@333360.0s; 10:00@607240.0s; 12:30@607240.0s
+- **expiry_reference** — UNSPECIFIED: UNSPECIFIED
+- **lot_reference** — SOURCE-EXPLICIT: 1@100800.0s; 2@201000.0s; 3@204320.0s; 3@333360.0s; 10@607240.0s; 12@607240.0s
+- **strike_reference** — SOURCE-EXPLICIT: out of the money@95040.0s; one strike@382360.0s
 - **stop_reference** — UNSPECIFIED: UNSPECIFIED
-- **target_reference** — SOURCE-EXPLICIT: book profits
+- **target_reference** — SOURCE-EXPLICIT: book profits@153400.0s
 
 ## Reconstruction status
 

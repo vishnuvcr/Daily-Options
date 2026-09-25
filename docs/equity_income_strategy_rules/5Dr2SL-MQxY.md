@@ -15,8 +15,8 @@
 - **time_reference** — UNSPECIFIED: UNSPECIFIED
 - **expiry_reference** — UNSPECIFIED: UNSPECIFIED
 - **lot_reference** — UNSPECIFIED: UNSPECIFIED
-- **strike_reference** — SOURCE-EXPLICIT: at the money; out of the money; ATM; one strike
-- **stop_reference** — SOURCE-EXPLICIT: stop losses and people who trade theta decay even in 2025 I really have no words I mean uh it's muc; stop looking at the payoff graphs like you just witnessed right now; stopping
+- **strike_reference** — SOURCE-EXPLICIT: at the money@131840.0s; at the money@158959.0s; at the money@164480.0s; one strike@648320.0s; out of the money@664880.0s; ATM@870639.0s
+- **stop_reference** — SOURCE-EXPLICIT: stop@679120.0s; stop looking at the@908160.0s; stopping@966079.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status

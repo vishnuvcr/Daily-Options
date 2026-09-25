@@ -11,12 +11,12 @@
 - **adjustment_day** — UNSPECIFIED: UNSPECIFIED
 - **exit_day** — UNSPECIFIED: UNSPECIFIED
 - **underlying** — UNSPECIFIED: UNSPECIFIED
-- **premium_zone** — SOURCE-EXPLICIT: 200 points
+- **premium_zone** — UNSPECIFIED: UNSPECIFIED
 - **time_reference** — UNSPECIFIED: UNSPECIFIED
-- **expiry_reference** — SOURCE-EXPLICIT: Tuesday
+- **expiry_reference** — UNSPECIFIED: UNSPECIFIED
 - **lot_reference** — UNSPECIFIED: UNSPECIFIED
-- **strike_reference** — SOURCE-EXPLICIT: out of the money; same strike
-- **stop_reference** — SOURCE-EXPLICIT: stopping; stop-loss on the overall trade
+- **strike_reference** — SOURCE-EXPLICIT: out of the money@60239.0s; out of the money@65760.0s; same strike@74640.0s; same strike@95759.0s; same strike@671200.0s
+- **stop_reference** — SOURCE-EXPLICIT: stopping@635519.0s; stop-loss on the overall trade@842560.0s
 - **target_reference** — UNSPECIFIED: UNSPECIFIED
 
 ## Reconstruction status
