@@ -169,3 +169,12 @@ Air Defense remains archived as a positive-but-under-target family. Falcon is no
 | 30.2 | phase-30.2-equity-income-falcon-weekly-v1 | 36160873596 | Stress executing; Base queued | No |
 
 Earlier Phase 30.2 runs were cancelled/invalidated before numerical execution due to acquisition/API and matrix-concurrency issues. Run 36160873596 is the corrected authoritative run.
+
+
+
+## 2026-09-25 — Phase 30.2 Falcon monitoring checkpoint
+- Authoritative run: **36160873596** on `phase-30.2-equity-income-falcon-weekly-v1` at corrected branch head `925dca64b773dd7b03ed6713fb98d966415c57c5`.
+- Base job **108156817844**: tests passed, Rissin acquisition passed, friction computation in progress.
+- Stress job **108156817965**: tests passed, Rissin acquisition passed, friction computation in progress.
+- No Falcon P&L is accepted yet; artifacts are absent until workflow completion.
+- Earlier Falcon runs remain non-evidentiary because of HF API and matrix-concurrency defects; the corrected run is the sole authoritative execution.
