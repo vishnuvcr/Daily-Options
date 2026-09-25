@@ -35,7 +35,7 @@ from research.phase30_weekly_iron_dome import build_mark_panel, first_trigger
 def test_vectorized_wing_trigger_uses_first_crossing():
     spot = pd.DataFrame({
         "ts": pd.to_datetime(["2026-01-01 09:31:00","2026-01-01 09:32:00","2026-01-01 09:33:00"]),
-        "close_px": [25000.0,25110.0,25125.0],
+        "close_px": [25000.0,25120.0,25125.0],
     })
     leg = {
         "active": True,
