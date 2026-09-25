@@ -161,3 +161,11 @@ Phase 30 v8 is retired. The Air Defense family is the sole active Equity Income 
 | 30.2 | phase-30.2-equity-income-falcon-weekly-v1 | 36160694325 | Pending/queued | No |
 
 Air Defense remains archived as a positive-but-under-target family. Falcon is now the sole active Equity Income numerical frontier.
+
+## 2026-09-25 — Phase 30.2 authoritative Falcon run
+
+| Phase | Branch | Workflow run | Status | Accepted P&L |
+|---|---|---:|---|---|
+| 30.2 | phase-30.2-equity-income-falcon-weekly-v1 | 36160873596 | Stress executing; Base queued | No |
+
+Earlier Phase 30.2 runs were cancelled/invalidated before numerical execution due to acquisition/API and matrix-concurrency issues. Run 36160873596 is the corrected authoritative run.
