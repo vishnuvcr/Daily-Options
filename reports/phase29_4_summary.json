@@ -1,0 +1,10 @@
+{
+  "variant_count": 36,
+  "entry_variants": 3,
+  "trigger_variants": 2,
+  "adjustment_variants": 3,
+  "exit_variants": 2,
+  "pnl_allowed": 0,
+  "selection_rule": "NONE",
+  "phase30_gate": "READY_FOR_FROZEN_VARIANT_BACKTEST"
+}
