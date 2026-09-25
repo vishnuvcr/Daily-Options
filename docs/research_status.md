@@ -45,13 +45,8 @@ Candidate sources:
 
 Status: candidate sources only; independent validation pending Phase 1.
 
-## Current blockers
-- Repository started empty.
-- High-quality historical bid/ask/depth may require licensed or broker-authenticated sources.
-- Some public datasets have close/market-price bars without bid/ask and cannot be treated as perfect executable prices.
-
-## Next action
-Create phase-1-data-foundation with data manifests, download adapters, schema validation, cached sample datasets and automated quality checks.
+## Current blocker / next action
+The sole active numerical frontier is Falcon Spread. Run 36160873596 has passed tests and exact Rissin acquisition and is executing Base/Stress friction. No P&L is accepted until both jobs finish and their persisted artifacts are independently audited. If 0/270 cells pass the frozen weekly gate, retire Falcon and move to the next distinct source-faithful Equity Income candidate; no result-driven tuning.
 
 
 ## Continuation checkpoint — 2026-09-24
