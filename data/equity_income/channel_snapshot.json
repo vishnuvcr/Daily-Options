@@ -1,0 +1,19 @@
+{
+  "schema_version": 2,
+  "channel_url": "https://www.youtube.com/@equityincome",
+  "channel_id": "UCxMt2GgYbO6-FCf0p4sAT0A",
+  "harvested_at_utc": "2026-09-25T10:33:54.456304+00:00",
+  "discovered_videos": 169,
+  "metadata_records": 169,
+  "transcript_archived": 0,
+  "transcript_errors": 169,
+  "integrity_checked": 0,
+  "integrity_ok": 0,
+  "encryption_scheme": "RSA-OAEP-SHA256+FERNET-SHA256",
+  "archive_public_key_sha256": "284f6831bd0e6bebb3afffba37ccf110a45d6a52d09647e18c888b84bdf45899",
+  "tooling": {
+    "yt-dlp": "2026.8.19",
+    "youtube-transcript-api": "1.2.4",
+    "cryptography": "50.0.1"
+  }
+}
