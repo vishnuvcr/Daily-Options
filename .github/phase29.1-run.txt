@@ -1,2 +1,2 @@
 run Phase 29.1 readiness audit
-triggered for pull-request validation
+triggered after E0252 correction
