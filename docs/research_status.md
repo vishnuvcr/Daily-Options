@@ -550,3 +550,10 @@ The family is **retired for the ₹5,000/week promotion gate**. No WFA/OOS or re
 New distinct branch: `phase-30.2-equity-income-falcon-weekly-v1`. This is the next source-faithful Equity Income candidate after Air Defense. The frozen 270-cell Falcon grid preserves the source's ratio-diagonal structure, current Tuesday-expiry timing analogue (Wednesday entry → Thursday adjustment → Monday exit), 25-point premium zone sensitivity, one-strike wing adjustment and hard-stop grid. The numerical gate has been rewritten for the current **₹5,000 net/week** objective rather than the retired ₹1,000/day criterion.
 
 Authoritative workflow run **36160694325** is queued/pending. No Falcon P&L is accepted yet.
+
+
+
+## 2026-09-25 — Phase 30.2 Falcon monitoring checkpoint
+Phase 30.2 Falcon independent replication is executing under the frozen 270-cell weekly matrix. Both Base and doubled-slippage Stress have passed unit tests and exact Rissin acquisition; numerical friction is now running. No result is accepted until both jobs complete and the persisted summaries/leaderboards are audited.
+
+The registered promotion gate remains mean weekly net ≥ ₹5,000, median weekly net ≥ ₹5,000, ≥70% profitable weeks, ≥20 completed weeks and ≥80% execution coverage, with Base/Stress costs and risk statistics disclosed. If the gate is not met, Falcon is retired without result-driven tuning and the next distinct source-faithful Equity Income candidate is opened.
