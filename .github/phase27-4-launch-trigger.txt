@@ -1,3 +1,4 @@
 Phase 27.4 launcher trigger: precision-clean the T1 evidence set.
 Phase 27.4 execution trigger 2026-09-25.
 Phase 27.4 push-trigger retry after launcher trigger correction.
+Controlled PR rerun after push-trigger verification 2026-09-25.
