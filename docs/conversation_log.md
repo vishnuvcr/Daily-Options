@@ -94,3 +94,7 @@ The prior Phase 13 result was revisited during candidate-audit work. Every trade
 ## 2026-09-25 — Phase 20 final result / Phase 21 launch
 
 Authoritative Phase 20 run 36045068043 completed Base and Stress cleanly. The frozen 384-cell global-gated late-day volatility-acceleration family produced 3,872 trades; best mean active-day net was Rs 481.73 base and Rs 451.73 stress, with 0 target-qualified cells and 0 nested-WFA windows. Phase 20 is retired without retuning. Phase 21 is the active frontier: a preregistered regime switch between long ATM straddles on fixed expansion regimes and short OTM strangles on fixed calm regimes.
+
+## 2026-09-25 — Phase 29.1 readiness execution and correction
+
+Phase 29.1 source-readiness audit was implemented with pinned TradeMarkk 51ca58c and Rissin 78b1c5468255d18cf492984bfe6fe4e3ac874d7c revisions, candidate-level readiness mapping, regression tests, and an Actions workflow with manual dispatch and push/pull-request execution. Run 36132533217 passed unit tests and the workflow gate, but its first source inventory exposed E0252: the Hugging Face repository ID was URL-encoded incorrectly, so every source-tree request returned HTTP 400. That artifact is rejected. The code is now corrected to preserve the repository slash, and source API failures are fatal rather than being allowed to silently change the feasibility counts. The rerun will be accepted only if the pinned NIFTY partitions are actually inventoried and the 51/16/4 regression distribution is reproduced. No P&L is involved.
