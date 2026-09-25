@@ -24,3 +24,5 @@ Retry 2026-09-25i: persist partial encrypted successes; reduce concurrency to 2;
 Retry 2026-09-25j: completeness gate + Invidious/proxy fallback probe added.
 
 Retry 2026-09-25k: bounded multi-path transcript ladder, parser regression, and fixed-branch manual workflow hardening.
+
+PR-triggered archive execution checkpoint 2026-09-25.
