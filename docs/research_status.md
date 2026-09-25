@@ -371,3 +371,11 @@ Authoritative launcher run **36133569295** completed successfully.
 The semantic cleanup removed clock-as-ratio/lot errors and filtered zero-premium matches, but it also confirmed that the remaining T1 source records still contain genuine material ambiguity. Phase 27 remains a reconstruction gate; no numerical testing is authorized from these sheets.
 
 Next step: create a frozen T1 source-resolution matrix and reconcile conflicts/unknowns using archived source evidence plus independent corroborating descriptions. Only candidates with all economically material rules resolved can advance.
+
+## 2026-09-25 — Phase 27.5 T1 source-resolution gate
+
+Run **36133946055** completed successfully.
+
+Result: **8 T1 candidates / 0 backtest-ready / 8 blocked**. Every T1 candidate still has at least one unresolved or conflicting economically material rule.
+
+The correct next step is targeted source-context reconciliation, not numerical tuning. The archive and data-feasibility gates remain passed; the remaining blocker is strategy-rule fidelity.
