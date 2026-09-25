@@ -28,3 +28,7 @@ Gates: both pinned files present; at least 20 distinct executable setup dates; b
 Costs: Paytm Money ₹20/order; date-aware NSE STT and transaction charges; SEBI fee; stamp duty; GST; base slippage 0.20 premium points/order; stress 0.40.
 
 Audit: Phase 24 undercoverage is logged as E0237; its numerical leaderboard is not accepted as strategy evidence.
+
+
+## Execution checkpoint — 2026-09-25
+Phase 25 CI execution requested after merge. Numerical results remain unaccepted until both friction models complete and the setup-date coverage gate passes.
