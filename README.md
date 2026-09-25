@@ -210,3 +210,9 @@ Trading research is **paused** while a dedicated fixed branch, `equity-income-ch
 - [Weekly research plan](https://github.com/vishnuvcr/Daily-Options/blob/equity-income-channel-archive-v1/docs/equity_income_weekly_research_plan.md)
 
 The new research gate is **at least ₹5,000 net per traded week** at a fixed reference position size, with Base/Stress friction, weekly P&L distribution, drawdown, WFA/OOS and later-period validation. Position size will not be increased merely to hit the target. Every distinct strategy described in the channel will first be reconstructed and deduplicated before it enters numerical testing.
+
+## 2026-09-25 — Equity Income archive keyless conversion
+
+The archive no longer requires a GitHub Actions secret. Branch `equity-income-channel-archive-v2-hybrid-keyless` uses RSA-OAEP + Fernet hybrid encryption: the repository contains only the public key, while the matching private key remains outside GitHub. The local decrypt utility is `scripts/decrypt_equity_income_transcript.py`.
+
+The weekly archive schedule is mirrored on `main` because GitHub scheduled workflows execute only from the default branch. citeturn445342search0turn445342search1
