@@ -223,12 +223,15 @@ def settle(legs, lot, slippage, brokerage_per_order, entry_date=None, exit_date=
     return gross - cost(legs, lot, slippage, brokerage_per_order, entry_date, exit_date)
 
 
-def build_setup(con, root, cal, entry_time, target, far_mode):
+def build_setup(con, root, cal, entry_time, target, far_mode, snapshot_cache):
     entry_date, adjust_date, exit_date = cal["entry_date"], cal["adjust_date"], cal["exit_date"]
     near_exp, far_exp = cal["near_expiry"], cal["far_expiry"]
     signal_ts = pd.Timestamp(f"{entry_date} {entry_time}")
     fill_ts = signal_ts + pd.Timedelta(minutes=1)
-    snap = load_snapshot(con, root, entry_date, near_exp, far_exp, signal_ts, fill_ts)
+    snap_key = (str(entry_date), str(near_exp), str(far_exp), str(signal_ts), str(fill_ts))
+    if snap_key not in snapshot_cache:
+        snapshot_cache[snap_key] = load_snapshot(con, root, entry_date, near_exp, far_exp, signal_ts, fill_ts)
+    snap = snapshot_cache[snap_key]
     if snap.empty:
         return None
 
@@ -414,11 +417,12 @@ def run(data: Path, out: Path, slippage: float, brokerage_per_order: float):
     cals = expiry_setups(sessions, expiries)
 
     setups = []
+    snapshot_cache = {}
     for cal in cals:
         for entry_time in ENTRY_TIMES:
             for target in TARGET_PREMIUMS:
                 for far_mode in FAR_MODES:
-                    s = build_setup(con, data, cal, entry_time, target, far_mode)
+                    s = build_setup(con, data, cal, entry_time, target, far_mode, snapshot_cache)
                     if s is not None:
                         setups.append(s)
 
