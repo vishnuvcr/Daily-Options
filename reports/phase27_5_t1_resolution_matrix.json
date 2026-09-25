@@ -1,0 +1,130 @@
+[
+  {
+    "video_id": "OvaJumYancs",
+    "title": "No More Straddles. This Strategy Is Smarter",
+    "family_hints": "strangle|straddle",
+    "resolved_evidence": "NIFTY mentioned; short actions; ATM and one-strike terminology; adjustment/move language",
+    "unresolved_material": [
+      "entry timing",
+      "adjustment timing",
+      "exit timing",
+      "expiry",
+      "stop",
+      "target"
+    ],
+    "resolution_state": "STRATEGY_REPLACES_STRADDLE_NEEDS_EXACT_STRUCTURE",
+    "backtest_allowed": false
+  },
+  {
+    "video_id": "Hk55IhMoYAQ",
+    "title": "Leaps Calendar pro Strategy for Working People",
+    "family_hints": "calendar|straddle|leaps",
+    "resolved_evidence": "NIFTY; sell/hedge actions; ITM language; hedging; target language includes ~25 ROI phrase; long-dated family",
+    "unresolved_material": [
+      "entry timing",
+      "short/long expiry mapping",
+      "exact strike construction",
+      "stop",
+      "capital",
+      "target definition"
+    ],
+    "resolution_state": "LONG_DATED_CALENDAR_NEEDS_EXACT_EXPIRIES",
+    "backtest_allowed": false
+  },
+  {
+    "video_id": "aRjY_O6U3nQ",
+    "title": "Retail Option Sellers Need This First - STRANGLE AIR DEFENSE SYSTEM",
+    "family_hints": "iron_condor|ratio_spread|strangle|jade_lizard",
+    "resolved_evidence": "NIFTY; 0.2 delta; short actions; 1/2-sigma expected range concept; external description confirms short strangles/iron condors and adjustment near short strikes; 5-minute-before-expiry exit phrase",
+    "unresolved_material": [
+      "entry timing/day",
+      "exact structure selection",
+      "stop",
+      "adjustment trigger",
+      "wing construction",
+      "target/exit semantics"
+    ],
+    "resolution_state": "SHORT_VOL_RANGE_SYSTEM_EXACT_STRIKE_STOP_ENTRY_NEEDED",
+    "backtest_allowed": false
+  },
+  {
+    "video_id": "hAy3T7sE5qo",
+    "title": "RR 1:5 LEAPS OPTIONS STRATEGY | Professional Hedged Setup",
+    "family_hints": "ratio_spread|strangle|straddle|leaps",
+    "resolved_evidence": "NIFTY; ATM; 500-point reference; hedge actions; long/sell actions; external description confirms defined risk, LEAPS strike selection, limit orders, one downside adjustment",
+    "unresolved_material": [
+      "entry timing",
+      "exact long/short expiry",
+      "strike-selection formula",
+      "stop",
+      "target",
+      "capital"
+    ],
+    "resolution_state": "LEAPS_RULE_NOT_NUMERICALLY_COMPLETE",
+    "backtest_allowed": false
+  },
+  {
+    "video_id": "1V-06qTH5Rc",
+    "title": "Iron Condor Adjustment",
+    "family_hints": "iron_fly|iron_condor|leaps",
+    "resolved_evidence": "NIFTY; OTM; 45-point reference; adjustment/move actions; external description confirms far-OTM additions and range widening",
+    "unresolved_material": [
+      "entry timing",
+      "tested-side trigger",
+      "exact adjustment leg construction",
+      "stop",
+      "target",
+      "expiry"
+    ],
+    "resolution_state": "IC_RULE_INCOMPLETE",
+    "backtest_allowed": false
+  },
+  {
+    "video_id": "UBk0f6HvXfg",
+    "title": "Bad-Trade Blocker | Intraday Option Selling Indicator",
+    "family_hints": "unclassified",
+    "resolved_evidence": "NIFTY; intraday option-selling entry action; external description confirms indicator-based entry/exit signals and tighter stop-loss",
+    "unresolved_material": [
+      "indicator formula",
+      "signal threshold",
+      "strike selection",
+      "stop numeric rule",
+      "exit time",
+      "underlying contract/expiry"
+    ],
+    "resolution_state": "INDICATOR_FORMULA_UNRESOLVED",
+    "backtest_allowed": false
+  },
+  {
+    "video_id": "EZZzwpLpghM",
+    "title": "LOSING-OPTION-TRADE? USE TIME Method | Bear Put, Bull Call Adjustment",
+    "family_hints": "iron_fly",
+    "resolved_evidence": "weekly expiry; Monday adjustment day; OTM language; external description confirms bull-put-spread repair using time/expiry structure and stop-loss requirement",
+    "unresolved_material": [
+      "entry timing",
+      "adjustment trigger",
+      "time-roll construction",
+      "stop numeric rule",
+      "exit",
+      "underlying"
+    ],
+    "resolution_state": "TIME_ADJUSTMENT_RULE_INCOMPLETE",
+    "backtest_allowed": false
+  },
+  {
+    "video_id": "_pDU1aqKivU",
+    "title": "Aggressive Straddle Adjustment Plan",
+    "family_hints": "iron_fly|straddle|debit_spread",
+    "resolved_evidence": "short straddle actions; ATM; weekly expiry; Monday adjustment/exit; stop-loss requirement; 250/5000 numeric references are ambiguous",
+    "unresolved_material": [
+      "entry timing",
+      "adjustment trigger",
+      "exact hedge leg",
+      "stop numeric rule",
+      "target",
+      "underlying"
+    ],
+    "resolution_state": "STRADDLE_MANAGEMENT_RULE_INCOMPLETE",
+    "backtest_allowed": false
+  }
+]
