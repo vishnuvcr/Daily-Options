@@ -72,7 +72,7 @@ def setup(c,S,d,et,p,f,exps,sessions):
     if not vals or any(x is None for x in vals):return None
     a,b,cc,d0=vals; credit=5*(a+b)-3*(cc+d0)
     return None if credit<=0 else {"d":d,"et":et,"p":p,"f":f,"ne":ne,"fe":fe,"ad":ad,"xd":xd,"fill":ft,"credit":credit,
-        "sce":float(ce.strike),"spe":float(pe.strike),"fce":float(fce.strike),"fpe":float(fpe),"sce0":a,"spe0":b,"fce0":cc,"fpe0":d0}
+        "sce":float(ce["strike"]),"spe":float(pe["strike"]),"fce":float(fce["strike"]),"fpe":float(fpe["strike"]),"sce0":a,"spe0":b,"fce0":cc,"fpe0":d0}
 
 def costs(legs,lot,slip,ed,xd):
     turnover=sum((x[0]+x[1])*x[2]*lot for x in legs)
