@@ -300,3 +300,42 @@ Phase 27.1 context-aware evidence extraction completed for all 71 strategy candi
 Phase 27.2 then produced an evidence-completeness triage of **8 T1 / 10 T2 / 53 T3** candidates. This is only a reconstruction-priority metric; **no backtesting is permitted yet**.
 
 The next step is frozen rule-sheet reconstruction of the highest-information T1 candidates, with external YouTube-description evidence used only as corroboration; the archived source captions remain primary.
+
+## 2026-09-25 — Phase 29.1 Equity-Income data readiness
+
+Phase 29.1 completed on dedicated branch `phase-29-equity-income-data-feasibility-v1` and workflow run **36133844640**. The readiness pipeline now inventories the exact pinned Hugging Face revisions with the official Python client rather than treating directory metadata as market-data presence.
+
+### Accepted Phase 29.1 evidence
+
+| Item | Result |
+|---|---|
+| Candidate registry | 71 Equity-Income candidate rows |
+| Preliminary data-feasible families | 51 |
+| Data-limited families | 16 |
+| Unresolved families | 4 |
+| TradeMarkk revision | `51ca58c` |
+| Rissin revision | `78b1c5468255d18cf492984bfe6fe4e3ac874d7c` |
+| Actual TradeMarkk NIFTY 1-minute option partitions | 267 Parquet expiry files |
+| Actual Rissin NIFTY intraday partitions | 4 Parquet year files |
+| Bid/ask execution quotes verified | 0 |
+| Strategy-specific quote completeness verified | 0 |
+| Fully verified historical NIFTY lot-size schedule | 0 |
+| Phase 30 numerical backtest gate | **BLOCKED** |
+
+The public source cards describe the TradeMarkk dataset as 1-minute NIFTY/BANKNIFTY/SENSEX spot and option-chain OHLCV(+OI) data with exact-expiry option files, while Rissin documents 1-minute NIFTY/BANKNIFTY/SENSEX coverage and a canonical Parquet schema; Rissin also notes that Upstox intraday OI is unavailable/NaN. These sources are treated as research data, not as perfect executable bid/ask quotes. citeturn308533search0turn365658search0
+
+NSE currently specifies Tuesday expiry for NIFTY weekly contracts, with the previous trading day used when Tuesday is a trading holiday. Historical expiry and lot-size rules are versioned rather than back-projected. NSE's 2025 expiry circular moved NIFTY weekly expiry from Thursday to Tuesday, and the exchange publishes current contract specifications separately. citeturn557934search0turn557934search27
+
+### Phase 29.1 research documents
+
+- [Phase 29.1 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-29-equity-income-data-feasibility-v1/docs/phase29.1_data_readiness_plan.md)
+- [Phase 29.1 source inventory](https://github.com/vishnuvcr/Daily-Options/blob/phase-29-equity-income-data-feasibility-v1/data/equity_income/phase29_readiness_source_inventory.json)
+- [Phase 29.1 readiness matrix](https://github.com/vishnuvcr/Daily-Options/blob/phase-29-equity-income-data-feasibility-v1/reports/phase29_readiness_matrix.csv)
+- [Phase 29.1 summary](https://github.com/vishnuvcr/Daily-Options/blob/phase-29-equity-income-data-feasibility-v1/reports/phase29_readiness_summary.json)
+- [Phase 29.1 workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-29-equity-income-data-feasibility-v1/.github/workflows/phase-29.1-equity-income-data-readiness-v1.yml)
+- [Research status](https://github.com/vishnuvcr/Daily-Options/blob/phase-29-equity-income-data-feasibility-v1/docs/research_status.md)
+- [Error log](https://github.com/vishnuvcr/Daily-Options/blob/phase-29-equity-income-data-feasibility-v1/docs/error_log.md)
+
+### Next research phase
+
+Phase 29.2 will perform strategy-specific contract coverage and exact-expiry joins for the 51 preliminary-feasible candidates, while preserving the hard execution-quality gate: no bid/ask inference, explicit slippage/transaction costs, historical lot sizes from dated exchange evidence, and no future information. Phase 30 cannot start from aggregate source availability alone.
