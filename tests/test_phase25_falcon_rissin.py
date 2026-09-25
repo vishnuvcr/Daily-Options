@@ -63,3 +63,9 @@ def test_setup_uses_scalar_strike_indexing():
     assert 'pe.strike' not in src
     assert 'fce.strike' not in src
     assert 'fpe.strike' not in src
+
+
+def test_pre_stop_is_limited_to_adjustment_and_keyed_by_adjustment_time():
+    src = Path('research/phase25_falcon_rissin.py').read_text()
+    assert 'pre_stop_key=(setup_key,v[3])' in src
+    assert 'if r.ts < start or r.ts >= sig:' in src
