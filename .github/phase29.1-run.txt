@@ -1,2 +1,2 @@
 run Phase 29.1 readiness audit
-triggered after diagnostics/persist-on-failure correction
+triggered after E0256 classifier correction
