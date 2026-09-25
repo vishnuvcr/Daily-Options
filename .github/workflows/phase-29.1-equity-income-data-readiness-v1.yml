@@ -5,6 +5,12 @@ on:
   push:
     paths:
       - ".github/phase29.1-run.txt"
+  pull_request:
+    paths:
+      - ".github/phase29.1-run.txt"
+      - "research/phase29_readiness.py"
+      - "tests/test_phase29_readiness.py"
+      - ".github/workflows/phase-29.1-equity-income-data-readiness-v1.yml"
 
 permissions:
   contents: write
@@ -21,7 +27,7 @@ jobs:
       - name: Checkout current readiness branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ github.head_ref || github.ref_name }}
           fetch-depth: 0
 
       - name: Sync Phase 28 candidate registry
