@@ -287,10 +287,10 @@ def simulate_setup(con, root, setup, variant, slippage, brokerage_per_order, ser
 
     if "initial" not in c:
         c["initial"] = {
-            "sce": load_series(con, root, setup["entry_date"], setup["exit_date"], setup["near_expiry"], setup["near_strikes"]["ce"], "CE"),
-            "spe": load_series(con, root, setup["entry_date"], setup["exit_date"], setup["near_expiry"], setup["near_strikes"]["pe"], "PE"),
-            "fce": load_series(con, root, setup["entry_date"], setup["exit_date"], setup["far_expiry"], setup["far_strikes"]["ce"], "CE"),
-            "fpe": load_series(con, root, setup["entry_date"], setup["exit_date"], setup["far_expiry"], setup["far_strikes"]["pe"], "PE"),
+            "sce": cached_series(setup["entry_date"], setup["exit_date"], setup["near_expiry"], setup["near_strikes"]["ce"], "CE"),
+            "spe": cached_series(setup["entry_date"], setup["exit_date"], setup["near_expiry"], setup["near_strikes"]["pe"], "PE"),
+            "fce": cached_series(setup["entry_date"], setup["exit_date"], setup["far_expiry"], setup["far_strikes"]["ce"], "CE"),
+            "fpe": cached_series(setup["entry_date"], setup["exit_date"], setup["far_expiry"], setup["far_strikes"]["pe"], "PE"),
         }
     initial = c["initial"]
     if any(s.empty for s in initial.values()):
@@ -349,8 +349,8 @@ def simulate_setup(con, root, setup, variant, slippage, brokerage_per_order, ser
             return None
         wing_ce, wing_pe = float(ce_w[0]), float(pe_w[-1])
 
-        wce = load_series(con, root, setup["adjust_date"], setup["exit_date"], setup["near_expiry"], wing_ce, "CE")
-        wpe = load_series(con, root, setup["adjust_date"], setup["exit_date"], setup["near_expiry"], wing_pe, "PE")
+        wce = cached_series(setup["adjust_date"], setup["exit_date"], setup["near_expiry"], wing_ce, "CE")
+        wpe = cached_series(setup["adjust_date"], setup["exit_date"], setup["near_expiry"], wing_pe, "PE")
         if wce.empty or wpe.empty:
             return None
         wce_row, wpe_row = next_open(wce, adjust_exec), next_open(wpe, adjust_exec)
