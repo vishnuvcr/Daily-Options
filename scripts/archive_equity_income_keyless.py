@@ -162,6 +162,7 @@ def main() -> int:
     parser.add_argument("--public-key", type=Path, default=Path("config/equity_income_archive_public_key.pem"))
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--limit", type=int, default=0)
+    parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--transcript-timeout-seconds", type=int, default=45)
     args = parser.parse_args()
 
