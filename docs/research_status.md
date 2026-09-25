@@ -526,3 +526,11 @@ Best Base cell: ID30_02_WING_60_RECENTER_BOTH, mean weekly net **-₹585.85**, m
 Best Stress cell: ID30_02_RISK_60_ONE_STRIKE_INSIDE, mean weekly net **-₹807.58**, median **-₹281.21**, positive-week rate **46.51%**, execution coverage **98.47%**, worst week **-₹9,274.17**, profit factor **0.62**, ES95 **-₹8,311.61**.
 
 Phase 30 is **RETIRED**. No WFA/OOS or parameter selection is authorized from this family. The next distinct source-faithful family is Air Defense.
+
+## 2026-09-25 — Phase 30.1 Air Defense active
+
+Phase 30 v8 Iron Dome is retired after clean Base+Stress failure of the frozen 12-cell weekly gate. The next distinct source-faithful family is **Air Defense / India-VIX expected-range weekly short strangle** on branch `phase-30.1-equity-income-air-defense-v1`.
+
+Authoritative workflow run **36159121044** is executing. Unit tests and the cached TradeMarkk source restore have passed; exact-expiry acquisition is in progress. The frozen 24-cell grid uses prior-day India VIX, 1/2-sigma range selection, expiry-relative entry offsets -2/-3 sessions, 09:30/10:00 entries, and NONE / 50%-distance / 75%-distance challenged-short reduction modes. Base brokerage is ₹10/order from the current Paytm Money F&O schedule; Base/Stress slippage remains ₹0.20/₹0.40.
+
+No Air Defense P&L is accepted until Base and Stress complete and the artifacts pass duplicate-key, coverage and information-barrier audit.
