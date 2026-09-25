@@ -420,3 +420,11 @@ The next distinct Equity Income family is the source-resolved **Air Defense / In
 ### Phase 30.1 — Air Defense active frontier
 
 The Iron Dome family is retired after the complete v8 Base+Stress audit. Phase 30.1 now tests the **Air Defense / India-VIX expected-range weekly short-strangle** family on `phase-30.1-equity-income-air-defense-v1`. The source evidence is Python-acquired and hashed; the 24-cell numerical grid is frozen before execution. [Phase 30.1 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.1-equity-income-air-defense-v1/docs/phase30_1_air_defense_plan.md)
+
+### Phase 30.1 closure — Air Defense
+
+Phase 30.1 completed Base and Stress on 42 normal Tuesday expiries and 236 official NSE India VIX observations. **0/24 frozen cells passed the ₹5,000/week gate.** Best cell: mean weekly net ₹2,126.52 Base / ₹2,070.63 Stress, 85.71% positive weeks and 83.33% execution coverage. The family is retired without WFA tuning.
+
+### Phase 30.2 active frontier — Falcon Spread
+
+The next Equity Income family is the source-formalized Falcon Spread. The new branch `phase-30.2-equity-income-falcon-weekly-v1` uses the current Tuesday-expiry analogue **Wednesday entry → Thursday adjustment → Monday pre-expiry exit** and a frozen 270-cell grid. The gate is now the declared **₹5,000 net/week** target with weekly consistency and cost stress. [Phase 30.2 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.2-equity-income-falcon-weekly-v1/docs/phase30_2_falcon_weekly_plan.md)
