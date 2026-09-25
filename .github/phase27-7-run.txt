@@ -1,3 +1,4 @@
 Phase 27.7 Air Defense source resolution launcher
 Phase 27.7 controlled rerun 2026-09-25-01
 Phase 27.7 controlled rerun 2026-09-25-02 — expanded hold/strike context
+Phase 27.7 controlled rerun 2026-09-25-03 — validation correction only
