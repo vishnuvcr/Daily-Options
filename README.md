@@ -24,15 +24,15 @@ The final decision still requires nested walk-forward selection followed by inde
 | Phase | Purpose | Status |
 |---|---|---|
 | 26 | Complete Python-acquired Equity Income channel archive | COMPLETE — 169/169 transcripts verified |
-| 27 / 27.4 | Source-fidelity evidence extraction and precision cleanup | COMPLETE — candidates still need deterministic rule resolution |
-| 29.1 | Data readiness | COMPLETE — 51 preliminary index-option-feasible; quote/lot gates remain |
-| 29.2 | Contract coverage | COMPLETE — 2 NIFTY Iron Dome rows contract-ready; others blocked |
-| 29.3 | Iron Dome content validation | COMPLETE — provisional weekly rule reconstructed |
-| 29.4 | Iron Dome source-fidelity reconstruction | **CURRENT** |
-| 29.5 | Freeze deterministic interpretations + contract/lot readiness | NEXT / numerical gate |
-| 30 | Weekly numerical backtest + WFA/OOS | **ACTIVE — v8 state-isolation correction; v7 P&L invalidated** |
+| 27 / 27.4 | Source-fidelity evidence extraction and precision cleanup | COMPLETE |
+| 29.1 | Data readiness | COMPLETE |
+| 29.2 | Contract coverage | COMPLETE |
+| 29.3 | Iron Dome content validation | COMPLETE |
+| 30 v8 | Iron Dome weekly numerical test | RETIRED — 0/12 cells passed the ₹5,000/week gate |
+| 30.1 | Air Defense weekly replication | RETIRED — 0/24 cells passed; best frozen mean weekly net ≈₹2.13k |
+| 30.2 | Falcon Spread weekly independent replication | **ACTIVE — authoritative run 36160873596, Base + Stress friction executing** |
 
-Current frontier links: [Research status](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md) · [Research plan](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_plan.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md)
+Current frontier links: [Research status](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md) · [Research plan](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_plan.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md) · [Phase 30.2 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.2-equity-income-falcon-weekly-v1/docs/phase30_2_falcon_weekly_plan.md)
 
 ## Current YouTube strategy program design
 
