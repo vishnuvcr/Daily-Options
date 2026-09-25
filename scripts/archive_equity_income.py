@@ -325,7 +325,7 @@ def archive_video(video: dict, transcript_root: Path,
 def validate(records: dict[str, dict], root: Path, key: str | None) -> tuple[int, int]:
     checked = ok = 0
     for record in records.values():
-        if record.get("status") != "archived":
+        if record.get("status") not in {"archived", "already_archived"}:
             continue
         checked += 1
         p = root / record["archive_path"]
@@ -424,7 +424,7 @@ def main() -> int:
         "harvested_at_utc": now_utc(),
         "discovered_videos": len(videos),
         "metadata_records": len(video_manifest),
-        "transcript_archived": sum(x.get("status") == "archived" for x in transcript_manifest.values()),
+        "transcript_archived": sum(x.get("status") in {"archived", "already_archived"} for x in transcript_manifest.values()),
         "transcript_errors": sum(x.get("status") == "error" for x in transcript_manifest.values()),
         "integrity_checked": checked,
         "integrity_ok": ok,
@@ -442,8 +442,10 @@ def main() -> int:
     if errors:
         write_jsonl(error_path, errors)
 
-    if checked != ok:
-        logging.error("Archive integrity failed: %d/%d", ok, checked)
+    errors_count = sum(x.get("status") == "error" for x in transcript_manifest.values())
+    metadata_errors = sum("metadata_error" in x for x in video_manifest.values())
+    if checked != ok or errors_count or metadata_errors or len(video_manifest) != len(videos):
+        logging.error("Archive incomplete: integrity=%d/%d transcript_errors=%d metadata_errors=%d metadata_records=%d discovered=%d", ok, checked, errors_count, metadata_errors, len(video_manifest), len(videos))
         return 2
     logging.info("Archive complete: %d videos; %d transcripts verified", len(videos), ok)
     return 0
