@@ -21,3 +21,5 @@ def test_build_record_marks_source_explicit_fields():
     assert r["field_status"]["premium_zone"] == "SOURCE-EXPLICIT"
     assert r["field_status"]["strike_reference"] == "SOURCE-EXPLICIT"
     assert r["field_status"]["stop_reference"] == "SOURCE-EXPLICIT"
+    assert r["fields"]["entry_day"][0]["value"].lower() == "wednesday"
+    assert r["fields"]["entry_day"][0]["start_sec"] == 0.0
