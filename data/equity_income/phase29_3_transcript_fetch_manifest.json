@@ -4,452 +4,1416 @@
     {
       "status": "OK",
       "video_id": "5xz7X5QsFv8",
-      "sha256": "1868573880694b064b06a37b406a099dfe475934d3c72a1e032adad3de8220ce",
-      "snippet_count": 27,
-      "evidence_count": 26,
+      "sha256": "68c41cf591cc58646bdcfe083e603e1490af72728eb775f627781fdf8c300725",
+      "snippet_count": 327,
+      "evidence_count": 126,
       "evidence": [
         {
-          "start": 2.0,
-          "text": "Because remember, when market spikes in Because remember, when market spikes in one direction, most traders freeze. And one direction, most traders freeze. And one direction, most traders freeze. And this strategy is made for ugly days. Most option sellers lose before the Most option sellers lose before the start of th",
+          "start": 12.28,
+          "text": "this strategy is made for ugly days. Most option sellers lose before the start of the trade. Why? Because they",
           "trigger_terms": [
-            "adjust",
-            "adjustment",
-            "dome",
-            "sell",
+            "sell"
+          ]
+        },
+        {
+          "start": 27.6,
+          "text": "share a strategy, a method, so at least one side stop being your problem. Nifty iron dome two adjustment is what we",
+          "trigger_terms": [
             "stop"
           ]
         },
         {
-          "start": 33.0,
-          "text": "Because remember, when market spikes in Because remember, when market spikes in one direction, most traders freeze. And one direction, most traders freeze. And one direction, most traders freeze. And this strategy is made for ugly days. Most option sellers lose before the Most option sellers lose before the start of th",
+          "start": 30.96,
+          "text": "one side stop being your problem. Nifty iron dome two adjustment is what we going to discuss in the video. Straight",
           "trigger_terms": [
             "adjust",
             "adjustment",
-            "call",
-            "dome",
-            "iron fly"
+            "dome"
           ]
         },
         {
-          "start": 64.0,
-          "text": "iron dome two adjustment is what we iron dome two adjustment is what we going to discuss in the video. Straight going to discuss in the video. Straight going to discuss in the video. Straight away, we going to go to the strategy away, we going to go to the strategy away, we going to go to the strategy creation. Remembe",
-          "trigger_terms": [
-            "buy",
-            "call",
-            "iron fly",
-            "pe",
-            "put",
-            "sell"
-          ]
-        },
-        {
-          "start": 94.0,
-          "text": "particular setup, the strength and the particular setup, the strength and the weaknesses, all. This is how the weaknesses, all. This is how the weaknesses, all. This is how the conventional iron fly looks like. It's a conventional iron fly looks like. It's a conventional iron fly looks like. It's a combination of a str",
-          "trigger_terms": [
-            "adjust",
-            "adjustment",
-            "iron fly",
-            "lot",
-            "move",
-            "pe"
-          ]
-        },
-        {
-          "start": 124.0,
-          "text": "Number one, if market go up, then we see Number one, if market go up, then we see the red zone. Number two, if market go the red zone. Number two, if market go the red zone. Number two, if market go down as well, then also. So, iron fly, a down as well, then also. So, iron fly, a down as well, then also. So, iron fly, ",
-          "trigger_terms": [
-            "buy",
-            "ce",
-            "enter",
-            "iron fly",
-            "pe"
-          ]
-        },
-        {
-          "start": 154.0,
-          "text": "So, here what we did is that instead of So, here what we did is that instead of making an iron fly at the center, we making an iron fly at the center, we making an iron fly at the center, we made a bearish iron fly. As you can see, made a bearish iron fly. As you can see, made a bearish iron fly. As you can see, slight",
-          "trigger_terms": [
-            "adjust",
-            "adjustment",
-            "buy",
-            "call",
-            "ce",
-            "pe",
-            "put",
-            "sell"
-          ]
-        },
-        {
-          "start": 185.0,
-          "text": "making a perfectly balanced wings, is making a perfectly balanced wings, is that, you know, selling 23,900, that, you know, selling 23,900, that, you know, selling 23,900, 200 points up, buy the call, 200 points 200 points up, buy the call, 200 points 200 points up, buy the call, 200 points below, buy the put. Instead ",
+          "start": 40.96,
+          "text": "creation. Remember, no heroics, no nine adjustments, no screen addiction. Just a clean defense model for Nifty. First,",
           "trigger_terms": [
             "adjust",
             "adjustment"
           ]
         },
         {
-          "start": 215.0,
-          "text": "if your strategy, your adjustments need if your strategy, your adjustments need constant babysitting, then it's a weak constant babysitting, then it's a weak constant babysitting, then it's a weak strategy. Now, what we going to do is, strategy. Now, what we going to do is, strategy. Now, what we going to do is, we goi",
+          "start": 48.08,
+          "text": "clean defense model for Nifty. First, let me show you how the iron fly, the so-called conventional iron fly looks.",
           "trigger_terms": [
-            "expiry",
-            "pe"
-          ]
-        },
-        {
-          "start": 247.0,
-          "text": "about this. And make sure, if you find about this. And make sure, if you find this video interesting, share it in your this video interesting, share it in your this video interesting, share it in your peer group. So, other person who you're peer group. So, other person who you're peer group. So, other person who you're",
-          "trigger_terms": [
-            "exit",
-            "pe"
-          ]
-        },
-        {
-          "start": 277.0,
-          "text": "in weekly, we plan to hold the trade for in weekly, we plan to hold the trade for two, three, maybe four days. Now, here two, three, maybe four days. Now, here two, three, maybe four days. Now, here it's Monday, and market has taken a it's Monday, and market has taken a it's Monday, and market has taken a bearish turn ",
-          "trigger_terms": [
-            "exit",
-            "move",
-            "profit"
-          ]
-        },
-        {
-          "start": 307.0,
-          "text": "to exit the trade. Now, can we do to exit the trade. Now, can we do something more in this? We definitely something more in this? We definitely something more in this? We definitely can. Because now I've got to show you, can. Because now I've got to show you, can. Because now I've got to show you, if market go complete",
-          "trigger_terms": [
-            "call",
-            "move",
-            "pe",
-            "put",
-            "sell"
-          ]
-        },
-        {
-          "start": 337.0,
-          "text": "complete opposite situation. Remember, complete opposite situation. Remember, when we make the strategy, one side is when we make the strategy, one side is when we make the strategy, one side is exposed to the market movement. And this exposed to the market movement. And this exposed to the market movement. And this is",
-          "trigger_terms": [
-            "buy",
-            "call",
-            "ce",
-            "pe",
-            "put",
-            "sell",
-            "strike"
-          ]
-        },
-        {
-          "start": 367.0,
-          "text": "call and put both. call and put both. Naturally. Naturally. Naturally. We got to make it directional now. So, We got to make it directional now. So, We got to make it directional now. So, I'm buying a call now. I'm buying a call now. I'm buying a call now. Very simple. You can slow down and learn Very simple. You can s",
-          "trigger_terms": [
-            "adjust",
-            "adjustment",
-            "loss",
-            "pe"
-          ]
-        },
-        {
-          "start": 399.0,
-          "text": "so that you learn it properly. so that you learn it properly. And when we do how this looks, this And when we do how this looks, this And when we do how this looks, this looks something like this now. Right? looks something like this now. Right? looks something like this now. Right? Okay, this is how it is. And now, le",
-          "trigger_terms": [
-            "adjust",
-            "adjustment",
-            "move",
-            "pe"
-          ]
-        },
-        {
-          "start": 431.0,
-          "text": "60% mark, we got to do some adjustment. 60% mark, we got to do some adjustment. Okay, so let's see what happens. And if Okay, so let's see what happens. And if Okay, so let's see what happens. And if market go down, I've already showed you market go down, I've already showed you market go down, I've already showed you ",
-          "trigger_terms": [
-            "adjust",
-            "adjustment",
-            "pe"
-          ]
-        },
-        {
-          "start": 461.0,
-          "text": "strategy is made for ugly days. Let's strategy is made for ugly days. Let's see what happens with this now. So, see what happens with this now. So, see what happens with this now. So, Monday morning at 9:30, market has a big Monday morning at 9:30, market has a big Monday morning at 9:30, market has a big direction now",
-          "trigger_terms": [
-            "adjust",
-            "adjustment",
-            "put",
-            "square"
-          ]
-        },
-        {
-          "start": 492.0,
-          "text": "And the maximum, if market continue to And the maximum, if market continue to go up, is approximately minus 29. So, go up, is approximately minus 29. So, go up, is approximately minus 29. So, now it has come to 40 to 60% range. Now, now it has come to 40 to 60% range. Now, now it has come to 40 to 60% range. Now, it's ",
-          "trigger_terms": [
-            "adjust",
-            "adjustment",
-            "move",
-            "square"
-          ]
-        },
-        {
-          "start": 523.0,
-          "text": "Step number two. The straddle which I Step number two. The straddle which I sold is 23,800. sold is 23,800. sold is 23,800. The market currently has gone up, has The market currently has gone up, has The market currently has gone up, has moved up. So, it only makes sense now to moved up. So, it only makes sense now to ",
-          "trigger_terms": [
-            "move",
-            "pe",
-            "put"
-          ]
-        },
-        {
-          "start": 555.0,
-          "text": "this is out. this is out. Yes, you copy. The put is trading at Yes, you copy. The put is trading at Yes, you copy. The put is trading at 12.4 12.4 12.4 five. five. five. This is also off the table. This is also off the table. This is also off the table. Interesting. Now, we have to move the Interesting. Now, we have to",
-          "trigger_terms": [
-            "call",
-            "ce",
-            "loss",
-            "move",
-            "put",
-            "sell"
-          ]
-        },
-        {
-          "start": 586.0,
-          "text": "one. We got to move it up. And 24,000 is one. We got to move it up. And 24,000 is a round number. a round number. a round number. Can we to sell the call, sell the put, Can we to sell the call, sell the put, Can we to sell the call, sell the put, and the second step is done, completed. and the second step is done, comp",
-          "trigger_terms": [
-            "ce",
-            "move",
-            "pe",
-            "put"
-          ]
-        },
-        {
-          "start": 616.0,
-          "text": "29 something, right? 29 something, right? Now, Now, Now, that 29 got reduced to minus 476. This that 29 got reduced to minus 476. This that 29 got reduced to minus 476. This is happening because we have taken extra is happening because we have taken extra is happening because we have taken extra credit by rolling the s",
-          "trigger_terms": [
-            "adjust",
-            "adjustment",
-            "exit",
-            "loss",
-            "pe"
-          ]
-        },
-        {
-          "start": 648.0,
-          "text": "&gt;&gt; Tuesday now, Tuesday morning and what do &gt;&gt; Tuesday now, Tuesday morning and what do we see is the loss which we had earlier we see is the loss which we had earlier we see is the loss which we had earlier is I can zoom out a bit for you. If I go is I can zoom out a bit for you. If I go is I can zoom out ",
-          "trigger_terms": [
-            "ce",
-            "exit",
-            "loss",
-            "pe",
-            "put"
-          ]
-        },
-        {
-          "start": 680.0,
-          "text": "we can definitely exit the trade in loss we can definitely exit the trade in loss or probably if I wait for some more time or probably if I wait for some more time or probably if I wait for some more time maybe that result is the trade come out maybe that result is the trade come out maybe that result is the trade come",
-          "trigger_terms": [
-            "adjust",
-            "adjustment",
-            "iron fly",
-            "pe"
-          ]
-        },
-        {
-          "start": 710.0,
-          "text": "enjoying the learning so far. enjoying the learning so far. The directional, how do we play? The directional, how do we play? The directional, how do we play? Number one point, the adjustment timing Number one point, the adjustment timing Number one point, the adjustment timing is non-negotiable. is non-negotiable. is ",
-          "trigger_terms": [
-            "adjust",
-            "adjustment",
-            "buy",
-            "iron fly",
-            "loss",
-            "lot",
-            "pe",
-            "stop"
-          ]
-        },
-        {
-          "start": 742.0,
-          "text": "highly popular. People who do iron fly highly popular. People who do iron fly took a lot of advantage from that took a lot of advantage from that took a lot of advantage from that particular playlist. If you trade any particular playlist. If you trade any particular playlist. If you trade any strategy and looking for d",
-          "trigger_terms": [
-            "adjust",
-            "adjustment",
-            "ce",
-            "pe"
-          ]
-        },
-        {
-          "start": 773.0,
-          "text": "it. Much better, easier. Probably you it. Much better, easier. Probably you can learn better strategies, adjustment can learn better strategies, adjustment can learn better strategies, adjustment techniques. Interesting point number techniques. Interesting point number techniques. Interesting point number two. two. two",
-          "trigger_terms": [
-            "adjust",
-            "adjustment",
-            "iron fly",
-            "loss",
-            "lot",
-            "pe",
-            "stop"
-          ]
-        }
-      ],
-      "language": "en",
-      "track_label": "en",
-      "generated": null,
-      "source": "youtube-transcript-ai"
-    },
-    {
-      "status": "OK",
-      "video_id": "9cetNfglyO4",
-      "sha256": "617e3aa386a4cdc0aad420088789cba86e2e88b2137209755f1a986d497de69d",
-      "snippet_count": 16,
-      "evidence_count": 15,
-      "evidence": [
-        {
-          "start": 4.0,
-          "text": "Part two of the Iron Dome strategy is Part two of the Iron Dome strategy is what we going to discuss about this. In what we going to discuss about this. In what we going to discuss about this. In the part one, you requested in the the part one, you requested in the the part one, you requested in the comment section tha",
-          "trigger_terms": [
-            "dome",
             "iron fly"
           ]
         },
         {
-          "start": 34.0,
-          "text": "Part two of the Iron Dome strategy is Part two of the Iron Dome strategy is what we going to discuss about this. In what we going to discuss about this. In what we going to discuss about this. In the part one, you requested in the the part one, you requested in the the part one, you requested in the comment section tha",
+          "start": 50.6,
+          "text": "let me show you how the iron fly, the so-called conventional iron fly looks. And then, we going to make some changes",
           "trigger_terms": [
-            "adjust",
-            "adjustment",
-            "iron fly",
-            "strike"
-          ]
-        },
-        {
-          "start": 64.0,
-          "text": "remember on this channel, in this remember on this channel, in this strategy, no heroics, no nine strategy, no heroics, no nine strategy, no heroics, no nine adjustments, no screen addiction, just adjustments, no screen addiction, just adjustments, no screen addiction, just clear model for Nifty. Let me load it clear m",
-          "trigger_terms": [
-            "iron fly",
-            "strike"
-          ]
-        },
-        {
-          "start": 94.0,
-          "text": "particular leg slightly one strike particular leg slightly one strike inside, and this is how it looks. I've inside, and this is how it looks. I've inside, and this is how it looks. I've discussed about it the market continue discussed about it the market continue discussed about it the market continue to go against us",
-          "trigger_terms": [
-            "ce",
-            "close"
-          ]
-        },
-        {
-          "start": 125.0,
-          "text": "which you can see here in this which you can see here in this particular situation. And what do we see particular situation. And what do we see particular situation. And what do we see is that market has gone ahead bearish, is that market has gone ahead bearish, is that market has gone ahead bearish, and this is where ",
-          "trigger_terms": [
-            "buy",
             "call",
-            "lot",
-            "pe",
+            "iron fly"
+          ]
+        },
+        {
+          "start": 67.48,
+          "text": "weaknesses, all. This is how the conventional iron fly looks like. It's a combination of a straddle, which is at",
+          "trigger_terms": [
+            "iron fly"
+          ]
+        },
+        {
+          "start": 72.64,
+          "text": "combination of a straddle, which is at the money selling call and put, and then we buy wings. So, this is how it looks.",
+          "trigger_terms": [
+            "call",
             "put",
             "sell"
           ]
         },
         {
-          "start": 156.0,
-          "text": "going to cover, even the brokerage for going to cover, even the brokerage for that matter. And if market reverse up, that matter. And if market reverse up, that matter. And if market reverse up, then what do we see is the red zone then what do we see is the red zone then what do we see is the red zone here. Now, obviou",
+          "start": 74.92,
+          "text": "the money selling call and put, and then we buy wings. So, this is how it looks. Well, in terms of margin requirements,",
           "trigger_terms": [
-            "ce",
-            "move",
-            "pe",
-            "put",
-            "square"
+            "buy"
           ]
         },
         {
-          "start": 186.0,
-          "text": "I'm talking about this particular put I'm talking about this particular put because market has gone down, so because market has gone down, so because market has gone down, so naturally this 117 put has jumped up in naturally this 117 put has jumped up in naturally this 117 put has jumped up in price and become 162.25. ",
+          "start": 82.2,
+          "text": "which you can see here, I understand why it is super popular. Because when you see the payoff, this is how it looks.",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 90.04,
+          "text": "But, if you see it carefully, retail is practically fighting on two fronts. Number one, if market go up, then we see",
+          "trigger_terms": [
+            "call"
+          ]
+        },
+        {
+          "start": 97.36,
+          "text": "the red zone. Number two, if market go down as well, then also. So, iron fly, a lot of adjustments. Today, we going to",
+          "trigger_terms": [
+            "iron fly"
+          ]
+        },
+        {
+          "start": 100.64,
+          "text": "down as well, then also. So, iron fly, a lot of adjustments. Today, we going to talk about how to remove one side. What",
+          "trigger_terms": [
+            "adjust",
+            "adjustment",
+            "lot"
+          ]
+        },
+        {
+          "start": 102.4,
+          "text": "lot of adjustments. Today, we going to talk about how to remove one side. What we going to do is, I have a alternate",
+          "trigger_terms": [
+            "move"
+          ]
+        },
+        {
+          "start": 113.84,
+          "text": "of doing this? The alternate to this is people start to do bearish or the bullish iron fly along with this.",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 116.0,
+          "text": "people start to do bearish or the bullish iron fly along with this. Let me show you to you. It will be more",
+          "trigger_terms": [
+            "iron fly"
+          ]
+        },
+        {
+          "start": 124.32,
+          "text": "So, here what we did is that instead of making an iron fly at the center, we made a bearish iron fly. As you can see,",
+          "trigger_terms": [
+            "ce",
+            "enter",
+            "iron fly"
+          ]
+        },
+        {
+          "start": 126.8,
+          "text": "making an iron fly at the center, we made a bearish iron fly. As you can see, slightly to 23,900, slightly below the",
+          "trigger_terms": [
+            "iron fly"
+          ]
+        },
+        {
+          "start": 129.56,
+          "text": "made a bearish iron fly. As you can see, slightly to 23,900, slightly below the market sold a straddle, and then buy",
+          "trigger_terms": []
+        },
+        {
+          "start": 133.28,
+          "text": "slightly to 23,900, slightly below the market sold a straddle, and then buy wings.",
+          "trigger_terms": [
+            "buy"
+          ]
+        },
+        {
+          "start": 145.28,
+          "text": "when you compare how much do we lose versus the peak, I've explained in the previous videos. Let's focus here. Now,",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 152.0,
+          "text": "what we going to do is, instead of making a perfectly balanced wings, is that, you know, selling 23,900,",
+          "trigger_terms": [
+            "ce",
+            "pe"
+          ]
+        },
+        {
+          "start": 154.76,
+          "text": "making a perfectly balanced wings, is that, you know, selling 23,900, 200 points up, buy the call, 200 points",
+          "trigger_terms": [
+            "sell"
+          ]
+        },
+        {
+          "start": 157.6,
+          "text": "that, you know, selling 23,900, 200 points up, buy the call, 200 points below, buy the put. Instead of 200",
           "trigger_terms": [
             "buy",
-            "move",
-            "put",
+            "call"
+          ]
+        },
+        {
+          "start": 161.0,
+          "text": "200 points up, buy the call, 200 points below, buy the put. Instead of 200 points, [snorts]",
+          "trigger_terms": [
+            "buy",
+            "put"
+          ]
+        },
+        {
+          "start": 165.72,
+          "text": "what if What if I bring this up slightly 50 points? Then what is going to happen?",
+          "trigger_terms": []
+        },
+        {
+          "start": 169.0,
+          "text": "What if I bring this up slightly 50 points? Then what is going to happen? Let's have a look at this. When we do",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 183.36,
+          "text": "bullish side, which you can see. Because if your strategy, your adjustments need constant babysitting, then it's a weak",
+          "trigger_terms": [
+            "adjust",
+            "adjustment"
+          ]
+        },
+        {
+          "start": 195.36,
+          "text": "in the bullish market when the trade go against us. What adjustments do we do? How do we tackle that? It's very",
+          "trigger_terms": [
+            "adjust",
+            "adjustment"
+          ]
+        },
+        {
+          "start": 217.44,
+          "text": "this video interesting, share it in your peer group. So, other person who you're sharing with also take advantage of",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 235.4,
+          "text": "let's go ahead. This is the weekly expiry. We've taken the position, and let's see what happens the next day. And",
+          "trigger_terms": [
+            "expiry"
+          ]
+        },
+        {
+          "start": 237.76,
+          "text": "expiry. We've taken the position, and let's see what happens the next day. And as expected, market has come down now.",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 240.04,
+          "text": "let's see what happens the next day. And as expected, market has come down now. So, we probably will wait a bit because",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 260.959,
+          "text": "particular situation. And like I told you, it depends on the broker and the wings which you which we pick,",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 264.08,
+          "text": "wings which you which we pick, approximately 1 lakh to 90,000 rupees to make it. Do check it with your broker to",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 274.92,
+          "text": "Now, obviously, we can definitely look to exit the trade. Now, can we do something more in this? We definitely",
+          "trigger_terms": [
+            "exit"
+          ]
+        },
+        {
+          "start": 286.24,
+          "text": "then what is an alternative? Because remember, most traders chase profit. Smart traders remove the panic first. In",
+          "trigger_terms": [
+            "profit"
+          ]
+        },
+        {
+          "start": 289.56,
+          "text": "remember, most traders chase profit. Smart traders remove the panic first. In a bearish market, in a gap down, which",
+          "trigger_terms": [
+            "move"
+          ]
+        },
+        {
+          "start": 309.92,
+          "text": "when we make the strategy, one side is exposed to the market movement. And this is exactly the pain point which I'm",
+          "trigger_terms": [
+            "move"
+          ]
+        },
+        {
+          "start": 316.08,
+          "text": "going to cover now. So, let me load that for you and teach you properly today. So, here we are making a new fly now.",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 320.56,
+          "text": "So, here we are making a new fly now. 15th of April, 9:30, and it's a start of the new weekly series. And as you can",
+          "trigger_terms": []
+        },
+        {
+          "start": 331.68,
+          "text": "course, I look to go slightly more in the money. And here, selling this 23,800 call and put both.",
+          "trigger_terms": [
+            "sell"
+          ]
+        },
+        {
+          "start": 335.96,
+          "text": "the money. And here, selling this 23,800 call and put both. Naturally.",
+          "trigger_terms": [
+            "call",
+            "put"
+          ]
+        },
+        {
+          "start": 340.44,
+          "text": "We got to make it directional now. So, I'm buying a call now. Very simple. You can slow down and learn",
+          "trigger_terms": [
+            "buy",
+            "call"
+          ]
+        },
+        {
+          "start": 344.44,
+          "text": "Very simple. You can slow down and learn from it. And equal distance is 23,500. This is exact 300 points down from the",
+          "trigger_terms": [
+            "ce"
+          ]
+        },
+        {
+          "start": 348.52,
+          "text": "from it. And equal distance is 23,500. This is exact 300 points down from the sold straddle.",
+          "trigger_terms": []
+        },
+        {
+          "start": 353.76,
+          "text": "sold straddle. If I sell equal distance, it going to be a bearish fly.",
+          "trigger_terms": [
+            "ce",
+            "sell"
+          ]
+        },
+        {
+          "start": 359.68,
+          "text": "Does that solve any purpose? I'm going to go one strike up. And here, I'm buying. I'm doing it in slow motion",
+          "trigger_terms": [
+            "strike"
+          ]
+        },
+        {
+          "start": 362.68,
+          "text": "I'm going to go one strike up. And here, I'm buying. I'm doing it in slow motion so that you learn it properly.",
+          "trigger_terms": [
+            "buy"
+          ]
+        },
+        {
+          "start": 364.96,
+          "text": "I'm buying. I'm doing it in slow motion so that you learn it properly. And when we do how this looks, this",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 377.44,
+          "text": "remember, if market start to go up, then what do we see is minus 2947 over here. If we get somewhere around 50, 40%, 60%",
+          "trigger_terms": []
+        },
+        {
+          "start": 382.16,
+          "text": "what do we see is minus 2947 over here. If we get somewhere around 50, 40%, 60% of a for loss, the maximum it is showing",
+          "trigger_terms": []
+        },
+        {
+          "start": 385.96,
+          "text": "If we get somewhere around 50, 40%, 60% of a for loss, the maximum it is showing over here if we get hit by the market,",
+          "trigger_terms": [
+            "loss"
+          ]
+        },
+        {
+          "start": 393.4,
+          "text": "over here if we get hit by the market, then as soon as we reach around 40 to 60% mark, we got to do some adjustment.",
+          "trigger_terms": []
+        },
+        {
+          "start": 395.84,
+          "text": "then as soon as we reach around 40 to 60% mark, we got to do some adjustment. Okay, so let's see what happens. And if",
+          "trigger_terms": [
+            "adjust",
+            "adjustment"
+          ]
+        },
+        {
+          "start": 399.52,
+          "text": "60% mark, we got to do some adjustment. Okay, so let's see what happens. And if market go down, I've already showed you",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 402.32,
+          "text": "market go down, I've already showed you the example. Let's see now what happens with this. So, let's lock the focus now,",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 410.04,
+          "text": "and let's go ahead. And as we go ahead, Thursday, and market has start to move already completely against us. And here,",
+          "trigger_terms": [
+            "move"
+          ]
+        },
+        {
+          "start": 417.8,
+          "text": "on the Friday, what you can see is market has snapped back a little. So, let's see what happens. Because",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 420.16,
+          "text": "market has snapped back a little. So, let's see what happens. Because remember, when market spikes in one",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 431.36,
+          "text": "strategy is made for ugly days. Let's see what happens with this now. So, Monday morning at 9:30, market has a big",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 433.24,
+          "text": "see what happens with this now. So, Monday morning at 9:30, market has a big direction now. Let's see what happens",
+          "trigger_terms": []
+        },
+        {
+          "start": 436.4,
+          "text": "Monday morning at 9:30, market has a big direction now. Let's see what happens with this. So, I go ahead now. Here.",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 446.28,
+          "text": "day. I got to go a little slower because as soon as it hits around 40 to 60% mark, we look to do some kind of an",
+          "trigger_terms": []
+        },
+        {
+          "start": 451.4,
+          "text": "mark, we look to do some kind of an adjustment in this now. And it is around 13, 1400, approximately. What do we see",
+          "trigger_terms": [
+            "adjust",
+            "adjustment"
+          ]
+        },
+        {
+          "start": 454.04,
+          "text": "adjustment in this now. And it is around 13, 1400, approximately. What do we see Monday around 3:00 p.m.?",
+          "trigger_terms": []
+        },
+        {
+          "start": 456.72,
+          "text": "13, 1400, approximately. What do we see Monday around 3:00 p.m.? And the maximum, if market continue to",
+          "trigger_terms": []
+        },
+        {
+          "start": 461.28,
+          "text": "And the maximum, if market continue to go up, is approximately minus 29. So, now it has come to 40 to 60% range. Now,",
+          "trigger_terms": []
+        },
+        {
+          "start": 464.92,
+          "text": "go up, is approximately minus 29. So, now it has come to 40 to 60% range. Now, it's seeking adjustments for us.",
+          "trigger_terms": []
+        },
+        {
+          "start": 467.84,
+          "text": "now it has come to 40 to 60% range. Now, it's seeking adjustments for us. Adjustment is what we going to do with",
+          "trigger_terms": [
+            "adjust",
+            "adjustment"
+          ]
+        },
+        {
+          "start": 470.24,
+          "text": "it's seeking adjustments for us. Adjustment is what we going to do with this. So, step number one.",
+          "trigger_terms": [
+            "adjust",
+            "adjustment"
+          ]
+        },
+        {
+          "start": 474.6,
+          "text": "this. So, step number one. This put which we bought, which is so far the further out of the money,",
+          "trigger_terms": [
+            "put"
+          ]
+        },
+        {
+          "start": 479.92,
+          "text": "far the further out of the money, we got to square it off. I squared it off immediately. It's trading around",
+          "trigger_terms": [
             "square"
           ]
         },
         {
-          "start": 217.0,
-          "text": "This is done. 22650 is done. I am going This is done. 22650 is done. I am going to move more in the money. That means to move more in the money. That means to move more in the money. That means I'm going to go above the market. So, I I'm going to go above the market. So, I I'm going to go above the market. So, I could ",
+          "start": 483.24,
+          "text": "off immediately. It's trading around 4.8. So, this is gone out completely. Step one.",
+          "trigger_terms": []
+        },
+        {
+          "start": 492.8,
+          "text": "Step number two. The straddle which I sold is 23,800. The market currently has gone up, has",
+          "trigger_terms": []
+        },
+        {
+          "start": 498.08,
+          "text": "The market currently has gone up, has moved up. So, it only makes sense now to completely square off your straddle",
+          "trigger_terms": [
+            "move"
+          ]
+        },
+        {
+          "start": 501.2,
+          "text": "moved up. So, it only makes sense now to completely square off your straddle and move it a bit up, maybe 100, maybe",
+          "trigger_terms": [
+            "square"
+          ]
+        },
+        {
+          "start": 504.0,
+          "text": "completely square off your straddle and move it a bit up, maybe 100, maybe 200 points. So, we going to do exactly",
+          "trigger_terms": [
+            "move"
+          ]
+        },
+        {
+          "start": 507.4,
+          "text": "and move it a bit up, maybe 100, maybe 200 points. So, we going to do exactly that. Two-step adjustment is what I told",
+          "trigger_terms": []
+        },
+        {
+          "start": 510.12,
+          "text": "200 points. So, we going to do exactly that. Two-step adjustment is what I told you. And this is the second number step",
+          "trigger_terms": [
+            "adjust",
+            "adjustment"
+          ]
+        },
+        {
+          "start": 516.159,
+          "text": "which we are doing right now. How much is trading at? 593. This is off the table now. So, let's do that. 593.43,",
+          "trigger_terms": []
+        },
+        {
+          "start": 518.52,
+          "text": "is trading at? 593. This is off the table now. So, let's do that. 593.43, this is out.",
+          "trigger_terms": []
+        },
+        {
+          "start": 523.599,
+          "text": "this is out. Yes, you copy. The put is trading at 12.4",
+          "trigger_terms": [
+            "put"
+          ]
+        },
+        {
+          "start": 526.44,
+          "text": "Yes, you copy. The put is trading at 12.4 five.",
+          "trigger_terms": []
+        },
+        {
+          "start": 532.24,
+          "text": "This is also off the table. Interesting. Now, we have to move the straddle up. Remember, we do not need",
+          "trigger_terms": [
+            "move"
+          ]
+        },
+        {
+          "start": 541.6,
+          "text": "more indicators or more noise. We need fewer mistakes. Watch this. Open option chain now. Simple. And now, 23,800",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 544.8,
+          "text": "fewer mistakes. Watch this. Open option chain now. Simple. And now, 23,800 is what the original trade was, this",
+          "trigger_terms": []
+        },
+        {
+          "start": 551.24,
+          "text": "is what the original trade was, this one. We got to move it up. And 24,000 is a round number.",
+          "trigger_terms": [
+            "move"
+          ]
+        },
+        {
+          "start": 557.04,
+          "text": "a round number. Can we to sell the call, sell the put, and the second step is done, completed.",
+          "trigger_terms": [
+            "call",
+            "put",
+            "sell"
+          ]
+        },
+        {
+          "start": 577.52,
+          "text": "Number one thing which you which immediately you must notice, what was the maximum red zone loss earlier?",
+          "trigger_terms": [
+            "ce"
+          ]
+        },
+        {
+          "start": 580.28,
+          "text": "immediately you must notice, what was the maximum red zone loss earlier? 29 something, right?",
+          "trigger_terms": [
+            "loss"
+          ]
+        },
+        {
+          "start": 584.12,
+          "text": "the maximum red zone loss earlier? 29 something, right? Now,",
+          "trigger_terms": []
+        },
+        {
+          "start": 587.36,
+          "text": "Now, that 29 got reduced to minus 476. This is happening because we have taken extra",
+          "trigger_terms": [
+            "ce"
+          ]
+        },
+        {
+          "start": 591.12,
+          "text": "that 29 got reduced to minus 476. This is happening because we have taken extra credit by rolling the straddle up and",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 596.0,
+          "text": "credit by rolling the straddle up and removing the put on the downside. But remember when you remove the put on the",
+          "trigger_terms": [
+            "put"
+          ]
+        },
+        {
+          "start": 598.32,
+          "text": "removing the put on the downside. But remember when you remove the put on the downside it's going to ask for more",
+          "trigger_terms": [
+            "move",
+            "put"
+          ]
+        },
+        {
+          "start": 604.68,
+          "text": "margin. You must also know that as well. Now let's see what happens with this particular trade.",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 610.08,
+          "text": "And uh here we are and let's just go to the next day and let's see what happens with this. So here next day",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 616.4,
+          "text": ">> Tuesday now, Tuesday morning and what do we see is the loss which we had earlier is I can zoom out a bit for you. If I go",
+          "trigger_terms": [
+            "loss"
+          ]
+        },
+        {
+          "start": 623.8,
+          "text": "back, right? This is where we did our adjustment, right? Naturally you could see very clearly. And after the",
+          "trigger_terms": [
+            "adjust",
+            "adjustment"
+          ]
+        },
+        {
+          "start": 628.72,
+          "text": "see very clearly. And after the adjustment, um let's see what happened the next day morning. Remember the trade",
+          "trigger_terms": [
+            "adjust",
+            "adjustment",
+            "pe"
+          ]
+        },
+        {
+          "start": 645.8,
+          "text": "Now we can definitely exit the trade in loss or probably if I wait for some more time",
+          "trigger_terms": [
+            "exit",
+            "loss"
+          ]
+        },
+        {
+          "start": 654.88,
+          "text": "in positive or negative. This is a method. I hope you will you made notes of it and learned it. But are",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 669.68,
+          "text": "into the favor? That going to be slightly more advanced. Maybe I can tell you that if you put it",
+          "trigger_terms": [
+            "ce"
+          ]
+        },
+        {
+          "start": 671.56,
+          "text": "That going to be slightly more advanced. Maybe I can tell you that if you put it in comments. Remember you got to share",
+          "trigger_terms": [
+            "put"
+          ]
+        },
+        {
+          "start": 683.0,
+          "text": "The directional, how do we play? Number one point, the adjustment timing is non-negotiable.",
+          "trigger_terms": [
+            "adjust",
+            "adjustment"
+          ]
+        },
+        {
+          "start": 690.04,
+          "text": "We don't have to wait for market to really go up and do not do adjust or the verses do adjustment too early, too",
+          "trigger_terms": [
+            "adjust"
+          ]
+        },
+        {
+          "start": 693.08,
+          "text": "really go up and do not do adjust or the verses do adjustment too early, too eagerly.",
+          "trigger_terms": [
+            "adjust",
+            "adjustment"
+          ]
+        },
+        {
+          "start": 697.88,
+          "text": "eagerly. I've given you the window 40 to 60. In fact, I've made a iron fly a video in",
+          "trigger_terms": []
+        },
+        {
+          "start": 700.08,
+          "text": "I've given you the window 40 to 60. In fact, I've made a iron fly a video in the past. There's a playlist which I've",
+          "trigger_terms": [
+            "iron fly"
+          ]
+        },
+        {
+          "start": 708.36,
+          "text": "made which is not there now. Uh highly popular. People who do iron fly took a lot of advantage from that",
+          "trigger_terms": [
+            "iron fly",
+            "pe"
+          ]
+        },
+        {
+          "start": 710.92,
+          "text": "highly popular. People who do iron fly took a lot of advantage from that particular playlist. If you trade any",
+          "trigger_terms": [
+            "lot"
+          ]
+        },
+        {
+          "start": 718.36,
+          "text": "strategy and looking for different ways to approach your trading the adjustments you could definitely watch on this",
+          "trigger_terms": [
+            "adjust",
+            "adjustment"
+          ]
+        },
+        {
+          "start": 730.12,
+          "text": "it's much better to probably use your one stop loss for your own learning, maybe buy a books any of your favorite",
+          "trigger_terms": [
+            "loss",
+            "stop"
+          ]
+        },
+        {
+          "start": 732.0,
+          "text": "one stop loss for your own learning, maybe buy a books any of your favorite author online, take out a Sunday",
+          "trigger_terms": [
+            "buy"
+          ]
+        },
+        {
+          "start": 742.12,
+          "text": "it. Much better, easier. Probably you can learn better strategies, adjustment techniques. Interesting point number",
+          "trigger_terms": [
+            "adjust",
+            "adjustment"
+          ]
+        },
+        {
+          "start": 752.28,
+          "text": "All you have to do is ask in comments. Like I told you exactly when to adjust and most importantly, which is not part",
+          "trigger_terms": [
+            "adjust"
+          ]
+        },
+        {
+          "start": 764.88,
+          "text": "into the favor. It's very interesting. But I do not know how many people are interested into learn the advanced",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 766.2,
+          "text": "But I do not know how many people are interested into learn the advanced concepts. How many people have actually",
+          "trigger_terms": [
+            "ce"
+          ]
+        },
+        {
+          "start": 767.92,
+          "text": "interested into learn the advanced concepts. How many people have actually watched this video till the very end and",
           "trigger_terms": [
             "ce",
+            "pe"
+          ]
+        },
+        {
+          "start": 773.32,
+          "text": "watched this video till the very end and learned the two-step adjustment and made a good note of it. I'm sure you must",
+          "trigger_terms": [
+            "adjust",
+            "adjustment"
+          ]
+        },
+        {
+          "start": 781.8,
+          "text": "reason why I told you trial and error in trading is equal to expensive stop losses.",
+          "trigger_terms": [
+            "pe",
+            "stop"
+          ]
+        },
+        {
+          "start": 783.839,
+          "text": "trading is equal to expensive stop losses. Now go back to the video. Again replay",
+          "trigger_terms": [
+            "loss"
+          ]
+        },
+        {
+          "start": 789.6,
+          "text": "it and learn exactly where the adjustment point of was mentioned in the video. And the past iron fly videos",
+          "trigger_terms": [
+            "adjust",
+            "adjustment"
+          ]
+        },
+        {
+          "start": 792.16,
+          "text": "adjustment point of was mentioned in the video. And the past iron fly videos which I made, you could definitely learn",
+          "trigger_terms": [
+            "iron fly"
+          ]
+        },
+        {
+          "start": 796.6,
+          "text": "which I made, you could definitely learn a lot from that as well. Thanks for watching and I wish you all",
+          "trigger_terms": [
+            "lot"
+          ]
+        }
+      ],
+      "language": "en",
+      "track_label": "English (auto-generated)",
+      "generated": true,
+      "source": "youtubegpt-json"
+    },
+    {
+      "status": "OK",
+      "video_id": "9cetNfglyO4",
+      "sha256": "b8a378f06ec4783e2daba6ecd92aaf3d4588d3659dd9d73a385227dc4b335099",
+      "snippet_count": 193,
+      "evidence_count": 74,
+      "evidence": [
+        {
+          "start": 2.48,
+          "text": "Part two of the Iron Dome strategy is what we going to discuss about this. In",
+          "trigger_terms": [
+            "dome"
+          ]
+        },
+        {
+          "start": 21.92,
+          "text": "you must watch it where I discuss about the Iron Fly. How exactly do we do it it differently to the popular method? What",
+          "trigger_terms": [
+            "iron fly"
+          ]
+        },
+        {
+          "start": 37.64,
+          "text": "strategy, no heroics, no nine adjustments, no screen addiction, just clear model for Nifty. Let me load it",
+          "trigger_terms": [
+            "adjust",
+            "adjustment"
+          ]
+        },
+        {
+          "start": 56.04,
+          "text": "discussed in the part one. That is, we are not making a conventional Iron Fly. We are making an Iron Fly with this",
+          "trigger_terms": [
+            "iron fly"
+          ]
+        },
+        {
+          "start": 58.8,
+          "text": "are not making a conventional Iron Fly. We are making an Iron Fly with this particular leg slightly one strike",
+          "trigger_terms": [
+            "iron fly"
+          ]
+        },
+        {
+          "start": 62.0,
+          "text": "We are making an Iron Fly with this particular leg slightly one strike inside, and this is how it looks. I've",
+          "trigger_terms": [
+            "strike"
+          ]
+        },
+        {
+          "start": 84.2,
+          "text": "simulator. I have loaded the weekly series for Iron Fly. Let me go ahead and show you exactly. So, in this situation,",
+          "trigger_terms": [
+            "iron fly"
+          ]
+        },
+        {
+          "start": 99.96,
+          "text": "is that market has gone ahead bearish, and this is where we closed our part two. Most important question is that if",
+          "trigger_terms": [
+            "close"
+          ]
+        },
+        {
+          "start": 110.28,
+          "text": "line, this vertical line is the future. I want you to concentrate here. If market continue to go down, then what do",
+          "trigger_terms": [
+            "ce"
+          ]
+        },
+        {
+          "start": 134.2,
+          "text": "could lock it with two three different techniques. By selling additional call or removing the buying leg is also a lot",
+          "trigger_terms": [
+            "call",
+            "sell"
+          ]
+        },
+        {
+          "start": 136.72,
+          "text": "techniques. By selling additional call or removing the buying leg is also a lot of people do. But, increasing your",
+          "trigger_terms": [
+            "buy",
+            "lot"
+          ]
+        },
+        {
+          "start": 139.08,
+          "text": "or removing the buying leg is also a lot of people do. But, increasing your margin to lock in the trade does not",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 143.8,
+          "text": "margin to lock in the trade does not make a lot of sense to me. So, what I'm going to do is",
+          "trigger_terms": [
+            "lot"
+          ]
+        },
+        {
+          "start": 147.6,
+          "text": "So, what I'm going to do is this put which I bought, remember in the fly, you sell the straddle and then we",
+          "trigger_terms": [
+            "put"
+          ]
+        },
+        {
+          "start": 149.96,
+          "text": "this put which I bought, remember in the fly, you sell the straddle and then we wide buy the wings.",
+          "trigger_terms": [
+            "sell"
+          ]
+        },
+        {
+          "start": 152.4,
+          "text": "fly, you sell the straddle and then we wide buy the wings. I'm talking about this particular put",
+          "trigger_terms": [
+            "buy"
+          ]
+        },
+        {
+          "start": 154.44,
+          "text": "wide buy the wings. I'm talking about this particular put because market has gone down, so",
+          "trigger_terms": [
+            "put"
+          ]
+        },
+        {
+          "start": 158.28,
+          "text": "because market has gone down, so naturally this 117 put has jumped up in price and become 162.25.",
+          "trigger_terms": [
             "pe",
             "put"
           ]
         },
         {
-          "start": 250.0,
-          "text": "the put now. Let's see how this looks. the put now. Let's see how this looks. How the locking techniques work without How the locking techniques work without How the locking techniques work without adding extra layer of cell. adding extra layer of cell. adding extra layer of cell. Now, what do you see? The flat line No",
+          "start": 161.52,
+          "text": "naturally this 117 put has jumped up in price and become 162.25. I could square off this particular trade",
           "trigger_terms": [
-            "adjust",
-            "adjustment",
-            "expiry",
+            "ce"
+          ]
+        },
+        {
+          "start": 165.08,
+          "text": "price and become 162.25. I could square off this particular trade now, and I try to move it more in the",
+          "trigger_terms": [
+            "square"
+          ]
+        },
+        {
+          "start": 167.84,
+          "text": "I could square off this particular trade now, and I try to move it more in the money. Let me show you when I move it",
+          "trigger_terms": [
+            "move"
+          ]
+        },
+        {
+          "start": 171.24,
+          "text": "now, and I try to move it more in the money. Let me show you when I move it more in the money how it looks. This 117",
+          "trigger_terms": [
+            "move"
+          ]
+        },
+        {
+          "start": 173.64,
+          "text": "money. Let me show you when I move it more in the money how it looks. This 117 is obviously off the charts. It's 162.25",
+          "trigger_terms": []
+        },
+        {
+          "start": 176.4,
+          "text": "more in the money how it looks. This 117 is obviously off the charts. It's 162.25 now. So, we going to square off 162.25.",
+          "trigger_terms": []
+        },
+        {
+          "start": 179.84,
+          "text": "is obviously off the charts. It's 162.25 now. So, we going to square off 162.25. This is done. 22650 is done. I am going",
+          "trigger_terms": [
+            "square"
+          ]
+        },
+        {
+          "start": 183.08,
+          "text": "now. So, we going to square off 162.25. This is done. 22650 is done. I am going to move more in the money. That means",
+          "trigger_terms": []
+        },
+        {
+          "start": 186.68,
+          "text": "This is done. 22650 is done. I am going to move more in the money. That means I'm going to go above the market. So, I",
+          "trigger_terms": [
+            "move"
+          ]
+        },
+        {
+          "start": 190.24,
+          "text": "I'm going to go above the market. So, I could do 22700. I could buy this.",
+          "trigger_terms": []
+        },
+        {
+          "start": 192.56,
+          "text": "could do 22700. I could buy this. So, let me load it.",
+          "trigger_terms": [
+            "buy"
+          ]
+        },
+        {
+          "start": 196.04,
+          "text": "So, let me load it. 22700 is here. This is what I've squared off.",
+          "trigger_terms": []
+        },
+        {
+          "start": 197.92,
+          "text": "22700 is here. This is what I've squared off. I could buy this",
+          "trigger_terms": [
+            "square"
+          ]
+        },
+        {
+          "start": 201.08,
+          "text": "is here. This is what I've squared off. I could buy this put. Interesting. Now, obviously, if you",
+          "trigger_terms": [
+            "buy"
+          ]
+        },
+        {
+          "start": 203.12,
+          "text": "I could buy this put. Interesting. Now, obviously, if you square off the put first, then your",
+          "trigger_terms": [
+            "put"
+          ]
+        },
+        {
+          "start": 205.8,
+          "text": "put. Interesting. Now, obviously, if you square off the put first, then your margin going to jump up. So, I can buy",
+          "trigger_terms": [
+            "put",
+            "square"
+          ]
+        },
+        {
+          "start": 207.2,
+          "text": "square off the put first, then your margin going to jump up. So, I can buy additional put first and then remove",
+          "trigger_terms": [
+            "buy"
+          ]
+        },
+        {
+          "start": 209.72,
+          "text": "margin going to jump up. So, I can buy additional put first and then remove 22650 is something I can do. I've added",
+          "trigger_terms": [
             "move",
+            "put"
+          ]
+        },
+        {
+          "start": 212.36,
+          "text": "additional put first and then remove 22650 is something I can do. I've added the put now. Let's see how this looks.",
+          "trigger_terms": []
+        },
+        {
+          "start": 215.36,
+          "text": "22650 is something I can do. I've added the put now. Let's see how this looks. How the locking techniques work without",
+          "trigger_terms": [
+            "put"
+          ]
+        },
+        {
+          "start": 220.96,
+          "text": "How the locking techniques work without adding extra layer of cell. Now, what do you see? The flat line",
+          "trigger_terms": [
+            "ce"
+          ]
+        },
+        {
+          "start": 233.64,
+          "text": "even take it more inside. If I make it 22,750, then what will happen? It's very",
+          "trigger_terms": []
+        },
+        {
+          "start": 235.48,
+          "text": "22,750, then what will happen? It's very interesting situation. Let's see that.",
+          "trigger_terms": [
             "pe"
           ]
         },
         {
-          "start": 280.0,
-          "text": "have some room for market to come back, have some room for market to come back, which you can see. This is very which you can see. This is very which you can see. This is very interesting now. versus here is the interesting now. versus here is the interesting now. versus here is the simulator if I do not do this simula",
+          "start": 257.16,
+          "text": "simulator if I do not do this adjustment. This is where the market is, right? This is exactly the same trade.",
           "trigger_terms": [
-            "buy",
-            "expiry",
-            "move",
-            "put",
+            "adjust",
+            "adjustment"
+          ]
+        },
+        {
+          "start": 261.68,
+          "text": "right? This is exactly the same trade. So, if I move on Monday 9:30, right? If I do not do this adjustment, and if I",
+          "trigger_terms": [
+            "move"
+          ]
+        },
+        {
+          "start": 265.4,
+          "text": "So, if I move on Monday 9:30, right? If I do not do this adjustment, and if I wait for end of the day, this is the",
+          "trigger_terms": [
+            "adjust",
+            "adjustment"
+          ]
+        },
+        {
+          "start": 270.44,
+          "text": "wait for end of the day, this is the exact expiry day. If I just don't do anything and take the trade till end of",
+          "trigger_terms": [
+            "expiry"
+          ]
+        },
+        {
+          "start": 276.08,
+          "text": "anything and take the trade till end of the day, then what is going to happen? Um obviously, now the flat line effect",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 282.76,
+          "text": "is going to show here, as you can see here, very clearly. 3:00 p.m. on the expiry day. versus when I lock it",
+          "trigger_terms": []
+        },
+        {
+          "start": 286.12,
+          "text": "here, very clearly. 3:00 p.m. on the expiry day. versus when I lock it without adding an extra sell leg. This",
+          "trigger_terms": [
+            "expiry"
+          ]
+        },
+        {
+          "start": 289.72,
+          "text": "expiry day. versus when I lock it without adding an extra sell leg. This is very important. The idea is to try",
+          "trigger_terms": [
             "sell"
           ]
         },
         {
-          "start": 312.0,
-          "text": "Um obviously, now the flat line effect Um obviously, now the flat line effect is going to show here, as you can see is going to show here, as you can see is going to show here, as you can see here, very clearly. 3:00 p.m. on the here, very clearly. 3:00 p.m. on the here, very clearly. 3:00 p.m. on the expiry day. versu",
+          "start": 298.48,
+          "text": "and use the same margin by just moving your put more in the money. Just moving your put up in the money. I can always",
+          "trigger_terms": [
+            "put"
+          ]
+        },
+        {
+          "start": 301.36,
+          "text": "your put more in the money. Just moving your put up in the money. I can always buy the put in the money and then remove",
+          "trigger_terms": [
+            "put"
+          ]
+        },
+        {
+          "start": 304.12,
+          "text": "your put up in the money. I can always buy the put in the money and then remove my this put. So, the margin shortfall, I",
+          "trigger_terms": [
+            "buy",
+            "move",
+            "put"
+          ]
+        },
+        {
+          "start": 306.76,
+          "text": "buy the put in the money and then remove my this put. So, the margin shortfall, I take care of. Now, let's see after doing",
+          "trigger_terms": [
+            "put"
+          ]
+        },
+        {
+          "start": 312.48,
+          "text": "take care of. Now, let's see after doing this adjustment, what happens? And for people who ask in comments a lot, what",
           "trigger_terms": [
             "adjust",
             "adjustment",
-            "expiry",
+            "pe"
+          ]
+        },
+        {
+          "start": 314.36,
+          "text": "this adjustment, what happens? And for people who ask in comments a lot, what if as soon as you do the adjustment of",
+          "trigger_terms": [
             "lot",
             "pe"
           ]
         },
         {
-          "start": 344.0,
-          "text": "take care of. Now, let's see after doing take care of. Now, let's see after doing this adjustment, what happens? And for this adjustment, what happens? And for this adjustment, what happens? And for people who ask in comments a lot, what people who ask in comments a lot, what people who ask in comments a lot, what if a",
+          "start": 316.48,
+          "text": "people who ask in comments a lot, what if as soon as you do the adjustment of market snaps back? If market snaps back,",
           "trigger_terms": [
-            "ce",
-            "move",
+            "adjust",
+            "adjustment"
+          ]
+        },
+        {
+          "start": 323.88,
+          "text": "with this. Let's see. And because it's an expiry day, so gamma effect is also in play.",
+          "trigger_terms": [
+            "expiry"
+          ]
+        },
+        {
+          "start": 331.24,
+          "text": "Theta decay is obviously quite high. Let's go to 3:00 p.m. now and compare head to head. This is the locking",
+          "trigger_terms": []
+        },
+        {
+          "start": 344.12,
+          "text": "see obviously, if you compare both of the techniques, the difference is",
+          "trigger_terms": [
+            "ce"
+          ]
+        },
+        {
+          "start": 347.4,
+          "text": "is for you to see how much difference it's going to make.",
+          "trigger_terms": [
+            "ce"
+          ]
+        },
+        {
+          "start": 354.0,
+          "text": "Very interesting. Now, this 22750, as the day progress, I could also move",
+          "trigger_terms": []
+        },
+        {
+          "start": 356.64,
+          "text": "Now, this 22750, as the day progress, I could also move it to 22,800",
+          "trigger_terms": [
+            "move"
+          ]
+        },
+        {
+          "start": 359.52,
+          "text": "as the day progress, I could also move it to 22,800 and 900. When I go more in the money, I",
+          "trigger_terms": []
+        },
+        {
+          "start": 362.04,
+          "text": "it to 22,800 and 900. When I go more in the money, I keep on jumping the strike every hour.",
+          "trigger_terms": []
+        },
+        {
+          "start": 365.4,
+          "text": "and 900. When I go more in the money, I keep on jumping the strike every hour. This",
+          "trigger_terms": [
             "strike"
           ]
         },
         {
-          "start": 375.0,
-          "text": "see obviously, if you compare see obviously, if you compare both of the techniques, the difference both of the techniques, the difference both of the techniques, the difference is is is for you to see how much difference it's for you to see how much difference it's for you to see how much difference it's going to make.",
+          "start": 391.0,
+          "text": "obviously because monthly theta is slower, but the premium is expected to be more than the weekly options. In that",
           "trigger_terms": [
             "pe"
           ]
         },
         {
-          "start": 406.0,
-          "text": "it more thicker. But here, what is a it more thicker. But here, what is a blind spot? It's for me to also tell blind spot? It's for me to also tell blind spot? It's for me to also tell you. you. you. Now, this is the weekly series which Now, this is the weekly series which Now, this is the weekly series which I've disc",
+          "start": 406.92,
+          "text": "the very second or third day. I try to do it towards the close of the series. Because when we do this",
+          "trigger_terms": [
+            "close"
+          ]
+        },
+        {
+          "start": 411.92,
+          "text": "series. Because when we do this adjustment, we want the theta do decay to show its effect in the trade. In the",
           "trigger_terms": [
             "adjust",
-            "adjustment",
-            "close",
-            "iron fly",
-            "lot",
+            "adjustment"
+          ]
+        },
+        {
+          "start": 419.04,
+          "text": "past, I have made the video about the Iron Fly. You can take advantage of it. We try to do things differently over",
+          "trigger_terms": [
+            "iron fly"
+          ]
+        },
+        {
+          "start": 429.12,
+          "text": "We try to use the same margin in the trade because selling naked options contain a lot of risk, as you know it.",
+          "trigger_terms": [
             "sell"
           ]
         },
         {
-          "start": 437.0,
-          "text": "the very second or third day. the very second or third day. I try to do it towards the close of the I try to do it towards the close of the I try to do it towards the close of the series. Because when we do this series. Because when we do this series. Because when we do this adjustment, we want the theta do decay adjus",
+          "start": 431.64,
+          "text": "trade because selling naked options contain a lot of risk, as you know it. Risk control is what a trader needs to",
+          "trigger_terms": [
+            "lot"
+          ]
+        },
+        {
+          "start": 441.6,
+          "text": "focus first. Not just going for big profits from the word go. That's the exact reason why I tell you trial and",
+          "trigger_terms": [
+            "profit"
+          ]
+        },
+        {
+          "start": 446.24,
+          "text": "exact reason why I tell you trial and error in trading is equal to expensive stop loss. It's much better to learn the",
+          "trigger_terms": [
+            "pe"
+          ]
+        },
+        {
+          "start": 448.48,
+          "text": "error in trading is equal to expensive stop loss. It's much better to learn the technique. We don't need to focus on",
           "trigger_terms": [
             "loss",
-            "pe",
-            "profit",
             "stop"
           ]
         }
       ],
       "language": "en",
-      "track_label": "en",
-      "generated": null,
-      "source": "youtube-transcript-ai"
+      "track_label": "English (auto-generated)",
+      "generated": true,
+      "source": "youtubegpt-json"
     }
   ],
   "plaintext_persisted": false
