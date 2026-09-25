@@ -348,3 +348,13 @@ Phase 26 completed the deterministic inventory of all 169 archived videos. Phase
 Current step: extract structured source-rule evidence from all title-identified strategy candidates using Python transcript retrieval. No plaintext transcript is committed and no backtest is performed.
 
 Promotion gate: every economically material field needed for simulation must be SOURCE-EXPLICIT or explicitly resolved as a preregistered inference; unresolved rules stay out of backtesting.
+
+## 2026-09-25 — Phase 27 evidence-extraction result
+
+Authoritative run 36130444316 completed successfully after one parser correction. Unit tests passed and 71 title-selected strategy-candidate videos were processed with zero acquisition errors.
+
+However, deterministic evidence extraction marked all 71 candidates for manual reconstruction review because the economically material rule fields (entry/adjustment/exit timing, strike construction, stop/target, etc.) are not yet reliably recoverable from simple keyword patterns.
+
+Detected family terms are discovery hints only and are not treated as canonical classifications. No backtest has been run in Phase 27.
+
+Next research step: strengthen source-context extraction with timestamped keyword context, then construct frozen rule sheets and deduplicate strategy families before numerical testing.
