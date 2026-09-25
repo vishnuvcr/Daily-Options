@@ -44,3 +44,10 @@ def test_target_strike_is_scalar_safe():
     row = m.target(df, "CE", 25.0)
     assert row is not None
     assert float(row["strike"]) == 24000.0
+
+
+def test_src_quotes_both_parquet_paths():
+    s = m.src(Path('/tmp/phase25'))
+    assert "NIFTY_2024.parquet'" in s
+    assert "NIFTY_2025.parquet'" in s
+    assert s.count("'") >= 4
