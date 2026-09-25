@@ -1,4 +1,4 @@
-from scripts.archive_equity_income import normalize_snippets, parse_vtt, parse_innertube_json3, parse_timestamped_markdown, sha256_bytes
+from scripts.archive_equity_income import fetch_youtubegpt, normalize_snippets, parse_vtt, parse_innertube_json3, parse_timestamped_markdown, sha256_bytes
 from scripts.archive_equity_income_keyless import hybrid_decrypt, hybrid_encrypt
 
 def test_normalize_snippets_collapses_duplicate_caption():
@@ -91,4 +91,35 @@ def test_parse_youtubegpt_segment_shape():
     ])
     assert snippets[0]["start"] == 1.25
     assert snippets[0]["text"] == "Hello & world"
+    assert snippets[1]["start"] == 2.0
+
+
+
+def test_fetch_youtubegpt_json(monkeypatch):
+    class Response:
+        status_code = 200
+        text = '{"ok":true}'
+
+        def json(self):
+            return {
+                "ok": True,
+                "track": {"language": "en", "name": "English", "generated": False},
+                "segments": [
+                    {"start": 1250, "dur": 500, "text": "Hello"},
+                    {"start": 2000, "dur": None, "text": "world"},
+                ],
+            }
+
+    def fake_get(*args, **kwargs):
+        return Response()
+
+    import scripts.archive_equity_income as mod
+    monkeypatch.setattr(mod.requests, "get", fake_get)
+    result = fetch_youtubegpt("abcdefghijk")
+    assert result[0] is not None
+    snippets, lang, label, generated = result
+    assert lang == "en"
+    assert label == "English"
+    assert generated is False
+    assert snippets[0]["start"] == 1.25
     assert snippets[1]["start"] == 2.0
