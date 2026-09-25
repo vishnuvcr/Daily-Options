@@ -1,0 +1,24 @@
+name: Phase 35 - Final manuscript
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  manual-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-35-equity-income-manuscript-v1
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Phase definition
+        run: |
+          echo "Phase 35: Final manuscript"
+          echo "Manual execution branch: phase-35-equity-income-manuscript-v1"
+          echo "Weekly target: INR 5,000 net per traded week at fixed reference sizing"
+          echo "Scope: Produce full reproducible manuscript, graphs, tables, appendices and supplementary material."
