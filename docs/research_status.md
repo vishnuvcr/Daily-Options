@@ -308,3 +308,12 @@ Phase 24 next execution requirement: rebuild/reacquire a coverage-validated exac
 Phase 24 TradeMarkk execution is quarantined for evidence because its accepted artifact contained only 5 unique executable entry dates and 32 setup combinations across the nominal research window. The apparent target-qualified cells were dominated by single-trade observations. This is logged as E0237/E0238; no Phase 24 leaderboard cell is promoted.
 
 Phase 25 is now the active independent replication branch: `phase-25-falcon-rissin-independent-v1`. It uses pinned Rissin/Upstox NIFTY 1-minute data revision `78b1c5468255d18cf492984bfe6fe4e3ac874d7c`, exact expiry metadata, the unchanged 270-cell Falcon grid, Wednesday→Thursday→Monday current-rule geometry, historical Friday→Monday→Wednesday geometry, Paytm Money/NSE costs, and doubled slippage. Promotion is blocked until the independent source produces adequate sample size and survives base/stress gates.
+
+
+## 2026-09-25 — Testing pause / Equity Income archive program
+
+At the user's direction, the previous daily/intraday strategy tournament is paused. The next research objective is a weekly strategy program sourced from the full Equity Income YouTube channel.
+
+A fixed acquisition branch `equity-income-channel-archive-v1` contains Python-only channel discovery and transcript-fetching infrastructure, metadata/provenance manifests, integrity checks and an encrypted transcript archive design. The archive workflow requires the user-configured `EQUITY_INCOME_ARCHIVE_KEY` secret before its first execution.
+
+Separate branches for Phases 26–35 are created. The new weekly economic target is **₹5,000 net per traded week at a fixed declared reference position size**, with Base/Stress friction, weekly risk statistics, nested WFA and later-period OOS validation.
