@@ -121,8 +121,7 @@ def archive_one(video: dict, out_root: Path, public_key, public_key_sha256: str,
     transcript_root.mkdir(parents=True, exist_ok=True)
     tmp = archive_path.with_suffix(archive_path.suffix + ".tmp")
     tmp.write_text(
-        json.dumps(envelope, ensure_ascii=False, sort_keys=True, indent=2) + "
-",
+        json.dumps(envelope, ensure_ascii=False, sort_keys=True, indent=2) + "\n",
         encoding="utf-8",
     )
     tmp.replace(archive_path)
@@ -230,8 +229,7 @@ def main() -> int:
         },
     }
     (root / "channel_snapshot.json").write_text(
-        json.dumps(snapshot, ensure_ascii=False, indent=2) + "
-", encoding="utf-8"
+        json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
     if errors:
         write_jsonl(error_path, errors)
