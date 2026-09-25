@@ -208,3 +208,10 @@ Phase 25 independent Rissin replication is **complete and retired**. Authoritati
 Base best: **-₹1,645.92/lot/day**. Stress best: **-₹2,219.25/lot/day**. No variant qualified for the ₹1,000/lot/day target. The complete result and provenance are in [Phase 25 final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-25-falcon-rissin-independent-v1/reports/phase25_falcon_rissin_final_result.md).
 
 Falcon is therefore retired without WFA/OOS promotion or result-driven tuning. Research continues with the next distinct hypothesis.
+
+
+## IMPORTANT — Phase 25 result retracted after strategy audit — 2026-09-25
+
+The earlier Phase 25 Falcon retirement is **not valid**. A forensic comparison with the Phase 24 reference simulator found that the Phase 25 pre-adjustment stop logic scanned beyond the adjustment timestamp and cached stop results without including adjustment time in the key. This can materially change the strategy being simulated. The produced leaderboard also contained only 135 executable variants (all diagonal-premium); 135 same-strike cells had no trades, despite the nominal 270-cell count.
+
+The simulator has been corrected and a fresh independent Base + Stress run is required. **Falcon is not retired. No Phase 25 P&L should be used for a strategy conclusion.**
