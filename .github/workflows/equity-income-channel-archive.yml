@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - ".github/workflows/equity-income-channel-archive.yml"
+      - ".github/equity-income-archive-trigger.txt"
   schedule:
     - cron: "30 2 * * 0"
 
