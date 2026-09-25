@@ -49,6 +49,21 @@ The repository historical lot schedule and NSE revision show NIFTY at 65 lots fo
 - No future information in signals or adjustments.
 - If bid/ask is unavailable, the execution model must be explicitly labelled as an OHLC-derived proxy, not observed spread data.
 
+## Weekly economic objective for Phase 30
+
+The current Equity Income promotion target is **₹5,000 NET per completed trading week** at the frozen reference strategy position size. The retired ₹1,000-per-day rule is not used for Phase 30.
+
+Phase 30 must report:
+- mean weekly net ≥ ₹5,000 on untouched OOS weeks;
+- median weekly net ≥ ₹5,000 on untouched OOS weeks;
+- profitable-week rate ≥70%;
+- executed-week coverage ≥80% unless a source-frozen no-trade condition applies;
+- Base and doubled-slippage Stress;
+- worst week, weekly drawdown, expected shortfall/CVaR, profit factor and concentration;
+- nested walk-forward selection followed by independent later-period OOS.
+
+Hidden position scaling is prohibited: lot ratios, reference size, all four legs, costs and capital usage must be disclosed.
+
 ## Phase 30 opening criteria
 All 12 cells must have deterministic rules, valid date-specific lot size, exact contract joins, no missing mandatory legs, and registered cost/slippage definitions.
 Then Phase 30 can run weekly net P&L, profitable-week rate, median, worst week, drawdown, profit factor, expected shortfall/CVaR, capital efficiency, Base/Stress, nested WFA/OOS and later-period validation.
