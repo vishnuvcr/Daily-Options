@@ -46,7 +46,8 @@ jobs:
         run: |
           set -euo pipefail
           PYTHONPATH=. python scripts/archive_equity_income_keyless.py             --channel-url "https://www.youtube.com/@equityincome"             --output-root "data/equity_income"             --public-key "config/equity_income_archive_public_key.pem" \
-            --transcript-timeout-seconds 45
+            --transcript-timeout-seconds 20 \
+            --workers 4
 
       - name: Test archive tooling
         run: PYTHONPATH=. pytest -q tests/test_equity_income_archive.py
