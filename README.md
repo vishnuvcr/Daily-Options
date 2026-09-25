@@ -30,7 +30,7 @@ The final decision still requires nested walk-forward selection followed by inde
 | 29.3 | Iron Dome content validation | COMPLETE — provisional weekly rule reconstructed |
 | 29.4 | Iron Dome source-fidelity reconstruction | **CURRENT** |
 | 29.5 | Freeze deterministic interpretations + contract/lot readiness | NEXT / numerical gate |
-| 30 | Weekly numerical backtest + WFA/OOS | BLOCKED until Phase 29.5 gate passes |
+| 30 | Weekly numerical backtest + WFA/OOS | **ACTIVE — corrected v7 rerun; no P&L accepted yet** |
 
 Current frontier links: [Research status](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md) · [Research plan](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_plan.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md)
 
@@ -399,3 +399,7 @@ NIFTY weekly options currently expire on Tuesday; NSE moved the weekly expiry fr
 **Next bounded phase: Phase 29.5 — source-fidelity formalization + contract/lot readiness.** It will freeze a small, preregistered set of source-anchored interpretations, verify dated Tuesday-expiry/lot mapping, and only then open the numerical Phase 30 weekly backtest with Paytm Money/NSE costs and Base/Stress slippage.
 
 [Research status](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md) · [Phase 29.4 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-29.4-equity-income-iron-dome-rule-reconstruction-v1/docs/phase29.4_iron_dome_rule_reconstruction_plan.md)
+
+### Phase 30 v7 correction — 2026-09-25
+Dedicated branch: `phase-30-equity-income-weekly-backtest-v7-corrected`.
+The first vectorized result was quarantined after a pre-result audit found that the exact-expiry option loader filtered by a single trading day. v7 uses the complete timestamp range within each exact-expiry file, adds a multi-day regression test, and keeps the frozen 12-cell rule/cost model unchanged. Base and Stress must complete before any strategy conclusion.
