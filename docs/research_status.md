@@ -347,3 +347,15 @@ Archive completion is blocked only on configuring the repository secret EQUITY_I
 The fixed archive branch now contains the deterministic Python discovery/transcript layer, unit tests, pinned dependencies, encrypted-archive workflow, strategy registry schema, and weekly Phase 26–35 research plan. The GitHub Actions archive job is deliberately not auto-triggered until the required `EQUITY_INCOME_ARCHIVE_KEY` secret is configured, so no incomplete archive run is treated as a result.
 
 All ten future research branches (Phase 26 through Phase 35) have been created with separate plan files and manual-run workflow buttons. Trading tests remain paused.
+
+## 2026-09-25 — Keyless archive conversion
+
+The original Equity Income archive design depended on `EQUITY_INCOME_ARCHIVE_KEY`, but the connected GitHub integration cannot create repository secrets. The archive has therefore been converted to public-key hybrid encryption on branch `equity-income-channel-archive-v2-hybrid-keyless`.
+
+- GitHub Actions encrypts each transcript with a fresh Fernet data key and wraps that key with the committed RSA-OAEP public key.
+- The matching RSA private key is kept outside GitHub.
+- A local decrypt utility is included.
+- The archive workflow no longer requires `secrets.EQUITY_INCOME_ARCHIVE_KEY`.
+- Local cryptographic round-trip testing passed; full channel acquisition has not yet been run in Actions.
+
+The v2 branch is ready to replace the old v1 secret-based design.
