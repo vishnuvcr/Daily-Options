@@ -429,3 +429,7 @@ A dedicated runtime-fix branch **`phase-30.2-falcon-runtime-fix-v1`** preserves 
 
 [Phase 30.2 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.2-falcon-runtime-fix-v1/docs/phase30_2_falcon_weekly_plan.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.2-falcon-runtime-fix-v1/docs/error_log.md) · [Research status](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.2-falcon-runtime-fix-v1/docs/research_status.md)
 
+
+
+### 2026-09-26 — Phase 30.2 Falcon engineering checkpoint
+Run 36218439278 is quarantined: both Base and Stress reached the simulator but failed on a DuckDB `ORDER BY ts` alias after the timestamp-normalization correction. No P&L is accepted. The frozen 270-cell Falcon grid, economic rules, and cost model are unchanged. Commit `b731513c6e22c9f2a3774c5e90db0eeb4f022c9a` fixes only the SQL alias; a fresh Base/Stress rerun is required.
