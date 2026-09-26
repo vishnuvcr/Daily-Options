@@ -795,3 +795,18 @@ Run **36252692972** stopped in unit tests after the engine correction. Seven tes
 Run **36252808290** passed all eight regression tests and the corrected global gate, then failed in Base discovery because `load_prices` attempted to select an `exit_ts` column that `build_signals` does not create. The frozen horizon field already determines the exit timestamp through `HORIZON_TIMES`. No P&L is accepted from run 8.
  
 E0406 is logged. The unused column selection is removed and a regression test now enforces the price-loader input contract.
+
+ 
+## 2026-09-26 — Phase 31.9 preregistered and ready
+ 
+Phase 31.9 is the next bounded family after Phase 31.8 closed negative. The frozen hypothesis is **India VIX / prior-only NIFTY RV20 regime × opening-gap FOLLOW/FADE × fixed exit**.
+ 
+The branch now contains:
+- preregistered plan and literature review;
+- official NSE India VIX Python acquisition with response/coverage/hash checks;
+- no-lookahead VIX/RV20 panel construction;
+- 12-cell true grid + five full-panel null seeds;
+- Base/Stress cost and historical lot-size execution model;
+- regression tests and a manual GitHub Actions launcher on main.
+ 
+No result has yet been accepted. The first gate is deterministic source coverage and prior-information integrity.
