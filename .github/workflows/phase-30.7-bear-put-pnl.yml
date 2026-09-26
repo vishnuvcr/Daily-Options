@@ -95,7 +95,7 @@ jobs:
           PYTHONPATH=. python research/phase30_7_bear_put_pnl.py \
             --data-root data/cache/phase30_2_rissin \
             --spot-root data/cache/phase30_5_nifty_spot \
-            --out-root "reports/phase30_7_shard_$SHARD_SHELL_REGIME__" \
+            --out-root "reports/phase30_7_shard_$SHARD_$REGIME" \
             --slippage "$SLIP" \
             --def-start "$START" \
             --def-count 5
@@ -103,7 +103,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: phase30-7-shard-${{ matrix.shard }}-${{ matrix.regime }}
-          path: reports/phase30_7_shard_$SHARD_SHELL_REGIME__
+          path: reports/phase30_7_shard_$SHARD_$REGIME
 
   aggregate:
     needs: shard
