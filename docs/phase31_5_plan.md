@@ -38,3 +38,7 @@ Discovery outputs every grid cell. No promotion is permitted from discovery alon
 - Parameter heatmap CSV
 - Drawdown and tail-risk diagnostics
 - Explicit rejection reasons
+
+
+## Phase status
+**2026-09-26 — CLOSED.** Run 36245174834 completed the frozen 18-cell discovery grid. No candidate met the preregistered weekly consistency gates; no WFA/OOS promotion is authorized.
