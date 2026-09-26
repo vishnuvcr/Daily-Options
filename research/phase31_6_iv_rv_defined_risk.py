@@ -5,7 +5,7 @@ import argparse, math, json
 import duckdb, pandas as pd
 
 START=date(2021,7,1); END=date(2026,8,31)
-THRESHOLDS=(2.0,4.0,6.0); WINGS=(200,400); EXPIRY_BUCKETS=(0,1)
+THRESHOLDS=(2.0,4.0,6.0); WINGS=(200,); EXPIRY_BUCKETS=(0,1)
 
 def lot_size(expiry):
     d=pd.Timestamp(expiry).date()
