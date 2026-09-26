@@ -547,3 +547,6 @@ No Falcon P&L from the stalled run is accepted. The next authoritative run from 
 
 ## 2026-09-26 — Phase 30.2 zero-setup audit and correction
 The runtime-fixed Falcon run **36216668042** completed Base/Stress with 32/32 calendars but **0 candidate setups / 0 trades**. This output is quarantined and is **not a Falcon performance result**. The remaining data-boundary risk was timestamp normalization: Rissin documents the 1-minute timestamp field as IST and public examples include +0530 timestamps. The simulator has therefore been corrected to parse raw intraday timestamps explicitly into Asia/Kolkata before exact signal/fill matching. No economic rule, parameter grid, cost model, or promotion gate was changed. A new deterministic Base/Stress rerun is required.
+
+
+Phase 30.2 Falcon update: run 36218439278 is quarantined as an engineering failure (DuckDB ORDER BY alias mismatch after timestamp normalization). The frozen 270-cell strategy and cost model are unchanged. Commit b731513c6e22c9f2a3774c5e90db0eeb4f022c9a fixes only the SQL alias; fresh Base/Stress evidence is required.
