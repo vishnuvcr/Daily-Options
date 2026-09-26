@@ -469,3 +469,18 @@ The Bear Put engine has passed the bounded Base/Stress smoke tests. Before accep
 ## 2026-09-26 — Phase 30.7 shard/audit correction
 
 The first 18 sharded Base/Stress jobs completed, but their artifact upload path was wrong, so the aggregate audit rejected the run before any result promotion. The weekly-statistics implementation was also corrected to use completed trading weeks, consistent with prior project methodology, and cost-share was corrected to use absolute gross P&L. **No first-pass Bear Put result is accepted.**
+
+
+
+## 2026-09-26 — Phase 30.7 Bear Put final result
+
+Phase 30.7 completed the frozen **6,480-cell** Bear Put interpretation matrix. Workflow **36233110210** finished with **18/18 shards successful** and a successful aggregate audit with **0 duplicate cells**.
+
+- Base: **0/6,480 pass**; best mean weekly net **-₹5,724.97**; best median **-₹4,885.24**; profitable-week rate **0.0%**; execution coverage **52.63%**; net P&L **-₹171,749.04**.
+- Stress: **0/6,480 pass**; best mean weekly net **-₹5,826.11**; best median **-₹4,937.20**; profitable-week rate **0.0%**; execution coverage **52.63%**; net P&L **-₹174,783.27**.
+
+Bear Put is therefore **retired at the frozen weekly gate**. No WFA/OOS or result-driven retuning is authorized.
+
+[Phase 30.7 final audited result](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.7-bear-put-contract-interpretation-grid-v1/reports/phase30_7_bear_put_final_result.md) · [Phase 30.7 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.7-bear-put-contract-interpretation-grid-v1/docs/phase30_7_bear_put_contract_interpretation_grid_plan.md)
+
+**Next frontier: Phase 30.8 source-fidelity reconstruction of the next preregistered Equity Income candidate.** Phase 31 remains parked until a Phase 30 family survives the weekly gate.
