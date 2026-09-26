@@ -655,3 +655,14 @@ The next source-faithful frontier is **Phase 30.13 — Equity Income Low-VIX Dia
 Phase 30.13 Low-VIX Diagonal is **SOURCE-BLOCKED / DATA-LIMITED**. GitHub Actions could reach the public YouTube page but deterministic Python caption acquisition was blocked by YouTube bot/IP controls across yt-dlp client modes and YouTubeTranscriptApi. No transcript evidence was accepted and no P&L was calculated. The candidate remains frozen for possible reopening when a reproducible primary-evidence path is available.
 
 [Phase 30.13 final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.13-equity-income-low-vix-diagonal-source-resolution-v1/reports/phase30_13_final_result.md) · [Phase 30.13 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.13-equity-income-low-vix-diagonal-source-resolution-v1/docs/phase30_13_plan.md)
+
+
+## 2026-09-26 — Phase 31.2 forensic audit completed
+
+Phase 31.1 is **quarantined**, not retired. Independent raw-data reconciliation completed successfully on branch `phase-31.2-phase31-1-forensic-audit-v1`: 30/30 stratified executed days matched the persisted ledger within ₹0.10 material tolerance, and the persisted 1,209-day ledger reconciles to its summary and weekly aggregation to numerical tolerance.
+
+The audit found E0375: the persisted Phase 31.1 Base artifact uses raw gross P&L minus transaction/statutory costs, while the current checked-in simulator applies slippage inside execution gross. Reconstructed leg-level slippage totals **₹130,750.00**. After applying that missing friction, Base becomes **-₹667,847.06 total net**, **-₹2,568.64 mean weekly**, **-₹3,057.21 median weekly**, with **25.38% positive weeks** over 260 weeks. The earlier -₹537,097.06 figure is therefore retained only as the persisted artifact's accounting result, not as the final friction-corrected research result.
+
+Next authorized step: provenance-corrected Phase 31.1 reproduction with one frozen accounting definition. No parameter optimization is authorized until that reproduction is frozen.
+
+[Phase 31.2 plan](docs/phase31_2_forensic_audit_plan.md) · [audit branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-31.2-phase31-1-forensic-audit-v1) · [final audit report](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.2-phase31-1-forensic-audit-v1/reports/phase31_2/final_result.md)
