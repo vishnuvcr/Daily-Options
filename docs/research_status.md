@@ -708,3 +708,11 @@ Run 36250489191 and run 36250549825 both reached Base/Stress but failed validati
 ## 2026-09-26 — Phase 31.7 run 11 closure / execution probe preparation
 
 Run 36250863176 reached the data gate, Base and Stress, but validation again failed at the friction-field assertion before any P&L was accepted. The latest branch now contains the explicit IST date/strike execution loader, the strike-order correction and a raw five-sample execution-row probe. The probe is being added to the authoritative launcher to determine whether the remaining issue is source-row availability or downstream price-key mapping. No numerical result from run 11 is accepted.
+
+## 2026-09-26 — Phase 31.7 run 12 closure / corrected run 13 frontier
+
+Run **36251100372** completed unit tests, data gate, raw execution probes, Base and Stress, but validation failed because every executable trade set was still empty. The run-12 artifact showed valid source rows at the required 09:31/15:10 timestamps; the remaining failure was localized to the expiry-file selection path. The feature expiry values were pandas-coerced while the expiry map used Python `date` keys.
+
+The branch now normalizes `wanted.expiry` into a dedicated Python-date `expiry_key` before expiry-file matching. A regression test covers timestamp/date normalization. The Phase 31.7 launcher persistence step has also been hardened with fetch/rebase retry logic, and the launcher has non-canceling concurrency enabled.
+
+Run 12 remains quarantined and its outputs are audit-only. The next authoritative computation is run 13 from the corrected branch after the latest branch head is recorded in the launch marker.
