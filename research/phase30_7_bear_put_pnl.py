@@ -137,6 +137,8 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
     """).df()
     if opt.empty: raise RuntimeError("no required option quotes")
     opt["ts"]=pd.to_datetime(opt.ts)
+    if opt["ts"].dt.tz is None: opt["ts"]=opt["ts"].dt.tz_localize("Asia/Kolkata")
+    else: opt["ts"]=opt["ts"].dt.tz_convert("Asia/Kolkata")
     # Keyed series; duplicates are removed deterministically.
     series={(e,s):g.sort_values("ts").drop_duplicates("ts").reset_index(drop=True)
             for (e,s),g in opt.groupby(["expiry","strike"],sort=False)}
