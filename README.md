@@ -631,3 +631,8 @@ Run 36252470696 stopped in unit tests because one regression expected the old pr
 ## 2026-09-26 — Phase 31.8 run 6 closure
  
 Run 36252561747 passed tests and the warm-up-aware global gate but stopped in Base discovery on an expiry date-type mismatch. E0404 is fixed with date normalization and a regression test. Run 7 is the next authoritative computation.
+
+ 
+## 2026-09-26 — Phase 31.8 run 7 closure
+ 
+Run 36252692972 stopped in unit tests because the new expiry regression used the wrong expected value type. E0405 is closed; run 8 will execute the corrected engine and full discovery path.
