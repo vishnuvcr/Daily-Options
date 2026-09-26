@@ -43,43 +43,23 @@ def session_panel(idx, vix):
 
     px=daily[["date","day_close"]].copy()
     r=np.log(px.day_close/px.day_close.shift(1))
-    # RV20 at date t uses returns through t-1 only.
     rv20=r.shift(1).rolling(20,min_periods=20).std(ddof=1)*np.sqrt(252)*100.0
-    rv=pd.DataFrame({"date":px.date,"rv20_pct":rv})
+    rv=pd.DataFrame({"rv_feature_date":px.date,"rv20_pct":rv})
 
-    vx=vix.copy(); vx["date"]=pd.to_datetime(vx.date).dt.normalize()
-    vx=vx[["date","close"]].rename(columns={"close":"vix_close"})
-    vx=vx.sort_values("date")
-    rv=rv.dropna().sort_values("date")
+    vx=vix.copy()
+    vx["vix_feature_date"]=pd.to_datetime(vx.date).dt.normalize()
+    vx=vx[["vix_feature_date","close"]].rename(columns={"close":"vix_close"}).sort_values("vix_feature_date")
+    rv=rv.dropna().sort_values("rv_feature_date")
     s["date"]=pd.to_datetime(s["date"]).dt.normalize().astype("datetime64[ns]")
-    vx["date"]=vx["date"].astype("datetime64[ns]")
-    rv["date"]=rv["date"].astype("datetime64[ns]")
+    vx["vix_feature_date"]=vx["vix_feature_date"].astype("datetime64[ns]")
+    rv["rv_feature_date"]=rv["rv_feature_date"].astype("datetime64[ns]")
 
-    # Strictly prior VIX close.
-    s=pd.merge_asof(s.sort_values("date"),vx,left_on="date",right_on="date",
+    s=pd.merge_asof(s.sort_values("date"),vx,left_on="date",right_on="vix_feature_date",
                     direction="backward",allow_exact_matches=False)
-    s=s.rename(columns={"date_x":"date","date_y":"vix_feature_date"})
-    if "date" not in s.columns:
-        s=s.rename(columns={"date_x":"date"})
-    s=pd.merge_asof(s.sort_values("date"),rv,left_on="date",right_on="date",
-                    direction="backward",allow_exact_matches=False,
-                    suffixes=("","_rv"))
-    s=s.rename(columns={"date_x":"date"})
-    if "date" not in s.columns:
-        s=s.rename(columns={"date_x":"date"})
-    # Recover feature dates from merge columns when present.
-    if "date_rv" in s.columns:
-        s["rv_feature_date"]=s["date_rv"]
-    elif "date_y" in s.columns:
-        s["rv_feature_date"]=s["date_y"]
-    else:
-        # Second merge_asof preserves right key under the same name only if suffixing occurs.
-        s["rv_feature_date"]=pd.NaT
+    s=pd.merge_asof(s.sort_values("date"),rv,left_on="date",right_on="rv_feature_date",
+                    direction="backward",allow_exact_matches=False)
     s["ratio"]=s["vix_close"]/s["rv20_pct"]
-    s["regime"]=np.select(
-        [s["ratio"].le(0.90), s["ratio"].le(1.10)],
-        ["LOW","MID"], default="HIGH"
-    )
+    s["regime"]=np.select([s["ratio"].le(0.90),s["ratio"].le(1.10)],["LOW","MID"],default="HIGH")
     s.loc[~np.isfinite(s["ratio"]),"regime"]=np.nan
     s["vix_prior_ok"]=s["vix_feature_date"].notna() & (s["vix_feature_date"] < s["date"])
     s["rv_prior_ok"]=s["rv_feature_date"].notna() & (s["rv_feature_date"] < s["date"])
@@ -89,8 +69,6 @@ def session_panel(idx, vix):
 def data_gate(panel, root):
     manifest=json.loads((root/"manifest.json").read_text()) if (root/"manifest.json").exists() else {}
     raw=len(panel)
-    eligible=int(panel["all_prior"].astype(bool).sum() & panel["ratio"].notna().sum()) if raw else 0
-    # Avoid bitwise ambiguity and make all eligibility conditions explicit.
     ready=panel["all_prior"].astype(bool) & panel["ratio"].notna() & panel["gap_ret"].notna()
     eligible=int(ready.sum())
     complete=int((panel["all_prior"] & panel["ratio"].notna()).sum())
