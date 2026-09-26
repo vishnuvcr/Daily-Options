@@ -1,5 +1,5 @@
 from __future__ import annotations
-import argparse, json, math, itertools
+import argparse, json, math, itertools, csv
 from pathlib import Path
 import duckdb, numpy as np, pandas as pd
 
@@ -151,86 +151,117 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
     daily=spot.assign(day=spot.Timestamp.dt.date).groupby("day",sort=True).first()[["Open"]]
     spot_by_ts=spot.set_index("Timestamp")["Close"]
     all_days=pd.date_range(pd.Timestamp(START),pd.Timestamp(END),freq="D"); all_weeks=sorted({f"{int(x.isocalendar().year)}-W{int(x.isocalendar().week):02d}" for x in all_days})
-    results=[]; edge=0; entry_missing=0; nonpositive_debit=0
+    edge=0; entry_missing=0; nonpositive_debit=0
+    all_days=pd.date_range(pd.Timestamp(START),pd.Timestamp(END),freq="D")
+    all_weeks=sorted({f"{int(x.isocalendar().year)}-W{int(x.isocalendar().week):02d}" for x in all_days})
+    expected_by_base={(a,b,c):len(g0) for (a,b,c),g0 in tradespec.groupby(["definition","expiry_choice","strike_choice"])}
+    cell_stats={}
+    trade_path=out/"trades.csv"
+    trade_header_written=False
+    trade_buffer=[]
+
+    def flush_trades():
+        nonlocal trade_buffer, trade_header_written
+        if not trade_buffer: return
+        pd.DataFrame(trade_buffer).to_csv(trade_path,index=False,mode="a",header=not trade_header_written)
+        trade_header_written=True
+        trade_buffer=[]
+
+    def record_trade(row):
+        key=(row["definition"],row["expiry_choice"],row["strike_choice"],row["gap"],row["wait"],row["risk"],row["time_exit"])
+        s=cell_stats.setdefault(key,{"trades":0,"weeks":{}}) 
+        s["trades"]+=1
+        s["weeks"][row["week"]]=s["weeks"].get(row["week"],0.0)+float(row["net_pnl"])
+        s.setdefault("gross_pnl",0.0); s["gross_pnl"]+=float(row["gross_pnl"])
+        s.setdefault("net_pnl",0.0); s["net_pnl"]+=float(row["net_pnl"])
+        s.setdefault("peak_capital_proxy",0.0); s["peak_capital_proxy"]=max(s["peak_capital_proxy"],float(row["capital_proxy"]))
+        s.setdefault("capital_sum",0.0); s["capital_sum"]+=float(row["capital_proxy"])
+        trade_buffer.append(row)
+        if len(trade_buffer)>=5000: flush_trades()
+
     def first_gap(date,res,gap,expiry):
         for d,rr in daily.loc[daily.index>date].iterrows():
             if d>expiry: break
             if float(rr.Open)>=res+gap: return d
         return None
+
     def exact_or_next(s, t, next_ok=False):
         if s is None or s.empty:return None
-        if next_ok:
-            z=s[s.ts>=pd.Timestamp(t)]
-        else:
-            z=s[s.ts==pd.Timestamp(t)]
+        z=s[s.ts>=pd.Timestamp(t)] if next_ok else s[s.ts==pd.Timestamp(t)]
         return None if z.empty else z.iloc[0]
+
     for r in tradespec.itertuples():
         L=series.get((r.expiry,r.long_strike)); P=series.get((r.expiry,r.short_strike))
         entry_ts=r.signal_ts+pd.Timedelta(minutes=1)
         le=exact_or_next(L,entry_ts); se=exact_or_next(P,entry_ts)
-        if le is None or se is None: entry_missing+=1; continue
+        if le is None or se is None:
+            entry_missing+=1; continue
         D=float(le.open_px-se.open_px)
-        if D<=0: nonpositive_debit+=1; continue
+        if D<=0:
+            nonpositive_debit+=1; continue
         lot=lot_size(r.expiry)
+        max_exit_day=pd.Timestamp(r.expiry).date()
         z=pd.merge(L[["ts","close_px"]].rename(columns={"close_px":"long"}),
-                   P[["ts","close_px"]].rename(columns={"close_px":"short"}),on="ts",how="inner")
-        z=z[(z.ts>=entry_ts)&(z.ts<=pd.Timestamp(r.expiry).tz_localize("Asia/Kolkata")+pd.Timedelta(hours=15))].copy()
+                   P[["ts","close_px"]].rename(columns={"close_px":"short"}),
+                   on="ts",how="inner")
+        z=z[(z.ts>=entry_ts)&(z.ts<=pd.Timestamp(f"{max_exit_day} 15:00").tz_localize("Asia/Kolkata"))].reset_index(drop=True)
         if z.empty: continue
-        z["base_pnl"]=z["long"]-z["short"]-D
+        base_pnl=(z.long.to_numpy(dtype=float)-z.short.to_numpy(dtype=float)-D)
+        zts=z.ts
+        gap_events={g:first_gap(r.signal_date,r.resistance,g,r.expiry) for g in GAPS}
         for gap in GAPS:
-            gd=first_gap(r.signal_date,r.resistance,gap,r.expiry)
+            gd=gap_events[gap]
             for wait in WAITS:
-                adj=None; reversal_ts=None; reversal_px=None; extra=0.0
+                adj=None; reversal_ts=None; reversal_px=None
                 if gd is not None:
                     obs=pd.Timestamp(gd).tz_localize("Asia/Kolkata")+pd.Timedelta(minutes=wait)
                     sv=spot_by_ts.get(obs)
                     if pd.notna(sv) and float(sv)>r.resistance:
                         ae=exact_or_next(P,obs+pd.Timedelta(minutes=1),True)
                         if ae is not None:
-                            adj=ae; extra=float(ae.open_px)
-                            post=spot_by_ts.loc[(spot_by_ts.index>ae.ts)&(spot_by_ts.index<=z.ts.max())]
-                            rev=post[post<=r.resistance]
+                            adj=ae
+                            post_spot=spot_by_ts.loc[(spot_by_ts.index>adj.ts)&(spot_by_ts.index<=pd.Timestamp(f"{max_exit_day} 15:00").tz_localize("Asia/Kolkata"))]
+                            rev=post_spot[post_spot<=r.resistance]
                             if not rev.empty:
-                                rt=rev.index[0]+pd.Timedelta(minutes=1)
-                                rb=exact_or_next(P,rt,True)
-                                if rb is not None: reversal_ts=rt; reversal_px=float(rb.open_px)
-                pnl=z["base_pnl"].to_numpy(dtype=float)
+                                candidate=rev.index[0]+pd.Timedelta(minutes=1)
+                                rb=exact_or_next(P,candidate,True)
+                                if rb is not None: reversal_ts=candidate; reversal_px=float(rb.open_px)
+                pnl_state=base_pnl.copy()
                 if adj is not None:
-                    during=(z.ts.to_numpy()>=np.datetime64(adj.ts))
+                    amask=(zts>=adj.ts).to_numpy()
+                    pnl_state[amask]=base_pnl[amask]+float(adj.open_px)-z.short.to_numpy(dtype=float)[amask]
                     if reversal_ts is not None:
-                        during &= z.ts.to_numpy()<np.datetime64(reversal_ts)
-                        after=z.ts.to_numpy()>=np.datetime64(reversal_ts)
-                        pnl[after]+=extra-reversal_px
-                    pnl[during]+=extra-z.loc[during,"short"].to_numpy(dtype=float)
-                z["pnl"]=pnl
+                        rmask=(zts>=reversal_ts).to_numpy()
+                        pnl_state[rmask]=base_pnl[rmask]+float(adj.open_px)-float(reversal_px)
                 for risk in RISKS:
-                    if risk=="debit_stop_1x_expiry": stop_at=None
-                    else:
-                        ss=z.loc[z.pnl<=-D,"ts"]
-                        stop_at=ss.iloc[0] if not ss.empty else None
-                    if risk.endswith("50pct"):
-                        tt=z.loc[z.pnl>=0.5*(r.long_strike-r.short_strike),"ts"]; target_at=tt.iloc[0] if not tt.empty else None
-                    elif risk.endswith("75pct"):
-                        tt=z.loc[z.pnl>=0.75*(r.long_strike-r.short_strike),"ts"]; target_at=tt.iloc[0] if not tt.empty else None
-                    else: target_at=None
+                    target_frac=0.5 if risk.endswith("50pct") else 0.75 if risk.endswith("75pct") else None
+                    stop_idx=None if risk=="debit_stop_1x_expiry" else (int(np.flatnonzero(pnl_state<=-D)[0]) if np.any(pnl_state<=-D) else None)
+                    target_idx=None if target_frac is None else (int(np.flatnonzero(pnl_state>=target_frac*(r.long_strike-r.short_strike))[0]) if np.any(pnl_state>=target_frac*(r.long_strike-r.short_strike)) else None)
                     for tex in TIME_EXITS:
                         exit_day=pd.Timestamp(r.expiry).date() if tex=="expiry_day_15_00" else (pd.Timestamp(r.expiry)-pd.Timedelta(days=1)).date()
                         exit_ts=pd.Timestamp(f"{exit_day} 15:00").tz_localize("Asia/Kolkata")
-                        candidates=[x for x in (stop_at,target_at) if x is not None and x<=exit_ts]
-                        xt=min(candidates) if candidates else exit_ts
-                        reason="STOP" if stop_at is not None and xt==stop_at else "TARGET" if target_at is not None and xt==target_at else "TIME_EXIT"
-                        if reason=="TIME_EXIT":
-                            le2=exact_or_next(L,exit_ts); se2=exact_or_next(P,exit_ts)
+                        time_mask=(zts<=exit_ts).to_numpy()
+                        if not np.any(time_mask): continue
+                        time_idx=int(np.flatnonzero(time_mask)[-1])
+                        candidates=[x for x in (stop_idx,target_idx) if x is not None and x<=time_idx]
+                        trig_idx=min(candidates) if candidates else None
+                        reason="STOP" if trig_idx is not None and stop_idx==trig_idx else "TARGET" if trig_idx is not None else "TIME_EXIT"
+                        if trig_idx is None:
+                            xt=exit_ts
+                            le2=exact_or_next(L,xt); se2=exact_or_next(P,xt)
                         else:
+                            xt=zts.iloc[trig_idx]+pd.Timedelta(minutes=1)
                             le2=exact_or_next(L,xt,True); se2=exact_or_next(P,xt,True)
-                        if le2 is None or se2 is None: edge+=1; continue
+                        if le2 is None or se2 is None:
+                            edge+=1; continue
+                        had_adjustment=adj is not None and adj.ts<=pd.Timestamp(xt)
                         orders=[
                             {"date":r.signal_date,"side":1,"price":fill_price(float(le.open_px),1,slip),"qty":lot},
                             {"date":r.signal_date,"side":-1,"price":fill_price(float(se.open_px),-1,slip),"qty":lot},
                             {"date":pd.Timestamp(xt).date(),"side":1,"price":fill_price(float(le2.open_px),1,slip),"qty":lot},
                             {"date":pd.Timestamp(xt).date(),"side":-1,"price":fill_price(float(se2.open_px),-1,slip),"qty":lot},
                         ]
-                        if adj is not None:
+                        if had_adjustment:
                             orders.insert(2,{"date":pd.Timestamp(adj.ts).date(),"side":-1,"price":fill_price(float(adj.open_px),-1,slip),"qty":lot})
                             if reversal_ts is not None and reversal_ts<=pd.Timestamp(xt) and reversal_px is not None:
                                 orders.insert(3,{"date":pd.Timestamp(reversal_ts).date(),"side":1,"price":fill_price(float(reversal_px),1,slip),"qty":lot})
@@ -238,59 +269,53 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
                                 orders.append({"date":pd.Timestamp(xt).date(),"side":1,"price":fill_price(float(se2.open_px),1,slip),"qty":lot})
                         gross=sum((-1 if o["side"]>0 else 1)*o["price"]*o["qty"] for o in orders)
                         net=gross-cost(orders,slip)
-                        iso=pd.Timestamp(r.signal_date).isocalendar(); week=f"{int(iso.year)}-W{int(iso.week):02d}"
-                        cap=D*lot
-                        spot0=float(r.spot); elm_rate=0.03 if r.short_strike<0.90*spot0 else 0.02
-                        cap=max(cap,cap+elm_rate*r.short_strike*lot*(2 if adj is not None else 1))
-                        results.append({"definition":r.definition,"expiry_choice":r.expiry_choice,"strike_choice":r.strike_choice,
-                                        "gap":gap,"wait":wait,"risk":risk,"time_exit":tex,"trade_date":r.signal_date,
-                                        "week":week,"net_pnl":net,"gross_pnl":gross,"capital_proxy":cap,"reason":reason,
-                                        "adjusted":adj is not None,"reversed":reversal_ts is not None})
-    tr=pd.DataFrame(results)
+                        iso=pd.Timestamp(r.signal_date).isocalendar()
+                        week=f"{int(iso.year)}-W{int(iso.week):02d}"
+                        elm_rate=0.03 if r.short_strike<0.90*float(r.spot) else 0.02
+                        cap=D*lot + elm_rate*r.short_strike*lot*(2 if had_adjustment else 1)
+                        record_trade({"definition":r.definition,"expiry_choice":r.expiry_choice,"strike_choice":r.strike_choice,
+                                      "gap":gap,"wait":wait,"risk":risk,"time_exit":tex,"trade_date":r.signal_date,
+                                      "week":week,"net_pnl":net,"gross_pnl":gross,"capital_proxy":cap,
+                                      "reason":reason,"adjusted":had_adjustment})
+    flush_trades()
     diagnostics={"signals":len(sig),"expiry_signal_rows":len(reqdf),"strike_resolved_specs":len(tradespec),
                   "option_rows_loaded":len(opt),"unique_option_series":len(series),
                   "entry_missing":entry_missing,"nonpositive_debit":nonpositive_debit,
-                  "result_trades":len(tr),"edge_unfilled":edge}
+                  "result_trades":sum(v["trades"] for v in cell_stats.values()),"edge_unfilled":edge,
+                  "smoke_mode":bool(smoke)}
     (out/"diagnostics.json").write_text(json.dumps(diagnostics,indent=2,default=str))
     print(json.dumps(diagnostics,indent=2,default=str))
-    if tr.empty: raise RuntimeError("no executable trades in matrix")
-    tr.to_csv(out/"trades.csv",index=False)
     keys=["definition","expiry_choice","strike_choice","gap","wait","risk","time_exit"]
     rows=[]
-    expected_by_base={(a,b,c):len(g0) for (a,b,c),g0 in tradespec.groupby(["definition","expiry_choice","strike_choice"])}
-    for k,g in tr.groupby(keys,sort=False):
-        weeks=g.groupby("week").net_pnl.sum()
+    for k,s in cell_stats.items():
         allw=pd.Series(0.0,index=all_weeks)
-        allw.loc[weeks.index]=weeks.values
+        for wk,val in s["weeks"].items():
+            if wk in allw.index: allw.loc[wk]=val
         eq=allw.cumsum(); dd=eq-eq.cummax()
-        grosspos=g.loc[g.net_pnl>0,"net_pnl"].sum(); grossneg=-g.loc[g.net_pnl<0,"net_pnl"].sum()
+        grosspos=float(allw[allw>0].sum()); grossneg=float(-allw[allw<0].sum())
         q05=float(allw.quantile(0.05)); es=float(allw[allw<=q05].mean()) if (allw<=q05).any() else q05
-        rows.append(dict(zip(keys,k),trades=len(g),weeks_completed=int(g.week.nunique()),
+        rows.append(dict(zip(keys,k),trades=s["trades"],weeks_completed=int(sum(v!=0 for v in s["weeks"].values())),
             mean_weekly_net=float(allw.mean()),median_weekly_net=float(allw.median()),
             profitable_week_rate=float((allw>0).mean()),profit_factor=float(grosspos/grossneg) if grossneg else math.inf,
             max_drawdown=float(dd.min()),weekly_q05=q05,weekly_es05=es,
-            execution_coverage=float(len(g)/max(1,expected_by_base.get(k[:3],1))),avg_capital_proxy=float(g.capital_proxy.mean()),
-            peak_capital_proxy=float(g.capital_proxy.max()),gross_pnl=float(g.gross_pnl.sum()),
-            net_pnl=float(g.net_pnl.sum()),cost_share=float(1-g.net_pnl.sum()/g.gross_pnl.sum()) if g.gross_pnl.sum() else 0.0,
-            gate=bool(allw.mean()>=5000 and allw.median()>=5000 and (allw>0).mean()>=0.70 and g.week.nunique()>=20)))
-    lb=pd.DataFrame(rows)
+            execution_coverage=float(s["trades"]/max(1,expected_by_base.get(k[:3],1))),
+            avg_capital_proxy=float(s["capital_sum"]/max(1,s["trades"])),
+            peak_capital_proxy=float(s["peak_capital_proxy"]),gross_pnl=float(s["gross_pnl"]),
+            net_pnl=float(s["net_pnl"]),cost_share=float(1-s["net_pnl"]/s["gross_pnl"]) if s["gross_pnl"] else 0.0,
+            gate=bool(allw.mean()>=5000 and allw.median()>=5000 and (allw>0).mean()>=0.70 and sum(v!=0 for v in s["weeks"].values())>=20)))
     full=list(itertools.product([d["definition"] for d in defs],EXPIRY_CHOICES,STRIKE_CHOICES,GAPS,WAITS,RISKS,TIME_EXITS))
-    full_df=pd.DataFrame(full,columns=keys)
-    if not lb.empty: lb=full_df.merge(lb,on=keys,how="left")
-    else: lb=full_df
-    defaults={"trades":0,"weeks_completed":0,"mean_weekly_net":0.0,"median_weekly_net":0.0,
-              "profitable_week_rate":0.0,"profit_factor":0.0,"max_drawdown":0.0,
-              "weekly_q05":0.0,"weekly_es05":0.0,"execution_coverage":0.0,
-              "avg_capital_proxy":0.0,"peak_capital_proxy":0.0,"gross_pnl":0.0,
-              "net_pnl":0.0,"cost_share":0.0,"gate":False}
+    lb=pd.DataFrame(full,columns=keys)
+    if rows: lb=lb.merge(pd.DataFrame(rows),on=keys,how="left")
+    defaults={"trades":0,"weeks_completed":0,"mean_weekly_net":0.0,"median_weekly_net":0.0,"profitable_week_rate":0.0,
+              "profit_factor":0.0,"max_drawdown":0.0,"weekly_q05":0.0,"weekly_es05":0.0,"execution_coverage":0.0,
+              "avg_capital_proxy":0.0,"peak_capital_proxy":0.0,"gross_pnl":0.0,"net_pnl":0.0,"cost_share":0.0,"gate":False}
     for col,val in defaults.items():
-        if col not in lb: lb[col]=val
-        lb[col]=lb[col].fillna(val)
+        lb[col]=lb[col].fillna(val) if col in lb else val
     lb=lb.sort_values(["gate","mean_weekly_net"],ascending=[False,False])
     lb.to_csv(out/"leaderboard.csv",index=False)
-    summary={"registered_cells":6480,"tested_cells":len(lb),"trade_records":len(tr),
-             "passed_gate":int(lb.gate.sum()),"best":lb.iloc[0].to_dict(),"slippage":slip,
-             "pnl_authorized":True,"study_window":[START,END]}
+    summary={"registered_cells":6480,"tested_cells":len(lb),"trade_records":int(lb["trades"].sum()),
+             "passed_gate":int(lb["gate"].sum()),"best":lb.iloc[0].to_dict() if len(lb) else {},
+             "slippage":slip,"pnl_authorized":True,"study_window":[START,END]}
     (out/"summary.json").write_text(json.dumps(summary,indent=2,default=str))
     print(json.dumps(summary,indent=2,default=str))
 
