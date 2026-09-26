@@ -229,7 +229,10 @@ def main():
             for r in ns.itertuples(index=False):
                 x=trade_from_signal(r,prices,slip)
                 if x: x["null_seed"]=seed; null_rows.append(x)
-        nd=pd.DataFrame(null_rows); nd.to_csv(out/f"null_trades_{friction}.csv",index=False); weekly(nd).to_csv(out/f"null_weekly_{friction}.csv",index=False)
+        nd=pd.DataFrame(null_rows)
+        if nd.empty:
+            nd=pd.DataFrame(columns=["day","expiry","regime","direction","horizon","side","friction","raw_gross","slippage_cost","transaction_costs","net_pnl","null_seed"])
+        nd.to_csv(out/f"null_trades_{friction}.csv",index=False); weekly(nd).to_csv(out/f"null_weekly_{friction}.csv",index=False)
         parts=[]
         for seed in NULL_SEEDS:
             q=summary(nd[nd.null_seed==seed]); q.insert(1,"null_seed",seed); parts.append(q)
