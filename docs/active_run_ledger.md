@@ -152,3 +152,12 @@ Frozen family retired. Base and Stress artifacts were independently audited for 
 | 30.1 | phase-30.1-equity-income-air-defense-v1 | 36159121044 | Unit tests/cache passed; exact-expiry acquisition in progress | No |
 
 Phase 30 v8 is retired. The Air Defense family is the sole active Equity Income numerical frontier.
+
+## 2026-09-26 — Phase 30.2 Falcon authoritative runtime-fix frontier
+
+| Phase | Execution branch | Workflow | Status | Accepted P&L |
+|---|---|---|---|---|
+| 30.2 | phase-30.2-falcon-runtime-fix-v1 | New run after runtime correction | Pending | No |
+
+Prior authoritative run **36213335815** on `phase-30.2-falcon-opt-v1` is quarantined for runtime only: Base and Stress both remained in `Run friction` beyond six hours. No P&L was accepted. The runtime-fix branch preserves the frozen 270-cell grid, changes only data-access/caching architecture and CI serialization, and must produce a fresh Base/Stress evidence chain.
+
