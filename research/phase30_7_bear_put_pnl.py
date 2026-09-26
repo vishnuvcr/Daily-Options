@@ -232,9 +232,7 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
     tr.to_csv(out/"trades.csv",index=False)
     keys=["definition","expiry_choice","strike_choice","gap","wait","risk","time_exit"]
     rows=[]
-    expected_by_cell={}
-    for k,g0 in tradespec.assign(gap=0,wait=0,risk=RISKS[0],time_exit=TIME_EXITS[0]).groupby(["definition","expiry_choice","strike_choice","gap","wait","risk","time_exit"]):
-        expected_by_cell[k]=len(g0)
+    expected_by_base={(a,b,c):len(g0) for (a,b,c),g0 in tradespec.groupby(["definition","expiry_choice","strike_choice"])}
     for k,g in tr.groupby(keys,sort=False):
         weeks=g.groupby("week").net_pnl.sum()
         allw=pd.Series(0.0,index=all_weeks)
@@ -246,7 +244,7 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
             mean_weekly_net=float(allw.mean()),median_weekly_net=float(allw.median()),
             profitable_week_rate=float((allw>0).mean()),profit_factor=float(grosspos/grossneg) if grossneg else math.inf,
             max_drawdown=float(dd.min()),weekly_q05=q05,weekly_es05=es,
-            execution_coverage=float(len(g)/max(1,expected_by_cell.get(k,1))),avg_capital_proxy=float(g.capital_proxy.mean()),
+            execution_coverage=float(len(g)/max(1,expected_by_base.get(k[:3],1))),avg_capital_proxy=float(g.capital_proxy.mean()),
             peak_capital_proxy=float(g.capital_proxy.max()),gross_pnl=float(g.gross_pnl.sum()),
             net_pnl=float(g.net_pnl.sum()),cost_share=float(1-g.net_pnl.sum()/g.gross_pnl.sum()) if g.gross_pnl.sum() else 0.0,
             gate=bool(allw.mean()>=5000 and allw.median()>=5000 and (allw>0).mean()>=0.70 and g.week.nunique()>=20)))
