@@ -629,3 +629,9 @@ Corrections logged before accepting any WFA result:
 Current clean WFA run: **36236079821** is queued behind the previous stale computation run; the previous run will not be accepted. The clean run uses the corrected WFA engine and aggregate auditor. No WFA survivor has been accepted yet.
 
 Phase 30.12 final holdout remains blocked until the WFA aggregate produces audited survivors.
+
+## 2026-09-26 — Phase 30.11 WFA v2 checkpoint
+
+The first packed-fold WFA topology was superseded after execution/cancellation issues. WFA v2 splits the validation into **72 independent jobs** (3 folds × 12 definition shards × 2 regimes) and audits 144 leaderboard/weekly files before any survivor is accepted.
+
+Clean v2 run **36236257189** is queued. The preceding v2 run **36236194154** is closed with failures caused by the WFA engine scope declaration; those results are quarantined.
