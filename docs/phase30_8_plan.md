@@ -130,3 +130,14 @@ No economic result may be used to force source resolution.
 ## Status
 
 OPEN — source-resolution only; P&L blocked.
+
+
+## Closure note — 2026-09-26
+
+The deterministic source-resolution workflow completed successfully in run **36234096126**.
+
+The result remains **BLOCKED_FOR_PNL**. Primary pinned evidence explicitly supports NIFTY, short/long actions, a 100-point width reference, a time reference, adjustment/move language and a source-explicit ratio/premium context. However, the same evidence has a **CONFLICTING strike reference (ATM vs one-strike)** and leaves the exact payoff sequence, entry day/time, expiry, adjustment timing, stop, target, exit and capital convention unresolved.
+
+No option P&L was run for this candidate and no economic conclusion is attached to it. Because the unresolved transcript cannot be safely reconstructed from the public repository without the private decryption key, the candidate is classified **SOURCE-BLOCKED / DATA-LIMITED**, not economically failed.
+
+The research moves to the next candidate with richer source-explicit execution evidence rather than inventing missing rules.
