@@ -6,6 +6,8 @@ import pandas as pd
 
 ROOT=Path("data/cache/phase30_5_nifty_spot")
 OUT=Path("reports/phase30_6_bear_put_signal_coverage.json")
+STUDY_START=pd.Timestamp("2025-09-01",tz="Asia/Kolkata")
+STUDY_END=pd.Timestamp("2026-08-31 23:59:59",tz="Asia/Kolkata")
 LOOKBACKS=[30,60,120]
 TOUCH=[0.001,0.002,0.004]
 CRACK=[0.001,0.002,0.004]
@@ -22,6 +24,7 @@ def load():
             x[c]=pd.to_numeric(x[c],errors="coerce")
         xs.append(x[["Timestamp","Open","High","Low","Close"]])
     z=pd.concat(xs,ignore_index=True).dropna().sort_values("Timestamp")
+    z=z[(z["Timestamp"]>=STUDY_START)&(z["Timestamp"]<=STUDY_END)]
     return z.drop_duplicates("Timestamp").reset_index(drop=True)
 
 def scan_day(day, grp, lookback, touch, kind, threshold):
@@ -78,7 +81,7 @@ def main():
                     "median_clock":None if not clocks else sorted(clocks)[len(clocks)//2],
                     "signals":sig,
                 })
-    result={"cells":len(out),"definitions":out,"pnl_authorized":False,"implementation":"vectorized"}
+    result={"cells":len(out),"definitions":out,"pnl_authorized":False,"implementation":"vectorized","study_window":["2025-09-01","2026-08-31"]}
     OUT.parent.mkdir(parents=True,exist_ok=True)
     OUT.write_text(json.dumps(result,indent=2)+"\n")
     print(json.dumps({"cells":len(out),"signal_days_min":min(x["signal_days"] for x in out),
