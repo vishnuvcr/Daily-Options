@@ -4,14 +4,22 @@
     "video_id": "OvaJumYancs",
     "title": "No More Straddles. This Strategy Is Smarter",
     "resolution_state": "BLOCKED_FOR_PNL",
-    "known_source_fields": {
-      "underlying": "NIFTY",
-      "entry_action": ["short", "long", "buy"],
-      "strike_reference": ["at the money", "one strike"],
-      "width_reference": "100",
-      "time_reference": "3:30",
-      "adjustment_action": "move",
-      "lot_reference": "3:30"
+    "source_explicit": {
+      "underlying": "SOURCE-EXPLICIT",
+      "entry_action": "SOURCE-EXPLICIT",
+      "width_reference": "SOURCE-EXPLICIT",
+      "time_reference": "SOURCE-EXPLICIT",
+      "adjustment_action": "SOURCE-EXPLICIT",
+      "lot_reference": "SOURCE-EXPLICIT"
+    },
+    "conflicts_requiring_resolution": {
+      "strike_reference": "CONFLICTING",
+      "entry_action_context": "SOURCE-EXPLICIT",
+      "ratio_vs_time_ambiguity": {
+        "ratio_reference": "SOURCE-EXPLICIT",
+        "time_reference": "SOURCE-EXPLICIT",
+        "note": "The extracted '3:30' occurrences must be reconciled from transcript context before numerical use."
+      }
     },
     "unresolved_fields": [
       "entry_day",
@@ -21,24 +29,452 @@
       "target_reference",
       "exit_day",
       "adjustment_day",
-      "exact_payoff_structure",
-      "exact_strike_construction",
+      "delta_reference",
       "capital_reference"
     ],
-    "conflicts_requiring_resolution": {
-      "strike_reference": "CONFLICTING",
-      "ratio_vs_time_ambiguity": "The extracted 3:30 occurrences appear in ratio/lot/time fields and must be resolved from transcript context before numerical use.",
-      "entry_action_context": "SOURCE-EXPLICIT but spans short, long and buy actions at different transcript positions; context is required to determine sequence."
-    },
     "no_pnl_authorization": true
   },
-  "primary_evidence": {
-    "files": [
+  "evidence": {
+    "video_id": "OvaJumYancs",
+    "title": "No More Straddles. This Strategy Is Smarter",
+    "primary_evidence_files": [
       "data/equity_income/phase27_1_rule_evidence.jsonl",
       "data/equity_income/phase27_4_t1_clean_evidence.jsonl"
     ],
+    "source_fields": {
+      "underlying": [
+        {
+          "start_sec": 124479.0,
+          "value": "nifty"
+        },
+        {
+          "start_sec": 128399.0,
+          "value": "nifty"
+        },
+        {
+          "start_sec": 132239.0,
+          "value": "nifty"
+        },
+        {
+          "start_sec": 134400.0,
+          "value": "nifty"
+        },
+        {
+          "start_sec": 136640.0,
+          "value": "nifty"
+        },
+        {
+          "start_sec": 138720.0,
+          "value": "nifty"
+        },
+        {
+          "start_sec": 141520.0,
+          "value": "nifty"
+        }
+      ],
+      "entry_action": [
+        {
+          "start_sec": 55120.0,
+          "value": "short"
+        },
+        {
+          "start_sec": 57840.0,
+          "value": "short"
+        },
+        {
+          "start_sec": 60719.0,
+          "value": "short"
+        },
+        {
+          "start_sec": 62879.0,
+          "value": "short"
+        },
+        {
+          "start_sec": 65680.0,
+          "value": "short"
+        },
+        {
+          "start_sec": 68960.0,
+          "value": "short"
+        },
+        {
+          "start_sec": 71280.0,
+          "value": "short"
+        },
+        {
+          "start_sec": 143599.0,
+          "value": "short"
+        },
+        {
+          "start_sec": 146160.0,
+          "value": "short"
+        },
+        {
+          "start_sec": 148720.0,
+          "value": "short"
+        },
+        {
+          "start_sec": 151200.0,
+          "value": "short"
+        },
+        {
+          "start_sec": 153200.0,
+          "value": "short"
+        },
+        {
+          "start_sec": 155519.0,
+          "value": "short"
+        },
+        {
+          "start_sec": 157680.0,
+          "value": "short"
+        },
+        {
+          "start_sec": 160080.0,
+          "value": "short"
+        }
+      ],
+      "strike_reference_full": [
+        {
+          "start_sec": 55120.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 57840.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 60719.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 62879.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 65680.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 68960.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 71280.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 191200.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 193040.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 194879.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 197200.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 199200.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 201200.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 203680.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 318720.0,
+          "value": "one strike"
+        }
+      ],
+      "strike_reference_clean": [
+        {
+          "start_sec": 55120.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 57840.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 60719.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 62879.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 65680.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 68960.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 71280.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 191200.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 193040.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 194879.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 197200.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 199200.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 201200.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 203680.0,
+          "value": "at the money"
+        },
+        {
+          "start_sec": 318720.0,
+          "value": "one strike"
+        },
+        {
+          "start_sec": 320479.0,
+          "value": "one strike"
+        },
+        {
+          "start_sec": 322639.0,
+          "value": "one strike"
+        },
+        {
+          "start_sec": 325440.0,
+          "value": "one strike"
+        },
+        {
+          "start_sec": 327680.0,
+          "value": "one strike"
+        },
+        {
+          "start_sec": 329919.0,
+          "value": "one strike"
+        },
+        {
+          "start_sec": 333600.0,
+          "value": "one strike"
+        }
+      ],
+      "width_reference": [
+        {
+          "start_sec": 206319.0,
+          "value": "100"
+        },
+        {
+          "start_sec": 208319.0,
+          "value": "100"
+        },
+        {
+          "start_sec": 211200.0,
+          "value": "100"
+        },
+        {
+          "start_sec": 213360.0,
+          "value": "100"
+        },
+        {
+          "start_sec": 216799.0,
+          "value": "100"
+        },
+        {
+          "start_sec": 219280.0,
+          "value": "100"
+        },
+        {
+          "start_sec": 221840.0,
+          "value": "100"
+        },
+        {
+          "start_sec": 312800.0,
+          "value": "100"
+        },
+        {
+          "start_sec": 316000.0,
+          "value": "100"
+        },
+        {
+          "start_sec": 318720.0,
+          "value": "100"
+        },
+        {
+          "start_sec": 320479.0,
+          "value": "100"
+        },
+        {
+          "start_sec": 322639.0,
+          "value": "100"
+        },
+        {
+          "start_sec": 325440.0,
+          "value": "100"
+        },
+        {
+          "start_sec": 327680.0,
+          "value": "100"
+        },
+        {
+          "start_sec": 329919.0,
+          "value": "100"
+        }
+      ],
+      "time_reference": [
+        {
+          "start_sec": 119119.0,
+          "value": "3:30"
+        },
+        {
+          "start_sec": 121840.0,
+          "value": "3:30"
+        },
+        {
+          "start_sec": 124479.0,
+          "value": "3:30"
+        },
+        {
+          "start_sec": 128399.0,
+          "value": "3:30"
+        },
+        {
+          "start_sec": 132239.0,
+          "value": "3:30"
+        },
+        {
+          "start_sec": 134400.0,
+          "value": "3:30"
+        },
+        {
+          "start_sec": 136640.0,
+          "value": "3:30"
+        }
+      ],
+      "adjustment_action": [
+        {
+          "start_sec": 346960.0,
+          "value": "move"
+        },
+        {
+          "start_sec": 349840.0,
+          "value": "move"
+        },
+        {
+          "start_sec": 352000.0,
+          "value": "move"
+        },
+        {
+          "start_sec": 354240.0,
+          "value": "move"
+        },
+        {
+          "start_sec": 356479.0,
+          "value": "move"
+        },
+        {
+          "start_sec": 358400.0,
+          "value": "move"
+        },
+        {
+          "start_sec": 361039.0,
+          "value": "move"
+        }
+      ],
+      "lot_reference": [
+        {
+          "start_sec": 119119.0,
+          "value": "3:30"
+        },
+        {
+          "start_sec": 121840.0,
+          "value": "3:30"
+        },
+        {
+          "start_sec": 124479.0,
+          "value": "3:30"
+        },
+        {
+          "start_sec": 128399.0,
+          "value": "3:30"
+        },
+        {
+          "start_sec": 132239.0,
+          "value": "3:30"
+        },
+        {
+          "start_sec": 134400.0,
+          "value": "3:30"
+        },
+        {
+          "start_sec": 136640.0,
+          "value": "3:30"
+        }
+      ]
+    },
+    "field_status_full": {
+      "adjustment_action": "SOURCE-EXPLICIT",
+      "adjustment_day": "UNSPECIFIED",
+      "day_count_reference": "UNSPECIFIED",
+      "delta_reference": "UNSPECIFIED",
+      "entry_action": "SOURCE-EXPLICIT",
+      "entry_day": "UNSPECIFIED",
+      "exit_day": "UNSPECIFIED",
+      "expiry_reference": "UNSPECIFIED",
+      "lot_reference": "SOURCE-EXPLICIT",
+      "premium_zone": "SOURCE-EXPLICIT",
+      "ratio_reference": "SOURCE-EXPLICIT",
+      "stop_reference": "UNSPECIFIED",
+      "strike_reference": "CONFLICTING",
+      "target_reference": "UNSPECIFIED",
+      "time_reference": "SOURCE-EXPLICIT",
+      "underlying": "SOURCE-EXPLICIT",
+      "width_reference": "SOURCE-EXPLICIT"
+    },
+    "field_status_clean": {
+      "adjustment_action": "UNSPECIFIED",
+      "adjustment_day": "UNSPECIFIED",
+      "day_count_reference": "UNSPECIFIED",
+      "delta_reference": "UNSPECIFIED",
+      "entry_action": "CONFLICTING",
+      "entry_day": "UNSPECIFIED",
+      "exit_day": "UNSPECIFIED",
+      "expiry_reference": "UNSPECIFIED",
+      "lot_reference": "UNSPECIFIED",
+      "premium_zone": "UNSPECIFIED",
+      "ratio_reference": "UNSPECIFIED",
+      "stop_reference": "UNSPECIFIED",
+      "strike_reference": "CONFLICTING",
+      "target_reference": "UNSPECIFIED",
+      "time_reference": "UNSPECIFIED",
+      "underlying": "SOURCE-EXPLICIT",
+      "width_reference": "UNSPECIFIED"
+    },
+    "requires_manual_review": true,
     "source_url": "https://www.youtube.com/watch?v=OvaJumYancs",
     "retrieved_at_utc": "2026-09-25T11:59:16Z"
-  },
-  "method_note": "This report is derived from Python-extracted transcript evidence already stored in the repository. No model-generated transcript or option P&L is used to resolve the rule."
+  }
 }
