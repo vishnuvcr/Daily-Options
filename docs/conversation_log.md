@@ -183,3 +183,8 @@ Run 36252301406 acquired all inputs and produced a deterministic gate FAIL at 94
 ## 2026-09-26 — Phase 31.8 run 5 unit-test correction
  
 Run 36252470696 failed before data acquisition because one regression test asserted the old coverage semantics. The code and methodology are unchanged by this test correction; E0403 closes the mismatch. No P&L was produced.
+
+ 
+## 2026-09-26 — Phase 31.8 run 6 traceback and correction
+ 
+Run 36252561747 passed unit tests and the global gate, then stopped in Base discovery. The authoritative traceback identified a Timestamp-vs-date comparison in `attach_expiry`. E0404 records the defect; the code now normalizes each panel date to Python `date` before matching the expiry map, and a regression test covers nearest-expiry selection. No numerical P&L result was produced.
