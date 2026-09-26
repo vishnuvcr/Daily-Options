@@ -4,3 +4,4 @@ Fresh trigger after E0367 correction
 Fresh trigger after E0368 schema correction
 Fresh trigger after E0369 cost-schema correction
 Fresh trigger after E0370 correction
+Fresh trigger after E0371 reporting correction
