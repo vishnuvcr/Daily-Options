@@ -785,3 +785,9 @@ Phase 31.8 is closed without promotion after authoritative run **36252922418**: 
 The new active branch is `phase-31.9-vix-rv-gap-opening-direction-v1`. Phase 31.9 tests the prior India VIX / prior-only NIFTY RV20 ratio as a three-regime state variable for opening-gap FOLLOW versus FADE with 10:30/15:10 exits. The 12-cell grid, five full-panel null seeds, official NSE VIX acquisition, strict prior-data barrier, Base/Stress costs and promotion gate are frozen in the plan before computation.
  
 No Phase 31.9 P&L is accepted yet. The next step is the authoritative unit-test + data-gate run.
+
+## 2026-09-26 — Phase 31.9 run 1 closure / run 2 frontier
+
+Run **36253432190** stopped in unit tests before data acquisition. E0407/E0408/E0409 are closed; no numerical computation ran.
+
+Next authoritative run: **Phase 31.9 run 2** from branch head `d60f99a5da07a227dffa3ced9e18c9abb7b4c75d`.
