@@ -457,3 +457,10 @@ Several pre-result implementation defects were found and logged as **E0326–E03
 - [Phase 30.7 workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.7-bear-put-contract-interpretation-grid-v1/.github/workflows/phase-30.7-bear-put-pnl.yml)
 - [Research status](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.7-bear-put-contract-interpretation-grid-v1/docs/research_status.md)
 - [Error log](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.7-bear-put-contract-interpretation-grid-v1/docs/error_log.md)
+
+
+## 2026-09-26 — Phase 30.7 hardened full-matrix checkpoint
+
+The Bear Put engine has passed the bounded Base/Stress smoke tests. Before accepting the full matrix, the runner was hardened with a Python compile gate, corrected Monday-exit handling for Monday-listed expiries, and robust summary/leaderboard/diagnostic persistence. Trade-level CSVs remain workflow artifacts rather than being committed wholesale.
+
+**No Bear Put P&L result is accepted until the hardened full Base and Stress runs finish and their artifacts pass the post-run audit.**
