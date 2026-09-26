@@ -1,5 +1,5 @@
 from __future__ import annotations
-import argparse, json, math
+import argparse, json, math, itertools
 from pathlib import Path
 import duckdb, numpy as np, pandas as pd
 
@@ -248,7 +248,19 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
             peak_capital_proxy=float(g.capital_proxy.max()),gross_pnl=float(g.gross_pnl.sum()),
             net_pnl=float(g.net_pnl.sum()),cost_share=float(1-g.net_pnl.sum()/g.gross_pnl.sum()) if g.gross_pnl.sum() else 0.0,
             gate=bool(allw.mean()>=5000 and allw.median()>=5000 and (allw>0).mean()>=0.70 and g.week.nunique()>=20)))
-    lb=pd.DataFrame(rows).sort_values(["gate","mean_weekly_net"],ascending=[False,False])
+    lb=pd.DataFrame(rows)
+    full=list(itertools.product([d["definition"] for d in defs],EXPIRY_CHOICES,STRIKE_CHOICES,GAPS,WAITS,RISKS,TIME_EXITS))
+    full_df=pd.DataFrame(full,columns=keys)
+    if not lb.empty: lb=full_df.merge(lb,on=keys,how="left")
+    else: lb=full_df
+    for col,val in {"trades":0,"weeks_completed":0,"mean_weekly_net":0.0,"median_weekly_net":0.0,
+                    "profitable_week_rate":0.0,"profit_factor":0.0,"max_drawdown":0.0,
+                    "weekly_q05":0.0,"weekly_es05":0.0,"execution_coverage":0.0,
+                    "avg_capital_proxy":0.0,"peak_capital_proxy":0.0,"gross_pnl":0.0,
+                    "net_pnl":0.0,"cost_share":0.0,"gate":False}.items():
+        if col not in lb: lb[col]=val
+        lb[col]=lb[col].fillna(val)
+    lb=lb.sort_values(["gate","mean_weekly_net"],ascending=[False,False])
     lb.to_csv(out/"leaderboard.csv",index=False)
     summary={"registered_cells":6480,"tested_cells":len(lb),"trade_records":len(tr),
              "passed_gate":int(lb.gate.sum()),"best":lb.iloc[0].to_dict(),"slippage":slip,
