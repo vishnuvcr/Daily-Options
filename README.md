@@ -516,3 +516,13 @@ Air Defense/VIX Phase 30.10 produced 31 cells passing both Base and Stress. Phas
 The execution topology was hardened to **72 independent fold/shard/regime jobs** with a 144-file aggregate audit. Clean v2 run **36236257189** is queued; no WFA survivor is accepted yet.
 
 [Phase 30.11 WFA plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.11-strangle-air-defense-wfa-v1/docs/phase30_11_wfa_plan.md)
+
+## Latest research update — 2026-09-26
+
+### Phase 31.1 fixed NIFTY ratio — retired
+The independently executed fixed 09:30 ratio structure completed Base and Stress on 1,209 executable trading days / 260 weeks. Base total net was **-₹537,097.06** and Stress **-₹537,032.22**; mean weekly net was about **-₹2,066** in both regimes and only **26.92%** of weeks were positive. It fails the ₹5,000/week consistency gate and is retired without WFA/holdout promotion or result-driven tuning.
+
+### Phase 30.13 — next source-resolution frontier
+The next bounded candidate is **Retail Option Seller's Diagonal Setup for Low Vix** (video 6_W4UpFsehs). Phase 30.13 acquires and hashes Python-retrieved caption evidence and resolves the exact diagonal legs, expiry, strike rule, low-VIX condition, adjustments, stop, target and exit before any P&L is allowed.
+
+[Phase 30.13 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.13-equity-income-low-vix-diagonal-source-resolution-v1/docs/phase30_13_plan.md) · [Research status](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md)
