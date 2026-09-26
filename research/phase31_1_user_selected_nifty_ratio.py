@@ -104,7 +104,7 @@ def trade_for_day(con, index, expiry_path, expiry, day, slippage):
             "gross_pnl": pnl + 2 * slippage * qty * lot, "costs": c
         })
     return {
-        "trade_date": str(day), "expiry": str(expiry_map[day]), "spot_0930": spot, "atm": atm,
+        "trade_date": str(day), "expiry": str(expiry), "spot_0930": spot, "atm": atm,
         "lot_size": lot, "entry_time": entry_ts, "exit_time": exit_ts,
         "slippage_per_order": slippage, "gross_pnl": gross_pnl,
         "costs": total_cost, "net_pnl": gross_pnl - total_cost,
