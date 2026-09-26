@@ -24,7 +24,7 @@ def main() -> None:
 
     frames = []
     for f in files:
-        regime = "stress" if "stress" in f.parts else "base" if "base" in f.parts else None
+        regime = "stress" if any("stress" in p for p in f.parts) else "base" if any("base" in p for p in f.parts) else None
         if regime is None:
             raise RuntimeError(f"Cannot infer regime from artifact path: {f}")
         z = pd.read_csv(f)
