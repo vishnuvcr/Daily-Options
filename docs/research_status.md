@@ -670,3 +670,12 @@ Authoritative workflow run **36248538306** completed successfully after three pr
 - No WFA/OOS branch is authorized for Phase 31.6. The family is closed as negative evidence under the declared gate.
 
 Final report: `reports/phase31_6/final_result.md`.
+
+
+## 2026-09-26 — Phase 31.7 OI/volume microstructure preregistered
+
+Phase 31.6 is closed negative. **Phase 31.7** is now the bounded next discovery family on branch `phase-31.7-oi-volume-microstructure-v1`.
+
+Frozen true grid: 3 lagged microstructure features × 2 absolute thresholds × 2 expiry buckets = **12 cells**. Features are ATM CE/PE volume imbalance, 09:25→09:30 OI-change imbalance, and their fixed 50/50 joint score. Execution is a 1-lot 200-point debit spread from 09:31 to 15:10 with ₹0.20/₹0.40 Base/Stress slippage and the frozen Phase 31.3 charge model.
+
+A data gate must pass first: option schema must contain volume and open interest, nearest-expiry feature coverage ≥70%, next-expiry feature coverage ≥50%, and all feature timestamps must precede the 09:31 entry. Five deterministic null controls (seeds 101/202/303/404/505) are required for every true cell. No P&L is accepted before the data gate and unit tests pass.
