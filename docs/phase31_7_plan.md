@@ -1,7 +1,7 @@
 # Phase 31.7 — OI/Volume Microstructure Discovery
 
 ## Status
-PREREGISTERED — data gate pending.
+CLOSED — negative discovery; no promotion.
 
 ## Research question
 Can lagged NIFTY option volume and open-interest microstructure at the 09:30 IST decision point identify same-day defined-risk directional option spreads whose net weekly P&L survives realistic transaction costs and Base/Stress slippage?
@@ -72,3 +72,20 @@ Close after the frozen 12 true cells plus five null controls per cell. Do not ex
 The Phase 31.4 evidence matrix classifies OI/volume microstructure as testable-with-nulls because Indian literature reports information in OI/volume while recent work cautions that held-out predictive performance can disappear. The present phase therefore treats the microstructure signal as a hypothesis requiring out-of-sample confirmation rather than an established edge.
 
 NSE's current NIFTY specification lists weekly expiries on Tuesday, with the prior trading day used when Tuesday is a holiday; the implementation uses actual expiry files in the pinned dataset.
+
+
+## Phase closure — 2026-09-26
+
+Authoritative workflow: **36251189770**. Artifact: **10909111158**.
+
+The data gate passed with 1,228 eligible sessions, nearest-expiry feature coverage 98.13%, and next-expiry coverage 72.39%. The validated numerical run produced 4,060 true trade records per friction across the 12 declared cells. All 12 Base cells and all 12 Stress cells had negative total net P&L; **0/12** cleared the promotion gate.
+
+The highest mean-weekly cell was VOL_IMB at threshold 0.40, nearest expiry:
+- Base: -₹18,566.48 total, -₹191.41 mean weekly, -₹942.75 median weekly, 42.27% positive weeks.
+- Stress: -₹23,821.47 total, -₹245.58 mean weekly, -₹974.92 median weekly, 42.27% positive weeks.
+
+Five deterministic null seeds were executed for every true cell from the complete feature panel before thresholding. No true cell exceeded all five nulls on mean weekly P&L.
+
+The correct accounting identity is raw gross minus slippage minus transaction/statutory costs equals net P&L; the run reconciled to below 2e-12 absolute row-level residual.
+
+No WFA/OOS promotion is authorized. Phase 31.7 is closed as negative evidence.
