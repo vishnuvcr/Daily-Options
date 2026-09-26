@@ -119,6 +119,9 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
                              "long_strike":longk,"short_strike":shortk})
     tradespec=pd.DataFrame(rows)
     if tradespec.empty: raise RuntimeError("no strike-resolved signals")
+    if smoke:
+        # Smoke keeps all 36 interpretation combinations but only 12 resolved specs.
+        tradespec=tradespec.head(12).copy()
     # Fetch only required PE contracts and only from signal date to expiry.
     contracts=tradespec[["expiry","long_strike","short_strike","signal_date"]].melt(
         id_vars=["expiry","signal_date"],value_name="strike").drop_duplicates()
@@ -143,16 +146,6 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
     # Keyed series; duplicates are removed deterministically.
     series={(e,s):g.sort_values("ts").drop_duplicates("ts").reset_index(drop=True)
             for (e,s),g in opt.groupby(["expiry","strike"],sort=False)}
-    if len(tradespec):
-        sr=tradespec.iloc[0]
-        print("FIRST_SPEC",sr.to_dict())
-        print("FIRST_SERIES_KEYS",list(series.keys())[:5])
-        for kk in [(sr.expiry,sr.long_strike),(sr.expiry,sr.short_strike)]:
-            gg=series.get(kk)
-            print("CONTRACT",kk,"ROWS",0 if gg is None else len(gg))
-            if gg is not None:
-                et=sr.signal_ts+pd.Timedelta(minutes=1)
-                print("AROUND_ENTRY",gg[(gg.ts>=et-pd.Timedelta(minutes=2))&(gg.ts<=et+pd.Timedelta(minutes=2))][["ts","open_px","close_px"]].to_dict("records"))
     spot=load_spot(spot_root)
     spot_idx=spot.set_index("Timestamp")
     daily=spot.assign(day=spot.Timestamp.dt.date).groupby("day",sort=True).first()[["Open"]]
