@@ -75,6 +75,9 @@ jobs:
               while IFS= read -r -d "" f; do cp "$f" "data/cache/phase30_5_nifty_spot/$(basename "$f")"; done
           fi
 
+      - name: Compile engine
+        run: python -m py_compile research/phase30_7_bear_put_pnl.py
+
       - name: Verify contract audit
         run: |
           test -s reports/phase30_7_bear_put_contract_audit.json
@@ -106,7 +109,10 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f             reports/phase30_7_smoke_base/summary.json reports/phase30_7_smoke_base/leaderboard.csv reports/phase30_7_smoke_base/diagnostics.json             reports/phase30_7_smoke_stress/summary.json reports/phase30_7_smoke_stress/leaderboard.csv reports/phase30_7_smoke_stress/diagnostics.json             reports/phase30_7_base/summary.json reports/phase30_7_base/leaderboard.csv reports/phase30_7_base/diagnostics.json             reports/phase30_7_stress/summary.json reports/phase30_7_stress/leaderboard.csv reports/phase30_7_stress/diagnostics.json
+          for d in reports/phase30_7_smoke_base reports/phase30_7_smoke_stress reports/phase30_7_base reports/phase30_7_stress; do
+            find "$d" -maxdepth 1 -type f \( -name summary.json -o -name leaderboard.csv -o -name diagnostics.json \) -print0 2>/dev/null |
+              xargs -0 -r git add -f --
+          done
           if ! git diff --cached --quiet; then
             git commit -m "Phase 30.7: persist Bear Put Base Stress matrix results"
             git push origin HEAD:phase-30.7-bear-put-contract-interpretation-grid-v1
