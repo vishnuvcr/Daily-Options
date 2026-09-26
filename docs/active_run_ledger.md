@@ -189,3 +189,11 @@ Earlier Phase 30.2 runs were cancelled/invalidated before numerical execution du
 
 Run 36213335815 is quarantined for runtime only. No Falcon P&L has been accepted.
 
+
+
+## 2026-09-26 — Phase 31.3 closure
+| Phase | Branch | Status | Accepted P&L |
+|---|---|---|---|
+| 31.3 | phase-31.3-friction-corrected-reproduction-v1 | Base + Stress complete; accounting identity passed; artifacts persisted | **Yes — negative evidence only** |
+
+No optimization, WFA or holdout promotion is authorized from the frozen Phase 31.1 strategy.
