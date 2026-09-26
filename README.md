@@ -484,3 +484,14 @@ Bear Put is therefore **retired at the frozen weekly gate**. No WFA/OOS or resul
 [Phase 30.7 final audited result](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.7-bear-put-contract-interpretation-grid-v1/reports/phase30_7_bear_put_final_result.md) · [Phase 30.7 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.7-bear-put-contract-interpretation-grid-v1/docs/phase30_7_bear_put_contract_interpretation_grid_plan.md)
 
 **Next frontier: Phase 30.8 source-fidelity reconstruction of the next preregistered Equity Income candidate.** Phase 31 remains parked until a Phase 30 family survives the weekly gate.
+
+
+## 2026-09-26 — Phase 30.8 source-resolution frontier
+
+Phase 30.7 Bear Put is **RETIRED** after a complete 6,480-cell Base/Stress matrix with 0/6,480 cells passing the frozen ₹5,000/week gate.
+
+Phase 30.8 is now active on `phase-30.8-equity-income-no-more-straddles-source-resolution-v1` for source-fidelity reconstruction of **OvaJumYancs — “No More Straddles. This Strategy Is Smarter.”**
+
+The phase is **P&L blocked** pending resolution of the exact payoff structure, strike construction, entry/expiry timing, adjustment logic, stop, target, exit and capital convention.
+
+[Phase 30.8 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.8-equity-income-no-more-straddles-source-resolution-v1/docs/phase30_8_plan.md) · [Phase 30.8 deterministic extractor](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.8-equity-income-no-more-straddles-source-resolution-v1/research/phase30_8_no_more_straddles_resolution.py) · [Phase 30.8 source checkpoint](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.8-equity-income-no-more-straddles-source-resolution-v1/reports/phase30_8_no_more_straddles_source_resolution.json) · [Phase 30.8 workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.8-equity-income-no-more-straddles-source-resolution-v1/.github/workflows/phase-30.8-equity-income-no-more-straddles-source-resolution-v1.yml)
