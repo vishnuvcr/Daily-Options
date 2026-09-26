@@ -253,11 +253,12 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
     full_df=pd.DataFrame(full,columns=keys)
     if not lb.empty: lb=full_df.merge(lb,on=keys,how="left")
     else: lb=full_df
-    for col,val in {"trades":0,"weeks_completed":0,"mean_weekly_net":0.0,"median_weekly_net":0.0,
-                    "profitable_week_rate":0.0,"profit_factor":0.0,"max_drawdown":0.0,
-                    "weekly_q05":0.0,"weekly_es05":0.0,"execution_coverage":0.0,
-                    "avg_capital_proxy":0.0,"peak_capital_proxy":0.0,"gross_pnl":0.0,
-                    "net_pnl":0.0,"cost_share":0.0,"gate":False}.items():
+    defaults={"trades":0,"weeks_completed":0,"mean_weekly_net":0.0,"median_weekly_net":0.0,
+              "profitable_week_rate":0.0,"profit_factor":0.0,"max_drawdown":0.0,
+              "weekly_q05":0.0,"weekly_es05":0.0,"execution_coverage":0.0,
+              "avg_capital_proxy":0.0,"peak_capital_proxy":0.0,"gross_pnl":0.0,
+              "net_pnl":0.0,"cost_share":0.0,"gate":False}
+    for col,val in defaults.items():
         if col not in lb: lb[col]=val
         lb[col]=lb[col].fillna(val)
     lb=lb.sort_values(["gate","mean_weekly_net"],ascending=[False,False])
