@@ -51,9 +51,13 @@ def load_global(root):
     return out
 
 def build_panel(global_data, nifty):
-    sessions=nifty[nifty.time=="09:30:00"][["date","open_px","close_px"]].drop_duplicates("date").sort_values("date").copy()
+    sessions=nifty.copy()
+    sessions["date"]=pd.to_datetime(sessions["date"]).dt.normalize().astype("datetime64[ns]")
+    sessions=sessions[sessions.time=="09:30:00"][["date","open_px","close_px"]].drop_duplicates("date").sort_values("date").copy()
     for m,df in global_data.items():
-        g=df.dropna(subset=["z"]).sort_values("date")
+        g=df.dropna(subset=["z"]).copy()
+        g["date"]=pd.to_datetime(g["date"]).dt.normalize().astype("datetime64[ns]")
+        g=g.sort_values("date")
         cols=g[["date","z"]].rename(columns={"date":"global_date","z":f"z_{m}"})
         sessions=pd.merge_asof(
             sessions.sort_values("date"),
