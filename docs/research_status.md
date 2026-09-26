@@ -611,3 +611,16 @@ The current authoritative run is **36232762688**. All 18 shard jobs have reached
 All 18 first-pass numerical shards completed, but the aggregate job correctly rejected them because shard artifacts were not uploaded due to an output-path typo. Before rerunning, a second statistical issue was also corrected: weekly performance metrics now use **completed trading weeks**, matching the established project methodology, rather than zero-filling all calendar weeks. Cost-share is now measured as transaction-cost drag divided by absolute gross P&L.
 
 **No first-pass shard result is accepted.** The corrected 18-shard Base/Stress run is now the authoritative numerical attempt.
+
+
+## 2026-09-26 — Phase 30.7 Bear Put closure
+
+The screenshot checkpoint showing 9/18 shards complete is now superseded by the authoritative completed run **36233110210**. All **18/18 shard jobs** (9 Base + 9 Stress) succeeded, and the aggregate successfully audited **6,480/6,480 cells** with **0 duplicate cells**.
+
+Final result:
+- Base: **0/6,480 pass**; best mean weekly net **-₹5,724.97**; median **-₹4,885.24**; profitable-week rate **0.0%**; execution coverage **52.63%**; net P&L **-₹171,749.04**.
+- Stress: **0/6,480 pass**; best mean weekly net **-₹5,826.11**; median **-₹4,937.20**; profitable-week rate **0.0%**; execution coverage **52.63%**; net P&L **-₹174,783.27**.
+- Neither regime cleared the frozen **₹5,000 net/completed-week** gate.
+- No WFA/OOS or result-driven tuning is authorized for Bear Put.
+
+**Phase 30.7 is RETIRED.** The next bounded frontier is Phase 30.8 source-fidelity reconstruction of the next preregistered Equity Income candidate. Phase 31 remains parked because it accepts only Phase 30 survivors.
