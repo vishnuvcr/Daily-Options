@@ -769,3 +769,10 @@ Next authoritative run: **Phase 31.8 run 8** from branch head `5b933104ca2551d08
 Run **36252808290** passed the corrected tests and global gate but failed in Base price loading on a stale `exit_ts` column reference. E0406 is logged; no P&L is accepted.
  
 Next authoritative run: **Phase 31.8 run 9** from branch head `7094f73d35fa0c5644dc4e0ec98b40fd2283712f`.
+
+ 
+## 2026-09-26 — Phase 31.8 CLOSED / Phase 31.9 activated
+ 
+Phase 31.8 authoritative run **36252922418** completed its frozen 12-cell Base/Stress discovery, five-seed null controls and validation. **0/12** cells passed the ₹5,000/week promotion gate in Base and **0/12** in Stress. Best cell: **ASIA_LEAD | z=1.00 | H10_30**, mean weekly net **₹107.37 Base / ₹37.13 Stress**, 45.45% positive weeks, negative medians. The final report is persisted on the Phase 31.8 branch.
+ 
+Phase 31.9 is now the next separately branched, preregistered family: **India VIX vs realized-volatility regime conditioning of NIFTY opening-gap direction**.
