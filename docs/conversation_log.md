@@ -203,3 +203,8 @@ Run 36252808290 passed tests and gate, then stopped in Base price loading with `
 ## 2026-09-26 — Phase 31.9 preregistration
  
 Operational handoff from Phase 31.8: the global-overnight family closed without promotion. A new branch `phase-31.9-vix-rv-gap-opening-direction-v1` was created from the audited Phase 31.8 result. Its hypothesis, finite grid, no-lookahead barrier, official NSE VIX acquisition path, null controls, Base/Stress cost model and promotion gate are written before computation. This log records operational decisions only.
+
+ 
+## 2026-09-26 — Phase 31.9 run 1 unit-test closure
+ 
+Run 36253432190 stopped before acquisition. The test log was inspected directly and the three defects were repaired: RV20 variable handoff, missing date in the prior-barrier fixture, and wrong nearest-expiry expectation. No numerical result exists from run 1.
