@@ -1,0 +1,13 @@
+mode,null_seed,feature,threshold,bucket,friction,trades,weeks,total_net,mean_weekly_net,median_weekly_net,positive_week_rate,worst_trade,worst_week,total_slippage,total_transaction_costs,raw_gross
+TRUE,,VOL_IMB,0.2,0,,0,0,0.0,0.0,0.0,0.0,,,0.0,0.0,0.0
+TRUE,,VOL_IMB,0.2,1,,0,0,0.0,0.0,0.0,0.0,,,0.0,0.0,0.0
+TRUE,,VOL_IMB,0.4,0,,0,0,0.0,0.0,0.0,0.0,,,0.0,0.0,0.0
+TRUE,,VOL_IMB,0.4,1,,0,0,0.0,0.0,0.0,0.0,,,0.0,0.0,0.0
+TRUE,,OI_CHANGE_IMB,0.2,0,,0,0,0.0,0.0,0.0,0.0,,,0.0,0.0,0.0
+TRUE,,OI_CHANGE_IMB,0.2,1,,0,0,0.0,0.0,0.0,0.0,,,0.0,0.0,0.0
+TRUE,,OI_CHANGE_IMB,0.4,0,,0,0,0.0,0.0,0.0,0.0,,,0.0,0.0,0.0
+TRUE,,OI_CHANGE_IMB,0.4,1,,0,0,0.0,0.0,0.0,0.0,,,0.0,0.0,0.0
+TRUE,,JOINT,0.2,0,,0,0,0.0,0.0,0.0,0.0,,,0.0,0.0,0.0
+TRUE,,JOINT,0.2,1,,0,0,0.0,0.0,0.0,0.0,,,0.0,0.0,0.0
+TRUE,,JOINT,0.4,0,,0,0,0.0,0.0,0.0,0.0,,,0.0,0.0,0.0
+TRUE,,JOINT,0.4,1,,0,0,0.0,0.0,0.0,0.0,,,0.0,0.0,0.0
