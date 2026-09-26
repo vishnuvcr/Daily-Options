@@ -444,3 +444,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0351 | 2026-09-26 | Phase 30.11 runner synchronization | Run 36235740035 executed from an intermediate commit where the WFA runner still contained the old Fold 3 dates, while the test had already been corrected; this produced 19 fold-test failures before the definitive runner correction | No WFA numerical result accepted from that run | Corrected the runner itself to Fold 3 train 2025-12-22..2026-05-10 and OOS 2026-05-11..2026-08-02; the new authoritative run is 36235817916 | CLOSED — corrected run active |
+
+
+| E0352 | 2026-09-26 | Phase 30.11 plan calendar wording | The WFA plan described reserve weeks 49-52 as 2026-08-17 to 2026-08-30, omitting weeks 49-50 (2026-08-03 to 2026-08-16) | No WFA run used the prose range to generate dates; the executable FOLDS definition already ends OOS on 2026-08-02, so the computational fold boundaries remained correct | Corrected the plan text to the full reserve interval 2026-08-03 through 2026-08-30 plus 2026-08-31 | CLOSED — documentation |
