@@ -609,3 +609,23 @@ Phase 30.10 is the active numerical phase. Corrected workflow run **36234923838*
 Phase 30.10 full-sample Air Defense result is audited: 1,440 total cells, 31 cells pass both Base and Stress. No live-trading conclusion is drawn from full-sample selection.
 
 Phase 30.11 rolling WFA is now the active validation phase. Corrected run **36235740035** is executing three rolling folds. Phase 30.12 final holdout remains blocked pending WFA completion.
+
+
+## 2026-09-26 — Phase 30.11 WFA corrected execution frontier
+
+Phase 30.10 Air Defense full-grid validation is closed as discovery evidence:
+- 720 Base cells, 720 Stress cells, 0 duplicates.
+- 34 Base gate passes, 31 Stress gate passes.
+- **31 cells pass in both friction regimes.**
+
+Phase 30.11 is the current validation phase on `phase-30.11-strangle-air-defense-wfa-v1`.
+
+Corrections logged before accepting any WFA result:
+- **E0350:** stale Fold 3 synchronization — fixed.
+- **E0351:** weekly event series overwrite — fixed; weekly cell results now accumulate all events.
+- **E0352:** holdout calendar wording — fixed; reserved interval is 2026-08-03 through 2026-08-30 plus 2026-08-31.
+- **E0353:** WFA aggregate cardinality — fixed; 24 regime/shard artifacts contain 144 leaderboard/weekly files total.
+
+Current clean WFA run: **36236079821** is queued behind the previous stale computation run; the previous run will not be accepted. The clean run uses the corrected WFA engine and aggregate auditor. No WFA survivor has been accepted yet.
+
+Phase 30.12 final holdout remains blocked until the WFA aggregate produces audited survivors.
