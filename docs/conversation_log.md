@@ -168,3 +168,8 @@ Operational checkpoint: Phase 31.7 completed its frozen 12-cell Base/Stress grid
 ## 2026-09-26 — Phase 31.8 run 1 gate failure
  
 Run 36251942190 acquired and persisted the six global-index parquet sources but failed before P&L in the global data gate. Branch audit identified the datetime-type mismatch in the no-lookahead `merge_asof` panel construction. The engine is corrected with datetime64 normalization and a regression test; no result from run 1 is accepted.
+
+ 
+## 2026-09-26 — Phase 31.8 run 2 traceback diagnosis
+ 
+Run 36252076237 again stopped before P&L. The job log was inspected directly: `build_panel` raised `AttributeError: 'DataFrame' object has no attribute 'time'` because `main()` passed a reduced session frame rather than the full NIFTY index frame. E0400 records the actual cause; the earlier E0398 attribution is marked superseded. The engine and regression tests are corrected.
