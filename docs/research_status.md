@@ -534,3 +534,12 @@ Phase 30 v8 Iron Dome is retired after clean Base+Stress failure of the frozen 1
 Authoritative workflow run **36159121044** is executing. Unit tests and the cached TradeMarkk source restore have passed; exact-expiry acquisition is in progress. The frozen 24-cell grid uses prior-day India VIX, 1/2-sigma range selection, expiry-relative entry offsets -2/-3 sessions, 09:30/10:00 entries, and NONE / 50%-distance / 75%-distance challenged-short reduction modes. Base brokerage is ₹10/order from the current Paytm Money F&O schedule; Base/Stress slippage remains ₹0.20/₹0.40.
 
 No Air Defense P&L is accepted until Base and Stress complete and the artifacts pass duplicate-key, coverage and information-barrier audit.
+
+## 2026-09-26 — Phase 30.2 Falcon runtime correction
+
+The authoritative Falcon run **36213335815** was not accepted as a result because both Base and Stress remained in `Run friction` for more than six hours. The implementation audit identified a runtime bottleneck rather than a strategy conclusion: repeated full-file Parquet scans were being performed for exact leg/strike series, while setup-level cached DataFrames accumulated across the full sweep.
+
+The corrected branch is now **`phase-30.2-falcon-runtime-fix-v1`**. The frozen 270-cell Falcon rule grid is unchanged. The engine now loads each near/far exact-expiry slice once per calendar window, performs entry-snapshot, strike, and leg-series selection in memory, processes one calendar at a time, explicitly releases cached frames, and prints per-calendar progress. The workflow also serializes Base and Stress jobs to prevent concurrent repository persistence races and explicitly supplies the friction label to the persistence step.
+
+No Falcon P&L from the stalled run is accepted. The next authoritative run from this runtime-fix branch must pass unit tests, produce non-zero candidate setups/trades, and then be audited under the preregistered Base/Stress weekly ₹5,000 gate.
+
