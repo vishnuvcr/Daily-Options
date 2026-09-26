@@ -735,3 +735,11 @@ Authoritative run **36251189770** completed the frozen 12-cell true grid and fiv
 No WFA/OOS promotion. Phase 31.7 is closed as negative evidence.
 
 Final report: `reports/phase31_7/final_result.md`.
+
+## 2026-09-26 — Phase 31.8 preregistration
+
+Phase 31.7 is closed negative: the frozen OI/volume family failed the ₹5,000/week discovery gate in all 12 Base/Stress cells. Phase 31.8 is now the next distinct, separately branched hypothesis: **global overnight cross-market transmission into the NIFTY open**.
+
+Phase 31.8 is preregistered on `phase-31.8-global-overnight-transmission-v1`. The frozen 12-cell grid is 3 global composites (US, Asia, all-six-market) × 2 z-score thresholds (0.50, 1.00) × 2 exits (10:30, 15:10). The signal uses only completed global sessions strictly before the NIFTY date; each z-score uses a 60-observation strictly prior rolling standardization. Base/Stress slippage remains ₹0.20/₹0.40 per order with the frozen transaction/statutory charge model.
+
+The literature review is persisted at `docs/phase31_8_literature_review.md`. The workflow will first pass the global data gate and only then run Base/Stress. No WFA/OOS is authorized unless a true cell clears the preregistered promotion gate.
