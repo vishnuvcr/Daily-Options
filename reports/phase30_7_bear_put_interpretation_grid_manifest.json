@@ -1,0 +1,17 @@
+{
+  "phase": "30.7",
+  "source_video": "IpCuGEDxF1k",
+  "source_transcript_sha256": "a79b1e15c1f10fe053ffc0ba4999a8675cd26202ce70b27459328210d809c9a6",
+  "coverage_source_artifact": 10899856191,
+  "entry_filter": "all Phase 30.6 definitions with signal_weeks >= 20",
+  "eligible_entry_definition_count": 45,
+  "eligible_signal_week_range": [33,53],
+  "registered_expiry_choices": ["nearest_weekly","second_nearest_weekly"],
+  "registered_strike_choices": ["atm_consecutive","atm_minus_one"],
+  "registered_adjustment_gap_points": [200,250,300],
+  "registered_adjustment_wait_minutes": [15,30],
+  "registered_risk_exit_conventions": ["debit_stop_1x_profit_50pct","debit_stop_1x_profit_75pct","debit_stop_1x_expiry"],
+  "registered_time_exits": ["monday_15_00","expiry_day_15_00"],
+  "registered_cell_count": 6480,
+  "pnl_authorized": false
+}
