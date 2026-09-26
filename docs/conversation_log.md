@@ -147,3 +147,7 @@ Operational continuation: inspected the current repository phase plan, research 
 ## 2026-09-26 — Phase 31.7 run 9 test-collection failure
 
 Operational checkpoint: corrected run 9 was triggered from the Phase 31.7 branch, but pytest stopped before computation because the added regression test file contained literal backslash-n text. No data, P&L or strategy evidence was produced. E0393 was logged, the test file was repaired, and the next run is pending.
+
+## 2026-09-26 — Phase 31.7 run 10 audit and execution-loader correction
+
+Run 36250549825 (run 10) completed Base and Stress but validation again failed before accepting any P&L. Concurrent branch-audit commits then replaced the execution-price join with explicit IST date/strike filters. Review of that new loader found E0394: strike_sql was referenced before definition in the query f-string. The source was corrected and a regression test was added. No numerical result is accepted from run 10.
