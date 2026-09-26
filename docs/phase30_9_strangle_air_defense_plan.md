@@ -5,7 +5,7 @@
 Video ID: `aRjY_O6U3nQ`  
 Title: **Retail Option Sellers Need This First - STRANGLE AIR DEFENSE SYSTEM**
 
-The public YouTube description says the video presents a VIX-based framework for estimating the expected NIFTY range for an expiry, discusses 1-sigma and 2-sigma ranges, uses the framework for short strangles and iron condors, and discusses when to adjust positions as price moves toward the strikes. citeturn368134youtube23
+The public YouTube description says the video presents a VIX-based framework for estimating the expected NIFTY range for an expiry, discusses 1-sigma and 2-sigma ranges, uses the framework for short strangles and iron condors, and discusses when to adjust positions as price moves toward the strikes.
 
 ## Why this phase follows Phase 30.8
 
@@ -46,7 +46,7 @@ The remaining unresolved fields are entry day/time, exact expiry convention, exa
 - Premium-zone and width references.
 
 ### SOURCE-CORROBORATED
-The public YouTube description corroborates VIX expected-range construction, 1-sigma/2-sigma framing, short strangles/iron condors, and adjustment when price approaches the strikes. citeturn368134youtube23
+The public YouTube description corroborates VIX expected-range construction, 1-sigma/2-sigma framing, short strangles/iron condors, and adjustment when price approaches the strikes.
 
 ### UNSPECIFIED / INFERRED
 - Entry day/time.
@@ -96,7 +96,7 @@ The matrix is a source-inference sensitivity analysis. It is not a claim that al
 
 ## India VIX data
 
-Primary reference: NSE's historical India VIX endpoint. citeturn514151search0turn514151search3
+Primary reference: NSE's historical India VIX endpoint.
 
 Pinned secondary reproducibility source: GitHub repository `RajeshMohan82/VIX-Mean-Reversion-Strategy`, commit `aa7daa84230ad62e2329e08e332f79dddf35a28a`, file `NIFTY_VIX_merged_2022_2026.csv`. This source will be copied into the branch as a cached research input and used only for the registered study window; it is not treated as superior to NSE. 
 
