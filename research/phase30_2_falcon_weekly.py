@@ -134,7 +134,7 @@ def load_expiry_slice(con, root, expiry, start_date, end_date):
     """
     path = glob_expr(root)
     q = f"""
-    SELECT CAST(timestamp AS TIMESTAMP) AS ts,
+    SELECT CAST(timestamp AS VARCHAR) AS ts_raw,
            CAST(expiry AS DATE) AS expiry,
            CAST(strike AS DOUBLE) AS strike,
            upper(option_type) AS option_type,
@@ -153,7 +153,12 @@ def load_expiry_slice(con, root, expiry, start_date, end_date):
     x = con.execute(q).df()
     if x.empty:
         return pd.DataFrame(columns=["ts", "expiry", "strike", "option_type", "open_px", "close_px"])
-    x["ts"] = pd.to_datetime(x["ts"]).dt.floor("min")
+    # The source publishes intraday timestamps as IST (often with +0530).
+    # Parse the raw timestamp explicitly in IST rather than relying on DuckDB's
+    # implicit TIMESTAMP/TIMESTAMPTZ cast, which can silently shift or strip TZ.
+    parsed = pd.to_datetime(x["ts_raw"], errors="coerce", utc=True)
+    x["ts"] = parsed.dt.tz_convert("Asia/Kolkata").dt.tz_localize(None).dt.floor("min")
+    x = x.drop(columns=["ts_raw"]).dropna(subset=["ts"])
     return x.drop_duplicates(["ts", "strike", "option_type"]).sort_values(
         ["option_type", "strike", "ts"]
     )
