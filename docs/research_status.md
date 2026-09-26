@@ -559,3 +559,14 @@ Authoritative run **36218652778** completed Base and Stress successfully at the 
 The simulator is corrected to normalize both timezone-aware (+05:30) and timezone-naive IST representations to the same naive Asia/Kolkata minute timestamp. A dedicated regression test now verifies both forms map to 09:30 IST. Economic rules, 270-cell grid, source, cost model and promotion gate are unchanged.
 
 Status: **OPEN — deterministic rerun required**
+
+
+## 2026-09-26 — Phase 30.2 zero-setup diagnosis and pinned-source rerun
+
+Run 36220039329 completed Base and Stress successfully but produced 0 candidate setups / 0 trades in both friction settings. This is quarantined as non-evidentiary. A deterministic diagnostic on the exact cached Rissin Parquet showed that the raw IST timestamps and next-minute fills exist at the registered 09:30/10:00/11:00/13:00/14:00 signal times, so the zero is not explained by the timestamp layer.
+
+The key reproducibility finding is source provenance: Phase 30.2 had resolved the Rissin dataset revision at workflow runtime (8f7739c...), while the only prior independently audited Falcon implementation used the pinned revision 78b1c5468255d18cf492984bfe6fe4e3ac874d7c. The corrected experiment is therefore being rerun on that immutable audited revision before any Falcon P&L interpretation.
+
+New authoritative branch: phase-30.2-falcon-source-pin-v1; run 36220723215. The branch changes only the data revision/cache key. The 270-cell economic grid, cost/slippage assumptions and promotion gate are unchanged.
+
+Status: **OPEN — pinned-source rerun pending**
