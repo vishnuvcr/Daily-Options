@@ -639,3 +639,9 @@ This is currently a **source-resolution-only** phase. Python-extracted transcrip
 The P&L barrier is explicit: **no option numerical testing is authorized until the source fields required for execution are resolved or placed into a preregistered interpretation matrix**.
 
 A manual GitHub Actions workflow and deterministic Python evidence extractor are registered.
+
+## 2026-09-26 — Phase 30.8 workflow correction
+
+Automated run **36233937116** failed at the test gate because the new branch did not carry the two Python-generated transcript-evidence JSONL inputs. No source conclusion was accepted from that run.
+
+The evidence files have now been copied into the Phase 30.8 branch as pinned research inputs. The deterministic extractor and tests remain unchanged in their source logic; a clean rerun is being triggered.
