@@ -119,24 +119,38 @@ def load_prices(con, expiry_map, features):
             pass
         con.register("wanted",active)
         p=str(path).replace("'","''")
-        q=f"""SELECT CAST(o.timestamp AS TIMESTAMP) ts,
-                     CAST(o.trading_day AS DATE) trade_date,
-                     UPPER(CAST(o.option_type AS VARCHAR)) option_type,
-                     CAST(o.strike AS DOUBLE) strike,
-                     CASE
-                       WHEN CAST(CAST(o.timestamp AS TIMESTAMP) AS TIME)=TIME '09:31:00' THEN CAST(o.open AS DOUBLE)
-                       WHEN CAST(CAST(o.timestamp AS TIMESTAMP) AS TIME)=TIME '15:10:00' THEN CAST(o.close AS DOUBLE)
-                     END AS exec_px
-              FROM read_parquet('{p}') o
-              JOIN wanted w
-                ON CAST(o.trading_day AS DATE)=CAST(w.trade_date AS DATE)
-               AND (CAST(o.strike AS DOUBLE)=w.atm
-                    OR CAST(o.strike AS DOUBLE)=w.atm+{WING}
-                    OR CAST(o.strike AS DOUBLE)=w.atm-{WING})
-              WHERE CAST(CAST(o.timestamp AS TIMESTAMP) AS TIME) IN (TIME '09:31:00',TIME '15:10:00')
-                AND UPPER(CAST(o.option_type AS VARCHAR)) IN ('CE','PE')
-                AND ((CAST(CAST(o.timestamp AS TIMESTAMP) AS TIME)=TIME '09:31:00' AND o.open>0)
-                  OR (CAST(CAST(o.timestamp AS TIMESTAMP) AS TIME)=TIME '15:10:00' AND o.close>0))"""
+        q=f"""
+            WITH src AS (
+                SELECT
+                    CAST(o.timestamp AS TIMESTAMP) AS ts,
+                    CAST(CAST(o.timestamp AS TIMESTAMP) AS DATE) AS trade_date,
+                    strftime(CAST(o.timestamp AS TIMESTAMP), '%H:%M:%S') AS time_str,
+                    UPPER(CAST(o.option_type AS VARCHAR)) AS option_type,
+                    CAST(o.strike AS DOUBLE) AS strike,
+                    CAST(o.open AS DOUBLE) AS open_px,
+                    CAST(o.close AS DOUBLE) AS close_px
+                FROM read_parquet('{p}') o
+            )
+            SELECT
+                s.ts,
+                s.trade_date,
+                s.option_type,
+                s.strike,
+                CASE
+                    WHEN s.time_str='09:31:00' THEN s.open_px
+                    WHEN s.time_str='15:10:00' THEN s.close_px
+                END AS exec_px
+            FROM src s
+            JOIN wanted w
+              ON s.trade_date=CAST(w.trade_date AS DATE)
+             AND (s.strike=w.atm
+                  OR s.strike=w.atm+{WING}
+                  OR s.strike=w.atm-{WING})
+            WHERE s.time_str IN ('09:31:00','15:10:00')
+              AND s.option_type IN ('CE','PE')
+              AND ((s.time_str='09:31:00' AND s.open_px>0)
+                OR (s.time_str='15:10:00' AND s.close_px>0))
+        """
         z=con.execute(q).df()
         if z.empty: continue
         for r in z.itertuples(index=False):
@@ -232,20 +246,47 @@ def main():
         features.to_csv(out/"features.csv",index=False)
         print(json.dumps(gate,indent=2))
         return
-    # Convert each feature series into explicit frozen threshold signals.
-    sig=[]
     fmap={"VOL_IMB":"vol_imb","OI_CHANGE_IMB":"oi_change_imb","JOINT":"joint"}
-    for feature in FEATURES:
-        col=fmap[feature]
-        for threshold in THRESHOLDS:
-            for bucket in BUCKETS:
-                z=features[features.bucket==bucket].copy()
-                for r in z.itertuples(index=False):
-                    val=float(getattr(r,col))
-                    if abs(val)<threshold: continue
-                    side="CALL" if val>0 else "PUT"
-                    sig.append({**r._asdict(),"feature":feature,"threshold":threshold,"side":side,"signal_value":val})
-    signals=pd.DataFrame(sig)
+
+    def permute_feature_values(panel, feature_col, bucket, seed):
+        out=panel.copy()
+        rng=np.random.default_rng(seed)
+        ix=out.index[out.bucket==bucket]
+        vals=out.loc[ix,feature_col].to_numpy(copy=True)
+        rng.shuffle(vals)
+        out.loc[ix,feature_col]=vals
+        return out
+
+    def build_signals(panel, null_seed=None):
+        working=panel.copy()
+        if null_seed is not None:
+            for feature in FEATURES:
+                col=fmap[feature]
+                for bucket in BUCKETS:
+                    working=permute_feature_values(working,col,bucket,null_seed)
+        sig=[]
+        for feature in FEATURES:
+            col=fmap[feature]
+            for threshold in THRESHOLDS:
+                for bucket in BUCKETS:
+                    z=working[working.bucket==bucket].copy()
+                    for r in z.itertuples(index=False):
+                        val=float(getattr(r,col))
+                        if abs(val)<threshold:
+                            continue
+                        side="CALL" if val>0 else "PUT"
+                        sig.append({
+                            **r._asdict(),
+                            "feature":feature,
+                            "threshold":threshold,
+                            "side":side,
+                            "signal_value":val,
+                            "null_seed":null_seed
+                        })
+        return pd.DataFrame(sig)
+
+    signals=build_signals(features)
+
     if signals.empty:
         pd.DataFrame(columns=["feature","threshold","bucket","side","signals"]).to_csv(out/"signal_counts.csv",index=False)
     else:
@@ -276,18 +317,12 @@ def main():
         cell_summary(td,"TRUE").to_csv(out/f"true_cell_summary_{friction}.csv",index=False)
         null_rows=[]
         for seed in NULL_SEEDS:
-            rng=np.random.default_rng(seed)
-            sf=signals.copy()
-            # Shuffle signal values within each feature/bucket/threshold cell.
-            for (feat,thr,b),ix in sf.groupby(["feature","threshold","bucket"],sort=False).groups.items():
-                vals=sf.loc[ix,"signal_value"].to_numpy(copy=True)
-                rng.shuffle(vals)
-                sf.loc[ix,"signal_value"]=vals
-                sf.loc[ix,"side"]=np.where(vals>0,"CALL","PUT")
+            sf=build_signals(features,null_seed=seed)
             for r in sf.itertuples(index=False):
                 x=trade_from_signal(r,r.side,prices,slip)
                 if x:
-                    x["null_seed"]=seed; null_rows.append(x)
+                    x["null_seed"]=seed
+                    null_rows.append(x)
         nd=pd.DataFrame(null_rows)
         nd.to_csv(out/f"null_trades_{friction}.csv",index=False)
         null_parts=[cell_summary(nd,"NULL",seed=seed) for seed in NULL_SEEDS]
