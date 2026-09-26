@@ -188,3 +188,8 @@ Run 36252470696 failed before data acquisition because one regression test asser
 ## 2026-09-26 — Phase 31.8 run 6 traceback and correction
  
 Run 36252561747 passed unit tests and the global gate, then stopped in Base discovery. The authoritative traceback identified a Timestamp-vs-date comparison in `attach_expiry`. E0404 records the defect; the code now normalizes each panel date to Python `date` before matching the expiry map, and a regression test covers nearest-expiry selection. No numerical P&L result was produced.
+
+ 
+## 2026-09-26 — Phase 31.8 run 7 test-fixture correction
+ 
+Run 36252692972 failed before data acquisition because the newly added expiry regression expected string labels while `attach_expiry` intentionally returns date keys. E0405 closes the test-only mismatch. No research computation ran.
