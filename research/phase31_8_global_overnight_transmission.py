@@ -181,7 +181,8 @@ def attach_expiry(panel, expiry_map):
     future=[]
     exps=sorted(expiry_map)
     for d in x.date:
-        ds=sorted(e for e in exps if e>=d)
+        trade_date=pd.Timestamp(d).date()
+        ds=sorted(e for e in exps if e>=trade_date)
         future.append(ds[0] if ds else None)
     x["expiry"]=future
     x["atm"]=(x.open_px/50.0).round()*50
