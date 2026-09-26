@@ -382,3 +382,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 | E0322 | 2026-09-26 | Phase 30.2 Falcon exact-expiry type bug | pandas datetime-like expiry values were compared directly to Python date values, silently eliminating candidate setups | Corrected `select_target()` to normalize expiry values before comparison; regression test added | CLOSED |
 | E0323 | 2026-09-26 | Phase 30.2 persistence race | Base computation completed but the runner push hit a fast-forward race; artifact upload succeeded | Preserve artifact as evidence and persist the final closure report on the phase branch | CLOSED |
+
+
+| E0341 | 2026-09-26 | Main-branch research-status synchronization | Main README/status remained anchored to the older Falcon Phase 30.2 checkpoint while Phase 30.7 had already closed and Phase 30.8 had become active | Readers could incorrectly interpret Falcon as the active frontier | Synchronize main README and research status with Phase 30.7 closure and Phase 30.8 source-resolution state; retain older entries as historical audit trail | CLOSED — synchronization update |
