@@ -37,7 +37,9 @@ def test_null_seeds_are_deterministic():
     rng2=np.random.default_rng(101); b=x.copy(); rng2.shuffle(b)
     assert list(a)==list(b)
 
-\n\ndef test_null_control_permutates_full_feature_panel_before_thresholding():
+
+
+def test_null_control_permutates_full_feature_panel_before_thresholding():
     panel=pd.DataFrame({
         "day":pd.to_datetime(["2026-01-05","2026-01-06","2026-01-07","2026-01-08"]),
         "bucket":[0,0,0,0],
