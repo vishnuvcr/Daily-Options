@@ -371,3 +371,12 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 ## E0317 — Phase 30.2 zero-setup result traced to timestamp normalization (2026-09-26)
 
 The runtime-fixed Falcon run 36216668042 completed quickly and correctly at the execution layer, but both Base and Stress produced 32/32 calendars with zero candidate setups. This is not accepted as a strategy result. Audit identified the Rissin intraday timestamp path as the remaining unverified boundary: the dataset publishes IST timestamps, including +0530 examples, while the simulator was implicitly casting them through DuckDB to TIMESTAMP before exact 09:30/10:00/11:00/13:00/14:00 signal matching. The code has been corrected to parse the raw timestamp explicitly as UTC and convert to Asia/Kolkata before minute matching. A deterministic rerun is required. The frozen economic rules and 270-cell grid are unchanged.
+
+
+## E0318 — Phase 30.2 raw timestamp SQL alias regression (2026-09-26)
+
+Authoritative run **36218439278** reached the corrected Falcon simulator but failed immediately in both Base and Stress with a DuckDB binder error: the SELECT projected the raw timestamp as `ts_raw` while the SQL `ORDER BY` still referenced the removed alias `ts`. Tests passed because this path is exercised only against the acquired Parquet schema during the workflow. No P&L or candidate-setup result is accepted from this run.
+
+The fix is code-only and economic-rule-neutral: order the raw source rows by `ts_raw`, then perform the already-registered explicit IST timestamp normalization in pandas. A fresh deterministic Base/Stress run is required.
+
+Status: **CLOSED — corrected in commit b731513c6e22c9f2a3774c5e90db0eeb4f022c9a; rerun required**
