@@ -108,6 +108,7 @@ def option_feature_rows(con, expiry_map, days_df):
     return pd.DataFrame(rows), pd.DataFrame(diag)
 
 def load_prices(con, expiry_map, features):
+    con.execute("SET TimeZone='Asia/Kolkata'")
     prices={}
     wanted=features[["day","bucket","expiry","atm","entry_ts","exit_ts"]].drop_duplicates().rename(columns={"day":"trade_date"})
     for expiry,path in sorted(expiry_map.items()):
