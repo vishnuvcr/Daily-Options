@@ -41,9 +41,13 @@ def parse_vtt(text):
 
 def acquire(out):
     out.mkdir(parents=True,exist_ok=True)
-    r=run(["yt-dlp","--skip-download","--write-auto-subs","--write-subs","--sub-langs","en.*,hi.*","--sub-format","vtt","--print","%(id)s\t%(title)s\t%(upload_date)s","-o",str(out/"%(id)s.%(ext)s"),URL])
-    meta={"video_id":VIDEO_ID,"url":URL,"command_returncode":r.returncode,"stdout":r.stdout,"stderr":r.stderr}
-    (out/"acquisition.json").write_text(json.dumps(meta,indent=2),encoding="utf-8")
+    attempts=[]
+    for client in ["web_safari","android","web_embedded","web"]:
+        r=run(["yt-dlp","--skip-download","--write-auto-subs","--write-subs","--sub-langs","en.*,hi.*","--sub-format","vtt","--extractor-args","youtube:player_client="+client,"--print","%(id)s\\t%(title)s\\t%(upload_date)s","-o",str(out/("%(id)s-"+client+".%(ext)s")),URL])
+        attempts.append({"client":client,"returncode":r.returncode,"stdout":r.stdout,"stderr":r.stderr})
+        if list(out.glob("*-"+client+"*.vtt")):
+            break
+    (out/"acquisition.json").write_text(json.dumps({"video_id":VIDEO_ID,"url":URL,"attempts":attempts},indent=2),encoding="utf-8")
     vtts=list(out.glob("*.vtt"))
     if not vtts: raise RuntimeError("No VTT caption track was acquired")
     primary=max(vtts,key=lambda p:p.stat().st_size)
