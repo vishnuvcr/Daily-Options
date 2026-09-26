@@ -163,7 +163,7 @@ def audit(data, out):
             leg_ok=False; errors.append(f"{day}: Base net mismatch {calc_net} vs {ref_net}")
         row={"trade_date":str(day),"expiry_ref":str(expiry),"expiry_derived":str(derived_expiry),"spot_ref":ref_spot,"spot_raw":calc_spot,"exit_spot_raw":exit_spot,
              "atm_ref":int(r["atm"]),"atm_derived":atm,"lot_ref":int(r["lot_size"]),"lot_derived":lot_size(expiry),
-             "gross_ref":float(r["gross_pnl"]),"gross_recalc":exec_calc,"tc_ref":float(r["transaction_costs"]),"tc_recalc":tc_calc,
+             "gross_ref":float(r["gross_pnl"]),"gross_recalc":exec_calc,"total_cost_ref":ref_total_cost,"total_cost_recalc":computed_total_cost,
              "net_ref":ref_net,"net_recalc":calc_net,"match":leg_ok,"legs":json.dumps(leg_details,separators=(",",":"))}
         rows.append(row)
     con.close()
