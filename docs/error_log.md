@@ -480,3 +480,10 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0396 | 2026-09-26 | Phase 31.7 run 12 validation | Run 36251100372 had valid raw 09:31/15:10 source rows (execution probe) but zero executable trades in Base/Stress, so validation failed at the friction assertion. Branch audit showed the expiry-file filter compared pandas-coerced expiry timestamps against Python date keys | Run 36251100372 quarantined; no P&L accepted | Normalize feature expiry to a dedicated Python-date `expiry_key` before matching each expiry parquet; retain the frozen grid, timestamps, slippage and cost model | CLOSED — source correction persisted |
 
 | E0397 | 2026-09-26 | Phase 31.7 run 12 persistence | Validation failure was followed by a report-persistence push rejection because the remote phase branch had advanced during the run; the artifact was uploaded successfully, but the workflow did not fast-forward its report commit | No research result was lost; artifact 10908916458 preserves the run-12 reports, but they are audit-only | Persist step now retries with fetch/rebase after a non-fast-forward push; phase launcher concurrency is enabled | CLOSED — workflow hardening |
+
+
+## Phase 31.7 consolidated closure — 2026-09-26
+
+Implementation defects E0382–E0394 were all corrected before the authoritative accepted run **36251189770**. The final run passed tests, data gate, execution-row probe, Base/Stress simulation, 12-cell validation, and null-control validation. None of E0382–E0394 represents accepted trading evidence; they are pre-result engineering/data-access defects or audit notes.
+
+The accepted run also established that the correct reconciliation is **raw gross − slippage − transaction/statutory costs = net P&L**. The temporary post-run audit comparison against execution-gross-minus-slippage was not the appropriate identity because execution gross already includes slippage.
