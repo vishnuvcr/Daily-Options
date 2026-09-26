@@ -127,7 +127,7 @@ def expiry_setups(sessions, expiries):
 def normalize_source_timestamps(raw):
     """Normalize Rissin timestamps to naive Asia/Kolkata minute timestamps."""
     raw = pd.Series(raw, copy=False).astype(str).str.strip()
-    aware = raw.str.contains(r"(?:[+-]\\d{2}:?\\d{2}|Z)$", regex=True, na=False)
+    aware = raw.str.contains(r"(?:[+-]\d{2}:?\d{2}|Z)$", regex=True, na=False)
     ts = pd.Series(pd.NaT, index=raw.index, dtype="datetime64[ns]")
     if aware.any():
         aware_parsed = pd.to_datetime(raw[aware], errors="coerce", utc=True)
