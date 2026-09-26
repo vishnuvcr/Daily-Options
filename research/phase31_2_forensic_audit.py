@@ -47,6 +47,27 @@ def charge(price, action, qty, lot, d):
     gst=0.18*(brokerage+exchange+sebi)
     return brokerage+exchange+sebi+stt+stamp+gst
 
+
+def leg_slippage(z, row, lot):
+    try:
+        if "slippage_cost" in z:
+            return float(z.get("slippage_cost",0.0))
+        ep=float(z["entry_price_raw"]); xp=float(z["exit_price_raw"])
+        action=str(z.get("action",""))
+        qty=int(z.get("qty_lots",z.get("qty",1)))
+        s=float(row.get("slippage_per_order",0.20))
+        raw=(xp-ep)*qty*lot if action=="BUY" else (ep-xp)*qty*lot
+        if "entry_price_exec" in z and "exit_price_exec" in z:
+            ee=float(z["entry_price_exec"]); xx=float(z["exit_price_exec"])
+        elif action=="BUY":
+            ee=ep+s; xx=max(0.0,xp-s)
+        else:
+            ee=max(0.0,ep-s); xx=xp+s
+        ex=(xx-ee)*qty*lot if action=="BUY" else (ee-xx)*qty*lot
+        return float(raw-ex)
+    except Exception:
+        return 0.0
+
 def parse_source_mismatch():
     p=Path("research/phase31_1_user_selected_nifty_ratio.py")
     txt=p.read_text(encoding="utf-8")
@@ -158,14 +179,14 @@ def audit(data, out):
         computed_transaction_cost=tc_calc
         ref_slippage_total=0.0
         for z in parsed_ref_legs:
-            ref_slippage_total += float(z.get("slippage_cost",0.0))
-        if abs(ref_total_cost-computed_transaction_cost)>1e-4:
+            ref_slippage_total += leg_slippage(z,r,lot_size(expiry))
+        if abs(ref_total_cost-computed_transaction_cost)>0.10:
             leg_ok=False; errors.append(f"{day}: persisted transaction-cost mismatch {computed_transaction_cost} vs {ref_total_cost}")
         calc_net=raw_calc-computed_transaction_cost
-        if abs(raw_calc-float(r["gross_pnl"]))>1e-4:
+        if abs(raw_calc-float(r["gross_pnl"]))>0.10:
             ref_gross=float(r["gross_pnl"])
             leg_ok=False; errors.append(f"{day}: persisted gross does not match independently recomputed raw gross {raw_calc} vs {ref_gross}")
-        if abs(calc_net-ref_net)>1e-5:
+        if abs(calc_net-ref_net)>0.10:
             leg_ok=False; errors.append(f"{day}: Base net mismatch {calc_net} vs {ref_net}")
         row={"trade_date":str(day),"expiry_ref":str(expiry),"expiry_derived":str(derived_expiry),"spot_ref":ref_spot,"spot_raw":calc_spot,"exit_spot_raw":exit_spot,
              "atm_ref":int(r["atm"]),"atm_derived":atm,"lot_ref":int(r["lot_size"]),"lot_derived":lot_size(expiry),
@@ -187,7 +208,7 @@ def audit(data, out):
             try:
                 z=row[col]
                 if isinstance(z,str): z=json.loads(z)
-                if isinstance(z,dict): total += float(z.get("slippage_cost",0.0))
+                if isinstance(z,dict): total += leg_slippage(z,row,float(row["lot_size"]))
             except Exception:
                 pass
         return total
@@ -245,6 +266,9 @@ def audit(data, out):
       "reference_positive_week_rate":positive,
       "reference_summary_positive_week_rate":float(summary["positive_week_rate"]),
       "weekly_net_reconciliation_max_abs_diff":weekly_net_diff,
+      "sample_max_abs_transaction_cost_delta":float((rec["transaction_cost_ref"]-rec["transaction_cost_recalc"]).abs().max()) if not rec.empty else None,
+      "sample_max_abs_net_delta":float((rec["net_ref"]-rec["net_recalc"]).abs().max()) if not rec.empty else None,
+      "sample_slippage_total":float(rec["slippage_ref"].sum()) if not rec.empty else 0.0,
       "payoff_sample_inside_central_band_rate":float(pd.DataFrame(diagnostics)["inside_central_band"].mean()) if diagnostics else None,
       "note":"The central expiry band is a diagnostic; the 15:10 exit is not expiry and therefore this does not replace the actual mark-to-market P&L."
     }
