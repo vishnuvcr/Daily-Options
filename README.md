@@ -32,7 +32,7 @@ Best cell in both friction settings:
 
 Phase 31.6 is frozen negative evidence; no WFA/OOS or result-driven tuning is authorized.
 
-**Next bounded research family:** Phase 31.7 — **OI/volume microstructure with explicit null controls**, subject to a new data-coverage gate and finite preregistration.
+**Current phase:** Phase 31.7 — **OI/volume microstructure with explicit null controls**, preregistered; first clean run is gated on schema/coverage validation. No P&L has been accepted.
 
 Current status links: [Research status](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md) · [Research plan](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_plan.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md) · [Phase 31.6 final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.6-iv-rv-defined-risk-v1/reports/phase31_6/final_result.md)
 
