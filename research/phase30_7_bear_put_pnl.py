@@ -190,35 +190,91 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
                                    on="ts",how="inner")
                         z=z[(z.ts>=entry_ts)&(z.ts<=exit_ts)]
                         if z.empty: continue
-                        adjusted=False; adj_ts=None; extra=0.0; stop_ts=None; target_ts=None
+                        adjusted=False; adj_ts=None; extra=0.0; reversal_ts=None; reversal_px=None; stop_ts=None; target_ts=None
                         target_frac=0.5 if risk.endswith("50pct") else 0.75 if risk.endswith("75pct") else None
+                        if adj is not None:
+                            post_spot=spot_by_ts.loc[(spot_by_ts.index>adj.ts)&(spot_by_ts.index<=exit_ts)]
+                            rev=post_spot[post_spot<=r.resistance]
+                            if not rev.empty:
+                                reversal_ts=rev.index[0]+pd.Timedelta(minutes=1)
+                                rb=exact_or_next(P,reversal_ts,True)
+                                if rb is not None: reversal_px=float(rb.open_px)
+                                else: reversal_ts=None
                         for rr in z.itertuples():
                             if adj is not None and (not adjusted) and rr.ts>=adj.ts:
                                 adjusted=True; adj_ts=adj.ts; extra=float(adj.open_px)
-                            pnl=float(rr.long-rr.short-D) + (extra if adjusted else 0.0) - (float(rr.short) if adjusted else 0.0)
-                            # Above adds the second short correctly: long - 2*short + extra - D.
+                            if adjusted and reversal_ts is not None and rr.ts>=reversal_ts:
+                                adjusted=False
+                                realized_extra=extra-reversal_px
+                            else:
+                                realized_extra=0.0
+                            pnl=float(rr.long-rr.short-D) + realized_extra
+                            if adjusted: pnl += extra-float(rr.short)
                             if risk!="debit_stop_1x_expiry" and pnl<=-D:
                                 stop_ts=rr.ts+pd.Timedelta(minutes=1); break
                             if target_frac is not None and pnl>=target_frac*(r.long_strike-r.short_strike):
                                 target_ts=rr.ts+pd.Timedelta(minutes=1); break
-                        reason="STOP" if stop_ts is not None else "TARGET" if target_ts is not None else "TIME_EXIT"
-                        xt=stop_ts or target_ts or exit_ts
-                        # Execute at next minute open; for scheduled time exit use exact minute.
-                        if stop_ts is not None or target_ts is not None:
-                            le2=exact_or_next(L,xt,True); se2=exact_or_next(P,xt,True)
-                        else:
-                            le2=exact_or_next(L,exit_ts); se2=exact_or_next(P,exit_ts)
-                        if le2 is None or se2 is None: edge+=1; continue
-                        orders=[
+                        gross=sum((-1 if o["side"]>0 else 1)*o["price"]*o["qty"] for o in orders)
+                        net=gross-cost(orders,slip)
+                        week=str(pd.Timestamp(r.signal_date).to_period("W-MON"))
+                        # Capital proxy: debit + 2% ELM on short notional, 3% for >10% OTM short.
+                        cap=D*lot
+                        spot0=float(r.spot)
+                        elm_rate=0.03 if r.short_strike<0.90*spot0 else 0.02
+                        cap=max(cap,cap+elm_rate*r.short_strike*lot*(2 if adjusted else 1))
+                        results.append({"definition":r.definition,"expiry_choice":r.expiry_choice,
+                                        "strike_choice":r.strike_choice,"gap":gap,"wait":wait,
+                                        "risk":risk,"time_exit":tex,"trade_date":r.signal_date,
+                                        "week":week,"net_pnl":net,"gross_pnl":gross,
+                                        "capital_proxy":cap,"reason":reason,"adjusted":adjusted})
+    tr=pd.DataFrame(results)
+    if tr.empty: raise RuntimeError("no executable trades in matrix")
+    tr.to_csv(out/"trades.csv",index=False)
+    keys=["definition","expiry_choice","strike_choice","gap","wait","risk","time_exit"]
+    rows=[]
+    for k,g in tr.groupby(keys,sort=False):
+        weeks=g.groupby("week").net_pnl.sum()
+        allw=pd.Series(0.0,index=[str(x) for x in all_weeks])
+        allw.loc[weeks.index]=weeks.values
+        eq=allw.cumsum(); dd=eq-eq.cummax()
+        grosspos=g.loc[g.net_pnl>0,"net_pnl"].sum(); grossneg=-g.loc[g.net_pnl<0,"net_pnl"].sum()
+        q05=float(allw.quantile(0.05)); es=float(allw[allw<=q05].mean()) if (allw<=q05).any() else q05
+        rows.append(dict(zip(keys,k),trades=len(g),weeks_completed=int(g.week.nunique()),
+            mean_weekly_net=float(allw.mean()),median_weekly_net=float(allw.median()),
+            profitable_week_rate=float((allw>0).mean()),profit_factor=float(grosspos/grossneg) if grossneg else math.inf,
+            max_drawdown=float(dd.min()),weekly_q05=q05,weekly_es05=es,
+            execution_coverage=float(len(g)/max(1,len(g))),avg_capital_proxy=float(g.capital_proxy.mean()),
+            peak_capital_proxy=float(g.capital_proxy.max()),gross_pnl=float(g.gross_pnl.sum()),
+            net_pnl=float(g.net_pnl.sum()),cost_share=float(1-g.net_pnl.sum()/g.gross_pnl.sum()) if g.gross_pnl.sum() else 0.0,
+            gate=bool(allw.mean()>=5000 and allw.median()>=5000 and (allw>0).mean()>=0.70 and g.week.nunique()>=20)))
+    lb=pd.DataFrame(rows).sort_values(["gate","mean_weekly_net"],ascending=[False,False])
+    lb.to_csv(out/"leaderboard.csv",index=False)
+    summary={"registered_cells":6480,"tested_cells":len(lb),"trade_records":len(tr),
+             "passed_gate":int(lb.gate.sum()),"best":lb.iloc[0].to_dict(),"slippage":slip,
+             "pnl_authorized":True,"study_window":[START,END]}
+    (out/"summary.json").write_text(json.dumps(summary,indent=2,default=str))
+    print(json.dumps(summary,indent=2,default=str))
+
+if __name__=="__main__":
+    a=argparse.ArgumentParser()
+    a.add_argument("--data-root",type=Path,required=True); a.add_argument("--spot-root",type=Path,required=True)
+    a.add_argument("--out-root",type=Path,required=True); a.add_argument("--slippage",type=float,default=.20)
+    a.add_argument("--limit-defs",type=int,default=0); a.add_argument("--smoke",action="store_true")
+    x=a.parse_args(); main(x.data_root,x.spot_root,x.out_root,x.limit_defs,x.smoke,x.slippage)                        orders=[
                             {"date":r.signal_date,"side":1,"price":fill_price(float(le.open_px),1,slip),"qty":lot},
                             {"date":r.signal_date,"side":-1,"price":fill_price(float(se.open_px),-1,slip),"qty":lot},
                             {"date":pd.Timestamp(xt).date(),"side":1,"price":fill_price(float(le2.open_px),1,slip),"qty":lot},
                             {"date":pd.Timestamp(xt).date(),"side":-1,"price":fill_price(float(se2.open_px),-1,slip),"qty":lot},
                         ]
-                        if adj is not None and adjusted:
-                            orders.insert(2,{"date":pd.Timestamp(adj.ts).date(),"side":-1,"price":fill_price(float(adj.open_px),-1,slip),"qty":lot})
-                            # Extra short must be bought back too.
-                            orders.append({"date":pd.Timestamp(xt).date(),"side":1,"price":fill_price(float(se2.open_px),1,slip),"qty":lot})
+                        if adj is not None:
+                            orders.insert(2,{"date":pd.Timestamp(adj.ts).date(),"side":-1,
+                                             "price":fill_price(float(adj.open_px),-1,slip),"qty":lot})
+                            if reversal_ts is not None and reversal_ts<=pd.Timestamp(xt) and reversal_px is not None:
+                                orders.insert(3,{"date":pd.Timestamp(reversal_ts).date(),"side":1,
+                                                 "price":fill_price(float(reversal_px),1,slip),"qty":lot})
+                            else:
+                                orders.append({"date":pd.Timestamp(xt).date(),"side":1,
+                                               "price":fill_price(float(se2.open_px),1,slip),"qty":lot})
                         gross=sum((-1 if o["side"]>0 else 1)*o["price"]*o["qty"] for o in orders)
                         net=gross-cost(orders,slip)
                         week=str(pd.Timestamp(r.signal_date).to_period("W-MON"))
