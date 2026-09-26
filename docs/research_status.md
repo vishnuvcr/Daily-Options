@@ -581,3 +581,14 @@ Authoritative run **36220915944** completed the corrected 270-cell Falcon test. 
 Phase 30.2 is **CLOSED** without WFA/OOS. The next distinct Equity Income frontier is Bear Put source resolution (Phase 30.3/30.4), with numerical testing still blocked until its source ambiguities are frozen.
 
 [Final audited Falcon report](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.2-falcon-closure-v1/reports/phase30_2_falcon_final_result.md)
+
+
+## 2026-09-26 — Main-branch synchronization
+
+The previous Phase 30.2-era README/status text is superseded by the current YouTube research state.
+
+**Phase 30.7 Bear Put:** completed authoritative run 36233110210; 18/18 shards successful; 6,480/6,480 aggregate cells; 0 cells passed Base and Stress weekly gate. Phase retired.
+
+**Phase 30.8 No More Straddles:** active source-resolution-only phase on `phase-30.8-equity-income-no-more-straddles-source-resolution-v1`. Automated run 36234096126 passed the deterministic evidence tests and generated the source report. P&L remains blocked.
+
+A main-branch launcher is currently running to reproduce the same source-resolution report from the pinned phase branch.
