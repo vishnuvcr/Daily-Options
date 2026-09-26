@@ -456,3 +456,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0355 | 2026-09-26 | Phase 30.11 WFA v2 engine | The v2 split-fold workflow exposed that the checked-in WFA engine still lacked the `global START, END` declaration before CLI defaults, causing `UnboundLocalError` in the first v2 numerical jobs | No WFA result accepted from v2 run 36236194154 | Restored the declaration at the start of `main()`; next v2 run is the first accepted numerical attempt after this correction | CLOSED — rerun pending |
+
+
+| E0356 | 2026-09-26 | Phase 30.11 WFA v2 aggregate path parsing | The initial aggregator inferred regime from the immediate parent directory of `leaderboard.csv`, but downloaded artifacts place that file under `.../<regime>/fold_N/train|oos/leaderboard.csv`, so the immediate parent is `train` or `oos` | No WFA survivor accepted; v2 jobs were still pre-aggregate | Added a v2-specific aggregator that searches all path components for the `-base/-stress` or `_base/_stress` regime suffix before auditing the 144 files | CLOSED — aggregation hardened before acceptance |
