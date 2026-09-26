@@ -53,8 +53,8 @@ def main() -> None:
         z["stage"] = stage_from_path(f)
         lb_frames.append(z)
     all_lb = pd.concat(lb_frames, ignore_index=True)
-    if len(all_lb) != 144 * 720:
-        raise RuntimeError(f"Expected 103680 leaderboard rows, got {len(all_lb)}")
+    if len(all_lb) != 72 * 120:
+        raise RuntimeError(f"Expected 8640 leaderboard rows, got {len(all_lb)}")
 
     for fold in (1, 2, 3):
         for stage in ("train", "oos"):
@@ -73,7 +73,7 @@ def main() -> None:
         z = pd.read_csv(f)
         if z.empty:
             continue
-        z["regime"] = regime_from_folder(f)
+        z["regime"] = regime_from_path(f)
         z["fold"] = fold_from_path(f)
         z["stage"] = stage_from_path(f)
         wk_frames.append(z)
