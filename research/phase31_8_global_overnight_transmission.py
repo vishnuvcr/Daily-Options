@@ -108,13 +108,15 @@ def build_signals(panel, null_seed=None):
     rows=[]
     for feature in FEATURES:
         for threshold in THRESHOLDS:
-            z=x[x[feature].abs()>=threshold].copy()
-            if z.empty: continue
-            z["feature"]=feature
-            z["threshold"]=threshold
-            z["signal_value"]=z[feature]
-            z["side"]=np.where(z["signal_value"]>0,"CALL","PUT")
-            rows.append(z)
+            for horizon in HORIZONS:
+                z=x[x[feature].abs()>=threshold].copy()
+                if z.empty: continue
+                z["feature"]=feature
+                z["threshold"]=threshold
+                z["horizon"]=horizon
+                z["signal_value"]=z[feature]
+                z["side"]=np.where(z["signal_value"]>0,"CALL","PUT")
+                rows.append(z)
     return pd.concat(rows,ignore_index=True) if rows else pd.DataFrame()
 
 def load_prices(root, expiry_map, signals):
@@ -123,9 +125,10 @@ def load_prices(root, expiry_map, signals):
     wanted=signals[["date","atm","exit_ts","expiry"]].copy() if "expiry" in signals.columns else signals[["date","atm","exit_ts"]].copy()
     con=duckdb.connect()
     con.execute("SET TimeZone='Asia/Kolkata'")
+    sig=signals.copy()
+    sig["expiry_key"]=pd.to_datetime(sig["expiry"]).dt.date
     for expiry,path in sorted(expiry_map.items()):
-        active=signals[pd.to_datetime(signals.date).dt.date.map(lambda d: expiry>=d)].copy()
-        active=active[active["expiry"]==expiry] if "expiry" in active.columns else active.iloc[0:0]
+        active=sig[sig["expiry_key"]==expiry].copy()
         if active.empty: continue
         dates=sorted(pd.to_datetime(active.date).dt.date.unique().tolist())
         date_sql=",".join(f"DATE '{d}'" for d in dates)
@@ -278,9 +281,14 @@ def main():
         nd=pd.DataFrame(null_rows)
         nd.to_csv(out/f"null_trades_{friction}.csv",index=False)
         weekly_ledger(nd).to_csv(out/f"null_weekly_{friction}.csv",index=False)
-        nsum=summary(nd.assign(threshold=pd.to_numeric(nd.threshold,errors="coerce")) if not nd.empty else nd).copy()
-        if not nd.empty: nsum.insert(1,"null_seed","ALL")
-        nsum.to_csv(out/f"null_summary_{friction}.csv",index=False)
+        parts=[]
+        if not nd.empty:
+            for seed in NULL_SEEDS:
+                gseed=nd[nd.null_seed==seed].copy()
+                q=summary(gseed)
+                q.insert(1,"null_seed",seed)
+                parts.append(q)
+        pd.concat(parts,ignore_index=True).to_csv(out/f"null_summary_{friction}.csv",index=False) if parts else pd.DataFrame().to_csv(out/f"null_summary_{friction}.csv",index=False)
     # Price coverage diagnostics across true signals
     cov=[]
     for keys,gx in signals.groupby(["feature","threshold","horizon"]):
