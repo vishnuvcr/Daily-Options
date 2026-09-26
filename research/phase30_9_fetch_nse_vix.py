@@ -26,15 +26,25 @@ def fetch_vix(start: str, end: str) -> list[dict]:
             "Connection": "keep-alive",
         }
     )
-    # Seed cookies/headers, then request the documented historical endpoint.
-    home = s.get(NSE_HOME, timeout=30)
-    home.raise_for_status()
-
+    # NSE may return 403 on the public landing page from CI IPs.
+    # The historical endpoint itself is the required data request.
     params = {
         "from": pd.Timestamp(start).strftime("%d-%m-%Y"),
         "to": pd.Timestamp(end).strftime("%d-%m-%Y"),
     }
     r = s.get(NSE_VIX_URL, params=params, timeout=60)
+    if r.status_code == 403:
+        # One deterministic retry with the browser-like headers most NSE clients use.
+        retry_headers = {
+            "User-Agent": s.headers["User-Agent"],
+            "Referer": "https://www.nseindia.com/reports-indices-historical-vix",
+            "Origin": "https://www.nseindia.com",
+            "Accept": "application/json, text/plain, */*",
+            "Sec-Fetch-Dest": "empty",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Site": "same-origin",
+        }
+        r = s.get(NSE_VIX_URL, params=params, headers=retry_headers, timeout=60)
     r.raise_for_status()
     payload = r.json()
     if isinstance(payload, dict):
