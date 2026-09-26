@@ -20,14 +20,14 @@ Positive IV–RV dislocations are tested with a defined-risk short iron condor; 
 - ATM: nearest ₹50 strike.
 - Expiry buckets: nearest and next available expiry on/after trade date.
 
-## Frozen finite grid
+## Frozen finite 12-cell grid
 - IV–RV threshold: 2, 4, 6 volatility points.
 - Structure side: positive-spread short iron condor / negative-spread long ATM straddle.
-- Iron-condor wing width: 200 and 400 NIFTY points.
 - Expiry bucket: nearest and next available.
+- Iron-condor wing width: fixed at 200 NIFTY points (not optimized).
 - No stop, target, adjustment, leverage, or discretionary override.
 
-The executable implementation must enumerate the declared cells without adding result-dependent combinations.
+The executable implementation must enumerate exactly 12 declared cells (3 thresholds × 2 structure sides × 2 expiry buckets), without adding result-dependent combinations.
 
 ## Costs
 - Base slippage ₹0.20/order.
