@@ -645,3 +645,14 @@ Phase 31.2 therefore freezes the Phase 31.1 strategy and performs a deterministi
 Branch: `phase-31.2-phase31-1-forensic-audit-v1`.
 Plan: `docs/phase31_2_forensic_audit_plan.md`.
 Workflow: `.github/workflows/phase-31-2-phase31-1-forensic-audit.yml`.
+
+
+## 2026-09-26 — Phase 31.2 completed: Phase 31.1 remains quarantined
+
+The independent forensic audit completed successfully in GitHub Actions run 36242170539. **30/30 stratified executed days reconciled with zero material mismatches**; maximum transaction-cost/net discrepancy was ₹0.0283. The persisted 1,209-day ledger also reconciles to its summary and weekly aggregation to numerical tolerance.
+
+The audit identified the substantive provenance defect E0375: the persisted Phase 31.1 Base artifact records raw gross P&L and subtracts transaction/statutory costs, while the current checked-in simulator applies slippage inside execution gross. Leg-level reconstruction gives **₹130,750.00** cumulative Base slippage across the 1,209 persisted trade days. Applying that missing slippage gives **-₹667,847.06** total net, **-₹2,568.64 mean weekly net**, **-₹3,057.21 median weekly net**, and **25.38% positive weeks** over 260 weeks.
+
+Therefore the original -₹537,097.06 result is numerically reproducible as the persisted artifact's own accounting, but it is **not accepted as the final friction-corrected result**. Phase 31.1 stays quarantined. The next permissible research phase is a provenance-corrected reproduction using one frozen accounting definition; no optimization is authorized until that reproduction is complete.
+
+Outputs: `reports/phase31_2/forensic_audit.json`, `reports/phase31_2/sample_reconciliation.csv`, `reports/phase31_2/payoff_diagnostics.csv`, `reports/phase31_2/final_result.md`.
