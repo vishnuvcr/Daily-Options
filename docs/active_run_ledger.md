@@ -180,3 +180,12 @@ Earlier Phase 30.2 runs were cancelled/invalidated before numerical execution du
 - Stress job **108156817965**: tests passed, Rissin acquisition passed, friction computation in progress.
 - No Falcon P&L is accepted yet; artifacts are absent until workflow completion.
 - Earlier Falcon runs remain non-evidentiary because of HF API and matrix-concurrency defects; the corrected run is the sole authoritative execution.
+
+## 2026-09-26 — Phase 30.2 Falcon runtime-fix rerun
+
+| Phase | Branch | Workflow run | Status | Accepted P&L |
+|---|---|---:|---|---|
+| 30.2 | phase-30.2-falcon-runtime-fix-v1 | **36216668042** | Base friction executing; Stress queued; tests/data acquisition passed | No |
+
+Run 36213335815 is quarantined for runtime only. No Falcon P&L has been accepted.
+
