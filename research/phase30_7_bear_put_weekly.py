@@ -364,7 +364,7 @@ def simulate_position(
     }
 
 
-def summarize(rows, errors, scenario):
+def summarize(rows, errors, scenario, attempted_by_variant):
     if not rows:
         return {
             "scenario": scenario,
@@ -405,7 +405,7 @@ def summarize(rows, errors, scenario):
             "mean_conservative_zero_index_loss": float(g.capital_at_zero_risk.mean()),
             "adjustment_rate": float(g.adjusted.mean()),
             "reversal_rate_after_adjustment": float(g.loc[g.adjusted, "reversal"].mean()) if g.adjusted.any() else 0.0,
-            "execution_coverage": float((g.status == "complete").mean()),
+            "execution_coverage": float(len(g) / max(1, attempted_by_variant.get(vid, len(g)))),
         })
     summaries = sorted(summaries, key=lambda x: (x["mean_weekly_net"], x["median_weekly_net"]), reverse=True)
     qualified = [
@@ -431,17 +431,26 @@ def summarize(rows, errors, scenario):
 def run_scenario(con, spot, signals, expiries, slippage, scenario):
     spot_by_day = {d: g.sort_values("Timestamp").copy() for d, g in spot.groupby("date", sort=True)}
     expiry_list = sorted(expiries)
-    # Map each eligible definition's first signal per weekly expiry.
-    positions = []
+    # Each signal is assigned to exactly one nearest weekly expiry on/after
+    # its signal date. If a definition produces multiple signals for that
+    # expiry, retain only its first signal. This prevents the same event from
+    # being replicated across future expiries.
+    positions_by_key = {}
     for did, (definition, sigs) in signals.items():
-        for expiry in expiry_list:
-            candidates = [s for s in sigs if date.fromisoformat(s["date"]) <= expiry]
-            if not candidates:
+        for signal in sigs:
+            signal_day = date.fromisoformat(signal["date"])
+            idx = bisect.bisect_left(expiry_list, signal_day)
+            if idx >= len(expiry_list):
                 continue
-            first = sorted(candidates, key=lambda s: s["signal_ts"])[0]
-            positions.append((did, definition, first, expiry))
+            expiry = expiry_list[idx]
+            key = (did, expiry)
+            old = positions_by_key.get(key)
+            if old is None or signal["signal_ts"] < old[2]["signal_ts"]:
+                positions_by_key[key] = (did, definition, signal, expiry)
+    positions = sorted(positions_by_key.values(), key=lambda x: (x[3], x[0], x[2]["signal_ts"]))
 
     rows, errors = [], []
+    attempted_by_variant = {}
     grouped = {}
     for item in positions:
         grouped.setdefault(item[3], []).append(item)
@@ -453,12 +462,15 @@ def run_scenario(con, spot, signals, expiries, slippage, scenario):
             for did, _, signal, _ in items:
                 for config in STRIKE_CONFIGS:
                     for gap in GAP_THRESHOLDS:
-                        errors.append({"variant": f"{did}|{config}|gap{gap:g}", "status": "incomplete", "reason": "EMPTY_EXPIRY_FRAME"})
+                        vid = f"{did}|{config}|gap{gap:g}"
+                        attempted_by_variant[vid] = attempted_by_variant.get(vid, 0) + 1
+                        errors.append({"variant": vid, "status": "incomplete", "reason": "EMPTY_EXPIRY_FRAME"})
             continue
         for did, definition, signal, exp in items:
             for config in STRIKE_CONFIGS:
                 for gap in GAP_THRESHOLDS:
                     vid = f"{did}|{config}|gap{gap:g}"
+                    attempted_by_variant[vid] = attempted_by_variant.get(vid, 0) + 1
                     try:
                         res = simulate_position(frame, spot_by_day, signal, exp, config, gap, slippage)
                     except Exception as exc:
@@ -470,9 +482,9 @@ def run_scenario(con, spot, signals, expiries, slippage, scenario):
                         errors.append({"variant": vid, "signal_date": signal["date"], "error": res["reason"]})
         del frame
 
-    summary = summarize(rows, errors, scenario)
+    summary = summarize(rows, errors, scenario, attempted_by_variant)
     summary["eligible_signal_definitions"] = len(signals)
-    summary["attempted_positions"] = len(positions) * len(STRIKE_CONFIGS) * len(GAP_THRESHOLDS)
+    summary["attempted_positions"] = int(sum(attempted_by_variant.values()))
     return summary
 
 
