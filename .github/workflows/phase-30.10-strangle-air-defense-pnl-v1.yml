@@ -3,6 +3,8 @@ name: Phase 30.10 - Air Defense Base Stress numerical matrix
 on:
   workflow_dispatch:
   push:
+    branches:
+      - phase-30.10-strangle-air-defense-pnl-v1
     paths:
       - "research/phase30_10_strangle_air_defense_pnl.py"
       - "research/phase30_10_strangle_air_defense_aggregate.py"
