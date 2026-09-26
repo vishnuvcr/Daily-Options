@@ -39,3 +39,10 @@ Mean weekly net >= ₹5,000; median >= ₹5,000; profitable-week rate >=70%; >=2
 
 ## Status
 OPEN — source resolution only.
+
+
+## Closure — 2026-09-26
+
+Phase 30.13 is **SOURCE-BLOCKED / DATA-LIMITED**. The public YouTube page is discoverable, but deterministic Python caption acquisition failed from GitHub Actions: yt-dlp returned YouTube bot verification across web_safari/android/web_embedded/web clients, and YouTubeTranscriptApi returned an IP-blocked/cloud-provider response. No transcript text was accepted as primary evidence.
+
+Therefore no payoff, strike, expiry, entry, adjustment, stop, target or exit rule was invented and **no P&L was calculated**. The candidate remains eligible for future reopening only if a reproducible non-bot primary-evidence acquisition path becomes available.
