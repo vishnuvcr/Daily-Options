@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Phase 30.9 workflow trigger: NSE VIX cache acquisition.
 from __future__ import annotations
 
 import argparse
