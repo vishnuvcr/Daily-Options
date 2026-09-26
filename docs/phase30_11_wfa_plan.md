@@ -12,7 +12,7 @@ The study window is partitioned into 52 complete Monday-Sunday weeks beginning 2
 
 - Fold 1: Train weeks 1-20 (2025-09-01 to 2026-01-18); OOS weeks 21-32 (2026-01-19 to 2026-04-12).
 - Fold 2: Train weeks 9-28 (2025-10-27 to 2026-03-15); OOS weeks 29-40 (2026-03-16 to 2026-06-07).
-- Fold 3: Train weeks 17-36 (2025-12-22 to 2026-05-24); OOS weeks 37-48 (2026-05-25 to 2026-08-16).
+- Fold 3: Train weeks 17-36 (2025-12-22 to 2026-05-10); OOS weeks 37-48 (2026-05-11 to 2026-08-02).
 
 Weeks 49-52 (2026-08-17 to 2026-08-30) plus 2026-08-31 are held in reserve for a subsequent final holdout phase and are not used for selection in Phase 30.11.
 
