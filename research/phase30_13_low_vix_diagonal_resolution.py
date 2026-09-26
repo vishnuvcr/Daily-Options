@@ -68,4 +68,4 @@ def acquire(out):
 
 if __name__=="__main__":
     ap=argparse.ArgumentParser(); ap.add_argument("--out",type=Path,required=True)
-    print(json.dumps(acquire(ap.out),indent=2))
+    args=ap.parse_args(); print(json.dumps(acquire(args.out),indent=2))
