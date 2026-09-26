@@ -4,7 +4,7 @@ import numpy as np
 
 from research.phase31_8_global_overnight_transmission import (
     FEATURES, THRESHOLDS, HORIZONS, NULL_SEEDS,
-    build_signals, data_gate
+    build_signals, data_gate, build_panel
 )
 
 def test_frozen_grid_is_12_cells():
@@ -43,3 +43,26 @@ def test_gate_requires_prior_date_barrier():
     })
     g=data_gate(panel,__import__("pathlib").Path("."))
     assert g["status"]=="FAIL"
+
+
+def test_build_panel_uses_datetime_merge_keys_and_strict_prior_dates():
+    dates = pd.date_range("2026-01-05", periods=4, freq="D")
+    nifty = pd.DataFrame({
+        "date": dates,
+        "time": ["09:30:00"] * 4,
+        "open_px": [25000, 25010, 25020, 25030],
+        "close_px": [25005, 25015, 25025, 25035],
+    })
+    global_data = {
+        "GSPC": pd.DataFrame({"date": dates - pd.Timedelta(days=1), "z": [1.0, 1.1, 1.2, 1.3], "ret": [0, 0, 0, 0]}),
+        "IXIC": pd.DataFrame({"date": dates - pd.Timedelta(days=1), "z": [1.0, 1.1, 1.2, 1.3], "ret": [0, 0, 0, 0]}),
+        "N225": pd.DataFrame({"date": dates - pd.Timedelta(days=1), "z": [1.0, 1.1, 1.2, 1.3], "ret": [0, 0, 0, 0]}),
+        "HSI": pd.DataFrame({"date": dates - pd.Timedelta(days=1), "z": [1.0, 1.1, 1.2, 1.3], "ret": [0, 0, 0, 0]}),
+        "GDAXI": pd.DataFrame({"date": dates - pd.Timedelta(days=1), "z": [1.0, 1.1, 1.2, 1.3], "ret": [0, 0, 0, 0]}),
+        "KS11": pd.DataFrame({"date": dates - pd.Timedelta(days=1), "z": [1.0, 1.1, 1.2, 1.3], "ret": [0, 0, 0, 0]}),
+    }
+    panel = build_panel(global_data, nifty)
+    assert pd.api.types.is_datetime64_any_dtype(panel["date"])
+    assert panel["all_global_available"].all()
+    assert panel["all_prior"].all()
+    assert (panel["prior_date_GSPC"] < panel["date"]).all()
