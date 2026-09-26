@@ -136,6 +136,7 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
       ORDER BY expiry,strike,ts
     """).df()
     if opt.empty: raise RuntimeError("no required option quotes")
+    opt["expiry"]=pd.to_datetime(opt["expiry"]).dt.date
     opt["ts"]=pd.to_datetime(opt.ts)
     if opt["ts"].dt.tz is None: opt["ts"]=opt["ts"].dt.tz_localize("Asia/Kolkata")
     else: opt["ts"]=opt["ts"].dt.tz_convert("Asia/Kolkata")
