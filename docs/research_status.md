@@ -691,3 +691,8 @@ The phase branch has now been corrected to use normalized timestamp-derived exec
 Authoritative run 36250452425 (run 9) failed at pytest collection because the added regression test file contained a literal backslash-n sequence. No data gate, Base, Stress or P&L computation ran. E0393 is logged and the phase branch test file is corrected.
 
 Run 10 will use the corrected Phase 31.7 branch head 0fc95b29fba8558070368bdeb076d793d494e2ab. No Phase 31.7 numerical result has yet been accepted.
+## 2026-09-26 — Phase 31.7 run 10 closure and run 11 preparation
+
+Run 36250549825 (run 10) reached the data gate, Base and Stress, but validation failed before any P&L acceptance. The concurrent branch audit then replaced the execution-price join with explicit per-expiry IST date and strike filters. That revision exposed E0394: strike_sql was referenced before definition in the query f-string. The branch source and regression tests are now corrected.
+
+Run 11 will use the corrected Phase 31.7 branch head 408d8d1cbb1fa5e121d2d2f72f3778432d07fa60. No Phase 31.7 numerical result is accepted yet.
