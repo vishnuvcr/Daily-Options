@@ -680,3 +680,14 @@ Phase 30.12 remains blocked until the WFA aggregate audit is complete.
 The immediately preceding run 36235740035 failed because its checked-out runner still had the pre-correction Fold 3 dates even though the tests had already been updated (E0351). No WFA numerical result from that run is accepted.
 
 The runner is now definitively synchronized with the preregistered Fold 3 dates, and authoritative run **36235817916** is executing the rolling WFA. Current state: **16/24 shard jobs in progress, 8 queued; no accepted WFA survivor yet.**
+
+
+## 2026-09-26 — Phase 30.11 WFA correction synchronization
+
+Before any WFA survivor was accepted, three reproducibility issues were corrected on the Phase 30.11 branch:
+
+- **E0351:** weekly event records now accumulate all events for a cell-week instead of overwriting earlier events.
+- **E0352:** the final holdout reserve interval is documented correctly as **2026-08-03 through 2026-08-30 plus 2026-08-31**; executable fold boundaries remain unchanged.
+- **E0353:** the aggregate auditor now expects **144 leaderboard files / 144 weekly files** from 24 shard artifacts × 3 folds × 2 stages, yielding 103,680 leaderboard rows.
+
+The current clean run is **36236079821**. It is waiting behind the stale pre-E0351 computation **36235898705**, which will not be used for WFA conclusions. No WFA survivor has been accepted.
