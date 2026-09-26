@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 import json
 from pathlib import Path
 import pandas as pd
@@ -10,60 +9,60 @@ MANIFEST=Path("reports/phase30_7_bear_put_interpretation_grid_manifest.json")
 DATA=Path("data/cache/phase30_2_rissin")
 OUT=Path("reports/phase30_7_bear_put_contract_audit.json")
 
-EXPECTED_COLUMNS={"date","expiry","strike","option_type","open","high","low","close","granularity"}
-
-def load_contracts():
-    files=sorted(DATA.glob("NIFTY_*.parquet"))
-    if not files:
-        raise RuntimeError("No cached Rissin NIFTY parquet files found")
-    con=duckdb.connect()
-    q="""
-    SELECT date, expiry, strike, option_type, open, high, low, close, granularity
-    FROM read_parquet(?, union_by_name=true)
-    WHERE granularity='1min'
-    """
-    return con.execute(q,[list(map(str,files))]).df()
+REQUIRED={"date","expiry","strike","option_type","open","high","low","close","granularity"}
 
 def main():
     m=json.loads(MANIFEST.read_text())
     c=json.loads(COVERAGE.read_text())
     defs=[x for x in c["definitions"] if x["signal_weeks"]>=20]
-    checks={}
-    checks["manifest_cell_count"]=m["registered_cell_count"]==6480
-    checks["eligible_definition_count"]=len(defs)==45
-    checks["eligible_week_range"]=sorted({x["signal_weeks"] for x in defs})[0]>=20 and max(x["signal_weeks"] for x in defs)<=53
+    checks={
+        "manifest_cell_count":m["registered_cell_count"]==6480,
+        "eligible_definition_count":len(defs)==45,
+        "eligible_week_range":min(x["signal_weeks"] for x in defs)>=20 and max(x["signal_weeks"] for x in defs)<=53,
+        "grid_arithmetic":45*2*2*3*2*3*2==m["registered_cell_count"],
+    }
+    files=sorted(DATA.glob("NIFTY_*.parquet"))
+    if not files: raise RuntimeError("No cached Rissin NIFTY parquet files found")
+    con=duckdb.connect()
+    file_args=list(map(str,files))
+    desc=con.execute("DESCRIBE SELECT * FROM read_parquet(?, union_by_name=true) LIMIT 0",[file_args]).df()
+    cols=set(desc.column_name.astype(str))
+    checks["required_columns"]=REQUIRED.issubset(cols)
 
-    df=load_contracts()
-    checks["required_columns"]=EXPECTED_COLUMNS.issubset(df.columns)
-    for col in ["date","expiry"]:
-        df[col]=pd.to_datetime(df[col],errors="coerce")
-    for col in ["strike","open","high","low","close"]:
-        df[col]=pd.to_numeric(df[col],errors="coerce")
-    checks["no_invalid_core_rows"]=int(df[["date","expiry","strike","open","high","low","close"]].isna().any(axis=1).sum())==0
-    checks["option_types"]=set(df.option_type.dropna().astype(str).str.upper()).issubset({"CE","PE"})
-    checks["positive_strikes"]=bool((df.strike>0).all())
-    checks["expiry_not_before_quote"]=bool((df.expiry.dt.date >= df.date.dt.date).all())
+    # All subsequent checks are SQL aggregates/distincts: no full option table is materialized.
+    summary=con.execute("""
+      SELECT
+        COUNT(*) AS rows,
+        COUNT(DISTINCT CAST(date AS DATE)) AS quote_dates,
+        COUNT(DISTINCT CAST(expiry AS DATE)) AS expiries,
+        COUNT(DISTINCT strike) AS strikes,
+        SUM(CASE WHEN date IS NULL OR expiry IS NULL OR strike IS NULL OR open IS NULL OR high IS NULL OR low IS NULL OR close IS NULL THEN 1 ELSE 0 END) AS invalid_core,
+        SUM(CASE WHEN strike <= 0 THEN 1 ELSE 0 END) AS bad_strikes,
+        SUM(CASE WHEN UPPER(CAST(option_type AS VARCHAR)) NOT IN ('CE','PE') THEN 1 ELSE 0 END) AS bad_option_types,
+        SUM(CASE WHEN CAST(expiry AS DATE) < CAST(date AS DATE) THEN 1 ELSE 0 END) AS expiry_before_quote
+      FROM read_parquet(?, union_by_name=true)
+      WHERE granularity='1min'
+    """,[file_args]).fetchone()
+    rows,quote_dates,expiries,strikes,invalid_core,bad_strikes,bad_types,bad_expiry=summary
+    checks["no_invalid_core_rows"]=int(invalid_core)==0
+    checks["option_types"]=int(bad_types)==0
+    checks["positive_strikes"]=int(bad_strikes)==0
+    checks["expiry_not_before_quote"]=int(bad_expiry)==0
 
-    # Weekly-expiry geometry: every candidate signal must have >=2 listed weekly expiries
-    # after the signal date in the option cache; the numerical engine will select the first/second.
     sig_dates=sorted({s["signal_ts"][:10] for d in defs for s in d["signals"]})
-    sig_ts=pd.to_datetime(sig_dates)
-    exp_dates=sorted(pd.to_datetime(df.expiry.dropna().dt.date.unique()))
-    enough=sum(sum(e.date() > d.date() for e in exp_dates)>=2 for d in sig_ts)
-    checks["signals_with_two_future_expiries"]=enough==len(sig_ts)
+    exp_dates=[x[0] for x in con.execute(
+        "SELECT DISTINCT CAST(expiry AS DATE) FROM read_parquet(?, union_by_name=true) WHERE granularity='1min' ORDER BY 1",[file_args]).fetchall()]
+    enough=sum(sum(e > pd.Timestamp(d).date() for e in exp_dates)>=2 for d in sig_dates)
+    checks["signals_with_two_future_expiries"]=enough==len(sig_dates)
 
-    # Strike geometry: consecutive 50-point strikes must exist on at least one future expiry.
-    strikes=set(df.strike.dropna().astype(float).unique())
-    consecutive_ok=sum((s+50 in strikes and s-50 in strikes) for s in strikes if s>=0)
-    checks["strike_grid_has_50pt_neighbors"]=consecutive_ok>0
+    strikes_list=[float(x[0]) for x in con.execute(
+        "SELECT DISTINCT strike FROM read_parquet(?, union_by_name=true) WHERE granularity='1min' AND strike IS NOT NULL",[file_args]).fetchall()]
+    sset=set(strikes_list)
+    checks["strike_grid_has_50pt_neighbors"]=any((s+50 in sset and s-50 in sset) for s in sset)
 
-    # Historical lot schedule frozen from NSE transition used by the research plan.
-    lot_test_dates=pd.to_datetime(["2025-12-30","2026-01-06"])
-    lot_sizes=[75 if lot_test_dates[0].date() <= pd.Timestamp("2025-12-30").date() else 65,
-               65 if lot_test_dates[1].date() >= pd.Timestamp("2026-01-06").date() else 75]
-    checks["lot_schedule"]=lot_sizes==[75,65]
+    checks["lot_schedule"]= [75,65]==[75 if pd.Timestamp("2025-12-30").date()<=pd.Timestamp("2025-12-30").date() else 65,
+                                  65 if pd.Timestamp("2026-01-06").date()>=pd.Timestamp("2026-01-06").date() else 75]
 
-    # Execution invariant audit is represented as explicit machine-checkable assertions.
     execution_rules={
         "signal_to_entry":"next_available_minute",
         "adjustment_to_fill":"next_available_minute",
@@ -79,29 +78,18 @@ def main():
         and execution_rules["adjustment_to_fill"]=="next_available_minute"
         and execution_rules["info_barrier"]=="no_future_data"
     )
-
-    # Grid arithmetic audit: 45*2*2*3*2*3*2.
-    checks["grid_arithmetic"]=45*2*2*3*2*3*2==m["registered_cell_count"]
     passed=all(checks.values())
     result={
-        "phase":"30.7",
-        "pnl_authorized":False,
-        "audit_passed":passed,
-        "checks":checks,
-        "cache_files":[str(x) for x in sorted(DATA.glob("NIFTY_*.parquet"))],
-        "cache_rows":int(len(df)),
-        "unique_quote_dates":int(df.date.dt.date.nunique()),
-        "unique_expiries":int(df.expiry.dt.date.nunique()),
-        "unique_strikes":int(df.strike.nunique()),
-        "unique_signals":len(sig_dates),
-        "registered_cell_count":m["registered_cell_count"],
+        "phase":"30.7","pnl_authorized":False,"audit_passed":passed,"checks":checks,
+        "cache_files":[str(x) for x in files],
+        "cache_rows":int(rows),"unique_quote_dates":int(quote_dates),
+        "unique_expiries":int(expiries),"unique_strikes":int(strikes),
+        "unique_signals":len(sig_dates),"registered_cell_count":m["registered_cell_count"],
         "execution_rules":execution_rules
     }
     OUT.parent.mkdir(parents=True,exist_ok=True)
     OUT.write_text(json.dumps(result,indent=2,default=str)+"\n")
     print(json.dumps(result,indent=2,default=str))
-    if not passed:
-        raise SystemExit("Phase 30.7 contract audit failed; P&L remains unauthorized.")
+    if not passed: raise SystemExit("Phase 30.7 contract audit failed; P&L remains unauthorized.")
 
-if __name__=="__main__":
-    main()
+if __name__=="__main__": main()
