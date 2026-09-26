@@ -193,3 +193,8 @@ Run 36252561747 passed unit tests and the global gate, then stopped in Base disc
 ## 2026-09-26 — Phase 31.8 run 7 test-fixture correction
  
 Run 36252692972 failed before data acquisition because the newly added expiry regression expected string labels while `attach_expiry` intentionally returns date keys. E0405 closes the test-only mismatch. No research computation ran.
+
+ 
+## 2026-09-26 — Phase 31.8 run 8 traceback and correction
+ 
+Run 36252808290 passed tests and gate, then stopped in Base price loading with `KeyError: ['exit_ts'] not in index`. E0406 records the defect. The loader has been corrected to rely only on the existing `date`, `atm`, `expiry` and `horizon` inputs; a regression test covers the column contract.
