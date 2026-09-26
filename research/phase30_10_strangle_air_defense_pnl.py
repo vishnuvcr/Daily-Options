@@ -589,7 +589,7 @@ def main() -> None:
                 st["cap"].append(float(res["capital_proxy"]))
 
     rows = []
-    full_keys = list(itertools.product(base_specs, TRIGGERS, ACTIONS, RISKS))
+    full_keys = list(itertools.product(shard_specs, TRIGGERS, ACTIONS, RISKS))
     # Above creates tuples like ((day,time,expiry,method),trigger,action,risk).
     for base_key, trig, action, risk in full_keys:
         key = tuple(base_key) + (trig, action, risk)
@@ -653,7 +653,7 @@ def main() -> None:
     }
     (out / "diagnostics.json").write_text(json.dumps(diagnostics, indent=2, default=str))
     summary = {
-        "registered_cells_per_regime": len(base_specs) * len(TRIGGERS) * len(ACTIONS) * len(RISKS),
+        "registered_cells_total": len(base_specs) * len(TRIGGERS) * len(ACTIONS) * len(RISKS),
         "tested_cells_in_shard": int(len(lb)),
         "passed_gate_in_shard": int(lb["gate"].sum()),
         "best_cell": lb.iloc[0].to_dict() if len(lb) else {},
