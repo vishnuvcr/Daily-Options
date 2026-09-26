@@ -155,3 +155,7 @@ Run 36250549825 (run 10) completed Base and Stress but validation again failed b
 ## 2026-09-26 — Phase 31.7 run 11 closure / diagnostic probe
 
 Run 36250863176 was quarantined after the validation friction-field assertion failed again. The latest branch lineage also contains a raw execution-row probe and strike-filter initialization correction. The authoritative launcher is being instrumented with that probe before the next rerun, so the remaining zero-coverage path can be localized without changing the preregistered strategy grid or cost model.
+
+## 2026-09-26 — Phase 31.7 run 12 diagnosis and run 13 preparation
+
+Run 36251100372 was quarantined after validation found zero executable trades, despite the raw execution-row probe confirming valid 09:31/15:10 source rows. Repository audit localized the remaining coverage failure to expiry-file selection: feature expiry values had been pandas-coerced while expiry map keys were Python dates. The branch now converts expiry to a dedicated Python-date key before file selection and includes a regression test. The launcher persistence step was also hardened against non-fast-forward branch races. No P&L result from run 12 is accepted.
