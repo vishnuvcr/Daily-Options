@@ -441,3 +441,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0350 | 2026-09-26 | Phase 30.11 WFA fold validation | Initial WFA workflow push used a test asserting every fold training window was exactly 140 calendar days; the deliberately revised third fold ended 2026-05-10 and the test still expected 2026-05-24 | No WFA numerical result was accepted from the failed jobs | Corrected Fold 3 to a 20-week training window (2025-12-22 to 2026-05-10) followed by 12 OOS weeks (2026-05-11 to 2026-08-02), synchronized the test and preregistration, and isolated the Phase 30.10 workflow trigger on its own branch | CLOSED — corrected run active |
+
+
+| E0351 | 2026-09-26 | Phase 30.11 runner synchronization | Run 36235740035 executed from an intermediate commit where the WFA runner still contained the old Fold 3 dates, while the test had already been corrected; this produced 19 fold-test failures before the definitive runner correction | No WFA numerical result accepted from that run | Corrected the runner itself to Fold 3 train 2025-12-22..2026-05-10 and OOS 2026-05-11..2026-08-02; the new authoritative run is 36235817916 | CLOSED — corrected run active |
