@@ -1,0 +1,120 @@
+name: Phase 30.7 - Bear Put full Base Stress matrix
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "research/phase30_7_bear_put_pnl.py"
+      - ".github/workflows/phase-30.7-bear-put-pnl.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase30-7-bear-put-pnl
+  cancel-in-progress: false
+
+jobs:
+  matrix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-30.7-bear-put-contract-interpretation-grid-v1
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install runtime
+        run: python -m pip install --disable-pip-version-check pandas duckdb pyarrow
+
+      - name: Restore pinned option cache
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase30_2_rissin
+          key: phase30-2-rissin-nifty-runtime-resolved-v1
+
+      - name: Acquire pinned option cache on cache miss
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase30_2_rissin
+          python - <<'PY'
+          from pathlib import Path
+          from huggingface_hub import hf_hub_download
+          repo_id="rissin/nse-options-intraday"
+          revision="78b1c5468255d18cf492984bfe6fe4e3ac874d7c"
+          out=Path("data/cache/phase30_2_rissin")
+          for year in ("2025","2026"):
+              target=out/f"NIFTY_{year}.parquet"
+              if not target.exists():
+                  p=Path(hf_hub_download(repo_id=repo_id,filename=f"upstox_intraday/NIFTY/NIFTY_{year}.parquet",
+                                          repo_type="dataset",revision=revision,local_dir=str(out)))
+                  if p != target: p.replace(target)
+          PY
+
+      - name: Restore pinned spot cache
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase30_5_nifty_spot
+          key: phase30-5-nifty-spot-2025-2026-pinned-v1
+
+      - name: Acquire pinned spot cache on cache miss
+        run: |
+          set -euo pipefail
+          if ! find data/cache/phase30_5_nifty_spot -type f -name "*.csv" -print -quit | grep -q .; then
+            git clone --depth 1 https://github.com/technovusin/nifty50-historical-data external/nifty50-historical-data
+            mkdir -p data/cache/phase30_5_nifty_spot
+            find external/nifty50-historical-data/1min/2025 external/nifty50-historical-data/1min/2026 -type f -name "*.csv" -print0 |
+              while IFS= read -r -d "" f; do cp "$f" "data/cache/phase30_5_nifty_spot/$(basename "$f")"; done
+          fi
+
+      - name: Verify contract audit
+        run: |
+          test -s reports/phase30_7_bear_put_contract_audit.json
+          python - <<'PY'
+          import json
+          x=json.load(open("reports/phase30_7_bear_put_contract_audit.json"))
+          assert x["audit_passed"] is True
+          PY
+
+      - name: Smoke Base
+        run: |
+          PYTHONPATH=. python research/phase30_7_bear_put_pnl.py             --data-root data/cache/phase30_2_rissin --spot-root data/cache/phase30_5_nifty_spot             --out-root reports/phase30_7_smoke_base --smoke --slippage 0.20
+
+      - name: Smoke Stress
+        run: |
+          PYTHONPATH=. python research/phase30_7_bear_put_pnl.py             --data-root data/cache/phase30_2_rissin --spot-root data/cache/phase30_5_nifty_spot             --out-root reports/phase30_7_smoke_stress --smoke --slippage 0.40
+
+      - name: Full Base matrix
+        run: |
+          PYTHONPATH=. python research/phase30_7_bear_put_pnl.py             --data-root data/cache/phase30_2_rissin --spot-root data/cache/phase30_5_nifty_spot             --out-root reports/phase30_7_base --slippage 0.20
+
+      - name: Full Stress matrix
+        run: |
+          PYTHONPATH=. python research/phase30_7_bear_put_pnl.py             --data-root data/cache/phase30_2_rissin --spot-root data/cache/phase30_5_nifty_spot             --out-root reports/phase30_7_stress --slippage 0.40
+
+      - name: Persist reports
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f reports/phase30_7_smoke_base reports/phase30_7_smoke_stress reports/phase30_7_base reports/phase30_7_stress
+          if ! git diff --cached --quiet; then
+            git commit -m "Phase 30.7: persist Bear Put Base Stress matrix results"
+            git push origin HEAD:phase-30.7-bear-put-contract-interpretation-grid-v1
+          fi
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase30-7-bear-put-base-stress-results
+          path: |
+            reports/phase30_7_smoke_base
+            reports/phase30_7_smoke_stress
+            reports/phase30_7_base
+            reports/phase30_7_stress
