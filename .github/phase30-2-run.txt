@@ -1,2 +1,1 @@
-Phase 30.2 timestamp-normalization correction rerun 2026-09-26
-# Trigger after E0318 SQL alias correction
+Phase 30.2 pinned-source rerun 78b1c546
