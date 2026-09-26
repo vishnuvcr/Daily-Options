@@ -453,3 +453,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0354 | 2026-09-26 | Phase 30.11 execution topology | The first WFA topology packed all three folds into one shard job, leaving one cancellation-resistant long-running job while newer corrected runs waited behind the concurrency group | No WFA survivor was accepted; the run is not authoritative | Registered WFA v2 as **72 independent jobs**: 12 definition shards × 2 regimes × 3 folds, each producing one train/OOS pair; aggregate remains a 144-file/103,680-row hard audit | OPEN — v2 execution |
+
+
+| E0355 | 2026-09-26 | Phase 30.11 WFA v2 engine | The v2 split-fold workflow exposed that the checked-in WFA engine still lacked the `global START, END` declaration before CLI defaults, causing `UnboundLocalError` in the first v2 numerical jobs | No WFA result accepted from v2 run 36236194154 | Restored the declaration at the start of `main()`; next v2 run is the first accepted numerical attempt after this correction | CLOSED — rerun pending |
