@@ -1,0 +1,8 @@
+{
+  "repo": "rissin/nse-options-intraday",
+  "revision": "8f7739cab3f38abdcbc6332a6d0a83e1341326e3",
+  "files": [
+    "NIFTY_2025.parquet",
+    "NIFTY_2026.parquet"
+  ]
+}
