@@ -582,3 +582,8 @@ The next authoritative run will be run 11 from branch head 408d8d1cbb1fa5e121d2d
 Run 36250863176 reached Base and Stress but failed validation before any numerical result was accepted. The current branch includes a raw execution-row probe and the launcher now records it after the data gate to localize the remaining execution-price coverage defect.
 
 The next authoritative run will be run 12 from branch head a73da3a7f29668b32f81fe1612b6ef31c40492a8. The probe is diagnostic only; the preregistered grid and cost model remain frozen.
+## 2026-09-26 — Phase 31.7 run 12 closure
+
+Run 36251100372 reached the full numerical stages and diagnostic probes, but validation failed because no executable trades were mapped. The raw probe confirmed valid 09:31/15:10 rows; the remaining issue was expiry-key type matching in the execution loader. The branch has been corrected with a Python-date `expiry_key` and regression test, and report persistence has been hardened against branch races.
+
+The next authoritative run is **run 13** from phase branch head **305fb81b6b4c48c01f713a9f8b57421af14145fc**. No Phase 31.7 numerical result is accepted yet.
