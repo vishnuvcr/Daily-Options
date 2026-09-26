@@ -70,3 +70,8 @@ Paytm Money's flat ₹20 pricing is documented by Paytm Money's December 2024 pr
 - **DATA/ENGINE BLOCKED:** any fold/regime cannot complete with audited 720-cell coverage.
 
 A WFA PASS advances only the surviving frozen cells to Phase 30.12 final reserve holdout testing. No parameter tuning is permitted between folds.
+
+
+## Artifact-audit invariant
+
+Each WFA shard is a single regime artifact containing **3 folds × 2 stages = 6 leaderboards + 6 weekly files**. With 12 definition shards × 2 regimes, the complete run therefore produces **144 leaderboard files and 144 weekly files**, covering **144 × 720 = 103,680 leaderboard rows**. The aggregate workflow must audit these counts before any survivor is accepted.
