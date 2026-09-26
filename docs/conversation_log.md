@@ -142,3 +142,8 @@ Authoritative run **36218652778** completed Base and Stress successfully at the 
 The simulator is corrected to normalize both timezone-aware (+05:30) and timezone-naive IST representations to the same naive Asia/Kolkata minute timestamp. A dedicated regression test now verifies both forms map to 09:30 IST. Economic rules, 270-cell grid, source, cost model and promotion gate are unchanged.
 
 Status: **OPEN — deterministic rerun required**
+
+
+### 2026-09-26 — Falcon E0320 correction
+
+On resumption, workflow 36219733330 was checked rather than treated as a strategy result. Both Base and Stress failed the timestamp-normalization regression because the offset-detection regex was over-escaped, so `+05:30` values were not classified as timezone-aware. The code was corrected in commit `edfd1608fa31ac8ee4d70c09e2a3ab1ce9303aae`, E0320 was logged as closed, and the push-triggered Falcon workflow 36220039329 was queued for the deterministic rerun. No economic rule, frozen cell, cost assumption or promotion gate changed.
