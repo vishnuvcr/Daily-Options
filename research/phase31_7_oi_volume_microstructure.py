@@ -121,6 +121,10 @@ def load_prices(con, expiry_map, features):
         dates=sorted(pd.to_datetime(active.trade_date).dt.date.unique().tolist())
         date_sql=",".join(f"DATE '{d}'" for d in dates)
         p=str(path).replace("'","''")
+        strikes=sorted(set(float(x) for x in active.atm.tolist()) |
+                       set(float(x)+WING for x in active.atm.tolist()) |
+                       set(float(x)-WING for x in active.atm.tolist()))
+        strike_sql=",".join(str(x) for x in strikes)
         q=f"""
             WITH src AS (
                 SELECT
@@ -150,11 +154,6 @@ def load_prices(con, expiry_map, features):
               AND ((s.time_str='09:31:00' AND s.open_px>0)
                 OR (s.time_str='15:10:00' AND s.close_px>0))
         """
-        strikes=sorted(set(float(x) for x in active.atm.tolist()) |
-                       set(float(x)+WING for x in active.atm.tolist()) |
-                       set(float(x)-WING for x in active.atm.tolist()))
-        strike_sql=",".join(str(x) for x in strikes)
-        q=q.format(strike_sql=strike_sql)
         z=con.execute(q).df()
         if z.empty:
             continue
