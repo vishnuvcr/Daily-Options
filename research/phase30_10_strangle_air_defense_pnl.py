@@ -587,12 +587,16 @@ def main() -> None:
             if res.get("eligible"):
                 st["trades"] += 1
                 st["weeks"][r.week] = st["weeks"].get(r.week, 0.0) + float(res["net_pnl"])
-                st["week_detail"][r.week] = {
-                    "net_pnl": float(res["net_pnl"]),
-                    "gross_pnl": float(res["gross_pnl"]),
-                    "cost": float(res["cost"]),
-                    "capital_proxy": float(res["capital_proxy"]),
-                }
+                wd = st["week_detail"].setdefault(r.week, {
+                    "net_pnl": 0.0,
+                    "gross_pnl": 0.0,
+                    "cost": 0.0,
+                    "capital_proxy": 0.0,
+                })
+                wd["net_pnl"] += float(res["net_pnl"])
+                wd["gross_pnl"] += float(res["gross_pnl"])
+                wd["cost"] += float(res["cost"])
+                wd["capital_proxy"] = max(wd["capital_proxy"], float(res["capital_proxy"]))
                 st["gross"] += float(res["gross_pnl"])
                 st["net"] += float(res["net_pnl"])
                 st["cost"] += float(res["cost"])
