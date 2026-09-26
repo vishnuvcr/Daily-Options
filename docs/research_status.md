@@ -762,3 +762,10 @@ The branch now normalizes the NIFTY trade date to Python `date` before selecting
 Run **36252692972** stopped at a regression-test fixture after the E0404 engine fix. E0405 is closed; no data acquisition or P&L ran. The corrected expiry regression now asserts the actual Python-date expiry keys.
  
 Next authoritative run: **Phase 31.8 run 8** from branch head `5b933104ca2551d0890d71f1541c199b9087d151`.
+
+ 
+## 2026-09-26 — Phase 31.8 run 8 closure / run 9 frontier
+ 
+Run **36252808290** passed the corrected tests and global gate but failed in Base price loading on a stale `exit_ts` column reference. E0406 is logged; no P&L is accepted.
+ 
+Next authoritative run: **Phase 31.8 run 9** from branch head `7094f73d35fa0c5644dc4e0ec98b40fd2283712f`.
