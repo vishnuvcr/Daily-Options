@@ -420,3 +420,12 @@ The next distinct Equity Income family is the source-resolved **Air Defense / In
 ### Phase 30.1 — Air Defense active frontier
 
 The Iron Dome family is retired after the complete v8 Base+Stress audit. Phase 30.1 now tests the **Air Defense / India-VIX expected-range weekly short-strangle** family on `phase-30.1-equity-income-air-defense-v1`. The source evidence is Python-acquired and hashed; the 24-cell numerical grid is frozen before execution. [Phase 30.1 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.1-equity-income-air-defense-v1/docs/phase30_1_air_defense_plan.md)
+
+### Phase 30.2 — Falcon runtime correction — 2026-09-26
+
+The initial corrected Falcon implementation was quarantined after authoritative run **36213335815** left both Base and Stress in the friction computation for more than six hours. No P&L from that run is accepted. The runtime audit found repeated full-file Parquet scans for exact leg/strike series and setup-level cache growth.
+
+A dedicated runtime-fix branch **`phase-30.2-falcon-runtime-fix-v1`** preserves the frozen 270-cell source-faithful grid while changing only execution architecture: each near/far exact-expiry slice is loaded once per calendar window; snapshot/strike/series selection is performed in memory; calendars are processed one at a time; caches are released explicitly; and Base/Stress jobs are serialized for safe persistence. The next workflow run is the authoritative Falcon numerical checkpoint.
+
+[Phase 30.2 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.2-falcon-runtime-fix-v1/docs/phase30_2_falcon_weekly_plan.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.2-falcon-runtime-fix-v1/docs/error_log.md) · [Research status](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.2-falcon-runtime-fix-v1/docs/research_status.md)
+
