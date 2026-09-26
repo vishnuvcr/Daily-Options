@@ -495,3 +495,15 @@ Phase 30.8 is now active on `phase-30.8-equity-income-no-more-straddles-source-r
 The phase is **P&L blocked** pending resolution of the exact payoff structure, strike construction, entry/expiry timing, adjustment logic, stop, target, exit and capital convention.
 
 [Phase 30.8 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.8-equity-income-no-more-straddles-source-resolution-v1/docs/phase30_8_plan.md) · [Phase 30.8 deterministic extractor](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.8-equity-income-no-more-straddles-source-resolution-v1/research/phase30_8_no_more_straddles_resolution.py) · [Phase 30.8 source checkpoint](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.8-equity-income-no-more-straddles-source-resolution-v1/reports/phase30_8_no_more_straddles_source_resolution.json) · [Phase 30.8 workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.8-equity-income-no-more-straddles-source-resolution-v1/.github/workflows/phase-30.8-equity-income-no-more-straddles-source-resolution-v1.yml)
+
+
+## 2026-09-26 — Phase 30.11 correction checkpoint
+
+The Air Defense full-grid Phase 30.10 result is discovery-only: **31/720 cells passed both Base and Stress**.
+
+Phase 30.11 WFA is now running the full frozen grid across three rolling train/OOS folds. Before accepting any WFA result, E0351/E0352/E0353 were corrected:
+- weekly cell-week events accumulate rather than overwrite;
+- the final holdout calendar is documented as 2026-08-03 through 2026-08-30 plus 2026-08-31;
+- WFA aggregation expects 144 leaderboard/weekly files from 24 artifacts × 3 folds × 2 stages.
+
+Clean run: **36236079821**. The prior stale run is not research-authoritative.
