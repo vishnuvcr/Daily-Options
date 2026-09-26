@@ -755,3 +755,10 @@ Next authoritative run: **Phase 31.8 run 6** from branch head `491644ec70ab9c5d6
 Run **36252561747** passed the corrected unit tests and global gate, then failed at Base-stage expiry attachment with a Timestamp-vs-date comparison. E0404 is logged; Stress/Validate were skipped and no P&L is accepted.
  
 The branch now normalizes the NIFTY trade date to Python `date` before selecting the nearest expiry and has a regression test. Next authoritative run: **Phase 31.8 run 7** from branch head `2c04627733afb93d4bf0c08670b0da035e942874`.
+
+ 
+## 2026-09-26 — Phase 31.8 run 7 closure / run 8 frontier
+ 
+Run **36252692972** stopped at a regression-test fixture after the E0404 engine fix. E0405 is closed; no data acquisition or P&L ran. The corrected expiry regression now asserts the actual Python-date expiry keys.
+ 
+Next authoritative run: **Phase 31.8 run 8** from branch head `5b933104ca2551d0890d71f1541c199b9087d151`.
