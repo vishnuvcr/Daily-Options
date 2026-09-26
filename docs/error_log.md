@@ -435,3 +435,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0348 | 2026-09-26 | Phase 30.10 strike-key normalization | Corrected run 36234923838 passed unit tests but some shards reached the engine with zero event definitions because DuckDB expiry keys (timestamps) did not match Python date keys used by the strike map | No numerical results accepted from those shards | Normalize the cached strike table expiry column to Python dates before building the strike map; rerun the frozen matrix | CLOSED — rerun pending |
+
+
+| E0349 | 2026-09-26 | Phase 30.10 shard/aggregate accounting | Corrected run 36234986788 executed all shard engines successfully, but each shard accidentally emitted the full 720-cell matrix instead of its assigned shard slice; the aggregate auditor also expected regime as a separate path component | No aggregate result was accepted; shard artifacts are retained only as diagnostic evidence | Restrict each shard output to its own definition slice (64 cells, final shard 16) and detect regime from the artifact directory name; rerun the complete 1,440-cell matrix | CLOSED — rerun required |
