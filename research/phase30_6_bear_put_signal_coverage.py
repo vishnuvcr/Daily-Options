@@ -31,13 +31,16 @@ def scan_day(day, grp, lookback, touch, kind, threshold):
     n=len(grp)
     if n<=lookback:
         return None
-    windows=np.lib.stride_tricks.sliding_window_view(high,lookback)
+    # Each trigger bar i=lookback..n-1 uses only the preceding
+    # lookback bars i-lookback..i-1. sliding_window_view creates one
+    # extra window ending at the final bar, so drop that extra window.
+    windows=np.lib.stride_tricks.sliding_window_view(high,lookback)[:-1]
     resistance=windows.max(axis=1)
     touch_count=(windows >= resistance[:,None]*(1-touch)).sum(axis=1)
     candidate=np.flatnonzero(touch_count>=2)
     if candidate.size==0:
         return None
-    # candidate k corresponds to the bar at index k+lookback
+    # candidate k corresponds to the trigger bar at index k+lookback.
     if kind=="crack":
         cond=cl[lookback:] <= resistance*(1-threshold)
     else:
