@@ -645,3 +645,14 @@ A manual GitHub Actions workflow and deterministic Python evidence extractor are
 Automated run **36233937116** failed at the test gate because the new branch did not carry the two Python-generated transcript-evidence JSONL inputs. No source conclusion was accepted from that run.
 
 The evidence files have now been copied into the Phase 30.8 branch as pinned research inputs. The deterministic extractor and tests remain unchanged in their source logic; a clean rerun is being triggered.
+
+
+## 2026-09-26 — Phase 30.8 source-resolution closure
+
+Run **36234096126** completed successfully: deterministic tests passed, the source report was built, and the report artifact was uploaded.
+
+Result: **SOURCE-BLOCKED / DATA-LIMITED — P&L not authorized.**
+
+The pinned evidence still contains a strike conflict (ATM versus one-strike) plus unresolved exact payoff structure, entry timing, expiry, adjustment timing, stop, target, exit and capital convention. No numerical result is accepted for this candidate.
+
+The next frontier is a separate Phase 30.9 source-fidelity reconstruction of the Air Defense / VIX expected-range candidate, which has materially richer source-explicit fields and a public YouTube description corroborating its use of VIX, sigma ranges, short strangles/iron condors and adjustments.
