@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: \${{ github.head_ref || github.ref_name }}
+          ref: ${{ github.head_ref || github.ref_name }}
           fetch-depth: 0
       - uses: actions/setup-python@v6
         with:
@@ -93,7 +93,7 @@ jobs:
           git add -f reports/phase31_2
           if ! git diff --cached --quiet; then
             git commit -m "Phase 31.2: persist forensic audit result"
-            git push origin HEAD:"\${GITHUB_HEAD_REF:-\${GITHUB_REF_NAME}}"
+            git push origin HEAD:"${GITHUB_HEAD_REF:-\${GITHUB_REF_NAME}}"
           fi
       - name: Upload audit artifact
         if: always()
