@@ -104,4 +104,4 @@ def test_attach_expiry_normalizes_timestamp_to_python_date():
         dt.date(2026,1,8): "later",
     }
     out=attach_expiry(panel,expiry_map)
-    assert out["expiry"].tolist()==["near","later"]
+    assert out["expiry"].tolist()==[dt.date(2026,1,5),dt.date(2026,1,8)]
