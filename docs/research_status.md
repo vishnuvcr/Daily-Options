@@ -734,3 +734,10 @@ The corrected branch now passes the full NIFTY index frame and has a regression 
 Run **36252203841** reached the no-lookahead panel but failed on a pandas datetime-unit mismatch in `merge_asof` (microseconds vs nanoseconds). E0401 is logged. The corrected branch now forces both merge keys to datetime64[ns] inside `build_panel` and covers the case with a regression test.
  
 Next authoritative run: **Phase 31.8 run 4** from branch head `902098ba07db15388a99d32a0c5b5b74f038b3ad`.
+
+ 
+## 2026-09-26 — Phase 31.8 run 4 closure / run 5 frontier
+ 
+Run **36252301406** correctly skipped numerical discovery because its 95% coverage gate counted 64 deterministic pre-lookback sessions, yielding 94.788%. The phase plan now explicitly excludes only this required warm-up from the coverage denominator while retaining the full raw session count and strict prior-date barrier.
+ 
+Next authoritative run: **Phase 31.8 run 5** from branch head `0963392cb7f1a9b73ec2e02e1bb66277f97f54bd`.
