@@ -144,7 +144,7 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
     spot_idx=spot.set_index("Timestamp")
     daily=spot.assign(day=spot.Timestamp.dt.date).groupby("day",sort=True).first()[["Open"]]
     spot_by_ts=spot.set_index("Timestamp")["Close"]
-    all_weeks=pd.period_range(pd.Timestamp(START),pd.Timestamp(END),freq="W-MON")
+    all_days=pd.date_range(pd.Timestamp(START),pd.Timestamp(END),freq="D"); all_weeks=sorted({f"{int(x.isocalendar().year)}-W{int(x.isocalendar().week):02d}" for x in all_days})
     results=[]; edge=0
     def first_gap(date,res,gap,expiry):
         for d,rr in daily.loc[daily.index>date].iterrows():
@@ -216,7 +216,7 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
                                 target_ts=rr.ts+pd.Timedelta(minutes=1); break
                         gross=sum((-1 if o["side"]>0 else 1)*o["price"]*o["qty"] for o in orders)
                         net=gross-cost(orders,slip)
-                        week=str(pd.Timestamp(r.signal_date).to_period("W-MON"))
+                        iso=pd.Timestamp(r.signal_date).isocalendar(); week=f"{int(iso.year)}-W{int(iso.week):02d}"
                         # Capital proxy: debit + 2% ELM on short notional, 3% for >10% OTM short.
                         cap=D*lot
                         spot0=float(r.spot)
@@ -232,9 +232,12 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
     tr.to_csv(out/"trades.csv",index=False)
     keys=["definition","expiry_choice","strike_choice","gap","wait","risk","time_exit"]
     rows=[]
+    expected_by_cell={}
+    for k,g0 in tradespec.assign(gap=0,wait=0,risk=RISKS[0],time_exit=TIME_EXITS[0]).groupby(["definition","expiry_choice","strike_choice","gap","wait","risk","time_exit"]):
+        expected_by_cell[k]=len(g0)
     for k,g in tr.groupby(keys,sort=False):
         weeks=g.groupby("week").net_pnl.sum()
-        allw=pd.Series(0.0,index=[str(x) for x in all_weeks])
+        allw=pd.Series(0.0,index=all_weeks)
         allw.loc[weeks.index]=weeks.values
         eq=allw.cumsum(); dd=eq-eq.cummax()
         grosspos=g.loc[g.net_pnl>0,"net_pnl"].sum(); grossneg=-g.loc[g.net_pnl<0,"net_pnl"].sum()
@@ -243,7 +246,7 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
             mean_weekly_net=float(allw.mean()),median_weekly_net=float(allw.median()),
             profitable_week_rate=float((allw>0).mean()),profit_factor=float(grosspos/grossneg) if grossneg else math.inf,
             max_drawdown=float(dd.min()),weekly_q05=q05,weekly_es05=es,
-            execution_coverage=float(len(g)/max(1,len(g))),avg_capital_proxy=float(g.capital_proxy.mean()),
+            execution_coverage=float(len(g)/max(1,expected_by_cell.get(k,1))),avg_capital_proxy=float(g.capital_proxy.mean()),
             peak_capital_proxy=float(g.capital_proxy.max()),gross_pnl=float(g.gross_pnl.sum()),
             net_pnl=float(g.net_pnl.sum()),cost_share=float(1-g.net_pnl.sum()/g.gross_pnl.sum()) if g.gross_pnl.sum() else 0.0,
             gate=bool(allw.mean()>=5000 and allw.median()>=5000 and (allw>0).mean()>=0.70 and g.week.nunique()>=20)))
