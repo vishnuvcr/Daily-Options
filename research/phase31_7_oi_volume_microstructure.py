@@ -109,7 +109,7 @@ def option_feature_rows(con, expiry_map, days_df):
 
 def load_prices(con, expiry_map, features):
     prices={}
-    wanted=features[["day","bucket","expiry","atm","entry_ts","exit_ts"]].drop_duplicates()
+    wanted=features[["day","bucket","expiry","atm","entry_ts","exit_ts"]].drop_duplicates().rename(columns={"day":"trade_date"})
     for expiry,path in sorted(expiry_map.items()):
         active=wanted[wanted.expiry==expiry]
         if active.empty: continue
