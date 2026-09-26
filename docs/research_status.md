@@ -795,3 +795,12 @@ Run **36252692972** stopped in unit tests after the engine correction. Seven tes
 Run **36252808290** passed all eight regression tests and the corrected global gate, then failed in Base discovery because `load_prices` attempted to select an `exit_ts` column that `build_signals` does not create. The frozen horizon field already determines the exit timestamp through `HORIZON_TIMES`. No P&L is accepted from run 8.
  
 E0406 is logged. The unused column selection is removed and a regression test now enforces the price-loader input contract.
+
+ 
+## 2026-09-26 — Phase 31.8 CLOSED
+ 
+Authoritative run **36252922418 (run 9)** completed unit tests, six-market acquisition, the corrected data gate, Base, Stress, validation, report persistence and artifact upload successfully.
+ 
+Final discovery outcome: **0/12 cells passed the ₹5,000/week promotion gate in Base and 0/12 in Stress**. The strongest cell was ASIA_LEAD, z=1.00, 09:31→10:30: ₹107.37/week Base and ₹37.13/week Stress, 45.45% positive weeks, negative medians in both regimes. The same cell beat all five registered null-control mean weekly results in both frictions, but its absolute economics were far below the promotion target.
+ 
+Phase 31.8 is therefore **closed without WFA/OOS promotion**. Final report: `reports/phase31_8/final_result.md`.
