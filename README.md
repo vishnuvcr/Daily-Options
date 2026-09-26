@@ -663,3 +663,7 @@ The family is preregistered before numerical execution; no result-driven regime 
 ## 2026-09-26 — Phase 31.9 run 1 closure
 
 Run 36253432190 stopped in unit tests before acquisition; three test/source authoring defects were corrected (E0407–E0409). No Phase 31.9 P&L exists yet. Run 2 is the corrected authoritative attempt.
+
+## 2026-09-26 — Phase 31.9 run 2 closure
+
+Run 36253528975 stopped before acquisition because the null-control regression fixture did not actually vary the regime labels; the workflow also had a secondary missing-path persistence error. Both are corrected. Run 3 is the next authoritative attempt.
