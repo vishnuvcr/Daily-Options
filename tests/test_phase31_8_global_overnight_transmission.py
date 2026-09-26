@@ -105,3 +105,10 @@ def test_attach_expiry_normalizes_timestamp_to_python_date():
     }
     out=attach_expiry(panel,expiry_map)
     assert out["expiry"].tolist()==[dt.date(2026,1,5),dt.date(2026,1,8)]
+
+
+def test_price_loader_does_not_require_nonexistent_exit_ts_column():
+    from pathlib import Path
+    src=Path("research/phase31_8_global_overnight_transmission.py").read_text(encoding="utf-8")
+    fn=src[src.index("def load_prices("):src.index("def attach_expiry(")]
+    assert '["date","atm","exit_ts","expiry"]' not in fn
