@@ -567,3 +567,8 @@ The first corrected launch, run 36250115094, completed Base/Stress but had zero 
 The phase branch has been corrected for timestamp-safe execution joins and preregistered full-panel null permutations, with regression tests added. The next run is the authoritative rerun from branch head eb4724c74ec064d7b5d7e6490186d8766e5188fc.
 
 [Phase 31.7 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.7-oi-volume-microstructure-v1/docs/phase31_7_plan.md) · [Phase 31.7 branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-31.7-oi-volume-microstructure-v1) · [Research status](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md)
+## 2026-09-26 — Phase 31.7 run 9 closure
+
+Run 36250452425 stopped at pytest collection before any Phase 31.7 data or P&L computation because a newly added regression test contained a literal backslash-n sequence. E0393 is logged; the test file is corrected.
+
+The next authoritative run will be run 10 from branch head 0fc95b29fba8558070368bdeb076d793d494e2ab. No Phase 31.7 numerical result is accepted yet.
