@@ -543,3 +543,7 @@ The corrected branch is now **`phase-30.2-falcon-runtime-fix-v1`**. The frozen 2
 
 No Falcon P&L from the stalled run is accepted. The next authoritative run from this runtime-fix branch must pass unit tests, produce non-zero candidate setups/trades, and then be audited under the preregistered Base/Stress weekly ₹5,000 gate.
 
+
+
+## 2026-09-26 — Phase 30.2 zero-setup audit and correction
+The runtime-fixed Falcon run **36216668042** completed Base/Stress with 32/32 calendars but **0 candidate setups / 0 trades**. This output is quarantined and is **not a Falcon performance result**. The remaining data-boundary risk was timestamp normalization: Rissin documents the 1-minute timestamp field as IST and public examples include +0530 timestamps. The simulator has therefore been corrected to parse raw intraday timestamps explicitly into Asia/Kolkata before exact signal/fill matching. No economic rule, parameter grid, cost model, or promotion gate was changed. A new deterministic Base/Stress rerun is required.
