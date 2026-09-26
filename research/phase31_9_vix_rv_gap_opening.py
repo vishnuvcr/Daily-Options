@@ -59,8 +59,8 @@ def session_panel(idx, vix):
     s=pd.merge_asof(s.sort_values("date"),rv,left_on="date",right_on="rv_feature_date",
                     direction="backward",allow_exact_matches=False)
     s["ratio"]=s["vix_close"]/s["rv20_pct"]
-    s["regime"]=np.select([s["ratio"].le(0.90),s["ratio"].le(1.10)],["LOW","MID"],default="HIGH")
-    s.loc[~np.isfinite(s["ratio"]),"regime"]=np.nan
+    s["regime"]=pd.Series(np.select([s["ratio"].le(0.90),s["ratio"].le(1.10)],["LOW","MID"],default="HIGH"),index=s.index,dtype="object")
+    s.loc[~np.isfinite(s["ratio"]),"regime"]=None
     s["vix_prior_ok"]=s["vix_feature_date"].notna() & (s["vix_feature_date"] < s["date"])
     s["rv_prior_ok"]=s["rv_feature_date"].notna() & (s["rv_feature_date"] < s["date"])
     s["all_prior"]=s["vix_prior_ok"] & s["rv_prior_ok"] & s["prev_close"].notna()
