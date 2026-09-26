@@ -776,3 +776,10 @@ The plan is now clarified by methodological erratum 31.8-1: the 95% coverage thr
 ## 2026-09-26 — Phase 31.8 run 5 closure / test correction
  
 Run **36252470696** stopped at the unit-test stage. The failing test still expected a pre-erratum 94% example to fail; under the new warm-up-aware gate that example correctly passes because the denominator contains only 94 feature-eligible sessions and all 94 are complete. E0403 records and closes the test-only defect. No data gate or P&L computation ran in this attempt.
+
+ 
+## 2026-09-26 — Phase 31.8 run 6 closure / expiry comparison correction
+ 
+Run **36252561747** passed all seven regression tests and the corrected global data gate, then failed at the first numerical Base stage in `attach_expiry`. The traceback showed a pandas `Timestamp` being compared with Python `datetime.date` expiry keys. Stress and Validate were skipped. No P&L is accepted from run 6.
+ 
+E0404 is now logged. The branch converts each panel trade date to a Python date before selecting the nearest on/after NIFTY expiry, with a direct regression test. The frozen strategy grid and cost model are unchanged.
