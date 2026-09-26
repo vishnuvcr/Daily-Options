@@ -532,3 +532,15 @@ The next bounded candidate is **Retail Option Seller's Diagonal Setup for Low Vi
 Phase 30.13 is **SOURCE-BLOCKED / DATA-LIMITED**. The public YouTube page is reachable, but deterministic Python caption acquisition is blocked by YouTube bot/IP controls. No transcript was substituted and no P&L was run.
 
 [Phase 30.13 final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.13-equity-income-low-vix-diagonal-source-resolution-v1/reports/phase30_13_final_result.md) · [Phase 30.13 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.13-equity-income-low-vix-diagonal-source-resolution-v1/docs/phase30_13_plan.md)
+
+
+## 2026-09-26 — Phase 31.2 forensic audit result
+
+**Phase 31.1 is quarantined, not accepted as the final friction-corrected result.** The independent Phase 31.2 audit reconciled 30/30 stratified executed days and the full 1,209-day persisted ledger/weekly summary. It also identified a material accounting/provenance difference: the persisted artifact uses raw gross P&L minus transaction/statutory costs, while the current simulator applies slippage inside execution gross.
+
+- Persisted Base result: **-₹537,097.06** total net; **-₹2,065.76/week** mean; **26.92%** positive weeks.
+- Reconstructed persisted slippage: **₹130,750.00**.
+- Friction-corrected Base result: **-₹667,847.06** total net; **-₹2,568.64/week** mean; **-₹3,057.21/week** median; **25.38%** positive weeks.
+- Next step is a provenance-corrected reproduction with one frozen accounting definition; no optimization is authorized before that reproduction.
+
+[Phase 31.2 plan](docs/phase31_2_forensic_audit_plan.md) · [Phase 31.2 final report](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.2-phase31-1-forensic-audit-v1/reports/phase31_2/final_result.md) · [Phase 31.2 branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-31.2-phase31-1-forensic-audit-v1)
