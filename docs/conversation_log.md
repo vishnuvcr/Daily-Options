@@ -208,3 +208,8 @@ Operational handoff from Phase 31.8: the global-overnight family closed without 
 ## 2026-09-26 — Phase 31.9 run 1 unit-test closure
  
 Run 36253432190 stopped before acquisition. The test log was inspected directly and the three defects were repaired: RV20 variable handoff, missing date in the prior-barrier fixture, and wrong nearest-expiry expectation. No numerical result exists from run 1.
+
+ 
+## 2026-09-26 — Phase 31.9 run 2 unit-test closure
+ 
+Run 36253528975 stopped before acquisition. The null-control regression was too weak because the toy feature construction produced only HIGH regime labels; the fixture is now explicit and mixed. The failure-path persistence step is also hardened. No numerical result exists from run 2.
