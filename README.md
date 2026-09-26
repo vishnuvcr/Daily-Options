@@ -606,3 +606,8 @@ The new manual launcher is [.github/workflows/phase-31-8-main-launcher.yml](http
 ## 2026-09-26 — Phase 31.8 run 1 gate failure / rerun
  
 The first Phase 31.8 run (**36251942190**) acquired the six pinned global-index sources but stopped at the global data gate before P&L because of a datetime merge-key implementation defect. E0398 is logged; the engine and regression tests are corrected. The next authoritative run is **run 2** from branch head `d73ce5e48d2d40a5a86bd53da91fec4629bab711`.
+
+ 
+## 2026-09-26 — Phase 31.8 run 2 closure
+ 
+Run 36252076237 passed tests and source acquisition but stopped before numerical testing because the full NIFTY frame was reduced before `build_panel`. E0400 is logged; the corrected branch now passes the full frame and includes a regression test. The next authoritative run is **run 3** from branch head `c08f1bc9faa126dbe5eaae84075963d0a66f18be`.
