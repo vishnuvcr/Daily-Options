@@ -701,3 +701,8 @@ Run 11 will use the corrected Phase 31.7 branch head 408d8d1cbb1fa5e121d2d2f72f3
 Run 36250863176 reached the data gate, Base and Stress, but validation again failed before any Phase 31.7 P&L was accepted. The latest phase branch now includes a raw five-sample execution-row probe; the authoritative launcher has been instrumented to run it after the data gate.
 
 Run 12 will use the latest corrected Phase 31.7 branch head a73da3a7f29668b32f81fe1612b6ef31c40492a8. The probe is diagnostic only and does not change the frozen 12-cell strategy grid, entry/exit, slippage or cost model.
+## 2026-09-26 — Phase 31.7 run 12 closure / run 13 frontier
+
+Run **36251100372** completed unit tests, data gate, raw execution probes, Base and Stress, but validation failed because every executable trade set was still empty. The run-12 artifact showed valid source rows at 09:31/15:10; the remaining defect was localized to expiry-file selection, where feature expiry timestamps were compared against Python-date expiry-map keys.
+
+The phase branch now normalizes feature expiry to a dedicated Python-date `expiry_key` before file selection, with a regression test. The launcher persist step now retries fetch/rebase after non-fast-forward push failures, and the workflow has non-canceling concurrency. Run 12 remains quarantined; no Phase 31.7 P&L is accepted.
