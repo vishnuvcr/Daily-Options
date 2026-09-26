@@ -423,3 +423,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0343 | 2026-09-26 | Phase 30.9 NSE VIX acquisition | First NSE acquisition run 36234420997 received HTTP 403 from the NSE landing page before reaching the historical VIX endpoint | No VIX data was accepted and no P&L ran | Removed the unnecessary landing-page dependency and added one deterministic endpoint retry with NSE browser-like headers | CLOSED — acquisition hardened; rerun required |
+
+
+| E0344 | 2026-09-26 | Phase 30.9 NSE VIX coverage | A successful endpoint request returned only 70 rows through 2025-12-10 for the full 2025-09-01 to 2026-08-31 query, demonstrating silent truncation/limited-window behavior | The 70-row file was quarantined as incomplete; no P&L authorized | Added coverage validation and an official NSE Indices `BindHistoricalIndiaVixData` fallback with overlap audit against the NSE response; full study-window coverage is now a hard prerequisite | OPEN — fallback rerun |
