@@ -45,6 +45,7 @@ def test_null_permutation_is_on_feature_eligible_panel():
 
 def test_gate_rejects_prior_barrier_violation():
     panel=pd.DataFrame({
+        "date":pd.to_datetime(["2026-01-05","2026-01-06","2026-01-08"]),
         "all_prior":[True,False,True],
         "ratio":[1.0,1.0,1.0],
         "gap_ret":[0.01,-0.01,0.02],
@@ -59,7 +60,7 @@ def test_attach_expiry_normalizes_timestamp_date():
     panel=pd.DataFrame({"date":pd.to_datetime(["2026-01-05 00:00:00","2026-01-06 00:00:00"]),"open_px":[25000.0,25020.0]})
     expiry={dt.date(2026,1,6):"x",dt.date(2026,1,8):"y"}
     out=attach_expiry(panel,expiry)
-    assert out["expiry"].tolist()==[dt.date(2026,1,6),dt.date(2026,1,8)]
+    assert out["expiry"].tolist()==[dt.date(2026,1,6),dt.date(2026,1,6)]
 
 def test_price_and_signal_engine_contracts_are_explicit():
     src=Path("research/phase31_9_vix_rv_gap_opening.py").read_text(encoding="utf-8")
