@@ -88,11 +88,11 @@ def main():
     root=Path(args.data); out=Path(args.out); out.mkdir(parents=True,exist_ok=True)
     con=duckdb.connect(); con.execute("SET TimeZone='Asia/Kolkata'")
     ip=root/"index/NIFTY.parquet"
-    idx=con.execute(f"""SELECT CAST(timestamp AS TIMESTAMP) ts,CAST(open AS DOUBLE) open,CAST(high AS DOUBLE) high,CAST(low AS DOUBLE) low,CAST(close AS DOUBLE) close
+    idx=con.execute(f"""SELECT CAST(timestamp AS TIMESTAMP) ts,CAST(open AS DOUBLE) open,CAST(high AS DOUBLE) high,CAST(low AS DOUBLE) low,CAST(close AS DOUBLE) close_px
                         FROM read_parquet('{ip}') ORDER BY ts""").df()
     idx.ts=pd.to_datetime(idx.ts); idx["date"]=idx.ts.dt.date; idx["time"]=idx.ts.dt.strftime("%H:%M:%S")
     idx=idx[(idx.date>=START)&(idx.date<=END)]
-    daily=idx.groupby("date",sort=True).agg(open=("open","first"),high=("high","max"),low=("low","min"),close=("close","last")).reset_index()
+    daily=idx.groupby("date",sort=True).agg(open=("open","first"),high=("high","max"),low=("low","min"),close=("close_px","last")).reset_index()
     files={}
     for p in (root/"options/NIFTY").glob("*.parquet"):
         try: pd.Timestamp(p.stem); files[p.stem]=p
