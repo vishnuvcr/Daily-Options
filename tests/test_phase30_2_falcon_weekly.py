@@ -1,7 +1,7 @@
 import pandas as pd
 from datetime import date
 
-from research.phase30_2_falcon_weekly import frame_series, lot_size, variant_grid
+from research.phase30_2_falcon_weekly import frame_series, lot_size, variant_grid, normalize_source_timestamps
 
 
 def test_variant_grid_is_frozen_270():
@@ -29,3 +29,12 @@ def test_frame_series_filters_exact_leg_without_rescan():
     out = frame_series(frame, date(2025, 9, 3), date(2025, 9, 3), 25000.0, "CE")
     assert len(out) == 2
     assert out["open_px"].tolist() == [100.0, 101.0]
+
+
+def test_timestamp_normalization_handles_naive_ist_and_offset_ist():
+    out = normalize_source_timestamps(pd.Series([
+        "2025-09-03 09:30:00",
+        "2025-09-03 09:30:00+05:30",
+    ]))
+    assert out.iloc[0] == pd.Timestamp("2025-09-03 09:30:00")
+    assert out.iloc[1] == pd.Timestamp("2025-09-03 09:30:00")
