@@ -9,6 +9,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: phase30-9-vix-acquisition
+  cancel-in-progress: true
+
 jobs:
   acquire:
     runs-on: ubuntu-latest
@@ -41,6 +45,8 @@ jobs:
           git add -f data/cache/phase30_9_india_vix/nse_india_vix_2025-09-01_2026-08-31.csv reports/phase30_9_vix_coverage.json
           if ! git diff --cached --quiet; then
             git commit -m "Phase 30.9: persist NSE India VIX study-window cache"
+            git fetch origin phase-30.9-strangle-air-defense-vix-source-resolution-v1
+            git rebase origin/phase-30.9-strangle-air-defense-vix-source-resolution-v1
             git push origin HEAD:phase-30.9-strangle-air-defense-vix-source-resolution-v1
           fi
       - name: Upload VIX cache
