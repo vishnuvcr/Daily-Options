@@ -21,20 +21,23 @@ The final decision still requires nested walk-forward selection followed by inde
 
 ## Current research frontier
 
-**Phase 31.6 IV–RV defined-risk discovery is closed.** Authoritative run **36248538306** completed Base + Stress and validated the frozen 12-cell grid. **0/12 Base and 0/12 Stress cells cleared the ₹5,000/week discovery gate; all 24 cell/friction combinations had negative total net P&L.**
+**Phase 31.7 OI/volume microstructure is closed.** Authoritative run **36251189770** passed the complete frozen discovery and null-control validation.
 
-Best cell in both friction settings:
-- positive IV–RV spread → 200-point short iron condor;
-- 6-vol-point threshold;
-- nearest expiry;
-- Base: **-₹166.80 mean weekly net**, **₹50.11 median**, **50.00% positive weeks**, **-₹23,018.38 total net**;
-- Stress: **-₹248.73 mean weekly net**, **-₹29.93 median**, **50.00% positive weeks**, **-₹34,324.32 total net**.
+Result:
+- **0/12 Base** cells cleared the ₹5,000/week mean + median + ≥70% positive-week discovery gate.
+- **0/12 Stress** cells cleared it.
+- All 12 Base and all 12 Stress cells had negative total net P&L.
+- Best cell: **VOL_IMB, threshold 0.40, nearest expiry**.
+- Base: **-₹18,566.48 total net; -₹191.41 mean weekly; -₹942.75 median; 42.27% positive weeks**.
+- Stress: **-₹23,821.47 total net; -₹245.58 mean weekly; -₹974.92 median; 42.27% positive weeks**.
+- Five-seed placebo controls were generated from the complete feature panel; no true cell outperformed all five nulls.
+- Final accounting identity reconciled to below **2×10^-12** row-level residual.
 
-Phase 31.6 is frozen negative evidence; no WFA/OOS or result-driven tuning is authorized.
+Phase 31.7 is frozen negative evidence; no WFA/OOS promotion or parameter tuning is authorized.
 
-**Current phase:** Phase 31.7 — **OI/volume microstructure with explicit null controls**, preregistered; first clean run is gated on schema/coverage validation. No P&L has been accepted.
+**Current phase:** Phase 31.8 — **Global Overnight Cross-Market Transmission**, with a fresh finite preregistration and explicit global-data coverage gate.
 
-Current status links: [Research status](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md) · [Research plan](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_plan.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md) · [Phase 31.6 final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.6-iv-rv-defined-risk-v1/reports/phase31_6/final_result.md)
+Current status links: [Research status](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md) · [Research plan](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_plan.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md) · [Phase 31.7 final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.7-oi-volume-microstructure-v1/reports/phase31_7/final_result.md)
 
 ## Current YouTube strategy program design
 
