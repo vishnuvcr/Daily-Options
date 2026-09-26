@@ -1,0 +1,44 @@
+{
+  "phase": "30.8",
+  "candidate": {
+    "video_id": "OvaJumYancs",
+    "title": "No More Straddles. This Strategy Is Smarter",
+    "resolution_state": "BLOCKED_FOR_PNL",
+    "known_source_fields": {
+      "underlying": "NIFTY",
+      "entry_action": ["short", "long", "buy"],
+      "strike_reference": ["at the money", "one strike"],
+      "width_reference": "100",
+      "time_reference": "3:30",
+      "adjustment_action": "move",
+      "lot_reference": "3:30"
+    },
+    "unresolved_fields": [
+      "entry_day",
+      "entry_time",
+      "expiry_reference",
+      "stop_reference",
+      "target_reference",
+      "exit_day",
+      "adjustment_day",
+      "exact_payoff_structure",
+      "exact_strike_construction",
+      "capital_reference"
+    ],
+    "conflicts_requiring_resolution": {
+      "strike_reference": "CONFLICTING",
+      "ratio_vs_time_ambiguity": "The extracted 3:30 occurrences appear in ratio/lot/time fields and must be resolved from transcript context before numerical use.",
+      "entry_action_context": "SOURCE-EXPLICIT but spans short, long and buy actions at different transcript positions; context is required to determine sequence."
+    },
+    "no_pnl_authorization": true
+  },
+  "primary_evidence": {
+    "files": [
+      "data/equity_income/phase27_1_rule_evidence.jsonl",
+      "data/equity_income/phase27_4_t1_clean_evidence.jsonl"
+    ],
+    "source_url": "https://www.youtube.com/watch?v=OvaJumYancs",
+    "retrieved_at_utc": "2026-09-25T11:59:16Z"
+  },
+  "method_note": "This report is derived from Python-extracted transcript evidence already stored in the repository. No model-generated transcript or option P&L is used to resolve the rule."
+}
