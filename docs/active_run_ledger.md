@@ -173,3 +173,12 @@ Authoritative run **36218652778** completed Base and Stress successfully at the 
 The simulator is corrected to normalize both timezone-aware (+05:30) and timezone-naive IST representations to the same naive Asia/Kolkata minute timestamp. A dedicated regression test now verifies both forms map to 09:30 IST. Economic rules, 270-cell grid, source, cost model and promotion gate are unchanged.
 
 Status: **OPEN — deterministic rerun required**
+
+
+## 2026-09-26 — Phase 30.2 pinned-source reproducibility rerun
+
+| Phase | Branch | Workflow run | Status | Accepted P&L |
+|---|---|---:|---|---|
+| 30.2 | phase-30.2-falcon-source-pin-v1 | 36220723215 | Queued / executing | No |
+
+Reason: run 36220039329 completed cleanly but produced 0 setups/trades. A deterministic post-run data audit showed valid signal/fill rows, while the workflow had resolved a moving Rissin dataset revision. The only prior independently audited Falcon implementation used pinned revision 78b1c5468255d18cf492984bfe6fe4e3ac874d7c. This rerun changes data provenance only; the frozen 270-cell strategy, Wednesday-entry/Thursday-adjustment/Monday-exit schedule, Base/Stress slippage and cost model remain unchanged.
