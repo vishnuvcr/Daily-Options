@@ -1,0 +1,1887 @@
+{
+  "source_revision": "8f7739cab3f38abdcbc6332a6d0a83e1341326e3",
+  "checks": [
+    {
+      "entry_date": "2025-09-03",
+      "near_expiry": "2025-09-09",
+      "far_expiry": "2025-09-16",
+      "near_rows": 51929,
+      "far_rows": 40686,
+      "times": {
+        "09:30:00": {
+          "near_signal": 135,
+          "far_signal": 103,
+          "near_fill": 139,
+          "far_fill": 103,
+          "targets": {
+            "20.0": {
+              "near": {
+                "ce_strike": 24950.0,
+                "pe_strike": 24200.0,
+                "ce_close": 22.5,
+                "pe_close": 21.2
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  24950.0,
+                  24200.0
+                ],
+                "prices": [
+                  22.45,
+                  21.2,
+                  65.5,
+                  50.3
+                ],
+                "credit": -129.14999999999998,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25250.0,
+                  23900.0
+                ],
+                "prices": [
+                  22.45,
+                  21.2,
+                  20.5,
+                  20.75
+                ],
+                "credit": 94.5,
+                "positive_credit": true
+              }
+            },
+            "25.0": {
+              "near": {
+                "ce_strike": 24950.0,
+                "pe_strike": 24250.0,
+                "ce_close": 22.5,
+                "pe_close": 26.15
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  24950.0,
+                  24250.0
+                ],
+                "prices": [
+                  22.45,
+                  26.0,
+                  65.5,
+                  58.2
+                ],
+                "credit": -128.85000000000002,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25200.0,
+                  23950.0
+                ],
+                "prices": [
+                  22.45,
+                  26.0,
+                  24.8,
+                  24.3
+                ],
+                "credit": 94.94999999999999,
+                "positive_credit": true
+              }
+            },
+            "30.0": {
+              "near": {
+                "ce_strike": 24900.0,
+                "pe_strike": 24300.0,
+                "ce_close": 29.35,
+                "pe_close": 32.45
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  24900.0,
+                  24300.0
+                ],
+                "prices": [
+                  29.4,
+                  32.55,
+                  78.4,
+                  67.9
+                ],
+                "credit": -129.15000000000003,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25150.0,
+                  24000.0
+                ],
+                "prices": [
+                  29.4,
+                  32.55,
+                  29.7,
+                  27.55
+                ],
+                "credit": 138.0,
+                "positive_credit": true
+              }
+            }
+          }
+        },
+        "10:00:00": {
+          "near_signal": 141,
+          "far_signal": 105,
+          "near_fill": 141,
+          "far_fill": 105,
+          "targets": {
+            "20.0": {
+              "near": {
+                "ce_strike": 24950.0,
+                "pe_strike": 24250.0,
+                "ce_close": 22.05,
+                "pe_close": 21.7
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  24950.0,
+                  24250.0
+                ],
+                "prices": [
+                  22.1,
+                  21.6,
+                  65.9,
+                  54.0
+                ],
+                "credit": -141.20000000000005,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25250.0,
+                  23900.0
+                ],
+                "prices": [
+                  22.1,
+                  21.6,
+                  20.4,
+                  18.7
+                ],
+                "credit": 101.20000000000002,
+                "positive_credit": true
+              }
+            },
+            "25.0": {
+              "near": {
+                "ce_strike": 24950.0,
+                "pe_strike": 24300.0,
+                "ce_close": 22.05,
+                "pe_close": 27.4
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  24950.0,
+                  24300.0
+                ],
+                "prices": [
+                  22.1,
+                  27.45,
+                  65.9,
+                  63.6
+                ],
+                "credit": -140.75,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25200.0,
+                  24000.0
+                ],
+                "prices": [
+                  22.1,
+                  27.45,
+                  25.0,
+                  25.05
+                ],
+                "credit": 97.60000000000002,
+                "positive_credit": true
+              }
+            },
+            "30.0": {
+              "near": {
+                "ce_strike": 24900.0,
+                "pe_strike": 24300.0,
+                "ce_close": 28.95,
+                "pe_close": 27.4
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  24900.0,
+                  24300.0
+                ],
+                "prices": [
+                  29.0,
+                  27.45,
+                  79.0,
+                  63.6
+                ],
+                "credit": -145.54999999999995,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25150.0,
+                  24050.0
+                ],
+                "prices": [
+                  29.0,
+                  27.45,
+                  30.35,
+                  28.9
+                ],
+                "credit": 104.5,
+                "positive_credit": true
+              }
+            }
+          }
+        },
+        "11:00:00": {
+          "near_signal": 143,
+          "far_signal": 111,
+          "near_fill": 143,
+          "far_fill": 111,
+          "targets": {
+            "20.0": {
+              "near": {
+                "ce_strike": 24950.0,
+                "pe_strike": 24200.0,
+                "ce_close": 18.5,
+                "pe_close": 18.55
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  24950.0,
+                  24200.0
+                ],
+                "prices": [
+                  18.4,
+                  18.6,
+                  59.5,
+                  49.05
+                ],
+                "credit": -140.64999999999998,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25200.0,
+                  23900.0
+                ],
+                "prices": [
+                  18.4,
+                  18.6,
+                  21.75,
+                  19.6
+                ],
+                "credit": 60.94999999999999,
+                "positive_credit": true
+              }
+            },
+            "25.0": {
+              "near": {
+                "ce_strike": 24900.0,
+                "pe_strike": 24250.0,
+                "ce_close": 24.45,
+                "pe_close": 23.2
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  24900.0,
+                  24250.0
+                ],
+                "prices": [
+                  24.35,
+                  23.2,
+                  71.5,
+                  57.9
+                ],
+                "credit": -150.45000000000005,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25150.0,
+                  24000.0
+                ],
+                "prices": [
+                  24.35,
+                  23.2,
+                  26.65,
+                  26.4
+                ],
+                "credit": 78.60000000000002,
+                "positive_credit": true
+              }
+            },
+            "30.0": {
+              "near": {
+                "ce_strike": 24850.0,
+                "pe_strike": 24300.0,
+                "ce_close": 32.45,
+                "pe_close": 29.25
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  24850.0,
+                  24300.0
+                ],
+                "prices": [
+                  32.35,
+                  29.25,
+                  84.8,
+                  67.25
+                ],
+                "credit": -148.15000000000003,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25100.0,
+                  24050.0
+                ],
+                "prices": [
+                  32.35,
+                  29.25,
+                  32.8,
+                  31.05
+                ],
+                "credit": 116.45000000000002,
+                "positive_credit": true
+              }
+            }
+          }
+        },
+        "13:00:00": {
+          "near_signal": 146,
+          "far_signal": 116,
+          "near_fill": 146,
+          "far_fill": 116,
+          "targets": {
+            "20.0": {
+              "near": {
+                "ce_strike": 24950.0,
+                "pe_strike": 24250.0,
+                "ce_close": 19.6,
+                "pe_close": 19.55
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  24950.0,
+                  24250.0
+                ],
+                "prices": [
+                  19.6,
+                  19.55,
+                  63.75,
+                  50.6
+                ],
+                "credit": -147.29999999999993,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25250.0,
+                  23950.0
+                ],
+                "prices": [
+                  19.6,
+                  19.55,
+                  18.1,
+                  20.8
+                ],
+                "credit": 79.05000000000001,
+                "positive_credit": true
+              }
+            },
+            "25.0": {
+              "near": {
+                "ce_strike": 24900.0,
+                "pe_strike": 24300.0,
+                "ce_close": 26.35,
+                "pe_close": 24.6
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  24900.0,
+                  24300.0
+                ],
+                "prices": [
+                  26.3,
+                  24.6,
+                  76.9,
+                  59.45
+                ],
+                "credit": -154.55000000000004,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25200.0,
+                  24000.0
+                ],
+                "prices": [
+                  26.3,
+                  24.6,
+                  22.5,
+                  23.95
+                ],
+                "credit": 115.15,
+                "positive_credit": true
+              }
+            },
+            "30.0": {
+              "near": {
+                "ce_strike": 24900.0,
+                "pe_strike": 24350.0,
+                "ce_close": 26.35,
+                "pe_close": 30.85
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  24900.0,
+                  24350.0
+                ],
+                "prices": [
+                  26.3,
+                  30.85,
+                  76.9,
+                  69.3
+                ],
+                "credit": -152.84999999999997,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25150.0,
+                  24100.0
+                ],
+                "prices": [
+                  26.3,
+                  30.85,
+                  27.85,
+                  31.95
+                ],
+                "credit": 106.35000000000002,
+                "positive_credit": true
+              }
+            }
+          }
+        },
+        "14:00:00": {
+          "near_signal": 147,
+          "far_signal": 117,
+          "near_fill": 147,
+          "far_fill": 117,
+          "targets": {
+            "20.0": {
+              "near": {
+                "ce_strike": 25000.0,
+                "pe_strike": 24300.0,
+                "ce_close": 18.9,
+                "pe_close": 20.05
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25000.0,
+                  24300.0
+                ],
+                "prices": [
+                  18.85,
+                  20.0,
+                  61.8,
+                  51.55
+                ],
+                "credit": -145.79999999999995,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25250.0,
+                  24000.0
+                ],
+                "prices": [
+                  18.85,
+                  20.0,
+                  21.45,
+                  21.05
+                ],
+                "credit": 66.75,
+                "positive_credit": true
+              }
+            },
+            "25.0": {
+              "near": {
+                "ce_strike": 24950.0,
+                "pe_strike": 24350.0,
+                "ce_close": 25.0,
+                "pe_close": 24.9
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  24950.0,
+                  24350.0
+                ],
+                "prices": [
+                  24.9,
+                  24.9,
+                  76.0,
+                  59.8
+                ],
+                "credit": -158.40000000000003,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25200.0,
+                  24050.0
+                ],
+                "prices": [
+                  24.9,
+                  24.9,
+                  26.95,
+                  24.1
+                ],
+                "credit": 95.85000000000002,
+                "positive_credit": true
+              }
+            },
+            "30.0": {
+              "near": {
+                "ce_strike": 24900.0,
+                "pe_strike": 24400.0,
+                "ce_close": 33.35,
+                "pe_close": 31.6
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  24900.0,
+                  24400.0
+                ],
+                "prices": [
+                  33.4,
+                  31.75,
+                  90.0,
+                  70.3
+                ],
+                "credit": -155.15000000000003,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25200.0,
+                  24150.0
+                ],
+                "prices": [
+                  33.4,
+                  31.75,
+                  26.95,
+                  32.1
+                ],
+                "credit": 148.60000000000002,
+                "positive_credit": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "entry_date": "2025-09-10",
+      "near_expiry": "2025-09-16",
+      "far_expiry": "2025-09-23",
+      "near_rows": 48538,
+      "far_rows": 40719,
+      "times": {
+        "09:30:00": {
+          "near_signal": 128,
+          "far_signal": 104,
+          "near_fill": 128,
+          "far_fill": 105,
+          "targets": {
+            "20.0": {
+              "near": {
+                "ce_strike": 25350.0,
+                "pe_strike": 24600.0,
+                "ce_close": 17.55,
+                "pe_close": 19.4
+              },
+              "far_same": {
+                "selectable": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25600.0,
+                  24300.0
+                ],
+                "prices": [
+                  17.5,
+                  19.35,
+                  19.3,
+                  21.15
+                ],
+                "credit": 62.89999999999999,
+                "positive_credit": true
+              }
+            },
+            "25.0": {
+              "near": {
+                "ce_strike": 25300.0,
+                "pe_strike": 24650.0,
+                "ce_close": 23.85,
+                "pe_close": 23.8
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25300.0,
+                  24650.0
+                ],
+                "prices": [
+                  23.8,
+                  23.8,
+                  69.2,
+                  57.05
+                ],
+                "credit": -140.75,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25500.0,
+                  24350.0
+                ],
+                "prices": [
+                  23.8,
+                  23.8,
+                  29.9,
+                  24.05
+                ],
+                "credit": 76.14999999999998,
+                "positive_credit": true
+              }
+            },
+            "30.0": {
+              "near": {
+                "ce_strike": 25250.0,
+                "pe_strike": 24700.0,
+                "ce_close": 32.05,
+                "pe_close": 29.55
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25250.0,
+                  24700.0
+                ],
+                "prices": [
+                  32.05,
+                  29.65,
+                  83.5,
+                  65.95
+                ],
+                "credit": -139.84999999999997,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25500.0,
+                  24450.0
+                ],
+                "prices": [
+                  32.05,
+                  29.65,
+                  29.9,
+                  31.3
+                ],
+                "credit": 124.89999999999998,
+                "positive_credit": true
+              }
+            }
+          }
+        },
+        "10:00:00": {
+          "near_signal": 132,
+          "far_signal": 109,
+          "near_fill": 132,
+          "far_fill": 109,
+          "targets": {
+            "20.0": {
+              "near": {
+                "ce_strike": 25400.0,
+                "pe_strike": 24600.0,
+                "ce_close": 17.8,
+                "pe_close": 18.85
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25400.0,
+                  24600.0
+                ],
+                "prices": [
+                  17.75,
+                  18.8,
+                  56.45,
+                  47.3
+                ],
+                "credit": -128.5,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25650.0,
+                  24300.0
+                ],
+                "prices": [
+                  17.75,
+                  18.8,
+                  19.55,
+                  21.0
+                ],
+                "credit": 61.10000000000001,
+                "positive_credit": true
+              }
+            },
+            "25.0": {
+              "near": {
+                "ce_strike": 25350.0,
+                "pe_strike": 24650.0,
+                "ce_close": 23.75,
+                "pe_close": 23.0
+              },
+              "far_same": {
+                "selectable": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25600.0,
+                  24350.0
+                ],
+                "prices": [
+                  23.8,
+                  23.05,
+                  24.55,
+                  23.75
+                ],
+                "credit": 89.35000000000002,
+                "positive_credit": true
+              }
+            },
+            "30.0": {
+              "near": {
+                "ce_strike": 25300.0,
+                "pe_strike": 24700.0,
+                "ce_close": 31.7,
+                "pe_close": 28.6
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25300.0,
+                  24700.0
+                ],
+                "prices": [
+                  31.8,
+                  28.55,
+                  82.55,
+                  63.5
+                ],
+                "credit": -136.40000000000003,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25600.0,
+                  24450.0
+                ],
+                "prices": [
+                  31.8,
+                  28.55,
+                  24.55,
+                  30.9
+                ],
+                "credit": 135.39999999999998,
+                "positive_credit": true
+              }
+            }
+          }
+        },
+        "11:00:00": {
+          "near_signal": 133,
+          "far_signal": 113,
+          "near_fill": 133,
+          "far_fill": 113,
+          "targets": {
+            "20.0": {
+              "near": {
+                "ce_strike": 25400.0,
+                "pe_strike": 24650.0,
+                "ce_close": 18.3,
+                "pe_close": 21.1
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25400.0,
+                  24650.0
+                ],
+                "prices": [
+                  18.35,
+                  21.15,
+                  57.9,
+                  51.6
+                ],
+                "credit": -131.0,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25650.0,
+                  24300.0
+                ],
+                "prices": [
+                  18.35,
+                  21.15,
+                  20.7,
+                  20.6
+                ],
+                "credit": 73.60000000000001,
+                "positive_credit": true
+              }
+            },
+            "25.0": {
+              "near": {
+                "ce_strike": 25350.0,
+                "pe_strike": 24700.0,
+                "ce_close": 24.6,
+                "pe_close": 25.95
+              },
+              "far_same": {
+                "selectable": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25600.0,
+                  24400.0
+                ],
+                "prices": [
+                  24.7,
+                  25.95,
+                  25.3,
+                  26.1
+                ],
+                "credit": 99.04999999999998,
+                "positive_credit": true
+              }
+            },
+            "30.0": {
+              "near": {
+                "ce_strike": 25300.0,
+                "pe_strike": 24750.0,
+                "ce_close": 32.95,
+                "pe_close": 31.9
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25300.0,
+                  24750.0
+                ],
+                "prices": [
+                  32.95,
+                  31.9,
+                  85.0,
+                  69.55
+                ],
+                "credit": -139.40000000000003,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25600.0,
+                  24450.0
+                ],
+                "prices": [
+                  32.95,
+                  31.9,
+                  25.3,
+                  29.2
+                ],
+                "credit": 160.75,
+                "positive_credit": true
+              }
+            }
+          }
+        },
+        "13:00:00": {
+          "near_signal": 136,
+          "far_signal": 115,
+          "near_fill": 136,
+          "far_fill": 115,
+          "targets": {
+            "20.0": {
+              "near": {
+                "ce_strike": 25300.0,
+                "pe_strike": 24650.0,
+                "ce_close": 22.65,
+                "pe_close": 21.25
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25300.0,
+                  24650.0
+                ],
+                "prices": [
+                  22.55,
+                  21.3,
+                  71.05,
+                  54.95
+                ],
+                "credit": -158.75,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25600.0,
+                  24300.0
+                ],
+                "prices": [
+                  22.55,
+                  21.3,
+                  20.1,
+                  20.7
+                ],
+                "credit": 96.85000000000001,
+                "positive_credit": true
+              }
+            },
+            "25.0": {
+              "near": {
+                "ce_strike": 25300.0,
+                "pe_strike": 24700.0,
+                "ce_close": 22.65,
+                "pe_close": 26.45
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25300.0,
+                  24700.0
+                ],
+                "prices": [
+                  22.55,
+                  26.45,
+                  71.05,
+                  63.7
+                ],
+                "credit": -159.25,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25600.0,
+                  24400.0
+                ],
+                "prices": [
+                  22.55,
+                  26.45,
+                  20.1,
+                  26.6
+                ],
+                "credit": 104.89999999999998,
+                "positive_credit": true
+              }
+            },
+            "30.0": {
+              "near": {
+                "ce_strike": 25250.0,
+                "pe_strike": 24750.0,
+                "ce_close": 30.6,
+                "pe_close": 33.15
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25250.0,
+                  24750.0
+                ],
+                "prices": [
+                  30.6,
+                  33.25,
+                  85.7,
+                  74.3
+                ],
+                "credit": -160.75,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25500.0,
+                  24450.0
+                ],
+                "prices": [
+                  30.6,
+                  33.25,
+                  31.2,
+                  30.45
+                ],
+                "credit": 134.3,
+                "positive_credit": true
+              }
+            }
+          }
+        },
+        "14:00:00": {
+          "near_signal": 137,
+          "far_signal": 116,
+          "near_fill": 137,
+          "far_fill": 116,
+          "targets": {
+            "20.0": {
+              "near": {
+                "ce_strike": 25300.0,
+                "pe_strike": 24650.0,
+                "ce_close": 20.55,
+                "pe_close": 21.7
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25300.0,
+                  24650.0
+                ],
+                "prices": [
+                  20.5,
+                  21.75,
+                  66.75,
+                  56.05
+                ],
+                "credit": -157.14999999999998,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25600.0,
+                  24300.0
+                ],
+                "prices": [
+                  20.5,
+                  21.75,
+                  19.15,
+                  21.1
+                ],
+                "credit": 90.5,
+                "positive_credit": true
+              }
+            },
+            "25.0": {
+              "near": {
+                "ce_strike": 25250.0,
+                "pe_strike": 24700.0,
+                "ce_close": 27.85,
+                "pe_close": 26.9
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25250.0,
+                  24700.0
+                ],
+                "prices": [
+                  27.8,
+                  26.9,
+                  80.6,
+                  64.8
+                ],
+                "credit": -162.69999999999993,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25500.0,
+                  24350.0
+                ],
+                "prices": [
+                  27.8,
+                  26.9,
+                  29.1,
+                  23.75
+                ],
+                "credit": 114.94999999999999,
+                "positive_credit": true
+              }
+            },
+            "30.0": {
+              "near": {
+                "ce_strike": 25250.0,
+                "pe_strike": 24700.0,
+                "ce_close": 27.85,
+                "pe_close": 26.9
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25250.0,
+                  24700.0
+                ],
+                "prices": [
+                  27.8,
+                  26.9,
+                  80.6,
+                  64.8
+                ],
+                "credit": -162.69999999999993,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25500.0,
+                  24450.0
+                ],
+                "prices": [
+                  27.8,
+                  26.9,
+                  29.1,
+                  31.1
+                ],
+                "credit": 92.89999999999998,
+                "positive_credit": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "entry_date": "2025-09-17",
+      "near_expiry": "2025-09-23",
+      "far_expiry": "2025-09-30",
+      "near_rows": 49011,
+      "far_rows": 56824,
+      "times": {
+        "09:30:00": {
+          "near_signal": 128,
+          "far_signal": 139,
+          "near_fill": 128,
+          "far_fill": 139,
+          "targets": {
+            "20.0": {
+              "near": {
+                "ce_strike": 25650.0,
+                "pe_strike": 25000.0,
+                "ce_close": 19.75,
+                "pe_close": 21.6
+              },
+              "far_same": {
+                "selectable": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25950.0,
+                  24600.0
+                ],
+                "prices": [
+                  19.7,
+                  21.6,
+                  19.4,
+                  19.2
+                ],
+                "credit": 90.70000000000002,
+                "positive_credit": true
+              }
+            },
+            "25.0": {
+              "near": {
+                "ce_strike": 25600.0,
+                "pe_strike": 25050.0,
+                "ce_close": 26.55,
+                "pe_close": 26.65
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25600.0,
+                  25050.0
+                ],
+                "prices": [
+                  26.6,
+                  26.8,
+                  79.0,
+                  60.4
+                ],
+                "credit": -151.20000000000005,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25900.0,
+                  24700.0
+                ],
+                "prices": [
+                  26.6,
+                  26.8,
+                  23.45,
+                  23.8
+                ],
+                "credit": 125.25,
+                "positive_credit": true
+              }
+            },
+            "30.0": {
+              "near": {
+                "ce_strike": 25600.0,
+                "pe_strike": 25050.0,
+                "ce_close": 26.55,
+                "pe_close": 26.65
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25600.0,
+                  25050.0
+                ],
+                "prices": [
+                  26.6,
+                  26.8,
+                  79.0,
+                  60.4
+                ],
+                "credit": -151.20000000000005,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25850.0,
+                  24800.0
+                ],
+                "prices": [
+                  26.6,
+                  26.8,
+                  28.65,
+                  30.0
+                ],
+                "credit": 91.05000000000001,
+                "positive_credit": true
+              }
+            }
+          }
+        },
+        "10:00:00": {
+          "near_signal": 131,
+          "far_signal": 150,
+          "near_fill": 131,
+          "far_fill": 150,
+          "targets": {
+            "20.0": {
+              "near": {
+                "ce_strike": 25650.0,
+                "pe_strike": 25000.0,
+                "ce_close": 21.45,
+                "pe_close": 19.25
+              },
+              "far_same": {
+                "selectable": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25950.0,
+                  24650.0
+                ],
+                "prices": [
+                  21.5,
+                  19.25,
+                  21.3,
+                  20.95
+                ],
+                "credit": 77.0,
+                "positive_credit": true
+              }
+            },
+            "25.0": {
+              "near": {
+                "ce_strike": 25650.0,
+                "pe_strike": 25050.0,
+                "ce_close": 21.45,
+                "pe_close": 23.6
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25650.0,
+                  25050.0
+                ],
+                "prices": [
+                  21.5,
+                  23.65,
+                  71.35,
+                  56.9
+                ],
+                "credit": -159.0,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25900.0,
+                  24750.0
+                ],
+                "prices": [
+                  21.5,
+                  23.65,
+                  25.8,
+                  25.8
+                ],
+                "credit": 70.94999999999999,
+                "positive_credit": true
+              }
+            },
+            "30.0": {
+              "near": {
+                "ce_strike": 25600.0,
+                "pe_strike": 25100.0,
+                "ce_close": 29.1,
+                "pe_close": 29.75
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25600.0,
+                  25100.0
+                ],
+                "prices": [
+                  28.95,
+                  29.8,
+                  86.3,
+                  65.6
+                ],
+                "credit": -161.94999999999993,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25850.0,
+                  24800.0
+                ],
+                "prices": [
+                  28.95,
+                  29.8,
+                  31.55,
+                  29.15
+                ],
+                "credit": 111.64999999999998,
+                "positive_credit": true
+              }
+            }
+          }
+        },
+        "11:00:00": {
+          "near_signal": 134,
+          "far_signal": 155,
+          "near_fill": 134,
+          "far_fill": 155,
+          "targets": {
+            "20.0": {
+              "near": {
+                "ce_strike": 25650.0,
+                "pe_strike": 25050.0,
+                "ce_close": 20.9,
+                "pe_close": 20.4
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25650.0,
+                  25050.0
+                ],
+                "prices": [
+                  20.95,
+                  20.45,
+                  74.1,
+                  53.1
+                ],
+                "credit": -174.59999999999997,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25950.0,
+                  24650.0
+                ],
+                "prices": [
+                  20.95,
+                  20.45,
+                  21.45,
+                  19.95
+                ],
+                "credit": 82.80000000000001,
+                "positive_credit": true
+              }
+            },
+            "25.0": {
+              "near": {
+                "ce_strike": 25600.0,
+                "pe_strike": 25100.0,
+                "ce_close": 29.05,
+                "pe_close": 25.5
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25600.0,
+                  25100.0
+                ],
+                "prices": [
+                  29.05,
+                  25.45,
+                  90.25,
+                  59.6
+                ],
+                "credit": -177.04999999999995,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25900.0,
+                  24750.0
+                ],
+                "prices": [
+                  29.05,
+                  25.45,
+                  26.45,
+                  24.4
+                ],
+                "credit": 119.95000000000002,
+                "positive_credit": true
+              }
+            },
+            "30.0": {
+              "near": {
+                "ce_strike": 25600.0,
+                "pe_strike": 25150.0,
+                "ce_close": 29.05,
+                "pe_close": 32.15
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25600.0,
+                  25150.0
+                ],
+                "prices": [
+                  29.05,
+                  32.05,
+                  90.25,
+                  69.9
+                ],
+                "credit": -174.95000000000005,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25850.0,
+                  24850.0
+                ],
+                "prices": [
+                  29.05,
+                  32.05,
+                  32.5,
+                  30.5
+                ],
+                "credit": 116.5,
+                "positive_credit": true
+              }
+            }
+          }
+        },
+        "13:00:00": {
+          "near_signal": 138,
+          "far_signal": 162,
+          "near_fill": 138,
+          "far_fill": 162,
+          "targets": {
+            "20.0": {
+              "near": {
+                "ce_strike": 25650.0,
+                "pe_strike": 25050.0,
+                "ce_close": 19.9,
+                "pe_close": 19.25
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25650.0,
+                  25050.0
+                ],
+                "prices": [
+                  19.95,
+                  19.25,
+                  73.5,
+                  51.75
+                ],
+                "credit": -179.75,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25950.0,
+                  24650.0
+                ],
+                "prices": [
+                  19.95,
+                  19.25,
+                  21.65,
+                  19.7
+                ],
+                "credit": 71.95000000000002,
+                "positive_credit": true
+              }
+            },
+            "25.0": {
+              "near": {
+                "ce_strike": 25600.0,
+                "pe_strike": 25100.0,
+                "ce_close": 27.75,
+                "pe_close": 24.2
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25600.0,
+                  25100.0
+                ],
+                "prices": [
+                  27.75,
+                  24.25,
+                  89.75,
+                  58.95
+                ],
+                "credit": -186.09999999999997,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25900.0,
+                  24750.0
+                ],
+                "prices": [
+                  27.75,
+                  24.25,
+                  26.0,
+                  24.15
+                ],
+                "credit": 109.55000000000001,
+                "positive_credit": true
+              }
+            },
+            "30.0": {
+              "near": {
+                "ce_strike": 25600.0,
+                "pe_strike": 25150.0,
+                "ce_close": 27.75,
+                "pe_close": 30.7
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25600.0,
+                  25150.0
+                ],
+                "prices": [
+                  27.75,
+                  30.7,
+                  89.75,
+                  69.0
+                ],
+                "credit": -184.0,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25850.0,
+                  24850.0
+                ],
+                "prices": [
+                  27.75,
+                  30.7,
+                  32.05,
+                  30.4
+                ],
+                "credit": 104.9,
+                "positive_credit": true
+              }
+            }
+          }
+        },
+        "14:00:00": {
+          "near_signal": 139,
+          "far_signal": 164,
+          "near_fill": 140,
+          "far_fill": 164,
+          "targets": {
+            "20.0": {
+              "near": {
+                "ce_strike": 25650.0,
+                "pe_strike": 25050.0,
+                "ce_close": 20.0,
+                "pe_close": 20.35
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25650.0,
+                  25050.0
+                ],
+                "prices": [
+                  20.0,
+                  20.4,
+                  72.05,
+                  54.15
+                ],
+                "credit": -176.59999999999997,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25950.0,
+                  24650.0
+                ],
+                "prices": [
+                  20.0,
+                  20.4,
+                  21.1,
+                  20.5
+                ],
+                "credit": 77.19999999999999,
+                "positive_credit": true
+              }
+            },
+            "25.0": {
+              "near": {
+                "ce_strike": 25600.0,
+                "pe_strike": 25100.0,
+                "ce_close": 27.45,
+                "pe_close": 25.7
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25600.0,
+                  25100.0
+                ],
+                "prices": [
+                  27.4,
+                  25.7,
+                  88.15,
+                  61.75
+                ],
+                "credit": -184.20000000000005,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25900.0,
+                  24750.0
+                ],
+                "prices": [
+                  27.4,
+                  25.7,
+                  25.8,
+                  25.15
+                ],
+                "credit": 112.64999999999998,
+                "positive_credit": true
+              }
+            },
+            "30.0": {
+              "near": {
+                "ce_strike": 25600.0,
+                "pe_strike": 25150.0,
+                "ce_close": 27.45,
+                "pe_close": 32.65
+              },
+              "far_same": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25600.0,
+                  25150.0
+                ],
+                "prices": [
+                  27.4,
+                  32.7,
+                  88.15,
+                  72.8
+                ],
+                "credit": -182.34999999999997,
+                "positive_credit": false
+              },
+              "far_diag": {
+                "selectable": true,
+                "fill_complete": true,
+                "far_strikes": [
+                  25850.0,
+                  24850.0
+                ],
+                "prices": [
+                  27.4,
+                  32.7,
+                  31.7,
+                  31.8
+                ],
+                "credit": 110.0,
+                "positive_credit": true
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
