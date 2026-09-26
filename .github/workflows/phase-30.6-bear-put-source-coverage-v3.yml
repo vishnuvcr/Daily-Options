@@ -1,0 +1,53 @@
+name: Phase 30.6 - Bear Put source interpretation coverage v3
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/phase30-6-launch-v3.txt"
+      - "research/phase30_6_bear_put_signal_coverage.py"
+
+permissions:
+  contents: write
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-30.6-bear-put-source-interpretation-coverage-v3
+          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          repository: technovusin/nifty50-historical-data
+          ref: 75f273a2dec36b10f4ded3a00721fae2172edccb
+          path: external/nifty50-historical-data
+          fetch-depth: 1
+      - name: Stage pinned spot data
+        run: |
+          set -euo pipefail
+          rm -rf data/cache/phase30_5_nifty_spot
+          mkdir -p data/cache/phase30_5_nifty_spot
+          find external/nifty50-historical-data/1min/2025 external/nifty50-historical-data/1min/2026 -type f -name "*.csv" -print0 | while IFS= read -r -d '' f; do cp "$f" "data/cache/phase30_5_nifty_spot/$(basename "$f")"; done
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install --disable-pip-version-check pandas==2.3.2 numpy==2.2.6
+      - name: Run vectorized coverage
+        run: PYTHONPATH=. python research/phase30_6_bear_put_signal_coverage.py
+      - name: Persist coverage
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f reports/phase30_6_bear_put_signal_coverage.json
+          git commit -m "Phase 30.6: persist vectorized Bear Put signal coverage"
+          git push origin HEAD:phase-30.6-bear-put-source-interpretation-coverage-v3
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase30-6-bear-put-signal-coverage-v3
+          path: reports/phase30_6_bear_put_signal_coverage.json
