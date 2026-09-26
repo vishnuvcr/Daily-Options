@@ -124,8 +124,8 @@ def load_prices(con, expiry_map, features):
                      UPPER(CAST(o.option_type AS VARCHAR)) option_type,
                      CAST(o.strike AS DOUBLE) strike,
                      CASE
-                       WHEN CAST(o.timestamp AS TIME)=TIME '09:31:00' THEN CAST(o.open AS DOUBLE)
-                       WHEN CAST(o.timestamp AS TIME)=TIME '15:10:00' THEN CAST(o.close AS DOUBLE)
+                       WHEN CAST(CAST(o.timestamp AS TIMESTAMP) AS TIME)=TIME '09:31:00' THEN CAST(o.open AS DOUBLE)
+                       WHEN CAST(CAST(o.timestamp AS TIMESTAMP) AS TIME)=TIME '15:10:00' THEN CAST(o.close AS DOUBLE)
                      END AS exec_px
               FROM read_parquet('{p}') o
               JOIN wanted w
@@ -133,7 +133,7 @@ def load_prices(con, expiry_map, features):
                AND (CAST(o.strike AS DOUBLE)=w.atm
                     OR CAST(o.strike AS DOUBLE)=w.atm+{WING}
                     OR CAST(o.strike AS DOUBLE)=w.atm-{WING})
-              WHERE CAST(o.timestamp AS TIME) IN (TIME '09:31:00',TIME '15:10:00')
+              WHERE CAST(CAST(o.timestamp AS TIMESTAMP) AS TIME) IN (TIME '09:31:00',TIME '15:10:00')
                 AND UPPER(CAST(o.option_type AS VARCHAR)) IN ('CE','PE')
                 AND ((CAST(o.timestamp AS TIME)=TIME '09:31:00' AND o.open>0)
                   OR (CAST(o.timestamp AS TIME)=TIME '15:10:00' AND o.close>0))"""
