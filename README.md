@@ -458,3 +458,14 @@ After source reconstruction and spot-only feasibility, the Bear Put candidate ha
 Phase 30.7 freezes **6,480** explicit interpretation cells covering expiry, strike construction, gap-up adjustment threshold/wait, risk/exit convention and time exit. This is a preregistered interpretation experiment, not a claim about the video's unstated rules. [Phase 30.7 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.7-bear-put-contract-interpretation-grid-v1/docs/phase30_7_bear_put_contract_interpretation_grid_plan.md) · [Grid manifest](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.7-bear-put-contract-interpretation-grid-v1/reports/phase30_7_bear_put_interpretation_grid_manifest.json)
 
 **P&L remains blocked until implementation/contract audit passes.**
+
+
+## 2026-09-26 — Live research frontier synchronization
+
+The stale Phase 30.7 screenshot checkpoint is superseded by authoritative repository state. Phase 30.7 Bear Put completed all **18/18 shards** and the aggregate audited **6,480/6,480 cells** with 0 duplicate cells. Base and Stress both had **0 passing cells** for the frozen ₹5,000/week gate, so Bear Put is retired with no WFA/OOS retuning.
+
+The active frontier is now **Phase 30.8 source resolution** for **OvaJumYancs — “No More Straddles. This Strategy Is Smarter.”** The deterministic Python evidence workflow completed successfully (run **36234096126**): tests passed, the source-resolution report was generated, and the artifact was uploaded. The candidate remains **BLOCKED_FOR_PNL** because exact payoff structure, entry/expiry timing, strike construction, adjustment mechanics, stop, target, exit and capital convention are unresolved in the pinned primary evidence.
+
+[Phase 30.7 final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.7-bear-put-contract-interpretation-grid-v1/reports/phase30_7_bear_put_final_result.md) · [Phase 30.8 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.8-equity-income-no-more-straddles-source-resolution-v1/docs/phase30_8_plan.md) · [Phase 30.8 source report](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.8-equity-income-no-more-straddles-source-resolution-v1/reports/phase30_8_no_more_straddles_source_resolution.json) · [Phase 30.8 workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.8-equity-income-no-more-straddles-source-resolution-v1/.github/workflows/phase-30.8-equity-income-no-more-straddles-source-resolution-v1.yml)
+
+A separate main-branch launcher is queued to keep Phase 30.8 source-resolution reporting reproducible without depending on hidden/private transcript material.
