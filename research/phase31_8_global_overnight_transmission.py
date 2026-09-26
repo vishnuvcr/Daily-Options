@@ -137,7 +137,6 @@ def build_signals(panel, null_seed=None):
 def load_prices(root, expiry_map, signals):
     prices={}
     if signals.empty: return prices
-    wanted=signals[["date","atm","exit_ts","expiry"]].copy() if "expiry" in signals.columns else signals[["date","atm","exit_ts"]].copy()
     con=duckdb.connect()
     con.execute("SET TimeZone='Asia/Kolkata'")
     sig=signals.copy()
