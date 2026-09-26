@@ -1,7 +1,7 @@
 # Phase 31.2 — Phase 31.1 forensic reconciliation audit
 
 ## Status
-ACTIVE — numerical result provisionally quarantined pending independent reconciliation.
+COMPLETE — Phase 31.1 remains quarantined pending provenance-corrected reproduction.
 
 ## Research question
 Is the published Phase 31.1 result (09:30 NIFTY 2:2:1 ratio, 15:10 exit) reproducible from the pinned raw dataset, leg by leg, independently of the Phase 31.1 simulator, and are the observed losses consistent with the strategy's actual intraday payoff mechanics?
@@ -86,3 +86,6 @@ No optimization, WFA, holdout promotion, or parameter search is allowed in this 
 
 ## Stop rule
 After the audit gates are resolved, freeze the Phase 31.1 conclusion as validated/quarantined/invalidated. Do not let this phase expand into parameter optimization. If invalidated, open a separately preregistered corrected reproduction phase rather than silently editing Phase 31.1.
+
+## Final disposition
+The audit gates are complete. The persisted Phase 31.1 accounting is reproducible, but the currently checked-in simulator has different slippage semantics. The phase is therefore quarantined rather than validated. The measured persisted slippage is ₹130,750.00 and the friction-corrected Base total is -₹667,847.06. The stop rule is active: the next phase must freeze one accounting definition before any optimization.
