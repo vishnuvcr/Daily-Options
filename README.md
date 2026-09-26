@@ -516,3 +516,11 @@ Air Defense/VIX Phase 30.10 produced 31 cells passing both Base and Stress. Phas
 The execution topology was hardened to **72 independent fold/shard/regime jobs** with a 144-file aggregate audit. Clean v2 run **36236257189** is queued; no WFA survivor is accepted yet.
 
 [Phase 30.11 WFA plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.11-strangle-air-defense-wfa-v1/docs/phase30_11_wfa_plan.md)
+
+## 2026-09-26 — Phase 31.2 forensic audit
+
+The Phase 31.1 fixed NIFTY ratio result is **provisionally quarantined** for forensic reconciliation. E0364 found a provenance mismatch between the checked-in Phase 31.1 simulator and its persisted weekly artifact: the simulator currently references a `costs` aggregation field that it does not create, while the artifact contains that field.
+
+Phase 31.2 freezes the strategy and independently re-reads the pinned raw NIFTY/index-options dataset to reconcile leg prices, strikes, expiry, lot size, raw P&L, execution P&L, costs, weekly aggregation and the empirical 09:30→15:10 loss-region diagnostic. No tuning is allowed.
+
+[Phase 31.2 plan](docs/phase31_2_forensic_audit_plan.md) · [Phase 31.2 workflow](.github/workflows/phase-31-2-phase31-1-forensic-audit.yml) · [Phase 31.2 branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-31.2-phase31-1-forensic-audit-v1)
