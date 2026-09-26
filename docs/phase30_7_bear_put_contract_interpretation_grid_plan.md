@@ -136,3 +136,12 @@ Phase 30.7 first performs deterministic contract/coverage validation across the 
 ## Status
 
 **OPEN — interpretation grid frozen; numerical execution authorization follows implementation/contract audit.**
+
+
+## Final status — 2026-09-26
+
+The complete Base/Stress execution finished in workflow run **36233110210** with 18/18 shard jobs successful and a successful 6,480-cell aggregate audit. Both friction regimes had **0/6,480 cells pass** the frozen ₹5,000/week promotion gate.
+
+**Phase status: CLOSED — RETIRED.**
+
+See `reports/phase30_7_bear_put_final_result.md` for the audited result. No WFA/OOS branch is authorized for Bear Put.
