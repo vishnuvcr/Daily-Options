@@ -691,3 +691,12 @@ Before any WFA survivor was accepted, three reproducibility issues were correcte
 - **E0353:** the aggregate auditor now expects **144 leaderboard files / 144 weekly files** from 24 shard artifacts × 3 folds × 2 stages, yielding 103,680 leaderboard rows.
 
 The current clean run is **36236079821**. It is waiting behind the stale pre-E0351 computation **36235898705**, which will not be used for WFA conclusions. No WFA survivor has been accepted.
+
+## 2026-09-26 — Phase 30.11 WFA v2 execution active
+
+The original packed-fold WFA runner was left with one cancellation-resistant shard, so it is not research-authoritative.
+
+WFA v2 now executes **72 independent jobs**: 3 folds × 12 definition shards × 2 friction regimes. Each job generates one train/OOS pair. The aggregate audit therefore expects 144 leaderboard files and 144 weekly files.
+
+Authoritative clean WFA v2 run: **36236194154**.
+Current checkpoint: **2 jobs in progress, 28 queued**. No WFA survivor has been accepted.
