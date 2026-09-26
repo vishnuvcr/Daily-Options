@@ -143,3 +143,7 @@ The authoritative Falcon run **36213335815** was found to be abnormally slow aft
 User message: **“Continue reasearch from here In this chat”** with screenshots showing the Phase 31.7 run monitoring context and the timezone-cast correction sequence.
 
 Operational continuation: inspected the current repository phase plan, research status, error log, workflow definition, authoritative run state and persisted run-8 artifacts before taking the next step. Run 36250115094 completed Base/Stress but failed validation because executable price coverage was zero; it is quarantined and no P&L is accepted. Corrected Phase 31.7 source now derives execution date/time from normalized option timestamps and constructs null controls from the full feature panel before thresholding. Regression tests are persisted. This log records operational research decisions only and does not record hidden chain-of-thought.
+
+## 2026-09-26 — Phase 31.7 run 9 test-collection failure
+
+Operational checkpoint: corrected run 9 was triggered from the Phase 31.7 branch, but pytest stopped before computation because the added regression test file contained literal backslash-n text. No data, P&L or strategy evidence was produced. E0393 was logged, the test file was repaired, and the next run is pending.
