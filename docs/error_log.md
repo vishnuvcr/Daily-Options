@@ -391,3 +391,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0350 | 2026-09-26 | Phase 30.11 WFA fold validation | Initial WFA run used a stale Fold 3 test date assertion after the preregistered fold was revised to a 20-week calendar window | No WFA result accepted | Corrected Fold 3 dates and synchronized the fold test, plan and runner; restarted the WFA run | CLOSED |
+
+| E0361 | 2026-09-26 | Phase 30.13 | First source-resolution workflow had valid tests but the acquisition script referenced `ap.out` before parsing arguments, so no caption evidence was acquired | No research evidence produced | Parse CLI arguments before calling acquire(); rerun required | CLOSED — implementation defect |\n
