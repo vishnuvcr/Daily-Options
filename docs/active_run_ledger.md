@@ -209,3 +209,14 @@ Next bounded discovery family: **Phase 31.7 OI/volume microstructure with explic
 | 31.7 | phase-31.7-oi-volume-microstructure-v1 | pending first clean run | PREREGISTERED — data gate not yet executed | No |
 
 No Base/Stress numerical work is authorized until the data gate passes.
+
+
+## 2026-09-26 — Phase 31.7 closure / Phase 31.8 handoff
+
+| Phase | Branch | Workflow | Status | Accepted P&L |
+|---|---|---:|---|---|
+| 31.7 | phase-31.7-oi-volume-microstructure-v1 | **36251189770** | CLOSED — all 12 cells negative in Base/Stress | Yes — negative discovery evidence |
+
+Phase 31.7 is frozen. No parameter retuning or WFA/OOS is authorized.
+
+Next bounded family: **Phase 31.8 Global Overnight Cross-Market Transmission**, subject to a fresh global-data coverage gate and preregistered finite hypothesis.
