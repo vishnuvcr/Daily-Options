@@ -577,3 +577,8 @@ The next authoritative run will be run 10 from branch head 0fc95b29fba8558070368
 Run 36250549825 reached the data gate, Base and Stress, but validation failed before any Phase 31.7 P&L was accepted. The execution loader was subsequently replaced with explicit IST date/strike filtering; E0394 then caught a strike-SQL construction-order defect, which is now corrected and covered by a regression test.
 
 The next authoritative run will be run 11 from branch head 408d8d1cbb1fa5e121d2d2f72f3778432d07fa60. No Phase 31.7 numerical result is accepted yet.
+## 2026-09-26 — Phase 31.7 run 11 closure
+
+Run 36250863176 reached Base and Stress but failed validation before any numerical result was accepted. The current branch includes a raw execution-row probe and the launcher now records it after the data gate to localize the remaining execution-price coverage defect.
+
+The next authoritative run will be run 12 from branch head a73da3a7f29668b32f81fe1612b6ef31c40492a8. The probe is diagnostic only; the preregistered grid and cost model remain frozen.
