@@ -173,3 +173,12 @@ Authoritative run **36218652778** completed Base and Stress successfully at the 
 The simulator is corrected to normalize both timezone-aware (+05:30) and timezone-naive IST representations to the same naive Asia/Kolkata minute timestamp. A dedicated regression test now verifies both forms map to 09:30 IST. Economic rules, 270-cell grid, source, cost model and promotion gate are unchanged.
 
 Status: **OPEN — deterministic rerun required**
+
+
+## 2026-09-26 — Phase 30.2 deterministic rerun after E0320
+
+| Phase | Branch | Workflow run | Status | Accepted P&L |
+|---|---|---:|---|---|
+| 30.2 Falcon | phase-30.2-falcon-runtime-fix-v1 | 36220039329 | Queued; corrected timestamp-offset regex | No |
+
+Run 36219733330 is quarantined as an implementation-only test failure. No market-data or P&L result from it is accepted. The frozen 270-cell grid remains unchanged.
