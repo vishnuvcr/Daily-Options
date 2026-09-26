@@ -44,7 +44,7 @@ def session_panel(idx, vix):
     px=daily[["date","day_close"]].copy()
     r=np.log(px.day_close/px.day_close.shift(1))
     rv20=r.shift(1).rolling(20,min_periods=20).std(ddof=1)*np.sqrt(252)*100.0
-    rv=pd.DataFrame({"rv_feature_date":px.date,"rv20_pct":rv})
+    rv=pd.DataFrame({"rv_feature_date":px.date,"rv20_pct":rv20})
 
     vx=vix.copy()
     vx["vix_feature_date"]=pd.to_datetime(vx.date).dt.normalize()
