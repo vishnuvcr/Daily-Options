@@ -378,3 +378,7 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 | E0316 | 2026-09-26 | Phase 30.2 Falcon runtime | Corrected Falcon run 36213335815 stayed in `Run friction` for more than six hours in both Base and Stress; static audit found repeated full-file Parquet scans and unbounded setup-level DataFrame retention | No P&L result accepted from the stalled run | Reworked the engine to load each near/far exact-expiry slice once per calendar, perform selection in memory, process one calendar at a time, release caches explicitly, emit progress, and serialize Base/Stress jobs | CLOSED — runtime fix deployed; rerun 36216668042 active |
 
+
+
+| E0322 | 2026-09-26 | Phase 30.2 Falcon exact-expiry type bug | pandas datetime-like expiry values were compared directly to Python date values, silently eliminating candidate setups | Corrected `select_target()` to normalize expiry values before comparison; regression test added | CLOSED |
+| E0323 | 2026-09-26 | Phase 30.2 persistence race | Base computation completed but the runner push hit a fast-forward race; artifact upload succeeded | Preserve artifact as evidence and persist the final closure report on the phase branch | CLOSED |
