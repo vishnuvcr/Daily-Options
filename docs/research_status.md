@@ -590,3 +590,10 @@ The deterministic contract audit passed. The cached Rissin option set contains 1
 The first numerical smoke attempts exposed and closed implementation defects E0326–E0332. The most important confirmed data finding is that Rissin option timestamps are stored as timezone-aware UTC and must be normalized to IST before next-minute execution matching; exact entry-minute probes confirm the required option rows exist. The latest corrected engine also normalizes expiry keys to Python dates and restores deterministic order construction.
 
 **Current state:** OPEN — corrected smoke rerun. Smoke is now bounded to 12 contract-resolved specifications while retaining all 36 interpretation combinations. Full 6,480-cell Base/Stress execution remains blocked until the corrected smoke passes.
+
+
+## 2026-09-26 — Phase 30.7 full-matrix runtime correction checkpoint
+
+The first vectorized full-Base attempt reached numerical computation but was superseded before any result was accepted. The engine was further hardened by correcting the Monday 15:00 convention for Monday-listed expiries caused by Tuesday holidays (E0333) and adding a Python compile gate before numerical execution. Result persistence was also changed to commit only summary/leaderboard/diagnostic artifacts while retaining trade-level CSVs as Actions artifacts.
+
+**Current state:** OPEN — corrected full Base/Stress workflow queued/running from the hardened branch head. No Bear Put economic result has been accepted.
