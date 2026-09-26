@@ -91,6 +91,7 @@ jobs:
                   assert len(sig)>0,(k,"zero signals")
                   cov=pd.read_csv(f"reports/phase31_7/{k}/price_coverage.csv")
                   assert int(cov.complete_price_coverage.sum())==len(t),(k,"price coverage mismatch")
+                  assert (t.raw_gross-t.slippage_cost-t.transaction_costs-t.net_pnl).abs().max()<1e-8,(k,"accounting identity mismatch")
                   n=pd.read_csv(f"reports/phase31_7/{k}/null_summary_{k}.csv")
                   assert len(n)==60,(k,len(n))
                   nt=pd.read_csv(f"reports/phase31_7/{k}/null_trades_{k}.csv")
