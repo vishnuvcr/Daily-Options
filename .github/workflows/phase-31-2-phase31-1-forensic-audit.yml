@@ -63,7 +63,7 @@ jobs:
               x=pd.read_csv(p)
               print(p, x.shape, list(x.columns))
               assert len(x)>=1200
-              assert {"trade_date","expiry","spot_0930","atm","lot_size","gross_pnl","net_pnl","legs"}.issubset(x.columns)
+              assert {"trade_date","expiry","spot_0930","atm","lot_size","gross_pnl","costs","net_pnl","leg_1","leg_2","leg_3"}.issubset(x.columns)
           PY
       - name: Run independent forensic reconciliation
         run: PYTHONPATH=. python research/phase31_2_forensic_audit.py --data data/cache/phase31_trademarkk --out reports/phase31_2
