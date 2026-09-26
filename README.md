@@ -480,3 +480,16 @@ The live frontier has advanced beyond the stale screenshot checkpoint:
 - **Phase 30.10 Air Defense P&L:** active corrected Base/Stress run **36234923838**, frozen **720 cells per regime / 1,440 total**, 12 definition shards × 2 friction regimes. The first matrix run was cancelled after a YAML interpolation defect and the corrected run is now executing.
 
 [Phase 30.10 numerical plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.10-strangle-air-defense-pnl-v1/docs/phase30_10_strangle_air_defense_pnl_plan.md) · [Phase 30.9 VIX acquisition plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.9-strangle-air-defense-vix-source-resolution-v1/docs/phase30_9_strangle_air_defense_plan.md) · [Phase 30.7 final Bear Put result](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.7-bear-put-contract-interpretation-grid-v1/reports/phase30_7_bear_put_final_result.md)
+
+
+## 2026-09-26 — Phase 30.11 rolling WFA active
+
+Phase 30.10 Air Defense/VIX numerical evaluation is complete and audited:
+- 720 Base cells and 720 Stress cells were aggregated with 0 duplicates.
+- **34 Base cells** and **31 Stress cells** passed the frozen weekly gate.
+- **31 cells passed in both friction regimes.**
+- The full-sample best Base and Stress cells are not being promoted directly; Phase 30.11 treats the full-sample result as discovery evidence and runs preregistered rolling walk-forward validation.
+
+Active branch: `phase-30.11-strangle-air-defense-wfa-v1`.
+
+Corrected WFA run: **36235740035**. It uses three rolling 20-week training / 12-week OOS folds, 720 cells per fold per friction regime, and no new parameter values. WFA results are not yet final.
