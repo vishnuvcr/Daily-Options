@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import gc
 import json
 from dataclasses import dataclass
 from datetime import date
@@ -123,7 +124,14 @@ def expiry_setups(sessions, expiries):
     return out
 
 
-def load_snapshot(con, root, entry_date, near_expiry, far_expiry, ts, fill_ts):
+def load_expiry_slice(con, root, expiry, start_date, end_date):
+    """Load one exact-expiry option slice once per Falcon calendar.
+
+    The source files are already expiry-specific at the economic level, so the
+    old per-strike read_parquet queries repeatedly rescanned the full two-year
+    files. This helper performs one bounded exact-expiry read for the calendar
+    window. All later selection/marking is done in-memory from this slice.
+    """
     path = glob_expr(root)
     q = f"""
     SELECT CAST(timestamp AS TIMESTAMP) AS ts,
@@ -135,13 +143,35 @@ def load_snapshot(con, root, entry_date, near_expiry, far_expiry, ts, fill_ts):
     FROM read_parquet('{path}')
     WHERE upper(underlying)='NIFTY'
       AND granularity='1min'
-      AND CAST(date AS DATE)=DATE '{entry_date}'
-      AND CAST(expiry AS DATE) IN (DATE '{near_expiry}', DATE '{far_expiry}')
-      AND CAST(timestamp AS TIMESTAMP) BETWEEN TIMESTAMP '{ts}' AND TIMESTAMP '{fill_ts}'
+      AND CAST(expiry AS DATE)=DATE '{expiry}'
+      AND CAST(date AS DATE) BETWEEN DATE '{start_date}' AND DATE '{end_date}'
+      AND CAST(timestamp AS TIMESTAMP) BETWEEN TIMESTAMP '{start_date} 09:00:00'
+          AND TIMESTAMP '{end_date} 15:15:00'
       AND open > 0 AND close > 0
-    ORDER BY expiry, option_type, strike, ts
+    ORDER BY option_type, strike, ts
     """
-    return con.execute(q).df()
+    x = con.execute(q).df()
+    if x.empty:
+        return pd.DataFrame(columns=["ts", "expiry", "strike", "option_type", "open_px", "close_px"])
+    x["ts"] = pd.to_datetime(x["ts"]).dt.floor("min")
+    return x.drop_duplicates(["ts", "strike", "option_type"]).sort_values(
+        ["option_type", "strike", "ts"]
+    )
+
+
+def frame_series(frame, trade_start, trade_end, strike, side):
+    """Return one leg series from a preloaded exact-expiry frame."""
+    if frame is None or frame.empty:
+        return pd.DataFrame(columns=["ts", "open_px", "close_px"])
+    start_ts = pd.Timestamp(f"{trade_start} 09:00:00")
+    end_ts = pd.Timestamp(f"{trade_end} 15:15:00")
+    x = frame[
+        (frame.option_type == side)
+        & (frame.strike == float(strike))
+        & (frame.ts >= start_ts)
+        & (frame.ts <= end_ts)
+    ][["ts", "open_px", "close_px"]].copy()
+    return x.drop_duplicates("ts").sort_values("ts")
 
 
 def select_target(chain, expiry, side, target, ref_strike=None, far_otm=False):
@@ -229,35 +259,42 @@ def settle(legs, lot, slippage, brokerage_per_order, entry_date=None, exit_date=
     return gross - cost(legs, lot, slippage, brokerage_per_order, entry_date, exit_date)
 
 
-def build_setup(con, root, cal, entry_time, target, far_mode):
+def build_setup(con, root, cal, entry_time, target, far_mode, expiry_frames):
     entry_date, adjust_date, exit_date = cal["entry_date"], cal["adjust_date"], cal["exit_date"]
     near_exp, far_exp = cal["near_expiry"], cal["far_expiry"]
     signal_ts = pd.Timestamp(f"{entry_date} {entry_time}")
     fill_ts = signal_ts + pd.Timedelta(minutes=1)
-    snap = load_snapshot(con, root, entry_date, near_exp, far_exp, signal_ts, fill_ts)
-    if snap.empty:
+
+    near_frame = expiry_frames.get(near_exp)
+    far_frame = expiry_frames.get(far_exp)
+    if near_frame is None or far_frame is None:
         return None
 
-    near_signal = snap[snap.ts == signal_ts]
-    near_fill = snap[snap.ts == fill_ts]
-    far_signal = snap[snap.ts == signal_ts]
-    far_fill = snap[snap.ts == fill_ts]
-    sce = select_target(near_signal, near_exp, "CE", target)
-    spe = select_target(near_signal, near_exp, "PE", target)
+    near_signal = near_frame[near_frame.ts.isin([signal_ts, fill_ts])].copy()
+    far_signal = far_frame[far_frame.ts.isin([signal_ts, fill_ts])].copy()
+    near_signal_rows = near_signal[near_signal.ts == signal_ts]
+    far_signal_rows = far_signal[far_signal.ts == signal_ts]
+    near_fill = near_signal[near_signal.ts == fill_ts]
+    far_fill = far_signal[far_signal.ts == fill_ts]
+
+    sce = select_target(near_signal_rows, near_exp, "CE", target)
+    spe = select_target(near_signal_rows, near_exp, "PE", target)
     if sce is None or spe is None:
         return None
 
     if far_mode == "SAME_STRIKE":
-        fce = select_target(far_signal, far_exp, "CE", target, ref_strike=sce.strike)
-        fpe = select_target(far_signal, far_exp, "PE", target, ref_strike=spe.strike)
+        fce = select_target(far_signal_rows, far_exp, "CE", target, ref_strike=sce.strike)
+        fpe = select_target(far_signal_rows, far_exp, "PE", target, ref_strike=spe.strike)
     else:
-        fce = select_target(far_signal, far_exp, "CE", target, ref_strike=sce.strike, far_otm=True)
-        fpe = select_target(far_signal, far_exp, "PE", target, ref_strike=spe.strike, far_otm=True)
+        fce = select_target(far_signal_rows, far_exp, "CE", target, ref_strike=sce.strike, far_otm=True)
+        fpe = select_target(far_signal_rows, far_exp, "PE", target, ref_strike=spe.strike, far_otm=True)
     if any(x is None for x in (fce, fpe)):
         return None
 
-    sc, sp = open_at(near_fill, "CE", sce.strike, fill_ts), open_at(near_fill, "PE", spe.strike, fill_ts)
-    fc, fp = open_at(far_fill, "CE", fce.strike, fill_ts), open_at(far_fill, "PE", fpe.strike, fill_ts)
+    sc = open_at(near_fill, "CE", sce.strike, fill_ts)
+    sp = open_at(near_fill, "PE", spe.strike, fill_ts)
+    fc = open_at(far_fill, "CE", fce.strike, fill_ts)
+    fp = open_at(far_fill, "PE", fpe.strike, fill_ts)
     if any(x is None for x in (sc, sp, fc, fp)):
         return None
     credit = 5.0 * (sc + sp) - 3.0 * (fc + fp)
@@ -276,15 +313,22 @@ def build_setup(con, root, cal, entry_time, target, far_mode):
     }
 
 
-def simulate_setup(con, root, setup, variant, slippage, brokerage_per_order, series_cache, strike_cache):
+def simulate_setup(con, root, setup, variant, slippage, brokerage_per_order, expiry_frames):
     c = setup["_cache"]
     lot = lot_size(setup["near_expiry"])
 
     def cached_series(trade_start, trade_end, expiry, strike, side):
         key = (str(trade_start), str(trade_end), str(expiry), float(strike), side)
-        if key not in series_cache:
-            series_cache[key] = load_series(con, root, trade_start, trade_end, expiry, strike, side)
-        return series_cache[key]
+        if key not in c.setdefault("series", {}):
+            c["series"][key] = frame_series(
+                expiry_frames.get(expiry),
+                trade_start,
+                trade_end,
+                strike,
+                side,
+            )
+        return c["series"][key]
+
     start = setup["entry_fill_ts"]
     end = pd.Timestamp(f"{setup['exit_date']} 15:15:00")
     adjust_signal = pd.Timestamp(f"{setup['adjust_date']} {variant.adjust_time}")
@@ -335,19 +379,14 @@ def simulate_setup(con, root, setup, variant, slippage, brokerage_per_order, ser
     adjustments = c.setdefault("adjustments", {})
     wing_key = variant.adjust_time
     if wing_key not in adjustments:
-        path = glob_expr(root)
-        strike_df = con.execute(
-            f"""
-            SELECT DISTINCT CAST(strike AS DOUBLE) strike, upper(option_type) option_type
-            FROM read_parquet('{path}')
-            WHERE upper(underlying)='NIFTY'
-              AND granularity='1min'
-              AND CAST(date AS DATE)=DATE '{setup["adjust_date"]}'
-              AND CAST(expiry AS DATE)=DATE '{setup["near_expiry"]}'
-            """
-        ).df()
-        ce_all = np.sort(strike_df.loc[strike_df.option_type=="CE","strike"].unique())
-        pe_all = np.sort(strike_df.loc[strike_df.option_type=="PE","strike"].unique())
+        near_frame = expiry_frames.get(setup["near_expiry"])
+        if near_frame is None or near_frame.empty:
+            return None
+        strike_window = near_frame[
+            near_frame.ts.dt.date == setup["adjust_date"]
+        ][["strike", "option_type"]].drop_duplicates()
+        ce_all = np.sort(strike_window.loc[strike_window.option_type == "CE", "strike"].unique())
+        pe_all = np.sort(strike_window.loc[strike_window.option_type == "PE", "strike"].unique())
         ce_w = ce_all[ce_all > setup["near_strikes"]["ce"]]
         pe_w = pe_all[pe_all < setup["near_strikes"]["pe"]]
         if len(ce_w) == 0 or len(pe_w) == 0:
@@ -361,8 +400,11 @@ def simulate_setup(con, root, setup, variant, slippage, brokerage_per_order, ser
         wce_row, wpe_row = next_open(wce, adjust_exec), next_open(wpe, adjust_exec)
         if wce_row is None or wpe_row is None:
             return None
-        post = mark_panel({"sce": initial["sce"], "spe": initial["spe"], "fce": initial["fce"], "fpe": initial["fpe"],
-                           "wce": wce, "wpe": wpe}, 1)
+        post = mark_panel({
+            "sce": initial["sce"], "spe": initial["spe"],
+            "fce": initial["fce"], "fpe": initial["fpe"],
+            "wce": wce, "wpe": wpe,
+        }, 1)
         adjustments[wing_key] = {
             "wce": wce, "wpe": wpe,
             "wce_entry": float(wce_row.open_px), "wpe_entry": float(wpe_row.open_px),
@@ -419,36 +461,83 @@ def run(data: Path, out: Path, slippage: float, brokerage_per_order: float):
     sessions, expiries = load_calendar(con, data)
     cals = expiry_setups(sessions, expiries)
 
-    setups = []
-    for cal in cals:
-        for entry_time in ENTRY_TIMES:
-            for target in TARGET_PREMIUMS:
-                for far_mode in FAR_MODES:
-                    s = build_setup(con, data, cal, entry_time, target, far_mode)
-                    if s is not None:
-                        setups.append(s)
-
-    series_cache, strike_cache = {}, {}
     by_key = {}
     for v in variants:
         by_key.setdefault((v.entry_time, v.target_premium, v.far_mode), []).append(v)
 
     rows, errors = [], []
-    for setup in setups:
-        for v in by_key[(setup["entry_time"], setup["target_premium"], setup["far_mode"])]:
-            try:
-                result = simulate_setup(con, data, setup, v, slippage, brokerage_per_order, series_cache, strike_cache)
-            except Exception as exc:
-                errors.append({"entry_date": str(setup["entry_date"]), "variant_id": v.variant_id, "error": repr(exc)})
-                result = None
-            if result is not None:
-                rows.append({"variant_id": v.variant_id, "entry_date": setup["entry_date"],
-                             "adjust_date": setup["adjust_date"], "exit_date": setup["exit_date"],
-                             "near_expiry": setup["near_expiry"], "far_expiry": setup["far_expiry"],
-                             "entry_ts": setup["entry_ts"], **result})
+    candidate_setups = 0
+
+    # Process one calendar at a time. The source is read exactly once per
+    # near/far expiry for the calendar window, and all strike/snapshot
+    # selection thereafter occurs in-memory. This preserves the frozen rules
+    # while removing the old repeated full-file scans and unbounded setup-cache
+    # memory growth.
+    for idx, cal in enumerate(cals, start=1):
+        expiry_frames = {}
+        for expiry in (cal["near_expiry"], cal["far_expiry"]):
+            expiry_frames[expiry] = load_expiry_slice(
+                con,
+                data,
+                expiry,
+                cal["entry_date"],
+                cal["exit_date"],
+            )
+
+        cal_setups = 0
+        for entry_time in ENTRY_TIMES:
+            for target in TARGET_PREMIUMS:
+                for far_mode in FAR_MODES:
+                    setup = build_setup(
+                        con, data, cal, entry_time, target, far_mode, expiry_frames
+                    )
+                    if setup is None:
+                        continue
+                    candidate_setups += 1
+                    cal_setups += 1
+                    for v in by_key[(entry_time, target, far_mode)]:
+                        try:
+                            result = simulate_setup(
+                                con,
+                                data,
+                                setup,
+                                v,
+                                slippage,
+                                brokerage_per_order,
+                                expiry_frames,
+                            )
+                        except Exception as exc:
+                            errors.append({
+                                "entry_date": str(setup["entry_date"]),
+                                "variant_id": v.variant_id,
+                                "error": repr(exc),
+                            })
+                            result = None
+                        if result is not None:
+                            rows.append({
+                                "variant_id": v.variant_id,
+                                "entry_date": setup["entry_date"],
+                                "adjust_date": setup["adjust_date"],
+                                "exit_date": setup["exit_date"],
+                                "near_expiry": setup["near_expiry"],
+                                "far_expiry": setup["far_expiry"],
+                                "entry_ts": setup["entry_ts"],
+                                **result,
+                            })
+
+        print(
+            f"[Falcon] calendar {idx}/{len(cals)} "
+            f"{cal['near_expiry']} entry={cal['entry_date']} "
+            f"candidate_setups={cal_setups} accumulated_trades={len(rows)}",
+            flush=True,
+        )
+        del expiry_frames
+        gc.collect()
 
     if errors:
-        (out / "phase24_rissin_sim_errors.json").write_text(json.dumps(errors[:500], indent=2, default=str))
+        (out / "phase24_rissin_sim_errors.json").write_text(
+            json.dumps(errors[:500], indent=2, default=str)
+        )
 
     trades = pd.DataFrame(rows)
     coverage = {
@@ -457,17 +546,29 @@ def run(data: Path, out: Path, slippage: float, brokerage_per_order: float):
         "window_start": str(START_DATE),
         "window_cap": str(END_CAP),
         "calendar_expiries": len(cals),
-        "candidate_setups": len(setups),
+        "candidate_setups": candidate_setups,
         "unique_entry_dates": 0 if trades.empty else int(pd.Series(trades["entry_date"]).nunique()),
         "unique_calendar_weeks": 0 if trades.empty else int(pd.Series(trades["week"]).nunique()) if "week" in trades else 0,
     }
-    (out / "phase24_rissin_coverage.json").write_text(json.dumps(coverage, indent=2, default=str))
+
+    (out / "phase24_rissin_coverage.json").write_text(
+        json.dumps(coverage, indent=2, default=str)
+    )
 
     if trades.empty:
-        summary = {"variants": len(variants), "setups": len(setups), "trades": 0,
-                   "positive_variants": 0, "target_qualified": 0, "best": None,
-                   "slippage": slippage, "coverage": coverage}
-        (out / "phase24_rissin_summary.json").write_text(json.dumps(summary, indent=2, default=str))
+        summary = {
+            "variants": len(variants),
+            "setups": candidate_setups,
+            "trades": 0,
+            "positive_variants": 0,
+            "target_qualified": 0,
+            "best": None,
+            "slippage": slippage,
+            "coverage": coverage,
+        }
+        (out / "phase24_rissin_summary.json").write_text(
+            json.dumps(summary, indent=2, default=str)
+        )
         con.close()
         return summary
 
@@ -482,7 +583,9 @@ def run(data: Path, out: Path, slippage: float, brokerage_per_order: float):
         win_rate=("net_pnl", lambda x: float((x > 0).mean())),
     ).reset_index()
     stats = daily.groupby("variant_id").net_pnl.agg(["mean", "median"]).reset_index()
-    stats = stats.rename(columns={"mean": "mean_active_day_net", "median": "median_active_day_net"})
+    stats = stats.rename(
+        columns={"mean": "mean_active_day_net", "median": "median_active_day_net"}
+    )
     leaderboard = leaderboard.merge(stats, on="variant_id")
 
     pf_map, dd_map, day_map = {}, {}, {}
@@ -497,29 +600,34 @@ def run(data: Path, out: Path, slippage: float, brokerage_per_order: float):
     leaderboard["profit_factor"] = leaderboard.variant_id.map(pf_map)
     leaderboard["max_drawdown"] = leaderboard.variant_id.map(dd_map)
     leaderboard["active_days"] = leaderboard.variant_id.map(day_map).astype(int)
-    # Weekly target is evaluated on completed trading weeks, not active days.
     trades["week"] = pd.to_datetime(trades["entry_date"]).dt.to_period("W-MON").astype(str)
-    weekly = trades.groupby(["variant_id","week"], as_index=False).net_pnl.sum()
-    weekly_stats = weekly.groupby("variant_id").net_pnl.agg(["mean","median"]).reset_index()
-    weekly_stats = weekly_stats.rename(columns={"mean":"mean_weekly_net","median":"median_weekly_net"})
-    weekly_stats["positive_week_rate"] = weekly.groupby("variant_id").net_pnl.apply(lambda x: float((x>0).mean())).values
+    weekly = trades.groupby(["variant_id", "week"], as_index=False).net_pnl.sum()
+    weekly_stats = weekly.groupby("variant_id").net_pnl.agg(["mean", "median"]).reset_index()
+    weekly_stats = weekly_stats.rename(
+        columns={"mean": "mean_weekly_net", "median": "median_weekly_net"}
+    )
+    weekly_stats["positive_week_rate"] = (
+        weekly.groupby("variant_id").net_pnl.apply(lambda x: float((x > 0).mean())).values
+    )
     weekly_stats["completed_weeks"] = weekly.groupby("variant_id").size().values
-    leaderboard = leaderboard.merge(weekly_stats,on="variant_id",how="left")
+    leaderboard = leaderboard.merge(weekly_stats, on="variant_id", how="left")
     leaderboard["execution_coverage"] = leaderboard["completed_weeks"] / max(len(cals), 1)
     leaderboard["target_qualified"] = (
-        (leaderboard["mean_weekly_net"] >= WEEKLY_TARGET) &
-        (leaderboard["median_weekly_net"] >= WEEKLY_TARGET) &
-        (leaderboard["positive_week_rate"] >= POSITIVE_WEEK_RATE_TARGET) &
-        (leaderboard["completed_weeks"] >= 20) &
-        (leaderboard["execution_coverage"] >= EXECUTION_COVERAGE_TARGET)
+        (leaderboard["mean_weekly_net"] >= WEEKLY_TARGET)
+        & (leaderboard["median_weekly_net"] >= WEEKLY_TARGET)
+        & (leaderboard["positive_week_rate"] >= POSITIVE_WEEK_RATE_TARGET)
+        & (leaderboard["completed_weeks"] >= 20)
+        & (leaderboard["execution_coverage"] >= EXECUTION_COVERAGE_TARGET)
     )
-    leaderboard = leaderboard.sort_values(["mean_active_day_net", "profit_factor"], ascending=False)
+    leaderboard = leaderboard.sort_values(
+        ["mean_active_day_net", "profit_factor"], ascending=False
+    )
     leaderboard.to_csv(out / "phase24_rissin_leaderboard.csv", index=False)
 
     best = leaderboard.iloc[0].to_dict() if not leaderboard.empty else None
     summary = {
         "variants": len(variants),
-        "setups": len(setups),
+        "setups": candidate_setups,
         "trades": int(len(trades)),
         "positive_variants": int((leaderboard.mean_active_day_net > 0).sum()),
         "target_qualified": int(leaderboard.target_qualified.sum()),
@@ -532,7 +640,9 @@ def run(data: Path, out: Path, slippage: float, brokerage_per_order: float):
         "brokerage_per_order": brokerage_per_order,
         "coverage": coverage,
     }
-    (out / "phase24_rissin_summary.json").write_text(json.dumps(summary, indent=2, default=str))
+    (out / "phase24_rissin_summary.json").write_text(
+        json.dumps(summary, indent=2, default=str)
+    )
     con.close()
     return summary
 
