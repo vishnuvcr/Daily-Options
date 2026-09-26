@@ -175,7 +175,7 @@ def audit(data, out):
 
     # Independent aggregation checks using the persisted trade ledger.
     t=trades.copy()
-    w=t.groupby(t["trade_date"].astype(str).str[:10].map(lambda s: pd.Timestamp(s).to_period("W-SUN").strftime("%Y-%m-%d/%Y-%m-%d")),as_index=False).agg(net_pnl=("net_pnl","sum"),gross_pnl=("gross_pnl","sum"),transaction_costs=("transaction_costs","sum"),trading_days=("trade_date","count"))
+    w=t.groupby(t["trade_date"].astype(str).str[:10].map(lambda s: pd.Timestamp(s).to_period("W-SUN").strftime("%Y-%m-%d/%Y-%m-%d")),as_index=False).agg(net_pnl=("net_pnl","sum"),gross_pnl=("gross_pnl","sum"),costs=("costs","sum"),trading_days=("trade_date","count"))
     w["positive"]=w.net_pnl>0
     total_net=float(t.net_pnl.sum())
     mean_week=float(w.net_pnl.mean())
