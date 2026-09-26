@@ -624,3 +624,18 @@ Final result:
 - No WFA/OOS or result-driven tuning is authorized for Bear Put.
 
 **Phase 30.7 is RETIRED.** The next bounded frontier is Phase 30.8 source-fidelity reconstruction of the next preregistered Equity Income candidate. Phase 31 remains parked because it accepts only Phase 30 survivors.
+
+
+## 2026-09-26 — Phase 30.8 source-resolution frontier
+
+Phase 30.7 Bear Put is closed after the complete 6,480-cell Base/Stress matrix failed the frozen ₹5,000/week gate. Phase 31 remains parked because it accepts only Phase 30 survivors.
+
+Phase 30.8 is now the active bounded frontier on branch `phase-30.8-equity-income-no-more-straddles-source-resolution-v1`.
+
+Candidate: **OvaJumYancs — “No More Straddles. This Strategy Is Smarter”**.
+
+This is currently a **source-resolution-only** phase. Python-extracted transcript evidence shows NIFTY, short/long/buy actions, ATM and one-strike strike references, a 100-point width reference, a 3:30 time reference, adjustment/move language, and a 3:30 lot/ratio ambiguity. Essential mechanics remain unresolved, including exact payoff structure, entry timing, expiry, strike construction, adjustment mechanics, stop, target, exit and capital convention.
+
+The P&L barrier is explicit: **no option numerical testing is authorized until the source fields required for execution are resolved or placed into a preregistered interpretation matrix**.
+
+A manual GitHub Actions workflow and deterministic Python evidence extractor are registered.
