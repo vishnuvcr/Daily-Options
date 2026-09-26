@@ -667,3 +667,7 @@ Run 36253432190 stopped in unit tests before acquisition; three test/source auth
 ## 2026-09-26 — Phase 31.9 run 2 closure
 
 Run 36253528975 stopped before acquisition because the null-control regression fixture did not actually vary the regime labels; the workflow also had a secondary missing-path persistence error. Both are corrected. Run 3 is the next authoritative attempt.
+
+## 2026-09-26 — Phase 31.9 run 3 closure
+
+Run 36253620977 passed tests and restored the pinned NIFTY cache but stopped on a workflow heredoc syntax defect before VIX acquisition. E0412 is closed; run 4 uses the corrected acquisition step.
