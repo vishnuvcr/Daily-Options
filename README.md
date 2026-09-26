@@ -449,3 +449,12 @@ The initial corrected Falcon run **36213335815** is quarantined: Base and Stress
 The corrected Falcon experiment is closed after authoritative run **36220915944**. Base and Stress each produced **468 setups / 4,212 trades**; **0/270 variants** passed the preregistered ₹5,000/week promotion gate. Base leading mean weekly net: **₹1,432.03**; Stress: **₹733.84**. No WFA/OOS or result-driven retuning is authorized.
 
 [Final Falcon audited report](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.2-falcon-closure-v1/reports/phase30_2_falcon_final_result.md) · [Phase 30.2 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.2-falcon-closure-v1/docs/phase30_2_falcon_weekly_plan.md) · [Next: Bear Put source resolution](https://github.com/vishnuvcr/Daily-Options/tree/phase-30.3-equity-income-bear-put-source-resolution-v1)
+
+
+## 2026-09-26 — Phase 30.7 Bear Put interpretation grid
+
+After source reconstruction and spot-only feasibility, the Bear Put candidate has **45/54** eligible resistance/trigger definitions with at least 20 signal weeks (33–53 weeks). No option P&L was used in this filter.
+
+Phase 30.7 freezes **6,480** explicit interpretation cells covering expiry, strike construction, gap-up adjustment threshold/wait, risk/exit convention and time exit. This is a preregistered interpretation experiment, not a claim about the video's unstated rules. [Phase 30.7 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.7-bear-put-contract-interpretation-grid-v1/docs/phase30_7_bear_put_contract_interpretation_grid_plan.md) · [Grid manifest](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.7-bear-put-contract-interpretation-grid-v1/reports/phase30_7_bear_put_interpretation_grid_manifest.json)
+
+**P&L remains blocked until implementation/contract audit passes.**
