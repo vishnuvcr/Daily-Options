@@ -148,7 +148,7 @@ def load_expiry_slice(con, root, expiry, start_date, end_date):
       AND CAST(timestamp AS TIMESTAMP) BETWEEN TIMESTAMP '{start_date} 09:00:00'
           AND TIMESTAMP '{end_date} 15:15:00'
       AND open > 0 AND close > 0
-    ORDER BY option_type, strike, ts
+    ORDER BY option_type, strike, ts_raw
     """
     x = con.execute(q).df()
     if x.empty:
