@@ -1,0 +1,11 @@
+{
+  "registered_cells_per_regime": 720,
+  "regimes": [
+    "base",
+    "stress"
+  ],
+  "total_rows": 1440,
+  "base_passed": 34,
+  "stress_passed": 31,
+  "pnl_authorized": true
+}
