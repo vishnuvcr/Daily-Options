@@ -145,7 +145,7 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
     daily=spot.assign(day=spot.Timestamp.dt.date).groupby("day",sort=True).first()[["Open"]]
     spot_by_ts=spot.set_index("Timestamp")["Close"]
     all_days=pd.date_range(pd.Timestamp(START),pd.Timestamp(END),freq="D"); all_weeks=sorted({f"{int(x.isocalendar().year)}-W{int(x.isocalendar().week):02d}" for x in all_days})
-    results=[]; edge=0
+    results=[]; edge=0; entry_missing=0; nonpositive_debit=0
     def first_gap(date,res,gap,expiry):
         for d,rr in daily.loc[daily.index>date].iterrows():
             if d>expiry: break
@@ -162,9 +162,9 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
         L=series.get((r.expiry,r.long_strike)); P=series.get((r.expiry,r.short_strike))
         entry_ts=r.signal_ts+pd.Timedelta(minutes=1)
         le=exact_or_next(L,entry_ts); se=exact_or_next(P,entry_ts)
-        if le is None or se is None: continue
+        if le is None or se is None: entry_missing+=1; continue
         D=float(le.open_px-se.open_px)
-        if D<=0: continue
+        if D<=0: nonpositive_debit+=1; continue
         lot=lot_size(r.expiry)
         gap_events={g:first_gap(r.signal_date,r.resistance,g,r.expiry) for g in GAPS}
         for gap in GAPS:
@@ -228,6 +228,12 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
                                         "week":week,"net_pnl":net,"gross_pnl":gross,
                                         "capital_proxy":cap,"reason":reason,"adjusted":adjusted})
     tr=pd.DataFrame(results)
+    diagnostics={"signals":len(sig),"expiry_signal_rows":len(reqdf),"strike_resolved_specs":len(tradespec),
+                  "option_rows_loaded":len(opt),"unique_option_series":len(series),
+                  "entry_missing":entry_missing,"nonpositive_debit":nonpositive_debit,
+                  "result_trades":len(tr),"edge_unfilled":edge}
+    (out/"diagnostics.json").write_text(json.dumps(diagnostics,indent=2,default=str))
+    print(json.dumps(diagnostics,indent=2,default=str))
     if tr.empty: raise RuntimeError("no executable trades in matrix")
     tr.to_csv(out/"trades.csv",index=False)
     keys=["definition","expiry_choice","strike_choice","gap","wait","risk","time_exit"]
