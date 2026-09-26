@@ -1,0 +1,10 @@
+{
+  "source": "rissin/nse-options-intraday",
+  "revision": "resolved at workflow runtime and persisted in data manifest",
+  "window_start": "2025-09-01",
+  "window_cap": "2026-08-31",
+  "calendar_expiries": 32,
+  "candidate_setups": 0,
+  "unique_entry_dates": 0,
+  "unique_calendar_weeks": 0
+}
