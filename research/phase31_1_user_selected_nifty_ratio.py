@@ -67,7 +67,7 @@ def costs(price, side, qty, lot, d):
     return brokerage + exchange + sebi + stt + stamp + gst
 
 
-def trade_for_day(con, index, expiry_map, day, expiry_path, slippage):
+def trade_for_day(con, index, expiry_path, expiry, day, slippage):
     entry_ts = f"{day} {ENTRY}"
     exit_ts = f"{day} {EXIT}"
     row = index[index.ts == pd.Timestamp(entry_ts)]
@@ -77,7 +77,7 @@ def trade_for_day(con, index, expiry_map, day, expiry_path, slippage):
     atm = nearest_strike(spot)
     strikes = [atm + 200, atm - 200, atm - 400]
     specs = [("CE", strikes[0], "BUY", 2), ("PE", strikes[1], "BUY", 2), ("PE", strikes[2], "SELL", 1)]
-    lot = lot_size(expiry_map[day])
+    lot = lot_size(expiry)
     legs = []
     gross_pnl = 0.0
     total_cost = 0.0
@@ -143,7 +143,7 @@ def run(data: Path, out: Path, slippage: float):
         if not future:
             continue
         expiry = future[0]
-        result = trade_for_day(con, index, expiry_files[expiry], day, expiry_files[expiry], slippage)
+        result = trade_for_day(con, index, expiry_files[expiry], expiry, day, slippage)
         if result is None:
             missing.append({"trade_date": str(day), "expiry": str(expiry)})
         else:
