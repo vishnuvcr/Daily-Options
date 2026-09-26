@@ -487,6 +487,7 @@ def eval_event(event: dict, smap: dict, spot_ts: pd.Series, spot_df: pd.DataFram
 
 
 def main() -> None:
+    global START, END
     ap = argparse.ArgumentParser()
     ap.add_argument("--data-root", type=Path, required=True)
     ap.add_argument("--spot-root", type=Path, required=True)
