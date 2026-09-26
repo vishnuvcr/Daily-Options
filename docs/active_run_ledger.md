@@ -189,3 +189,14 @@ Earlier Phase 30.2 runs were cancelled/invalidated before numerical execution du
 
 Run 36213335815 is quarantined for runtime only. No Falcon P&L has been accepted.
 
+
+
+## 2026-09-26 — Phase 31.6 closure / next-family handoff
+
+| Phase | Branch | Workflow run | Status | Accepted P&L |
+|---|---|---:|---|---|
+| 31.6 | phase-31.6-iv-rv-defined-risk-v1 | **36248538306** | Base + Stress complete; all 12 cells below gate | Yes — negative discovery evidence |
+
+Phase 31.6 is frozen. No parameter retuning, WFA, or holdout validation is authorized.
+
+Next bounded discovery family: **Phase 31.7 OI/volume microstructure with explicit null controls**, subject to data-field coverage validation and a new finite preregistration.
