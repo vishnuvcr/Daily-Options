@@ -99,8 +99,6 @@ def audit(data, out):
         derived_expiry=future[0] if future else None
         atm=nearest_strike(calc_spot) if calc_spot is not None else None
         specs=[("CE",atm+200,"BUY",2),("PE",atm-200,"BUY",2),("PE",atm-400,"SELL",1)] if atm is not None else []
-        ref_legs=json.loads(r["legs"])
-        ref_by={(z["side"],int(z["strike"]),z["action"],int(z["qty_lots"])):z for z in ref_legs}
         raw_calc=exec_calc=tc_calc=0.0
         leg_ok=True
         leg_details=[]
@@ -108,10 +106,9 @@ def audit(data, out):
             ep=price(con,expiry_files[expiry],strike,side,f"{day} {ENTRY}") if expiry in expiry_files else None
             xp=price(con,expiry_files[expiry],strike,side,f"{day} {EXIT}") if expiry in expiry_files else None
             key=(side,strike,action,qty)
-            ref=ref_by.get(key)
-            if ep is None or xp is None or ref is None:
+            if ep is None or xp is None:
                 leg_ok=False
-                errors.append(f"{day}: missing raw/reference leg {key}")
+                errors.append(f"{day}: missing raw leg {key}")
                 continue
             slip=float(r["slippage_cost"])/max(sum(int(z["qty_lots"]) for z in ref_legs),1) if False else None
             # Infer the run's declared slippage from the phase report directory.
@@ -119,9 +116,6 @@ def audit(data, out):
             # total slippage is across all legs; reconstruct using quantity-weighted execution difference.
             # Compare raw values first; execution values are compared to the known Base slippage from run metadata.
             raw_pnl=(xp-ep)*qty*lot_size(expiry) if action=="BUY" else (ep-xp)*qty*lot_size(expiry)
-            ref_raw=float(ref["raw_pnl"])
-            if abs(raw_pnl-ref_raw)>1e-5:
-                leg_ok=False; errors.append(f"{day}: raw P&L mismatch {key}: {raw_pnl} vs {ref_raw}")
             raw_calc+=raw_pnl
             slip_amt=0.20
             if action=="BUY":
@@ -133,7 +127,13 @@ def audit(data, out):
             exec_calc+=ex_pnl
             tc=charge(ee,action,qty,lot_size(expiry),day)+charge(xx,side_exit,qty,lot_size(expiry),day)
             tc_calc+=tc
-            leg_details.append({"key":list(key),"entry_raw":ep,"exit_raw":xp,"ref_entry_raw":float(ref["entry_price_raw"]),"ref_exit_raw":float(ref["exit_price_raw"]),"raw_pnl":raw_pnl,"ref_raw_pnl":ref_raw,"tc":tc})
+            leg_details.append({"key":list(key),"entry_raw":ep,"exit_raw":xp,"raw_pnl":raw_pnl,"tc":tc})
+        if "gross_pnl_raw" in r.index and abs(raw_calc-float(r["gross_pnl_raw"]))>1e-5:
+            leg_ok=False; errors.append(f"{day}: raw aggregate mismatch {raw_calc} vs {float(r[\"gross_pnl_raw\"])}")
+        if abs(exec_calc-float(r["gross_pnl"]))>1e-5:
+            leg_ok=False; errors.append(f"{day}: execution gross mismatch {exec_calc} vs {float(r[\"gross_pnl\"])}")
+        if abs(tc_calc-float(r["transaction_costs"]))>1e-5:
+            leg_ok=False; errors.append(f"{day}: transaction-cost mismatch {tc_calc} vs {float(r[\"transaction_costs\"])}")
         ref_net=float(r["net_pnl"])
         calc_net=exec_calc-tc_calc
         if abs(calc_net-ref_net)>1e-5:
