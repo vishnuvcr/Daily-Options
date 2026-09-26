@@ -597,3 +597,10 @@ The first numerical smoke attempts exposed and closed implementation defects E03
 The first vectorized full-Base attempt reached numerical computation but was superseded before any result was accepted. The engine was further hardened by correcting the Monday 15:00 convention for Monday-listed expiries caused by Tuesday holidays (E0333) and adding a Python compile gate before numerical execution. Result persistence was also changed to commit only summary/leaderboard/diagnostic artifacts while retaining trade-level CSVs as Actions artifacts.
 
 **Current state:** OPEN — corrected full Base/Stress workflow queued/running from the hardened branch head. No Bear Put economic result has been accepted.
+
+
+## 2026-09-26 — Phase 30.7 sharded numerical execution checkpoint
+
+The monolithic full-Base runner was superseded before any result was accepted because it did not provide timely checkpoints. The frozen matrix is unchanged. The hardened workflow now runs **9 deterministic definition shards × 2 friction regimes = 18 parallel numerical jobs**, followed by a completeness/duplicate audit requiring exactly **6,480 cells per regime**.
+
+The current authoritative run is **36232762688**. All 18 shard jobs have reached their numerical execution stage; no shard result has yet been accepted. The next accepted research artifact will be the aggregate Base/Stress leaderboard after the 6,480-cell audit passes.
