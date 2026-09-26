@@ -602,3 +602,10 @@ Phase 30.8 is source-blocked/data-limited; no P&L is accepted.
 Phase 30.9 completed the India VIX study-window cache: **248 unique trading days, 2025-09-01 to 2026-08-31**. The initial 70-row NSE endpoint response was quarantined as incomplete; the subsequent deterministic paginated acquisition produced the full window and persisted it to the phase branch.
 
 Phase 30.10 is the active numerical phase. Corrected workflow run **36234923838** is executing the preregistered **720 cells per regime** with Base slippage ₹0.20/order and Stress slippage ₹0.40/order. No result has been promoted yet.
+
+
+## 2026-09-26 — Main synchronization: Phase 30.11 active
+
+Phase 30.10 full-sample Air Defense result is audited: 1,440 total cells, 31 cells pass both Base and Stress. No live-trading conclusion is drawn from full-sample selection.
+
+Phase 30.11 rolling WFA is now the active validation phase. Corrected run **36235740035** is executing three rolling folds. Phase 30.12 final holdout remains blocked pending WFA completion.
