@@ -720,3 +720,10 @@ Phase 31.8 is now the active bounded numerical frontier on `phase-31.8-global-ov
 Run **36251942190** completed global-source acquisition but failed in the data-gate stage before any numerical testing. E0398 records the date-key type mismatch in the strict `merge_asof` alignment. The six global source files and manifest were persisted successfully; the branch is corrected to normalize NIFTY/global dates to datetime64 and a regression test now covers the prior-date barrier.
  
 Next authoritative run: **Phase 31.8 run 2** from branch head `d73ce5e48d2d40a5a86bd53da91fec4629bab711`. No Phase 31.8 P&L is accepted.
+
+ 
+## 2026-09-26 — Phase 31.8 run 2 closure / run 3 frontier
+ 
+Run **36252076237** passed unit tests and global acquisition but failed before P&L in `build_panel`. The traceback showed that `main()` had passed a reduced NIFTY session frame without `time` into the session builder. E0400 records the actual defect; the earlier E0398 diagnosis is explicitly superseded.
+ 
+The corrected branch now passes the full NIFTY index frame and has a regression test. Next authoritative run: **run 3** from phase branch head `c08f1bc9faa126dbe5eaae84075963d0a66f18be`.
