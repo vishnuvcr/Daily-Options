@@ -1,7 +1,30 @@
 {
   "video_id": "6_W4UpFsehs",
   "url": "https://www.youtube.com/watch?v=6_W4UpFsehs",
-  "command_returncode": 1,
-  "stdout": "",
-  "stderr": "WARNING: Your yt-dlp version (2025.09.26) is older than 90 days!\n         It is strongly recommended to always use the latest version.\n         You installed yt-dlp with pip or using the wheel from PyPi; Use that to update.\n         To suppress this warning, add --no-update to your command/config.\nWARNING: [youtube] No title found in player responses; falling back to title from initial data. Other metadata may also be missing\nERROR: [youtube] 6_W4UpFsehs: Sign in to confirm you\u2019re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies\n"
+  "attempts": [
+    {
+      "client": "web_safari",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "WARNING: Your yt-dlp version (2025.09.26) is older than 90 days!\n         It is strongly recommended to always use the latest version.\n         You installed yt-dlp with pip or using the wheel from PyPi; Use that to update.\n         To suppress this warning, add --no-update to your command/config.\nWARNING: [youtube] No title found in player responses; falling back to title from initial data. Other metadata may also be missing\nERROR: [youtube] 6_W4UpFsehs: Sign in to confirm you\u2019re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies\n"
+    },
+    {
+      "client": "android",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "WARNING: Your yt-dlp version (2025.09.26) is older than 90 days!\n         It is strongly recommended to always use the latest version.\n         You installed yt-dlp with pip or using the wheel from PyPi; Use that to update.\n         To suppress this warning, add --no-update to your command/config.\nWARNING: [youtube] No title found in player responses; falling back to title from initial data. Other metadata may also be missing\nERROR: [youtube] 6_W4UpFsehs: Sign in to confirm you\u2019re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies\n"
+    },
+    {
+      "client": "web_embedded",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "WARNING: Your yt-dlp version (2025.09.26) is older than 90 days!\n         It is strongly recommended to always use the latest version.\n         You installed yt-dlp with pip or using the wheel from PyPi; Use that to update.\n         To suppress this warning, add --no-update to your command/config.\nWARNING: [youtube] No title found in player responses; falling back to title from initial data. Other metadata may also be missing\nERROR: [youtube] 6_W4UpFsehs: Sign in to confirm you\u2019re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies\n"
+    },
+    {
+      "client": "web",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "WARNING: Your yt-dlp version (2025.09.26) is older than 90 days!\n         It is strongly recommended to always use the latest version.\n         You installed yt-dlp with pip or using the wheel from PyPi; Use that to update.\n         To suppress this warning, add --no-update to your command/config.\nWARNING: [youtube] unable to extract yt initial data; please report this issue on  https://github.com/yt-dlp/yt-dlp/issues?q= , filling out the appropriate issue template. Confirm you are on the latest version using  yt-dlp -U\nWARNING: [youtube] Incomplete data received in embedded initial data; re-fetching using API.\nWARNING: [youtube] No title found in player responses; falling back to title from initial data. Other metadata may also be missing\nERROR: [youtube] 6_W4UpFsehs: Sign in to confirm you\u2019re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies\n"
+    }
+  ]
 }
