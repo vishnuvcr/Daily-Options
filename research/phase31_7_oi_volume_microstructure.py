@@ -158,6 +158,46 @@ def load_prices(con, expiry_map, features):
     con.close()
     return prices
 
+FEATURE_COLS={"VOL_IMB":"vol_imb","OI_CHANGE_IMB":"oi_change_imb","JOINT":"joint"}
+
+def permute_feature_values(panel, feature_col, bucket, seed):
+    out=panel.copy()
+    rng=np.random.default_rng(seed)
+    ix=out.index[out.bucket==bucket]
+    vals=out.loc[ix,feature_col].to_numpy(copy=True)
+    rng.shuffle(vals)
+    out.loc[ix,feature_col]=vals
+    return out
+
+def build_signals(panel, null_seed=None):
+    working=panel.copy()
+    if null_seed is not None:
+        for feature in FEATURES:
+            col=FEATURE_COLS[feature]
+            for bucket in BUCKETS:
+                working=permute_feature_values(working,col,bucket,null_seed)
+    sig=[]
+    for feature in FEATURES:
+        col=FEATURE_COLS[feature]
+        for threshold in THRESHOLDS:
+            for bucket in BUCKETS:
+                z=working[working.bucket==bucket].copy()
+                for r in z.itertuples(index=False):
+                    val=float(getattr(r,col))
+                    if abs(val)<threshold:
+                        continue
+                    side="CALL" if val>0 else "PUT"
+                    sig.append({
+                        **r._asdict(),
+                        "feature":feature,
+                        "threshold":threshold,
+                        "side":side,
+                        "signal_value":val,
+                        "null_seed":null_seed
+                    })
+    return pd.DataFrame(sig)
+
+
 def trade_from_signal(frow, side, prices, slip):
     d=frow.day; expiry=frow.expiry; atm=frow.atm; lot=lot_size(expiry)
     typ="CE" if side=="CALL" else "PE"
@@ -246,45 +286,6 @@ def main():
         features.to_csv(out/"features.csv",index=False)
         print(json.dumps(gate,indent=2))
         return
-    fmap={"VOL_IMB":"vol_imb","OI_CHANGE_IMB":"oi_change_imb","JOINT":"joint"}
-
-    def permute_feature_values(panel, feature_col, bucket, seed):
-        out=panel.copy()
-        rng=np.random.default_rng(seed)
-        ix=out.index[out.bucket==bucket]
-        vals=out.loc[ix,feature_col].to_numpy(copy=True)
-        rng.shuffle(vals)
-        out.loc[ix,feature_col]=vals
-        return out
-
-    def build_signals(panel, null_seed=None):
-        working=panel.copy()
-        if null_seed is not None:
-            for feature in FEATURES:
-                col=fmap[feature]
-                for bucket in BUCKETS:
-                    working=permute_feature_values(working,col,bucket,null_seed)
-        sig=[]
-        for feature in FEATURES:
-            col=fmap[feature]
-            for threshold in THRESHOLDS:
-                for bucket in BUCKETS:
-                    z=working[working.bucket==bucket].copy()
-                    for r in z.itertuples(index=False):
-                        val=float(getattr(r,col))
-                        if abs(val)<threshold:
-                            continue
-                        side="CALL" if val>0 else "PUT"
-                        sig.append({
-                            **r._asdict(),
-                            "feature":feature,
-                            "threshold":threshold,
-                            "side":side,
-                            "signal_value":val,
-                            "null_seed":null_seed
-                        })
-        return pd.DataFrame(sig)
-
     signals=build_signals(features)
 
     if signals.empty:
