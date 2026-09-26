@@ -426,3 +426,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0377 | 2026-09-26 | Phase 31.3 persistence | The corrected rerun still inherited the extra closing brace in the workflow's git-push ref expression, so Base/Stress calculations and accounting validation passed but persistence failed with a non-fast-forward push to the stray ref | Run 36242698184 produced valid Base/Stress artifacts and uploaded them, but repository persistence was not accepted | Remove the extra brace and rerun; accept numerical results only after the corrected run persists the artifacts to the intended branch | OPEN — workflow fixed in commit 19044f68; rerun pending |
+
+
+| E0378 | 2026-09-26 | Phase 31.5 workflow | First ORB discovery run failed at the pinned-cache verification step because GitHub checkout does not contain the large cached market-data directory by itself; the workflow incorrectly assumed the cache was present in the repository workspace | Run 36244187924 did not execute the ORB calculations | Added the same pinned Actions cache + Hugging Face acquisition/reuse pattern used by Phase 31.3; rerun triggered from corrected workflow | CLOSED — workflow corrected in commit 0cbde56 |
