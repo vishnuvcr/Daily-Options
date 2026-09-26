@@ -1,0 +1,111 @@
+name: Phase 31.3 - friction corrected reproduction
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/phase31_3-run.txt"
+      - "docs/phase31_3_plan.md"
+      - "research/phase31_3_friction_corrected_reproduction.py"
+      - "tests/test_phase31_3_friction_corrected_reproduction.py"
+      - ".github/workflows/phase-31-3-friction-corrected-reproduction.yml"
+permissions:
+  contents: write
+concurrency:
+  group: phase31-3-friction-corrected-reproduction
+  cancel-in-progress: false
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: \${{ github.head_ref || github.ref_name }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: python -m pip install --disable-pip-version-check pandas==2.3.2 numpy==2.1.3 duckdb==1.3.2 pyarrow==19.0.1 pytest==8.4.2 huggingface_hub==0.35.3
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_phase31_3_friction_corrected_reproduction.py
+      - name: Cache pinned NIFTY source
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase31_trademarkk
+          key: phase31-trademarkk-51ca58c-v1
+          restore-keys: |
+            phase31-trademarkk-51ca58c-
+            phase30-trademarkk-51ca58c-
+      - name: Acquire or reuse exact-expiry NIFTY data
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase31_trademarkk
+          if [ ! -f data/cache/phase31_trademarkk/index/NIFTY.parquet ]; then
+            python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="thetrademarkk/india-index-options-1m",repo_type="dataset",revision="51ca58c",local_dir="data/cache/phase31_trademarkk",allow_patterns=["index/NIFTY.parquet","options/NIFTY/*.parquet"])'
+          fi
+      - name: Run Base reproduction
+        run: PYTHONPATH=. python research/phase31_3_friction_corrected_reproduction.py --data data/cache/phase31_trademarkk --out reports/phase31_3/base --slippage 0.20
+      - name: Run Stress reproduction
+        run: PYTHONPATH=. python research/phase31_3_friction_corrected_reproduction.py --data data/cache/phase31_trademarkk --out reports/phase31_3/stress --slippage 0.40
+      - name: Validate accounting identity
+        run: |
+          python - <<'PY'
+          import json, pandas as pd
+          for k in ["base","stress"]:
+              s=json.load(open(f"reports/phase31_3/{k}/summary.json"))
+              t=pd.read_csv(f"reports/phase31_3/{k}/trades.csv")
+              lhs=float(t.net_pnl.sum())
+              rhs=float(t.gross_pnl.sum()-t.slippage_cost.sum()-t.transaction_costs.sum())
+              print(k,s)
+              assert abs(lhs-rhs)<1e-6
+              assert s["trade_days"]==len(t)
+              assert s["total_net"]==lhs
+          PY
+      - name: Write final result
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          b=json.load(open("reports/phase31_3/base/summary.json"))
+          s=json.load(open("reports/phase31_3/stress/summary.json"))
+          lines=[
+            "# Phase 31.3 friction-corrected reproduction",
+            "",
+            "## Base",
+            f"Total net: ₹{b['total_net']:,.2f}",
+            f"Mean weekly net: ₹{b['mean_weekly_net']:,.2f}",
+            f"Median weekly net: ₹{b['median_weekly_net']:,.2f}",
+            f"Positive-week rate: {b['positive_week_rate']*100:.2f}%",
+            f"Total slippage: ₹{b['total_slippage_cost']:,.2f}",
+            f"Total transaction/statutory costs: ₹{b['total_transaction_costs']:,.2f}",
+            "",
+            "## Stress",
+            f"Total net: ₹{s['total_net']:,.2f}",
+            f"Mean weekly net: ₹{s['mean_weekly_net']:,.2f}",
+            f"Median weekly net: ₹{s['median_weekly_net']:,.2f}",
+            f"Positive-week rate: {s['positive_week_rate']*100:.2f}%",
+            f"Total slippage: ₹{s['total_slippage_cost']:,.2f}",
+            f"Total transaction/statutory costs: ₹{s['total_transaction_costs']:,.2f}",
+            "",
+            "Accounting identity passed for both Base and Stress. This phase does not optimize parameters."
+          ]
+          Path("reports/phase31_3").mkdir(parents=True,exist_ok=True)
+          Path("reports/phase31_3/final_result.md").write_text("\\n".join(lines)+"\\n")
+          PY
+      - name: Persist reproduction
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f reports/phase31_3
+          if ! git diff --cached --quiet; then
+            git commit -m "Phase 31.3: persist friction-corrected reproduction"
+            git push origin HEAD:"\${GITHUB_HEAD_REF:-\${GITHUB_REF_NAME}}"
+          fi
+      - name: Upload artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase31-3-friction-corrected-reproduction
+          path: reports/phase31_3/
