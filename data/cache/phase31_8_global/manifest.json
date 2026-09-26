@@ -1,0 +1,51 @@
+{
+  "source": "Yahoo Finance via yfinance",
+  "start": "2021-07-01",
+  "end": "2026-08-31",
+  "retrieved_utc": "2026-09-26T15:27:01.760968+00:00",
+  "yfinance_version": "1.7.0",
+  "tickers": {
+    "GSPC": {
+      "symbol": "^GSPC",
+      "rows": 1297,
+      "first_date": "2021-07-01",
+      "last_date": "2026-08-31",
+      "sha256": "7043fe8ebd6815643be3a5addc476f8b27401fe049724b3c747ad778c1c0b276"
+    },
+    "IXIC": {
+      "symbol": "^IXIC",
+      "rows": 1297,
+      "first_date": "2021-07-01",
+      "last_date": "2026-08-31",
+      "sha256": "a11e2ce7d4795422742a722202cc8e3dcfbc2faa401ffa469645e5e5f45fce1a"
+    },
+    "N225": {
+      "symbol": "^N225",
+      "rows": 1263,
+      "first_date": "2021-07-01",
+      "last_date": "2026-08-31",
+      "sha256": "fa38353a74ccbb11a27acdac3b2f378f9fd5a624ff534ad4e7ff6a408d3a45d3"
+    },
+    "HSI": {
+      "symbol": "^HSI",
+      "rows": 1269,
+      "first_date": "2021-07-02",
+      "last_date": "2026-08-31",
+      "sha256": "3f4f469930da34a9edfc28d329103aa7bb109ba8fc2510d4c2d753b639660666"
+    },
+    "GDAXI": {
+      "symbol": "^GDAXI",
+      "rows": 1318,
+      "first_date": "2021-07-01",
+      "last_date": "2026-08-31",
+      "sha256": "a645ad351f5b611aad48a316cdfa2240391d85f3ac76a2208d0a5546289bf0ee"
+    },
+    "KS11": {
+      "symbol": "^KS11",
+      "rows": 1262,
+      "first_date": "2021-07-01",
+      "last_date": "2026-08-31",
+      "sha256": "3ad7c114f4f2e67d3506f0bf2f0c89cdc77b5700484509068ce1eb116c49393e"
+    }
+  }
+}
