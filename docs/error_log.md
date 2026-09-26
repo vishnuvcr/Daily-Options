@@ -450,3 +450,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0353 | 2026-09-26 | Phase 30.11 WFA aggregate cardinality | The aggregate auditor expected 72 leaderboard/weekly files, but each of 24 regime/shard artifacts contains 6 files (3 folds × train/OOS), so the correct total is 144 files and 103,680 leaderboard rows | The auditor would reject the completed shards before any WFA survivor was accepted | Corrected the file and row cardinality checks to 144 files and 144×720 rows; no selection logic changed | CLOSED — aggregation corrected before acceptance |
+
+
+| E0354 | 2026-09-26 | Phase 30.11 execution topology | The first WFA topology packed all three folds into one shard job, leaving one cancellation-resistant long-running job while newer corrected runs waited behind the concurrency group | No WFA survivor was accepted; the run is not authoritative | Registered WFA v2 as **72 independent jobs**: 12 definition shards × 2 regimes × 3 folds, each producing one train/OOS pair; aggregate remains a 144-file/103,680-row hard audit | OPEN — v2 execution |
