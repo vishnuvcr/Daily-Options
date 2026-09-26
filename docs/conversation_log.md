@@ -198,3 +198,8 @@ Run 36252692972 failed before data acquisition because the newly added expiry re
 ## 2026-09-26 — Phase 31.8 run 8 traceback and correction
  
 Run 36252808290 passed tests and gate, then stopped in Base price loading with `KeyError: ['exit_ts'] not in index`. E0406 records the defect. The loader has been corrected to rely only on the existing `date`, `atm`, `expiry` and `horizon` inputs; a regression test covers the column contract.
+
+ 
+## 2026-09-26 — Phase 31.8 final result
+ 
+Run 36252922418 completed the full frozen 12-cell Base/Stress discovery with 60 null summaries per friction and passed validation. The family produced 0/12 promotion passes in both frictions. Best true cell: ASIA_LEAD z=1.00, H10_30, mean weekly net ₹107.37 Base / ₹37.13 Stress, 45.45% positive weeks and negative medians. The final result is persisted at `reports/phase31_8/final_result.md`; no WFA/OOS was authorized.
