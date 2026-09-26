@@ -4,7 +4,7 @@
   "window_start": "2025-09-01",
   "window_cap": "2026-08-31",
   "calendar_expiries": 32,
-  "candidate_setups": 0,
-  "unique_entry_dates": 0,
+  "candidate_setups": 468,
+  "unique_entry_dates": 32,
   "unique_calendar_weeks": 0
 }
