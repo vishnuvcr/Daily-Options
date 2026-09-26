@@ -4,6 +4,9 @@ on:
   push:
     paths:
       - '.github/phase30-6-run-v2.txt'
+  push:
+    paths:
+      - '.github/phase30-6-run-v2.txt'
 permissions:
   contents: write
 jobs:
