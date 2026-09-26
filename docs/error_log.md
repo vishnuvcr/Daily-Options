@@ -429,3 +429,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 | E0410 | 2026-09-26 | Phase 31.9 null regression | Run 36253528975 used a toy fixture whose computed regime labels were all HIGH, so shuffling produced no observable change | No computation ran | Mixed explicit LOW/MID/HIGH fixture added | CLOSED |
 | E0411 | 2026-09-26 | Phase 31.9 workflow | Failure-path persistence hit a missing-path error when tests stopped before output creation | No research result affected | Persistence now creates directories before git add | CLOSED |
+
+| E0412 | 2026-09-26 | Phase 31.9 workflow | Run 36253620977 stopped in the NIFTY acquisition shell block because the heredoc terminator was not parsed correctly | No VIX, gate or P&L computation ran | Replaced with one-line pinned Python call | CLOSED |
