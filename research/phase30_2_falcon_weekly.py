@@ -124,6 +124,21 @@ def expiry_setups(sessions, expiries):
     return out
 
 
+def normalize_source_timestamps(raw):
+    """Normalize Rissin timestamps to naive Asia/Kolkata minute timestamps."""
+    raw = pd.Series(raw, copy=False).astype(str).str.strip()
+    aware = raw.str.contains(r"(?:[+-]\\d{2}:?\\d{2}|Z)$", regex=True, na=False)
+    ts = pd.Series(pd.NaT, index=raw.index, dtype="datetime64[ns]")
+    if aware.any():
+        aware_parsed = pd.to_datetime(raw[aware], errors="coerce", utc=True)
+        ts.loc[aware] = aware_parsed.dt.tz_convert("Asia/Kolkata").dt.tz_localize(None)
+    naive = ~aware
+    if naive.any():
+        naive_parsed = pd.to_datetime(raw[naive], errors="coerce")
+        ts.loc[naive] = naive_parsed.dt.tz_localize("Asia/Kolkata").dt.tz_localize(None)
+    return ts.dt.floor("min")
+
+
 def load_expiry_slice(con, root, expiry, start_date, end_date):
     """Load one exact-expiry option slice once per Falcon calendar.
 
@@ -156,23 +171,9 @@ def load_expiry_slice(con, root, expiry, start_date, end_date):
     # The source publishes intraday timestamps as IST (often with +0530).
     # Parse the raw timestamp explicitly in IST rather than relying on DuckDB's
     # implicit TIMESTAMP/TIMESTAMPTZ cast, which can silently shift or strip TZ.
-    raw = x["ts_raw"].astype(str).str.strip()
-    # Rissin's canonical Parquet schema declares timestamp as IST. Depending
-    # on the Parquet writer, the materialized value can be timezone-aware
-    # (+05:30) or timezone-naive while still representing IST. Handle both
-    # explicitly; treating a naive IST timestamp as UTC shifts every signal by
-    # 5h30 and can silently create zero exact-match setups.
-    parsed = pd.to_datetime(raw, errors="coerce")
-    aware = raw.str.contains(r"(?:[+-]\\d{2}:?\\d{2}|Z)$", regex=True, na=False)
-    ts = pd.Series(pd.NaT, index=x.index, dtype="datetime64[ns]")
-    if aware.any():
-        aware_parsed = pd.to_datetime(raw[aware], errors="coerce", utc=True)
-        ts.loc[aware] = aware_parsed.dt.tz_convert("Asia/Kolkata").dt.tz_localize(None)
-    naive = ~aware
-    if naive.any():
-        naive_parsed = pd.to_datetime(raw[naive], errors="coerce")
-        ts.loc[naive] = naive_parsed.dt.tz_localize("Asia/Kolkata").dt.tz_localize(None)
-    x["ts"] = ts.dt.floor("min")
+    # The canonical schema declares timestamps as IST. Handle both
+    # timezone-aware (+05:30) and timezone-naive IST materializations.
+    x["ts"] = normalize_source_timestamps(x["ts_raw"])
     x = x.drop(columns=["ts_raw"]).dropna(subset=["ts"])
     return x.drop_duplicates(["ts", "strike", "option_type"]).sort_values(
         ["option_type", "strike", "ts"]
