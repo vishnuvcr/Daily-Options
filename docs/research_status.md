@@ -656,3 +656,17 @@ The audit identified the substantive provenance defect E0375: the persisted Phas
 Therefore the original -₹537,097.06 result is numerically reproducible as the persisted artifact's own accounting, but it is **not accepted as the final friction-corrected result**. Phase 31.1 stays quarantined. The next permissible research phase is a provenance-corrected reproduction using one frozen accounting definition; no optimization is authorized until that reproduction is complete.
 
 Outputs: `reports/phase31_2/forensic_audit.json`, `reports/phase31_2/sample_reconciliation.csv`, `reports/phase31_2/payoff_diagnostics.csv`, `reports/phase31_2/final_result.md`.
+
+
+## 2026-09-26 — Phase 31.5 finite ORB discovery completed
+
+Authoritative GitHub Actions run **36245174834** completed successfully after corrections E0378–E0380. The frozen 18-cell NIFTY ORB grid produced complete Base and Stress summaries with daily trades and diagnostics.
+
+- Best Base discovery cell: **30-minute OR / 1.00× multiplier**, 512 trades, **₹47,477.23 total net**, **₹92.73 mean weekly net**, **47.13% positive weeks**.
+- Same cell under Stress: **₹25,955.61 total net**, **₹50.69 mean weekly net**, **45.90% positive weeks**.
+- The strongest cells remain far below the preregistered **₹5,000/week** consistency target and below the **70% positive-week** gate.
+- No ORB cell is promoted to WFA/OOS; no result-driven tuning is authorized.
+
+**Phase 31.5: CLOSED — discovery negative-to-target / no promotion.**
+
+[Phase 31.5 plan](docs/phase31_5_plan.md) · [Phase 31.5 final result](../reports/phase31_5/final_result.md)
