@@ -124,19 +124,19 @@ def load_prices(con, expiry_map, features):
                      UPPER(CAST(o.option_type AS VARCHAR)) option_type,
                      CAST(o.strike AS DOUBLE) strike,
                      CASE
-                       WHEN CAST(o.timestamp AS TIMESTAMP)=w.entry_ts THEN CAST(o.open AS DOUBLE)
-                       WHEN CAST(o.timestamp AS TIMESTAMP)=w.exit_ts THEN CAST(o.close AS DOUBLE)
+                       WHEN CAST(o.timestamp AS TIME)=TIME '09:31:00' THEN CAST(o.open AS DOUBLE)
+                       WHEN CAST(o.timestamp AS TIME)=TIME '15:10:00' THEN CAST(o.close AS DOUBLE)
                      END AS exec_px
               FROM read_parquet('{p}') o
               JOIN wanted w
-                ON CAST(o.trading_day AS DATE)=w.trade_date
-               AND CAST(o.timestamp AS TIMESTAMP) IN (w.entry_ts,w.exit_ts)
-               AND UPPER(CAST(o.option_type AS VARCHAR)) IN ('CE','PE')
+                ON CAST(o.trading_day AS DATE)=CAST(w.trade_date AS DATE)
                AND (CAST(o.strike AS DOUBLE)=w.atm
                     OR CAST(o.strike AS DOUBLE)=w.atm+{WING}
                     OR CAST(o.strike AS DOUBLE)=w.atm-{WING})
-              WHERE ((CAST(o.timestamp AS TIMESTAMP)=w.entry_ts AND o.open>0)
-                  OR (CAST(o.timestamp AS TIMESTAMP)=w.exit_ts AND o.close>0))"""
+              WHERE CAST(o.timestamp AS TIME) IN (TIME '09:31:00',TIME '15:10:00')
+                AND UPPER(CAST(o.option_type AS VARCHAR)) IN ('CE','PE')
+                AND ((CAST(o.timestamp AS TIME)=TIME '09:31:00' AND o.open>0)
+                  OR (CAST(o.timestamp AS TIME)=TIME '15:10:00' AND o.close>0))"""
         z=con.execute(q).df()
         if z.empty: continue
         for r in z.itertuples(index=False):
