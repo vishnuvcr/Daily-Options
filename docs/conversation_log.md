@@ -137,3 +137,9 @@ Checkpoint: read the current run ledger/status/error documentation and the Phase
 
 The authoritative Falcon run **36213335815** was found to be abnormally slow after more than six hours in `Run friction`. The stalled run is non-evidentiary. A runtime audit identified repeated full-file Parquet scans and setup-cache accumulation. The frozen 270-cell rule grid was preserved; the engine was reworked to preload exact-expiry slices per calendar, perform selection in memory, process one calendar at a time and release caches explicitly. The workflow now serializes Base and Stress. Authoritative rerun **36216668042** is active with Base executing and Stress queued; no P&L is accepted yet.
 
+
+## 2026-09-26 — Continue research from prior chat checkpoint
+
+User message: **“Continue reasearch from here In this chat”** with screenshots showing the Phase 31.7 run monitoring context and the timezone-cast correction sequence.
+
+Operational continuation: inspected the current repository phase plan, research status, error log, workflow definition, authoritative run state and persisted run-8 artifacts before taking the next step. Run 36250115094 completed Base/Stress but failed validation because executable price coverage was zero; it is quarantined and no P&L is accepted. Corrected Phase 31.7 source now derives execution date/time from normalized option timestamps and constructs null controls from the full feature panel before thresholding. Regression tests are persisted. This log records operational research decisions only and does not record hidden chain-of-thought.
