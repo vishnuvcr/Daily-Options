@@ -9,10 +9,9 @@ import pandas as pd
 ROOT = Path("data/cache/phase30_2_rissin")
 OUT = Path("reports/phase30_2_signal_diagnostic.json")
 CHECKS = [
-    ("2025-09-09", "2025-09-03"),
-    ("2025-09-16", "2025-09-10"),
+    ("2025-09-09", "2025-09-16", "2025-09-03"),
+    ("2025-09-16", "2025-09-23", "2025-09-10"),
 ]
-
 ENTRY_TIMES = ["09:30:00", "10:00:00", "11:00:00", "13:00:00", "14:00:00"]
 TARGETS = [20.0, 25.0, 30.0]
 
@@ -31,7 +30,7 @@ def normalize(raw):
     return ts.dt.floor("min")
 
 
-def inspect(con, expiry, entry_date):
+def load_day(con, expiry, entry_date):
     path = str(ROOT / "NIFTY_*.parquet")
     q = f"""
     SELECT CAST(timestamp AS VARCHAR) AS ts_raw,
@@ -53,58 +52,99 @@ def inspect(con, expiry, entry_date):
     ORDER BY option_type, strike, ts_raw
     """
     df = con.execute(q).df()
-    if df.empty:
-        return {"expiry": expiry, "entry_date": entry_date, "rows": 0}
+    if not df.empty:
+        df["ts"] = normalize(df["ts_raw"])
+    return df
 
-    df["ts"] = normalize(df["ts_raw"])
+
+def select_near(df, side, target):
+    s = df[df.option_type == side]
+    if s.empty:
+        return None
+    return s.iloc[(s.close_px - target).abs().argmin()]
+
+
+def select_far(df, side, target, ref_strike, mode):
+    s = df[df.option_type == side].copy()
+    if mode == "SAME_STRIKE":
+        s = s[s.strike == float(ref_strike)]
+    elif side == "CE":
+        s = s[s.strike >= float(ref_strike)]
+    else:
+        s = s[s.strike <= float(ref_strike)]
+    if s.empty:
+        return None
+    return s.iloc[(s.close_px - target).abs().argmin()]
+
+
+def inspect(con, near_expiry, far_expiry, entry_date):
+    near = load_day(con, near_expiry, entry_date)
+    far = load_day(con, far_expiry, entry_date)
     out = {
-        "expiry": expiry,
+        "near_expiry": near_expiry,
+        "far_expiry": far_expiry,
         "entry_date": entry_date,
-        "rows": int(len(df)),
-        "raw_timestamp_sample": sorted(df.ts_raw.dropna().unique().tolist())[:20],
-        "normalized_min": str(df.ts.min()),
-        "normalized_max": str(df.ts.max()),
-        "signal_counts": {},
-        "fill_counts": {},
-        "target_examples": {},
+        "near_rows": int(len(near)),
+        "far_rows": int(len(far)),
+        "near_timestamp_range": None if near.empty else [str(near.ts.min()), str(near.ts.max())],
+        "far_timestamp_range": None if far.empty else [str(far.ts.min()), str(far.ts.max())],
+        "checks": {},
     }
-
     for t in ENTRY_TIMES:
         signal_ts = pd.Timestamp(f"{entry_date} {t}")
         fill_ts = signal_ts + pd.Timedelta(minutes=1)
-        s = df[df.ts == signal_ts]
-        f = df[df.ts == fill_ts]
-
-        out["signal_counts"][t] = {
-            "rows": int(len(s)),
-            "CE": int((s.option_type == "CE").sum()),
-            "PE": int((s.option_type == "PE").sum()),
+        ns = near[near.ts == signal_ts]
+        nf = near[near.ts == fill_ts]
+        fs = far[far.ts == signal_ts]
+        ff = far[far.ts == fill_ts]
+        record = {
+            "near_signal_rows": int(len(ns)),
+            "far_signal_rows": int(len(fs)),
+            "near_fill_rows": int(len(nf)),
+            "far_fill_rows": int(len(ff)),
+            "modes": {},
         }
-        out["fill_counts"][t] = {
-            "rows": int(len(f)),
-            "CE": int((f.option_type == "CE").sum()),
-            "PE": int((f.option_type == "PE").sum()),
-        }
-
-        ex = {}
-        for side in ("CE", "PE"):
-            ss = s[s.option_type == side]
-            vals = {}
-            for target in TARGETS:
-                if ss.empty:
-                    vals[str(target)] = None
+        for target in TARGETS:
+            nce = select_near(ns, "CE", target)
+            npe = select_near(ns, "PE", target)
+            if nce is None or npe is None:
+                record["modes"][str(target)] = None
+                continue
+            mode_out = {}
+            for mode in ("SAME_STRIKE", "DIAGONAL_PREMIUM"):
+                fce = select_far(fs, "CE", target, nce.strike, mode)
+                fpe = select_far(fs, "PE", target, npe.strike, mode)
+                if fce is None or fpe is None:
+                    mode_out[mode] = {"far_selection": False}
                     continue
-                row = ss.iloc[(ss.close_px - target).abs().argmin()]
-                same = f[(f.option_type == side) & (f.strike == row.strike)]
-                vals[str(target)] = {
-                    "strike": float(row.strike),
-                    "close_px": float(row.close_px),
-                    "fill_rows_same_strike": int(len(same)),
-                    "fill_open": None if same.empty else float(same.iloc[0].open_px),
+                nce_fill = nf[(nf.option_type == "CE") & (nf.strike == nce.strike)]
+                npe_fill = nf[(nf.option_type == "PE") & (nf.strike == npe.strike)]
+                fce_fill = ff[(ff.option_type == "CE") & (ff.strike == fce.strike)]
+                fpe_fill = ff[(ff.option_type == "PE") & (ff.strike == fpe.strike)]
+                if any(x.empty for x in (nce_fill, npe_fill, fce_fill, fpe_fill)):
+                    mode_out[mode] = {
+                        "far_selection": True,
+                        "fill_complete": False,
+                        "near_strikes": [float(nce.strike), float(npe.strike)],
+                        "far_strikes": [float(fce.strike), float(fpe.strike)],
+                    }
+                    continue
+                sc = float(nce_fill.iloc[0].open_px)
+                sp = float(npe_fill.iloc[0].open_px)
+                fc = float(fce_fill.iloc[0].open_px)
+                fp = float(fpe_fill.iloc[0].open_px)
+                credit = 5.0 * (sc + sp) - 3.0 * (fc + fp)
+                mode_out[mode] = {
+                    "far_selection": True,
+                    "fill_complete": True,
+                    "near_strikes": [float(nce.strike), float(npe.strike)],
+                    "far_strikes": [float(fce.strike), float(fpe.strike)],
+                    "entry_prices": {"sc": sc, "sp": sp, "fc": fc, "fp": fp},
+                    "credit": credit,
+                    "positive_credit": bool(credit > 0),
                 }
-            ex[side] = vals
-        out["target_examples"][t] = ex
-
+            record["modes"][str(target)] = mode_out
+        out["checks"][t] = record
     return out
 
 
@@ -113,7 +153,7 @@ def main():
     con.execute("SET TimeZone='Asia/Kolkata'")
     report = {
         "source": str(ROOT),
-        "checks": [inspect(con, expiry, entry) for expiry, entry in CHECKS],
+        "checks": [inspect(con, near, far, entry) for near, far, entry in CHECKS],
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(report, indent=2, default=str) + "\n", encoding="utf-8")
