@@ -12,3 +12,5 @@ Phase 30.10 launch marker.
 Phase 30.10 rerun after matrix-expression fix.
 2026-09-26T16:37:00+05:30
 Phase 30.10 rerun after numerical-engine CLI fix E0346.
+2026-09-26T16:42:00+05:30
+Phase 30.10 rerun after expiry-key normalization E0348.
