@@ -133,7 +133,7 @@ def audit(data, out):
         if abs(exec_calc-ref_exec_gross)>1e-5:
             leg_ok=False; errors.append(f"{day}: execution gross mismatch {exec_calc} vs {ref_exec_gross}")
         ref_net=float(r["net_pnl"])
-        ref_total_cost=float(r["gross_pnl"]-r["net_pnl"])
+        ref_total_cost=float(r["costs"])
         ref_leg_cols=[col for col in ("leg_1","leg_2","leg_3") if col in r.index]
         parsed_ref_legs=[]
         for col in ref_leg_cols:
@@ -158,12 +158,14 @@ def audit(data, out):
         computed_total_cost=tc_calc+(raw_calc-exec_calc)
         if abs(ref_total_cost-computed_total_cost)>1e-4:
             leg_ok=False; errors.append(f"{day}: total-cost mismatch {computed_total_cost} vs {ref_total_cost}")
-        calc_net=exec_calc-tc_calc
+        calc_net=raw_calc-computed_total_cost
+        if abs(raw_calc-float(r["gross_pnl"]))>1e-4:
+            leg_ok=False; errors.append(f"{day}: persisted gross does not match independently recomputed raw gross {raw_calc} vs {float(r[\"gross_pnl\"])}")
         if abs(calc_net-ref_net)>1e-5:
             leg_ok=False; errors.append(f"{day}: Base net mismatch {calc_net} vs {ref_net}")
         row={"trade_date":str(day),"expiry_ref":str(expiry),"expiry_derived":str(derived_expiry),"spot_ref":ref_spot,"spot_raw":calc_spot,"exit_spot_raw":exit_spot,
              "atm_ref":int(r["atm"]),"atm_derived":atm,"lot_ref":int(r["lot_size"]),"lot_derived":lot_size(expiry),
-             "gross_ref":float(r["gross_pnl"]),"gross_recalc":exec_calc,"total_cost_ref":ref_total_cost,"total_cost_recalc":computed_total_cost,
+             "gross_ref":float(r["gross_pnl"]),"gross_recalc":raw_calc,"execution_gross_recalc":exec_calc,"total_cost_ref":ref_total_cost,"total_cost_recalc":computed_total_cost,
              "net_ref":ref_net,"net_recalc":calc_net,"match":leg_ok,"legs":json.dumps(leg_details,separators=(",",":"))}
         rows.append(row)
     con.close()
