@@ -56,3 +56,14 @@ The registered economic experiment is unchanged: 270 frozen Falcon cells, fixed 
 
 Acceptance remains gated on a fresh non-stalled Base/Stress run with non-zero candidate setups/trades and complete artifact audit.
 
+
+
+## Final closure — 2026-09-26
+
+Authoritative corrected run 36220915944 completed the frozen 270-cell experiment after resolving the exact-expiry pandas type defect (E0322). Base and Stress both produced 468 candidate setups and 4,212 trade records. Base had 17 positive-mean variants; Stress had 3. **0/270 variants qualified** for the preregistered ₹5,000/week gate in either friction regime.
+
+The zero-setup artifacts from the earlier timestamp-normalization runs are quarantined and are not performance evidence. After correction, executable coverage was high (96.875% for the leading measured variant), so the Falcon gate failure is not attributable to data scarcity.
+
+Continuation rule applied: **retire Falcon from further WFA/OOS tuning** and proceed to the next distinct source-faithful candidate. No result-driven parameter changes are permitted.
+
+The successful data provenance for this closure is the immutable dataset revision recorded by the run: `8f7739cab3f38abdcbc6332a6d0a83e1341326e3`. Future Falcon reruns, if ever needed for audit, must use this exact revision or a separately declared immutable snapshot.
