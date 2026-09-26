@@ -178,3 +178,8 @@ Run 36252076237 again stopped before P&L. The job log was inspected directly: `b
 ## 2026-09-26 — Phase 31.8 run 4 coverage-gate correction
  
 Run 36252301406 acquired all inputs and produced a deterministic gate FAIL at 94.788% coverage. Inspection showed exactly 64 pre-lookback sessions were being counted as missing feature sessions. The plan was clarified so the 95% gate is evaluated on feature-eligible sessions after the required 60-observation warm-up, while warm-up sessions remain reported. No P&L result was produced.
+
+ 
+## 2026-09-26 — Phase 31.8 run 5 unit-test correction
+ 
+Run 36252470696 failed before data acquisition because one regression test asserted the old coverage semantics. The code and methodology are unchanged by this test correction; E0403 closes the mismatch. No P&L was produced.
