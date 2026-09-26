@@ -426,3 +426,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0407 | 2026-09-26 | Phase 31.9 unit tests | Run 36253432190 failed before acquisition because the RV20 DataFrame used an undefined variable instead of the calculated RV20 series | No computation ran | Corrected variable handoff | CLOSED |
 | E0408 | 2026-09-26 | Phase 31.9 test fixture | Prior-barrier fixture omitted the current-session date field | No computation ran | Added date column | CLOSED |
 | E0409 | 2026-09-26 | Phase 31.9 test fixture | Nearest-expiry fixture expected a later contract even when an on-date expiry existed | No computation ran | Corrected expected nearest expiry | CLOSED |
+
+| E0410 | 2026-09-26 | Phase 31.9 null regression | Run 36253528975 used a toy fixture whose computed regime labels were all HIGH, so shuffling produced no observable change | No computation ran | Mixed explicit LOW/MID/HIGH fixture added | CLOSED |
+| E0411 | 2026-09-26 | Phase 31.9 workflow | Failure-path persistence hit a missing-path error when tests stopped before output creation | No research result affected | Persistence now creates directories before git add | CLOSED |
