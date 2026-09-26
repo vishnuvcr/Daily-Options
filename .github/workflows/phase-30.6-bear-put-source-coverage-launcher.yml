@@ -45,7 +45,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reports/phase30_6_bear_put_signal_coverage.json
+          git add -f reports/phase30_6_bear_put_signal_coverage.json
           git commit -m "Phase 30.6: persist vectorized Bear Put signal coverage"
           git push origin HEAD:phase-30.6-bear-put-source-interpretation-coverage-v3
       - name: Upload coverage artifact
