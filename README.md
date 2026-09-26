@@ -464,3 +464,8 @@ Several pre-result implementation defects were found and logged as **E0326–E03
 The Bear Put engine has passed the bounded Base/Stress smoke tests. Before accepting the full matrix, the runner was hardened with a Python compile gate, corrected Monday-exit handling for Monday-listed expiries, and robust summary/leaderboard/diagnostic persistence. Trade-level CSVs remain workflow artifacts rather than being committed wholesale.
 
 **No Bear Put P&L result is accepted until the hardened full Base and Stress runs finish and their artifacts pass the post-run audit.**
+
+
+## 2026-09-26 — Phase 30.7 shard/audit correction
+
+The first 18 sharded Base/Stress jobs completed, but their artifact upload path was wrong, so the aggregate audit rejected the run before any result promotion. The weekly-statistics implementation was also corrected to use completed trading weeks, consistent with prior project methodology, and cost-share was corrected to use absolute gross P&L. **No first-pass Bear Put result is accepted.**
