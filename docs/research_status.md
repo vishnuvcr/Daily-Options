@@ -815,3 +815,8 @@ No result has yet been accepted. The first gate is deterministic source coverage
 ## 2026-09-26 — Phase 31.9 run 1 closure / test corrections
  
 Authoritative run **36253432190** stopped in unit tests before acquisition. Four tests were affected by three independent authoring defects: an RV20 variable handoff typo (E0407), a prior-barrier test fixture missing the date field (E0408), and an incorrect nearest-expiry test expectation (E0409). No data or P&L computation ran. All three are corrected on the branch.
+
+ 
+## 2026-09-26 — Phase 31.9 run 2 closure / null-test correction
+ 
+Run **36253528975** failed the unit-test stage before acquisition. The engine passed five of six tests; the null-control test used a toy panel whose computed labels were all HIGH, so the registered shuffle had no observable effect (E0410). The workflow also emitted a secondary persistence pathspec error when no report directory existed (E0411). Both are corrected; no data or P&L computation ran.
