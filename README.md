@@ -611,3 +611,8 @@ The first Phase 31.8 run (**36251942190**) acquired the six pinned global-index 
 ## 2026-09-26 — Phase 31.8 run 2 closure
  
 Run 36252076237 passed tests and source acquisition but stopped before numerical testing because the full NIFTY frame was reduced before `build_panel`. E0400 is logged; the corrected branch now passes the full frame and includes a regression test. The next authoritative run is **run 3** from branch head `c08f1bc9faa126dbe5eaae84075963d0a66f18be`.
+
+ 
+## 2026-09-26 — Phase 31.8 run 3 closure
+ 
+Run 36252203841 passed acquisition but stopped before P&L on a datetime-unit mismatch in the no-lookahead merge. E0401 is logged; the engine now coerces both merge keys to datetime64[ns] and has a regression test. Run 4 will start from branch head `902098ba07db15388a99d32a0c5b5b74f038b3ad`.
