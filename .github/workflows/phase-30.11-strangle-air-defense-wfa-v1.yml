@@ -1,0 +1,152 @@
+name: Phase 30.11 - Air Defense rolling WFA
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "research/phase30_10_strangle_air_defense_pnl.py"
+      - "research/phase30_11_wfa.py"
+      - "research/phase30_11_wfa_aggregate.py"
+      - "tests/test_phase30_11_wfa.py"
+      - ".github/workflows/phase-30.11-strangle-air-defense-wfa-v1.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase30-11-wfa
+  cancel-in-progress: true
+
+jobs:
+  shard:
+    name: shard ${{ matrix.shard }} / ${{ matrix.regime }}
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3,4,5,6,7,8,9,10,11]
+        regime: [base, stress]
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-30.11-strangle-air-defense-wfa-v1
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install runtime
+        run: python -m pip install --disable-pip-version-check pandas duckdb pyarrow pytest huggingface_hub
+      - name: Restore option cache
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase30_2_rissin
+          key: phase30-2-rissin-nifty-runtime-resolved-v1
+      - name: Acquire option cache on miss
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase30_2_rissin
+          python - <<'PY'
+          from pathlib import Path
+          from huggingface_hub import hf_hub_download
+          repo_id="rissin/nse-options-intraday"
+          revision="78b1c5468255d18cf492984bfe6fe4e3ac874d7c"
+          out=Path("data/cache/phase30_2_rissin")
+          for year in ("2025","2026"):
+              target=out/f"NIFTY_{year}.parquet"
+              if not target.exists():
+                  p=Path(hf_hub_download(repo_id=repo_id,filename=f"upstox_intraday/NIFTY/NIFTY_{year}.parquet",repo_type="dataset",revision=revision,local_dir=str(out)))
+                  if p != target: p.replace(target)
+          PY
+      - name: Restore spot cache
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase30_5_nifty_spot
+          key: phase30-5-nifty-spot-2025-2026-pinned-v1
+      - name: Acquire spot cache on miss
+        run: |
+          set -euo pipefail
+          if ! find data/cache/phase30_5_nifty_spot -type f -name "*.csv" -print -quit | grep -q .; then
+            git init external/nifty50-historical-data
+            git -C external/nifty50-historical-data remote add origin https://github.com/technovusin/nifty50-historical-data
+            git -C external/nifty50-historical-data fetch --depth 1 origin 75f273a2dec36b10f4ded3a00721fae2172edccb
+            git -C external/nifty50-historical-data checkout --detach 75f273a2dec36b10f4ded3a00721fae2172edccb
+            mkdir -p data/cache/phase30_5_nifty_spot
+            find external/nifty50-historical-data/1min/2025 external/nifty50-historical-data/1min/2026 -type f -name "*.csv" -print0 | while IFS= read -r -d "" f; do cp "$f" "data/cache/phase30_5_nifty_spot/$(basename "$f")"; done
+          fi
+      - name: Test fold definitions
+        run: PYTHONPATH=. python -m pytest -q tests/test_phase30_11_wfa.py
+      - name: Run fold 1
+        env:
+          SHARD: ${{ matrix.shard }}
+          REGIME: ${{ matrix.regime }}
+        run: |
+          set -euo pipefail
+          START=$((SHARD*8))
+          SLIP="0.20"; if [ "$REGIME" = "stress" ]; then SLIP="0.40"; fi
+          PYTHONPATH=. python research/phase30_11_wfa.py --fold 1 --data-root data/cache/phase30_2_rissin --spot-root data/cache/phase30_5_nifty_spot --vix-file data/cache/phase30_9_india_vix/nse_india_vix_2025-09-01_2026-08-31.csv --out-root reports/phase30_11_shard_${SHARD}_${REGIME} --slippage "$SLIP" --def-start "$START" --def-count 8
+      - name: Run fold 2
+        env:
+          SHARD: ${{ matrix.shard }}
+          REGIME: ${{ matrix.regime }}
+        run: |
+          set -euo pipefail
+          START=$((SHARD*8))
+          SLIP="0.20"; if [ "$REGIME" = "stress" ]; then SLIP="0.40"; fi
+          PYTHONPATH=. python research/phase30_11_wfa.py --fold 2 --data-root data/cache/phase30_2_rissin --spot-root data/cache/phase30_5_nifty_spot --vix-file data/cache/phase30_9_india_vix/nse_india_vix_2025-09-01_2026-08-31.csv --out-root reports/phase30_11_shard_${SHARD}_${REGIME} --slippage "$SLIP" --def-start "$START" --def-count 8
+      - name: Run fold 3
+        env:
+          SHARD: ${{ matrix.shard }}
+          REGIME: ${{ matrix.regime }}
+        run: |
+          set -euo pipefail
+          START=$((SHARD*8))
+          SLIP="0.20"; if [ "$REGIME" = "stress" ]; then SLIP="0.40"; fi
+          PYTHONPATH=. python research/phase30_11_wfa.py --fold 3 --data-root data/cache/phase30_2_rissin --spot-root data/cache/phase30_5_nifty_spot --vix-file data/cache/phase30_9_india_vix/nse_india_vix_2025-09-01_2026-08-31.csv --out-root reports/phase30_11_shard_${SHARD}_${REGIME} --slippage "$SLIP" --def-start "$START" --def-count 8
+      - name: Upload WFA shard
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase30-11-shard-${{ matrix.shard }}-${{ matrix.regime }}
+          path: reports/phase30_11_shard_${{ matrix.shard }}_${{ matrix.regime }}
+
+  aggregate:
+    needs: shard
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-30.11-strangle-air-defense-wfa-v1
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install runtime
+        run: python -m pip install --disable-pip-version-check pandas
+      - name: Download all WFA shard artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: phase30-11-shard-*
+          path: shard_results
+          merge-multiple: false
+      - name: Aggregate and audit WFA
+        run: PYTHONPATH=. python research/phase30_11_wfa_aggregate.py --root shard_results --out-root reports/phase30_11_aggregate
+      - name: Persist WFA outputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f reports/phase30_11_aggregate
+          if ! git diff --cached --quiet; then
+            git commit -m "Phase 30.11: aggregate rolling WFA"
+            git fetch origin phase-30.11-strangle-air-defense-wfa-v1
+            git rebase origin/phase-30.11-strangle-air-defense-wfa-v1
+            git push origin HEAD:phase-30.11-strangle-air-defense-wfa-v1
+          fi
+      - name: Upload WFA aggregate
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase30-11-wfa-aggregate
+          path: reports/phase30_11_aggregate
