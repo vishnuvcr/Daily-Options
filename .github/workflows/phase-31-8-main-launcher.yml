@@ -1,0 +1,112 @@
+name: Phase 31.8 main launcher
+
+on:
+  push:
+    paths:
+      - ".github/phase31_8-main-launch.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase31-8-main-launcher
+  cancel-in-progress: false
+
+jobs:
+  launch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-31.8-global-overnight-transmission-v1
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: python -m pip install --disable-pip-version-check pandas==2.3.2 numpy==2.1.3 duckdb==1.3.2 pyarrow==19.0.1 pytest==8.4.2 yfinance==1.7.0
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_phase31_8_global_overnight_transmission.py
+      - name: Cache pinned NIFTY source
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase31_trademarkk
+          key: phase31-trademarkk-51ca58c-v1
+          restore-keys: |
+            phase31-trademarkk-51ca58c-
+            phase30-trademarkk-51ca58c-
+      - name: Acquire or reuse exact-expiry NIFTY data
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase31_trademarkk
+          if [ ! -f data/cache/phase31_trademarkk/index/NIFTY.parquet ]; then
+            python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="thetrademarkk/india-index-options-1m",repo_type="dataset",revision="51ca58c",local_dir="data/cache/phase31_trademarkk",allow_patterns=["index/NIFTY.parquet","options/NIFTY/*.parquet"])'
+          fi
+      - name: Cache global source
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase31_8_global
+          key: phase31-8-global-yf-1.7.0-v1
+      - name: Acquire or reuse global indices
+        run: |
+          set -euo pipefail
+          PYTHONPATH=. python research/phase31_8_acquire_global.py --out data/cache/phase31_8_global
+      - name: Run global data gate
+        run: PYTHONPATH=. python research/phase31_8_global_overnight_transmission.py --data data/cache/phase31_trademarkk --global-data data/cache/phase31_8_global --out reports/phase31_8/gate --gate-only
+      - name: Run Base discovery
+        run: |
+          if python -c 'import json,sys; g=json.load(open("reports/phase31_8/gate/data_gate.json")); sys.exit(0 if g["status"]=="PASS" else 1)'; then
+            PYTHONPATH=. python research/phase31_8_global_overnight_transmission.py --data data/cache/phase31_trademarkk --global-data data/cache/phase31_8_global --out reports/phase31_8/base --slippage 0.20
+          else
+            echo "GLOBAL_DATA_GATE_FAIL: numerical stage intentionally skipped"
+          fi
+      - name: Run Stress discovery
+        run: |
+          if python -c 'import json,sys; g=json.load(open("reports/phase31_8/gate/data_gate.json")); sys.exit(0 if g["status"]=="PASS" else 1)'; then
+            PYTHONPATH=. python research/phase31_8_global_overnight_transmission.py --data data/cache/phase31_trademarkk --global-data data/cache/phase31_8_global --out reports/phase31_8/stress --slippage 0.40
+          else
+            echo "GLOBAL_DATA_GATE_FAIL: numerical stage intentionally skipped"
+          fi
+      - name: Validate
+        run: |
+          python - <<'PY'
+          import json, pandas as pd
+          g=json.load(open("reports/phase31_8/gate/data_gate.json"))
+          if g["status"]=="PASS":
+              for k in ["base","stress"]:
+                  x=pd.read_csv(f"reports/phase31_8/{k}/true_cell_summary_{k}.csv")
+                  assert len(x)==12,(k,len(x))
+                  t=pd.read_csv(f"reports/phase31_8/{k}/trades_{k}.csv")
+                  assert len(t)>0,(k,"zero trades")
+                  assert (t.net_pnl-(t.raw_gross-t.slippage_cost-t.transaction_costs)).abs().max()<1e-6
+                  n=pd.read_csv(f"reports/phase31_8/{k}/null_summary_{k}.csv")
+                  assert len(n)==60,(k,len(n))
+                  p=pd.read_csv(f"reports/phase31_8/{k}/price_coverage.csv")
+                  assert len(p)==12,(k,len(p))
+          PY
+      - name: Persist outputs and global cache to phase branch
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f reports/phase31_8 data/cache/phase31_8_global
+          if ! git diff --cached --quiet; then
+            git commit -m "Phase 31.8: persist global transmission outputs"
+            for attempt in 1 2 3; do
+              if git push origin HEAD:phase-31.8-global-overnight-transmission-v1; then
+                exit 0
+              fi
+              git fetch origin phase-31.8-global-overnight-transmission-v1
+              git rebase FETCH_HEAD
+            done
+            exit 1
+          fi
+      - name: Upload artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase31-8-global-overnight-transmission
+          path: reports/phase31_8/
