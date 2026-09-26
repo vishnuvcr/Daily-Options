@@ -120,13 +120,13 @@ def load_prices(con, expiry_map, features):
         con.register("wanted",active)
         p=str(path).replace("'","''")
         q=f"""SELECT CAST(o.timestamp AS TIMESTAMP) ts,
-                     CAST(o.trading_day AS DATE) day,
+                     CAST(o.trading_day AS DATE) trade_date,
                      UPPER(CAST(o.option_type AS VARCHAR)) option_type,
                      CAST(o.strike AS DOUBLE) strike,
                      CAST(o.open AS DOUBLE) open_px
               FROM read_parquet('{p}') o
               JOIN wanted w
-                ON CAST(o.trading_day AS DATE)=w.day
+                ON CAST(o.trading_day AS DATE)=w.trade_date
                AND CAST(o.timestamp AS TIMESTAMP) IN (w.entry_ts,w.exit_ts)
                AND UPPER(CAST(o.option_type AS VARCHAR)) IN ('CE','PE')
                AND (CAST(o.strike AS DOUBLE)=w.atm
@@ -136,7 +136,8 @@ def load_prices(con, expiry_map, features):
         z=con.execute(q).df()
         if z.empty: continue
         for r in z.itertuples(index=False):
-            prices[(r.day,expiry,r.option_type,float(r.strike),pd.Timestamp(r.ts))]=float(r.open_px)
+            prices[(r.trade_date,expiry,r.option_type,float(r.strike),pd.Timestamp(r.ts))]=float(r.open_px)
+    con.close()
     return prices
 
 def trade_from_signal(frow, side, prices, slip):
