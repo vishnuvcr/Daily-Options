@@ -508,3 +508,11 @@ Phase 30.11 is now validating the frozen grid with rolling training/OOS folds. T
 Clean WFA run: **36236079821**. No WFA survivor is accepted yet.
 
 [Phase 30.11 WFA plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.11-strangle-air-defense-wfa-v1/docs/phase30_11_wfa_plan.md) · [Phase 30.10 audited aggregate](https://github.com/vishnuvcr/Daily-Options/tree/phase-30.10-strangle-air-defense-pnl-v1/reports/phase30_10_aggregate)
+
+## 2026-09-26 — Phase 30.11 WFA v2 checkpoint
+
+Air Defense/VIX Phase 30.10 produced 31 cells passing both Base and Stress. Phase 30.11 is now validating those frozen definitions through three rolling WFA folds.
+
+The execution topology was hardened to **72 independent fold/shard/regime jobs** with a 144-file aggregate audit. Clean v2 run **36236257189** is queued; no WFA survivor is accepted yet.
+
+[Phase 30.11 WFA plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.11-strangle-air-defense-wfa-v1/docs/phase30_11_wfa_plan.md)
