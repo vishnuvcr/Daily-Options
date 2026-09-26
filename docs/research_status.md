@@ -700,3 +700,7 @@ The corrected branch now derives execution `trade_date` and execution clock dire
 ## 2026-09-26 — Phase 31.7 run 9 pre-computation closure
 
 Authoritative run 36250452425 (run 9) stopped at pytest collection because the newly added regression tests contained a literal backslash-n sequence before a test definition. No data gate, Base, Stress or P&L computation ran in this attempt. The failure is logged as E0393 and the test source has been corrected. The next run will be triggered only after the corrected test file is persisted.
+
+## 2026-09-26 — Phase 31.7 execution-loader correction
+
+Run 36250489191 and run 36250549825 both reached Base/Stress but failed validation before P&L acceptance because the executable-price path remained zero-coverage/blank-summary in those revisions. During the post-run branch audit, the replacement execution loader was found to contain a new runtime ordering defect: strike_sql was referenced inside the f-string before it was defined. E0394 records this defect. The source and a regression test are now corrected. A fresh authoritative run is required from the corrected branch.
