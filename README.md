@@ -636,3 +636,8 @@ Run 36252561747 passed tests and the warm-up-aware global gate but stopped in Ba
 ## 2026-09-26 — Phase 31.8 run 7 closure
  
 Run 36252692972 stopped in unit tests because the new expiry regression used the wrong expected value type. E0405 is closed; run 8 will execute the corrected engine and full discovery path.
+
+ 
+## 2026-09-26 — Phase 31.8 run 8 closure
+ 
+Run 36252808290 passed tests and the global gate but stopped in Base price loading on a nonexistent `exit_ts` signal column. E0406 is fixed; run 9 will execute the corrected loader.
