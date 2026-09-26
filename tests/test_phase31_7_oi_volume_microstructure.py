@@ -72,3 +72,12 @@ def test_execution_query_has_no_timezone_aware_direct_timestamp_to_time_cast():
 def test_ist_execution_date_derives_from_timestamp_not_dataset_day():
     ts=pd.Timestamp("2026-01-01 18:45:00",tz="UTC")
     assert ts.tz_convert("Asia/Kolkata").date().isoformat()=="2026-01-02"
+
+def test_execution_loader_defines_strike_filter_before_query():
+    from pathlib import Path
+    src=Path("research/phase31_7_oi_volume_microstructure.py").read_text(encoding="utf-8")
+    fn_start=src.index("def load_prices(")
+    fn_src=src[fn_start:src.index("FEATURE_COLS=",fn_start)]
+    assert 'strike_sql=",".join(str(x) for x in strikes)' in fn_src
+    assert fn_src.index('strike_sql=",".join(str(x) for x in strikes)') < fn_src.index('q=f"""')
+    assert "AND s.strike IN ({strike_sql})" in fn_src
