@@ -110,15 +110,16 @@ def option_feature_rows(con, expiry_map, days_df):
 def load_prices(con, expiry_map, features):
     con.execute("SET TimeZone='Asia/Kolkata'")
     prices={}
+    if features.empty:
+        con.close()
+        return prices
     wanted=features[["day","bucket","expiry","atm","entry_ts","exit_ts"]].drop_duplicates().rename(columns={"day":"trade_date"})
     for expiry,path in sorted(expiry_map.items()):
-        active=wanted[wanted.expiry==expiry]
-        if active.empty: continue
-        try:
-            con.unregister("wanted")
-        except Exception:
-            pass
-        con.register("wanted",active)
+        active=wanted[wanted.expiry==expiry].copy()
+        if active.empty:
+            continue
+        dates=sorted(pd.to_datetime(active.trade_date).dt.date.unique().tolist())
+        date_sql=",".join(f"DATE '{d}'" for d in dates)
         p=str(path).replace("'","''")
         q=f"""
             WITH src AS (
@@ -142,18 +143,19 @@ def load_prices(con, expiry_map, features):
                     WHEN s.time_str='15:10:00' THEN s.close_px
                 END AS exec_px
             FROM src s
-            JOIN wanted w
-              ON s.trade_date=CAST(w.trade_date AS DATE)
-             AND (s.strike=w.atm
-                  OR s.strike=w.atm+{WING}
-                  OR s.strike=w.atm-{WING})
-            WHERE s.time_str IN ('09:31:00','15:10:00')
+            WHERE s.trade_date IN ({date_sql})
+              AND (s.strike IN (SELECT UNNEST(?::DOUBLE[])))
+              AND s.time_str IN ('09:31:00','15:10:00')
               AND s.option_type IN ('CE','PE')
               AND ((s.time_str='09:31:00' AND s.open_px>0)
                 OR (s.time_str='15:10:00' AND s.close_px>0))
         """
-        z=con.execute(q).df()
-        if z.empty: continue
+        strikes=sorted(set(float(x) for x in active.atm.tolist()) |
+                       set(float(x)+WING for x in active.atm.tolist()) |
+                       set(float(x)-WING for x in active.atm.tolist()))
+        z=con.execute(q,[strikes]).df()
+        if z.empty:
+            continue
         for r in z.itertuples(index=False):
             prices[(r.trade_date,expiry,r.option_type,float(r.strike),pd.Timestamp(r.ts))]=float(r.exec_px)
     con.close()
