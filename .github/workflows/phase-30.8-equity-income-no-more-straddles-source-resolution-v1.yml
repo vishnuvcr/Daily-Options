@@ -1,30 +1,28 @@
 name: Phase 30.8 - No More Straddles source resolution
 
-permissions:
-  contents: write
-
 on:
   workflow_dispatch:
   push:
     branches:
       - phase-30.8-equity-income-no-more-straddles-source-resolution-v1
-    paths:
-      - "research/phase30_8_no_more_straddles_resolution.py"
-      - "tests/test_phase30_8_no_more_straddles_resolution.py"
+
+permissions:
+  contents: read
 
 jobs:
-  resolve-source:
+  source-resolution:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: phase-30.8-equity-income-no-more-straddles-source-resolution-v1
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - name: Install test runtime
         run: python -m pip install --disable-pip-version-check pytest
-
       - name: Run source-evidence tests
-        run: python -m pytest -q tests/test_phase30_8_no_more_straddles_resolution.py
+        run: PYTHONPATH=. python -m pytest -q tests/test_phase30_8_no_more_straddles_resolution.py
       - name: Build deterministic source-resolution report
         run: python research/phase30_8_no_more_straddles_resolution.py --output reports/phase30_8_no_more_straddles_source_resolution.json
       - name: Upload source-resolution report
@@ -32,12 +30,3 @@ jobs:
         with:
           name: phase30-8-source-resolution
           path: reports/phase30_8_no_more_straddles_source_resolution.json
-      - name: Persist generated report to branch
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f reports/phase30_8_no_more_straddles_source_resolution.json
-          git diff --cached --quiet || git commit -m "Phase 30.8: persist source-resolution report"
-          git push
