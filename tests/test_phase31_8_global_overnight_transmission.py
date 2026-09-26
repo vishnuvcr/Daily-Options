@@ -4,7 +4,7 @@ import numpy as np
 
 from research.phase31_8_global_overnight_transmission import (
     FEATURES, THRESHOLDS, HORIZONS, NULL_SEEDS,
-    build_signals, data_gate, build_panel
+    build_signals, data_gate, build_panel, attach_expiry
 )
 
 def test_frozen_grid_is_12_cells():
@@ -92,3 +92,16 @@ def test_main_passes_raw_nifty_index_to_build_panel():
     src=Path("research/phase31_8_global_overnight_transmission.py").read_text(encoding="utf-8")
     assert "panel=build_panel(g,idx)" in src
     assert 'panel=build_panel(g,sessions)' not in src
+
+
+def test_attach_expiry_normalizes_timestamp_to_python_date():
+    panel=pd.DataFrame({
+        "date":pd.to_datetime(["2026-01-05 00:00:00","2026-01-06 00:00:00"]),
+        "open_px":[25000,25010]
+    })
+    expiry_map={
+        dt.date(2026,1,5): "near",
+        dt.date(2026,1,8): "later",
+    }
+    out=attach_expiry(panel,expiry_map)
+    assert out["expiry"].tolist()==["near","later"]
