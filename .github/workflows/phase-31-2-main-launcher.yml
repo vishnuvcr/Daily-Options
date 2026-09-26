@@ -48,6 +48,26 @@ jobs:
           test -f data/cache/phase31_trademarkk/index/NIFTY.parquet
       - name: Run forensic audit
         run: PYTHONPATH=. python research/phase31_2_forensic_audit.py --data data/cache/phase31_trademarkk --out reports/phase31_2
+      - name: Write final audit result
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          a=json.loads(Path("reports/phase31_2/forensic_audit.json").read_text())
+          stress=json.loads(Path("reports/phase31_1/stress/summary.json").read_text())
+          lines=[
+            "# Phase 31.2 forensic audit result","",
+            f"Decision: **{a.get('decision','UNKNOWN')}**","",
+            f"Audited sample: {a.get('sample_rows',0)} executed days; reconciliation matches: {a.get('sample_matches',0)}; mismatches: {a.get('sample_mismatches',0)}.","",
+            f"Reference Base total net: ₹{a.get('reference_total_net',0):,.2f}; mean weekly net: ₹{a.get('reference_mean_week',0):,.2f}; positive-week rate: {a.get('reference_positive_week_rate',0)*100:.2f}%.",
+            f"Reference Stress total net: ₹{stress.get('total_net',0):,.2f}; mean weekly net: ₹{stress.get('mean_weekly_net',0):,.2f}.","",
+            f"Persisted Base slippage reconstructed from leg records: ₹{a.get('persisted_total_slippage_cost',0):,.2f}. Slippage-adjusted total net: ₹{a.get('slippage_adjusted_total_net',0):,.2f}; mean weekly net: ₹{a.get('slippage_adjusted_mean_week',0):,.2f}; positive-week rate: {a.get('slippage_adjusted_positive_week_rate',0)*100:.2f}%.","",
+            "The persisted artifact reconciles to raw gross P&L minus transaction/statutory costs. The current checked-in simulator applies slippage inside execution gross; this provenance/semantic mismatch keeps Phase 31.1 quarantined.","",
+            "The 09:30→15:10 central expiry band is diagnostic only; it is not treated as the 15:10 mark-to-market payoff.","",
+            "See forensic_audit.json, sample_reconciliation.csv, and payoff_diagnostics.csv."
+          ]
+          Path("reports/phase31_2/final_result.md").write_text("\n".join(lines)+"\n")
+          PY
       - name: Persist to audit branch
         if: always()
         run: |
