@@ -442,3 +442,10 @@ Falcon Phase 30.2 remains the authoritative active numerical run (36160873596; B
 
 The initial corrected Falcon run **36213335815** is quarantined: Base and Stress remained in the friction step for more than six hours. No P&L was accepted. Static audit found repeated full-file Parquet scans and unbounded setup-cache growth. The runtime-fix branch **`phase-30.2-falcon-runtime-fix-v1`** preserves the frozen 270-cell strategy grid and changes only execution architecture. New authoritative run **36216668042** is executing the fixed engine with serialized Base/Stress jobs.
 
+
+
+## 2026-09-26 — Phase 30.2 Falcon final closure
+
+The corrected Falcon experiment is closed after authoritative run **36220915944**. Base and Stress each produced **468 setups / 4,212 trades**; **0/270 variants** passed the preregistered ₹5,000/week promotion gate. Base leading mean weekly net: **₹1,432.03**; Stress: **₹733.84**. No WFA/OOS or result-driven retuning is authorized.
+
+[Final Falcon audited report](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.2-falcon-closure-v1/reports/phase30_2_falcon_final_result.md) · [Phase 30.2 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.2-falcon-closure-v1/docs/phase30_2_falcon_weekly_plan.md) · [Next: Bear Put source resolution](https://github.com/vishnuvcr/Daily-Options/tree/phase-30.3-equity-income-bear-put-source-resolution-v1)
