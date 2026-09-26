@@ -704,3 +704,7 @@ Authoritative run 36250452425 (run 9) stopped at pytest collection because the n
 ## 2026-09-26 — Phase 31.7 execution-loader correction
 
 Run 36250489191 and run 36250549825 both reached Base/Stress but failed validation before P&L acceptance because the executable-price path remained zero-coverage/blank-summary in those revisions. During the post-run branch audit, the replacement execution loader was found to contain a new runtime ordering defect: strike_sql was referenced inside the f-string before it was defined. E0394 records this defect. The source and a regression test are now corrected. A fresh authoritative run is required from the corrected branch.
+
+## 2026-09-26 — Phase 31.7 run 11 closure / execution probe preparation
+
+Run 36250863176 reached the data gate, Base and Stress, but validation again failed at the friction-field assertion before any P&L was accepted. The latest branch now contains the explicit IST date/strike execution loader, the strike-order correction and a raw five-sample execution-row probe. The probe is being added to the authoritative launcher to determine whether the remaining issue is source-row availability or downstream price-key mapping. No numerical result from run 11 is accepted.
