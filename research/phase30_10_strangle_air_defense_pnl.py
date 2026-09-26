@@ -665,21 +665,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--data-root", type=Path, required=True)
-    parser.add_argument("--spot-root", type=Path, required=True)
-    parser.add_argument("--vix-file", type=Path, required=True)
-    parser.add_argument("--out-root", type=Path, required=True)
-    parser.add_argument("--slippage", type=float, default=SLIP_BASE)
-    parser.add_argument("--def-start", type=int, default=0)
-    parser.add_argument("--def-count", type=int, default=8)
-    args = parser.parse_args()
-    main(
-        args.data_root,
-        args.spot_root,
-        args.vix_file,
-        args.out_root,
-        args.slippage,
-        args.def_start,
-        args.def_count,
-    )
+    main()
