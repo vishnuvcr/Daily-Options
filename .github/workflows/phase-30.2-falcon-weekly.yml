@@ -20,6 +20,7 @@ jobs:
     timeout-minutes: 360
     strategy:
       fail-fast: false
+      max-parallel: 1
       matrix:
         friction: [base, stress]
     steps:
@@ -69,6 +70,8 @@ jobs:
           PYTHONPATH=. python -m research.phase30_2_falcon_weekly --data data/cache/phase30_2_rissin --out reports/phase30_2_${LABEL} --slippage "${SLIP}" --brokerage "${BROKERAGE}"
       - name: Persist results
         if: always()
+        env:
+          LABEL: ${{ matrix.friction }}
         run: |
           if [ -d reports/phase30_2_${LABEL} ]; then
             git config user.name 'github-actions[bot]'
