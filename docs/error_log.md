@@ -391,3 +391,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0350 | 2026-09-26 | Phase 30.11 WFA fold validation | Initial WFA run used a stale Fold 3 test date assertion after the preregistered fold was revised to a 20-week calendar window | No WFA result accepted | Corrected Fold 3 dates and synchronized the fold test, plan and runner; restarted the WFA run | CLOSED |
+
+| E0375 | 2026-09-26 | Phase 31.1 numerical provenance | Persisted Phase 31.1 Base artifact records raw gross P&L minus transaction/statutory costs, while the current simulator applies slippage inside execution gross | Phase 31.1 P&L is not accepted as fully friction-corrected | Phase 31.2 reconciled 30/30 sample; reconstructed ₹130,750.00 persisted slippage; slippage-adjusted Base total net = -₹667,847.06 | CLOSED — quantified; Phase 31.1 remains quarantined |
