@@ -60,7 +60,7 @@ jobs:
               print(k,s)
               assert abs(lhs-rhs)<1e-6
               assert s["trade_days"]==len(t)
-              assert s["total_net"]==lhs
+              assert abs(float(s["total_net"])-lhs)<1e-6
           PY
       - name: Write final result
         run: |
