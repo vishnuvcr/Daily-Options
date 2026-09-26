@@ -429,3 +429,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0345 | 2026-09-26 | Phase 30.10 workflow matrix interpolation | First numerical launcher run 36234800534 used escaped GitHub Actions matrix expressions, producing literal values such as \\0 and \\base and failing before P&L | No numerical result was accepted; only the four unit tests were observed passing in one shard before the shell-variable failure | Removed the escaping from the checked-in YAML and enabled cancel-in-progress so stale runs cannot overlap; rerun 36234875446 is the authoritative attempt | CLOSED — stale run cancelled; corrected run active |
+
+
+| E0346 | 2026-09-26 | Phase 30.10 numerical engine CLI | Corrected run 36234875446 reached the frozen engine but failed because the script parsed CLI arguments and then passed them into a zero-argument main() | No P&L accepted from failed shards; unit tests passed | Simplified the script entrypoint to call the existing CLI-aware main() exactly once; corrected rerun is required | CLOSED — rerun pending |
