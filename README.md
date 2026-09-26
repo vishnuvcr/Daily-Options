@@ -641,3 +641,12 @@ Run 36252692972 stopped in unit tests because the new expiry regression used the
 ## 2026-09-26 — Phase 31.8 run 8 closure
  
 Run 36252808290 passed tests and the global gate but stopped in Base price loading on a nonexistent `exit_ts` signal column. E0406 is fixed; run 9 will execute the corrected loader.
+
+ 
+## 2026-09-26 — Phase 31.8 CLOSED / Phase 31.9 current frontier
+ 
+**Phase 31.8 Global Overnight Cross-Market Transmission is closed without promotion.** Run 36252922418 completed the frozen 12-cell Base/Stress grid; 0/12 cells cleared the ₹5,000/week gate in either friction regime. Best cell: ASIA_LEAD z=1.00, 09:31→10:30, ₹107.37/week Base / ₹37.13/week Stress.
+ 
+[Phase 31.8 final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.8-global-overnight-transmission-v1/reports/phase31_8/final_result.md)
+ 
+**Phase 31.9** is now the active bounded frontier: [India VIX × realized-volatility regime × NIFTY opening-gap direction](https://github.com/vishnuvcr/Daily-Options/tree/phase-31.9-vix-rv-gap-opening-direction-v1).
