@@ -11,7 +11,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-# Phase-30.8 clean-workflow checkpoint: pinned evidence and workflow syntax are validated.
+# Phase-30.8 minimal-workflow checkpoint: pinned evidence is present and workflow uses the repository's validated manual-run structure.
 VIDEO_ID = "OvaJumYancs"
 TITLE = "No More Straddles. This Strategy Is Smarter"
 
