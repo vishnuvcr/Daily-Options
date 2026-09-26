@@ -30,7 +30,7 @@ def load_index(root):
     idx=con.execute(q).df()
     con.close()
     idx.ts=pd.to_datetime(idx.ts)
-    idx["date"]=idx.ts.dt.date
+    idx["date"]=idx.ts.dt.normalize()
     idx["time"]=idx.ts.dt.strftime("%H:%M:%S")
     return idx.drop_duplicates("ts")
 
@@ -41,7 +41,7 @@ def load_global(root):
         if not p.exists():
             raise FileNotFoundError(p)
         df=pd.read_parquet(p)
-        df["date"]=pd.to_datetime(df["date"]).dt.date
+        df["date"]=pd.to_datetime(df["date"]).dt.normalize()
         df=df.sort_values("date").drop_duplicates("date")
         r=df["close"].pct_change()
         mu=r.shift(1).rolling(60,min_periods=60).mean()
@@ -162,6 +162,7 @@ def load_prices(root, expiry_map, signals):
 
 def attach_expiry(panel, expiry_map):
     x=panel.copy()
+    x["date"]=pd.to_datetime(x["date"]).dt.normalize()
     future=[]
     exps=sorted(expiry_map)
     for d in x.date:
