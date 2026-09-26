@@ -706,3 +706,10 @@ Run 12 will use the latest corrected Phase 31.7 branch head a73da3a7f29668b32f81
 Run **36251100372** completed unit tests, data gate, raw execution probes, Base and Stress, but validation failed because every executable trade set was still empty. The run-12 artifact showed valid source rows at 09:31/15:10; the remaining defect was localized to expiry-file selection, where feature expiry timestamps were compared against Python-date expiry-map keys.
 
 The phase branch now normalizes feature expiry to a dedicated Python-date `expiry_key` before file selection, with a regression test. The launcher persist step now retries fetch/rebase after non-fast-forward push failures, and the workflow has non-canceling concurrency. Run 12 remains quarantined; no Phase 31.7 P&L is accepted.
+
+ 
+## 2026-09-26 — Phase 31.7 closure / Phase 31.8 activation
+ 
+Phase 31.7 is closed after authoritative run **36251189770**. The frozen OI/volume microstructure family produced **0/12 Base** and **0/12 Stress** promotion passes; all true cells had negative total net P&L. The best observed cell was VOL_IMB at threshold 0.40 with nearest expiry: **-₹191.41 mean weekly Base** and **-₹245.58 mean weekly Stress**, with **42.27% positive weeks**. No WFA/OOS was authorized.
+ 
+Phase 31.8 is now the active bounded numerical frontier on `phase-31.8-global-overnight-transmission-v1`. The preregistered hypothesis, literature review, unit tests and manual launcher are persisted. The first gate is global-data acquisition/coverage; no P&L will be interpreted until the gate passes.
