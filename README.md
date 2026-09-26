@@ -442,3 +442,10 @@ Authoritative run **36218652778** completed Base and Stress successfully at the 
 The simulator is corrected to normalize both timezone-aware (+05:30) and timezone-naive IST representations to the same naive Asia/Kolkata minute timestamp. A dedicated regression test now verifies both forms map to 09:30 IST. Economic rules, 270-cell grid, source, cost model and promotion gate are unchanged.
 
 Status: **OPEN — deterministic rerun required**
+
+
+### Phase 30.2 — Falcon pinned-source reproducibility rerun — 2026-09-26
+
+Run **36220039329** completed Base and Stress successfully but produced 0 candidate setups/trades. This is not accepted as a Falcon performance result. Post-run diagnostics verified that the cached Rissin Parquet contains valid timezone-aware IST timestamps, registered signal rows and next-minute fill rows. The remaining reproducibility difference is dataset provenance: the run resolved moving Rissin revision **8f7739c...**, while the prior independently audited Falcon implementation used pinned revision **78b1c5468255d18cf492984bfe6fe4e3ac874d7c**.
+
+The authoritative follow-up branch is **`phase-30.2-falcon-source-pin-v1`**, workflow run **36220723215**. It changes only the Rissin revision and immutable cache key; the frozen 270-cell Falcon rules, Wednesday entry / Thursday adjustment / Monday exit calendar, Paytm Money/NSE cost model, Base/Stress slippage and ₹5,000/week promotion gate remain unchanged. No Falcon P&L is accepted until this reproducibility gate is resolved.
