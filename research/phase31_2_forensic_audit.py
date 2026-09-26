@@ -128,12 +128,16 @@ def audit(data, out):
             tc=charge(ee,action,qty,lot_size(expiry),day)+charge(xx,side_exit,qty,lot_size(expiry),day)
             tc_calc+=tc
             leg_details.append({"key":list(key),"entry_raw":ep,"exit_raw":xp,"raw_pnl":raw_pnl,"tc":tc})
-        if "gross_pnl_raw" in r.index and abs(raw_calc-float(r["gross_pnl_raw"]))>1e-5:
-            leg_ok=False; errors.append(f"{day}: raw aggregate mismatch {raw_calc} vs {float(r[\"gross_pnl_raw\"])}")
-        if abs(exec_calc-float(r["gross_pnl"]))>1e-5:
-            leg_ok=False; errors.append(f"{day}: execution gross mismatch {exec_calc} vs {float(r[\"gross_pnl\"])}")
-        if abs(tc_calc-float(r["transaction_costs"]))>1e-5:
-            leg_ok=False; errors.append(f"{day}: transaction-cost mismatch {tc_calc} vs {float(r[\"transaction_costs\"])}")
+        if "gross_pnl_raw" in r.index:
+            ref_raw_agg=float(r["gross_pnl_raw"])
+            if abs(raw_calc-ref_raw_agg)>1e-5:
+                leg_ok=False; errors.append(f"{day}: raw aggregate mismatch {raw_calc} vs {ref_raw_agg}")
+        ref_exec_gross=float(r["gross_pnl"])
+        if abs(exec_calc-ref_exec_gross)>1e-5:
+            leg_ok=False; errors.append(f"{day}: execution gross mismatch {exec_calc} vs {ref_exec_gross}")
+        ref_tc=float(r["transaction_costs"])
+        if abs(tc_calc-ref_tc)>1e-5:
+            leg_ok=False; errors.append(f"{day}: transaction-cost mismatch {tc_calc} vs {ref_tc}")
         ref_net=float(r["net_pnl"])
         calc_net=exec_calc-tc_calc
         if abs(calc_net-ref_net)>1e-5:
