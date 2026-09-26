@@ -81,3 +81,11 @@ def test_execution_loader_defines_strike_filter_before_query():
     assert 'strike_sql=",".join(str(x) for x in strikes)' in fn_src
     assert fn_src.index('strike_sql=",".join(str(x) for x in strikes)') < fn_src.index('q=f"""')
     assert "AND s.strike IN ({strike_sql})" in fn_src
+
+
+def test_price_key_normalizes_pandas_timestamp_and_date_to_same_key():
+    import datetime as dt
+    from research.phase31_7_oi_volume_microstructure import price_key
+    a=price_key(dt.date(2021,7,1),dt.date(2021,7,1),"CE",15700,pd.Timestamp("2021-07-01 09:31:00"))
+    b=price_key(pd.Timestamp("2021-07-01"),pd.Timestamp("2021-07-01"),"ce",15700.0,pd.Timestamp("2021-07-01 09:31:00"))
+    assert a==b
