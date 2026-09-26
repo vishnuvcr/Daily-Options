@@ -741,3 +741,10 @@ Next authoritative run: **Phase 31.8 run 4** from branch head `902098ba07db15388
 Run **36252301406** correctly skipped numerical discovery because its 95% coverage gate counted 64 deterministic pre-lookback sessions, yielding 94.788%. The phase plan now explicitly excludes only this required warm-up from the coverage denominator while retaining the full raw session count and strict prior-date barrier.
  
 Next authoritative run: **Phase 31.8 run 5** from branch head `0963392cb7f1a9b73ec2e02e1bb66277f97f54bd`.
+
+ 
+## 2026-09-26 — Phase 31.8 run 5 closure / run 6 frontier
+ 
+Run **36252470696** stopped at a regression test that still reflected the old coverage denominator. E0403 is closed after aligning the test with methodological erratum 31.8-1. No data acquisition or P&L computation ran.
+ 
+Next authoritative run: **Phase 31.8 run 6** from branch head `491644ec70ab9c5d69fb0d8b7db85cf21f383f43`.
