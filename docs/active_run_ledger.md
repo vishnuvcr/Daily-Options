@@ -161,3 +161,6 @@ Phase 30 v8 is retired. The Air Defense family is the sole active Equity Income 
 
 Prior authoritative run **36213335815** on `phase-30.2-falcon-opt-v1` is quarantined for runtime only: Base and Stress both remained in `Run friction` beyond six hours. No P&L was accepted. The runtime-fix branch preserves the frozen 270-cell grid, changes only data-access/caching architecture and CI serialization, and must produce a fresh Base/Stress evidence chain.
 
+
+
+Phase 30.2 Falcon authoritative frontier update: run 36218439278 failed in simulator startup due to E0318 DuckDB alias regression; no P&L accepted. Corrected source commit b731513c6e22c9f2a3774c5e90db0eeb4f022c9a is now the next rerun candidate.
