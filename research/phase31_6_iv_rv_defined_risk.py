@@ -2,7 +2,7 @@
 from pathlib import Path
 from datetime import date
 import argparse, math, json
-import duckdb, pandas as pd
+import duckdb, pandas as pd, numpy as np
 
 START=date(2021,7,1); END=date(2026,8,31)
 THRESHOLDS=(2.0,4.0,6.0); WINGS=(200,); EXPIRY_BUCKETS=(0,1)
@@ -43,8 +43,8 @@ def yz_vol(g):
     if len(g)<20: return None
     x=g.tail(20).copy()
     o,h,l,c=[x[z].astype(float) for z in ("open","high","low","close")]
-    rs=(math.log(h/l)*math.log(h/o)+math.log(l/o)*math.log(l/c)).mean()
-    oc=(c/o).apply(math.log); co=(o/c.shift(1)).dropna().apply(math.log)
+    rs=(np.log(h/l)*np.log(h/o)+np.log(l/o)*np.log(l/c)).mean()
+    oc=np.log(c/o); co=np.log((o/c.shift(1)).dropna())
     if len(co)<19: return None
     k=0.34/(1.34+(21/19))
     var=co.var(ddof=1)+k*oc.var(ddof=1)+(1-k)*rs
