@@ -99,7 +99,7 @@ def main():
     expiries=sorted(pd.to_datetime(list(files)).date)
     sessions=sorted(idx.date.unique()); rows=[]; diag=[]
     for day in sessions:
-        ddf=idx[idx.date<day].drop_duplicates("date")
+        ddf=daily[daily.date<day]
         rv=yz_vol(ddf)
         bars=idx[(idx.date==day)&(idx.time>="09:30:00")&(idx.time<="15:10:00")]
         srow=bars[bars.time=="09:30:00"]
