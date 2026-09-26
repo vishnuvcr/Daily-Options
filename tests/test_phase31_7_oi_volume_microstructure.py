@@ -61,7 +61,8 @@ def test_null_control_permutates_full_feature_panel_before_thresholding():
     null=build_signals(panel,null_seed=101)
     assert set(true["day"]) != set(null["day"]) or set(true["side"]) != set(null["side"])
 
-\ndef test_execution_query_has_no_timezone_aware_direct_timestamp_to_time_cast():
+
+def test_execution_query_has_no_timezone_aware_direct_timestamp_to_time_cast():
     from pathlib import Path
     src=Path("research/phase31_7_oi_volume_microstructure.py").read_text(encoding="utf-8")
     assert "CAST(o.timestamp AS TIME)" not in src
