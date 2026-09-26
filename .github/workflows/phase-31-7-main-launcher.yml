@@ -9,6 +9,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: phase31-7-main-launcher
+  cancel-in-progress: false
+
 jobs:
   launch:
     runs-on: ubuntu-latest
