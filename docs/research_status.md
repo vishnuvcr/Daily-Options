@@ -771,3 +771,8 @@ The branch now coerces both left and right merge keys inside `build_panel` to ex
 Run **36252301406** completed all engineering and numerical *steps as commands*, but the global gate returned **FAIL** at 94.788% because the 64 deterministic 60-observation warm-up sessions were included in the coverage denominator. Base/Stress discovery were correctly skipped by the launcher; no P&L exists from this run.
  
 The plan is now clarified by methodological erratum 31.8-1: the 95% coverage threshold applies to feature-eligible sessions after the required prior-only lookback, while raw sessions and warm-up exclusions are reported separately. E0402 records the correction. The next run will determine whether the actual post-warm-up coverage passes and, only then, execute the 12-cell Base/Stress grid.
+
+ 
+## 2026-09-26 — Phase 31.8 run 5 closure / test correction
+ 
+Run **36252470696** stopped at the unit-test stage. The failing test still expected a pre-erratum 94% example to fail; under the new warm-up-aware gate that example correctly passes because the denominator contains only 94 feature-eligible sessions and all 94 are complete. E0403 records and closes the test-only defect. No data gate or P&L computation ran in this attempt.
