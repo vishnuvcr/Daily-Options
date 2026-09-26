@@ -155,10 +155,13 @@ def audit(data, out):
                             leg_ok=False; errors.append(f"{day}: reference {fld} mismatch {key}")
                         if fld in z and fld=="exit_price_raw" and abs(float(z[fld])-float(price(con,expiry_files[expiry],strike,side,f"{day} {EXIT}")))>1e-5:
                             leg_ok=False; errors.append(f"{day}: reference {fld} mismatch {key}")
-        computed_total_cost=tc_calc+(raw_calc-exec_calc)
-        if abs(ref_total_cost-computed_total_cost)>1e-4:
-            leg_ok=False; errors.append(f"{day}: total-cost mismatch {computed_total_cost} vs {ref_total_cost}")
-        calc_net=raw_calc-computed_total_cost
+        computed_transaction_cost=tc_calc
+        ref_slippage_total=0.0
+        for z in parsed_ref_legs:
+            ref_slippage_total += float(z.get("slippage_cost",0.0))
+        if abs(ref_total_cost-computed_transaction_cost)>1e-4:
+            leg_ok=False; errors.append(f"{day}: persisted transaction-cost mismatch {computed_transaction_cost} vs {ref_total_cost}")
+        calc_net=raw_calc-computed_transaction_cost
         if abs(raw_calc-float(r["gross_pnl"]))>1e-4:
             ref_gross=float(r["gross_pnl"])
             leg_ok=False; errors.append(f"{day}: persisted gross does not match independently recomputed raw gross {raw_calc} vs {ref_gross}")
@@ -166,7 +169,7 @@ def audit(data, out):
             leg_ok=False; errors.append(f"{day}: Base net mismatch {calc_net} vs {ref_net}")
         row={"trade_date":str(day),"expiry_ref":str(expiry),"expiry_derived":str(derived_expiry),"spot_ref":ref_spot,"spot_raw":calc_spot,"exit_spot_raw":exit_spot,
              "atm_ref":int(r["atm"]),"atm_derived":atm,"lot_ref":int(r["lot_size"]),"lot_derived":lot_size(expiry),
-             "gross_ref":float(r["gross_pnl"]),"gross_recalc":raw_calc,"execution_gross_recalc":exec_calc,"total_cost_ref":ref_total_cost,"total_cost_recalc":computed_total_cost,
+             "gross_ref":float(r["gross_pnl"]),"gross_recalc":raw_calc,"execution_gross_recalc":exec_calc,"transaction_cost_ref":ref_total_cost,"transaction_cost_recalc":computed_transaction_cost,"slippage_ref":ref_slippage_total,
              "net_ref":ref_net,"net_recalc":calc_net,"match":leg_ok,"legs":json.dumps(leg_details,separators=(",",":"))}
         rows.append(row)
     con.close()
@@ -178,6 +181,26 @@ def audit(data, out):
     t["week"]=pd.to_datetime(t["trade_date"].astype(str)).dt.to_period("W-SUN").astype(str)
     w=t.groupby("week",as_index=False).agg(net_pnl=("net_pnl","sum"),gross_pnl=("gross_pnl","sum"),costs=("costs","sum"),trading_days=("trade_date","count"))
     w["positive"]=w.net_pnl>0
+    def ledger_slippage(row):
+        total=0.0
+        for col in ("leg_1","leg_2","leg_3"):
+            try:
+                z=row[col]
+                if isinstance(z,str): z=json.loads(z)
+                if isinstance(z,dict): total += float(z.get("slippage_cost",0.0))
+            except Exception:
+                pass
+        return total
+    t["persisted_slippage_cost"]=t.apply(ledger_slippage,axis=1)
+    total_slippage=float(t.persisted_slippage_cost.sum())
+    t["corrected_net_pnl"]=t["net_pnl"]-t["persisted_slippage_cost"]
+    t["week"]=pd.to_datetime(t["trade_date"].astype(str)).dt.to_period("W-SUN").astype(str)
+    cw=t.groupby("week",as_index=False).agg(net_pnl=("corrected_net_pnl","sum"))
+    cw["positive"]=cw.net_pnl>0
+    corrected_total_net=float(t.corrected_net_pnl.sum())
+    corrected_mean_week=float(cw.net_pnl.mean())
+    corrected_median_week=float(cw.net_pnl.median())
+    corrected_positive=float(cw.positive.mean())
     total_net=float(t.net_pnl.sum())
     mean_week=float(w.net_pnl.mean())
     median_week=float(w.net_pnl.median())
@@ -188,6 +211,8 @@ def audit(data, out):
     source=parse_source_mismatch()
     source["persisted_weekly_has_costs_column"]="costs" in weekly.columns
     source["reference_trade_has_cost_column"]="costs" in trades.columns
+    source["current_source_uses_execution_gross"]="execution_gross" in Path("research/phase31_1_user_selected_nifty_ratio.py").read_text(encoding="utf-8")
+    source["current_source_net_uses_transaction_cost_only"]='"net_pnl":execution_gross-transaction_costs' in Path("research/phase31_1_user_selected_nifty_ratio.py").read_text(encoding="utf-8")
     diagnostics=[]
     for _,r in rec.iterrows():
         if pd.notna(r.exit_spot_raw):
@@ -206,6 +231,12 @@ def audit(data, out):
       "reference_weeks":int(len(w)),
       "reference_total_net":total_net,
       "reference_summary_total_net":float(summary["total_net"]),
+      "persisted_total_slippage_cost":total_slippage,
+      "slippage_adjusted_total_net":corrected_total_net,
+      "slippage_adjusted_mean_week":corrected_mean_week,
+      "slippage_adjusted_median_week":corrected_median_week,
+      "slippage_adjusted_positive_week_rate":corrected_positive,
+      "slippage_adjusted_week_count":int(len(cw)),
       "reference_total_net_diff":abs(total_net-float(summary["total_net"])),
       "reference_mean_week":mean_week,
       "reference_summary_mean_week":float(summary["mean_weekly_net"]),
