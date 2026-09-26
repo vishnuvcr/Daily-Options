@@ -238,7 +238,11 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
                     stop_idx=None if risk=="debit_stop_1x_expiry" else (int(np.flatnonzero(pnl_state<=-D)[0]) if np.any(pnl_state<=-D) else None)
                     target_idx=None if target_frac is None else (int(np.flatnonzero(pnl_state>=target_frac*(r.long_strike-r.short_strike))[0]) if np.any(pnl_state>=target_frac*(r.long_strike-r.short_strike)) else None)
                     for tex in TIME_EXITS:
-                        exit_day=pd.Timestamp(r.expiry).date() if tex=="expiry_day_15_00" else (pd.Timestamp(r.expiry)-pd.Timedelta(days=1)).date()
+                        if tex=="expiry_day_15_00":
+                            exit_day=pd.Timestamp(r.expiry).date()
+                        else:
+                            exp_day=pd.Timestamp(r.expiry)
+                            exit_day=(exp_day if exp_day.weekday()==0 else exp_day-pd.Timedelta(days=1)).date()
                         exit_ts=pd.Timestamp(f"{exit_day} 15:00").tz_localize("Asia/Kolkata")
                         time_mask=(zts<=exit_ts).to_numpy()
                         if not np.any(time_mask): continue
