@@ -7,6 +7,7 @@ on:
       - "research/phase31_6_iv_rv_defined_risk.py"
       - "tests/test_phase31_6_iv_rv_defined_risk.py"
       - ".github/workflows/phase-31-6-iv-rv-defined-risk.yml"
+      - ".github/phase31_6-run.txt"
 permissions:
   contents: write
 concurrency:
