@@ -121,3 +121,12 @@ Authoritative Iron Dome v8 Base+Stress execution completed. All 12 frozen cells 
 ## 2026-09-25 — Phase 30.1 Air Defense launch
 
 After the clean Phase 30 v8 retirement, research advanced to the source-resolved Air Defense candidate. A 24-cell frozen grid was registered before numerical execution. The Python-only NSE India VIX acquisition layer is cached separately from the pinned TradeMarkk options source. No result-driven parameter changes are permitted.
+
+## 2026-09-26 — Phase 30.2 Falcon runtime diagnosis and correction
+
+The user reported the apparent Falcon stall. Direct GitHub inspection showed authoritative run **36213335815** had Base and Stress both in `Run friction` for more than six hours. A static audit found repeated full-file Parquet scans for exact leg/strike series plus setup-level cached DataFrames retained across the whole sweep. The run was therefore treated as an engineering/runtime failure, not strategy evidence.
+
+A new branch **`phase-30.2-falcon-runtime-fix-v1`** was created from the audited corrected Falcon commit. The strategy grid and economic rules were left unchanged. The engine now reads each near/far exact-expiry slice once per calendar window, selects snapshots/strikes/leg series in-memory, processes calendars one at a time, releases caches explicitly, and emits progress. Unit coverage was extended for cached series selection. The workflow was also changed to serialize Base/Stress jobs and explicitly pass the friction label to result persistence.
+
+The next run is the only accepted numerical evidence for this runtime-fix branch; no result from the stalled run is promoted.
+
