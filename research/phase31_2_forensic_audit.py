@@ -160,7 +160,8 @@ def audit(data, out):
             leg_ok=False; errors.append(f"{day}: total-cost mismatch {computed_total_cost} vs {ref_total_cost}")
         calc_net=raw_calc-computed_total_cost
         if abs(raw_calc-float(r["gross_pnl"]))>1e-4:
-            ref_gross=float(r["gross_pnl"])\n            leg_ok=False; errors.append(f"{day}: persisted gross does not match independently recomputed raw gross {raw_calc} vs {ref_gross}")
+            ref_gross=float(r["gross_pnl"])
+            leg_ok=False; errors.append(f"{day}: persisted gross does not match independently recomputed raw gross {raw_calc} vs {ref_gross}")
         if abs(calc_net-ref_net)>1e-5:
             leg_ok=False; errors.append(f"{day}: Base net mismatch {calc_net} vs {ref_net}")
         row={"trade_date":str(day),"expiry_ref":str(expiry),"expiry_derived":str(derived_expiry),"spot_ref":ref_spot,"spot_raw":calc_spot,"exit_spot_raw":exit_spot,
