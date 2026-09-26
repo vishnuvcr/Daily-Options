@@ -523,6 +523,7 @@ def main() -> None:
         f"ORDER BY expiry, strike",
         expiries,
     ).df()
+    strike_df["expiry"] = pd.to_datetime(strike_df["expiry"], errors="coerce").dt.date
     strikes_by_expiry = {
         e: np.sort(g.strike.to_numpy(dtype=float))
         for e, g in strike_df.groupby("expiry")
