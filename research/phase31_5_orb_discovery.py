@@ -51,7 +51,7 @@ def simulate(con, idx, path, expiry, day, window, mult, slip):
         if c>=up: sig=r; direction="UP"; break
         if c<=dn: sig=r; direction="DOWN"; break
     if sig is None: return {"status":"NO_SIGNAL"}
-    spot=float(sig.close); atm=nearest50(spot); lot=lot_size(expiry)
+    spot=float(sig.close_px); atm=nearest50(spot); lot=lot_size(expiry)
     legs=[("CE",atm,"BUY"),("CE",atm+200,"SELL")] if direction=="UP" else [("PE",atm,"BUY"),("PE",atm-200,"SELL")]
     et=sig.ts; xt=pd.Timestamp(f"{day} 15:10:00")
     gross=slip_cost=tc=0
