@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# Phase 30.9 workflow trigger: NSE VIX cache acquisition.
 from __future__ import annotations
 
 import argparse
@@ -10,71 +9,106 @@ from pathlib import Path
 import pandas as pd
 import requests
 
-NSE_HOME = "https://www.nseindia.com/"
 NSE_VIX_URL = "https://www.nseindia.com/api/historicalOR/vixhistory"
+NIFTYINDICES_VIX_URL = "https://www.niftyindices.com/Backpage.aspx/BindHistoricalIndiaVixData"
 
 
-def fetch_vix(start: str, end: str) -> list[dict]:
+def _session() -> requests.Session:
     s = requests.Session()
     s.headers.update(
         {
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
             "(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-            "Accept": "application/json,text/plain,*/*",
-            "Referer": NSE_HOME,
+            "Accept": "application/json, text/plain, */*",
             "Accept-Language": "en-US,en;q=0.9",
             "Connection": "keep-alive",
         }
     )
+    return s
 
-    def fetch_chunk(chunk_start: date, chunk_end: date) -> list[dict]:
-        params = {
-            "from": chunk_start.strftime("%d-%m-%Y"),
-            "to": chunk_end.strftime("%d-%m-%Y"),
-        }
-        r = s.get(NSE_VIX_URL, params=params, timeout=60)
-        if r.status_code == 403:
-            retry_headers = {
-                "User-Agent": s.headers["User-Agent"],
+
+def fetch_nse_vix(start: str, end: str) -> list[dict]:
+    s = _session()
+    params = {
+        "from": pd.Timestamp(start).strftime("%d-%m-%Y"),
+        "to": pd.Timestamp(end).strftime("%d-%m-%Y"),
+    }
+    r = s.get(
+        NSE_VIX_URL,
+        params=params,
+        headers={
+            "Referer": "https://www.nseindia.com/reports-indices-historical-vix",
+            "Origin": "https://www.nseindia.com",
+        },
+        timeout=60,
+    )
+    if r.status_code == 403:
+        r = s.get(
+            NSE_VIX_URL,
+            params=params,
+            headers={
                 "Referer": "https://www.nseindia.com/reports-indices-historical-vix",
                 "Origin": "https://www.nseindia.com",
-                "Accept": "application/json, text/plain, */*",
                 "Sec-Fetch-Dest": "empty",
                 "Sec-Fetch-Mode": "cors",
                 "Sec-Fetch-Site": "same-origin",
-            }
-            r = s.get(NSE_VIX_URL, params=params, headers=retry_headers, timeout=60)
-        r.raise_for_status()
-        payload = r.json()
-        if isinstance(payload, dict):
-            rows = payload.get("data") or payload.get("records") or payload
-        else:
-            rows = payload
-        if not isinstance(rows, list):
-            raise RuntimeError(f"Unexpected NSE VIX response type: {type(rows)!r}")
-        return rows
+            },
+            timeout=60,
+        )
+    r.raise_for_status()
+    payload = r.json()
+    if isinstance(payload, dict):
+        rows = payload.get("data") or payload.get("records") or payload
+    else:
+        rows = payload
+    if not isinstance(rows, list):
+        raise RuntimeError(f"Unexpected NSE VIX response type: {type(rows)!r}")
+    return rows
 
-    # The historical endpoint currently caps a single response at about 70
-    # trading-day rows. Use deterministic 60-calendar-day chunks to avoid
-    # silent truncation of the registered research window.
-    start_d, end_d = date.fromisoformat(start), date.fromisoformat(end)
-    out: list[dict] = []
-    chunk_start = start_d
-    while chunk_start <= end_d:
-        chunk_end = min(end_d, chunk_start + pd.Timedelta(days=59).to_pytimedelta())
-        out.extend(fetch_chunk(chunk_start, chunk_end))
-        chunk_start = chunk_end + pd.Timedelta(days=1).to_pytimedelta()
-    return out
+
+def fetch_niftyindices_vix(start: str, end: str) -> list[dict]:
+    s = _session()
+    body = (
+        "{'name':'India VIX',"
+        f"'startDate':'{pd.Timestamp(start).strftime('%d %b %Y')}',"
+        f"'endDate':'{pd.Timestamp(end).strftime('%d %b %Y')}}}"
+    )
+    r = s.post(
+        NIFTYINDICES_VIX_URL,
+        data=body,
+        headers={
+            "Content-Type": "application/json; charset=utf-8",
+            "Referer": "https://www.niftyindices.com/reports",
+            "Origin": "https://www.niftyindices.com",
+        },
+        timeout=60,
+    )
+    r.raise_for_status()
+    payload = r.json()
+    if isinstance(payload, dict) and "d" in payload:
+        payload = payload["d"]
+        if isinstance(payload, str):
+            try:
+                payload = json.loads(payload)
+            except json.JSONDecodeError:
+                if payload.strip().lower() == "false":
+                    payload = []
+                else:
+                    raise
+    if not isinstance(payload, list):
+        raise RuntimeError(f"Unexpected Nifty Indices VIX response type: {type(payload)!r}")
+    return payload
 
 
 def normalize(rows: list[dict]) -> pd.DataFrame:
     if not rows:
-        raise RuntimeError("NSE returned no VIX rows")
+        raise RuntimeError("VIX source returned no rows")
 
     df = pd.DataFrame(rows)
     aliases = {
         "EOD_TIMESTAMP": "date",
         "date": "date",
+        "EOD_INDEX_NAME": "index_name",
         "EOD_OPEN_INDEX_VAL": "open",
         "open": "open",
         "EOD_HIGH_INDEX_VAL": "high",
@@ -90,22 +124,36 @@ def normalize(rows: list[dict]) -> pd.DataFrame:
         "VIX_PERC_CHG": "pct_change",
         "pct_change": "pct_change",
     }
-    rename = {k: v for k, v in aliases.items() if k in df.columns}
-    df = df.rename(columns=rename)
+    df = df.rename(columns={k: v for k, v in aliases.items() if k in df.columns})
 
     required = ["date", "open", "high", "low", "close"]
     missing = [c for c in required if c not in df.columns]
     if missing:
-        raise RuntimeError(f"Missing required NSE VIX columns: {missing}; got {list(df.columns)}")
+        raise RuntimeError(f"Missing VIX columns: {missing}; got {list(df.columns)}")
 
     df["date"] = pd.to_datetime(df["date"], dayfirst=True, errors="coerce").dt.date
     for c in ["open", "high", "low", "close", "prev_close", "change", "pct_change"]:
         if c in df.columns:
             df[c] = pd.to_numeric(df[c], errors="coerce")
-
-    df = df.dropna(subset=["date", "open", "high", "low", "close"])
+    df = df.dropna(subset=required)
     df = df.drop_duplicates(subset=["date"], keep="last").sort_values("date")
     return df.reset_index(drop=True)
+
+
+def compare_overlap(a: pd.DataFrame, b: pd.DataFrame) -> dict:
+    if a.empty or b.empty:
+        return {"overlap_dates": 0}
+    x = a[["date", "open", "high", "low", "close"]].merge(
+        b[["date", "open", "high", "low", "close"]],
+        on="date", suffixes=("_a", "_b"),
+    )
+    if x.empty:
+        return {"overlap_dates": 0}
+    diffs = {
+        c: float((x[f"{c}_a"] - x[f"{c}_b"]).abs().max())
+        for c in ["open", "high", "low", "close"]
+    }
+    return {"overlap_dates": int(len(x)), "max_abs_diff": diffs}
 
 
 def main() -> None:
@@ -121,31 +169,67 @@ def main() -> None:
     if start > end:
         raise SystemExit("start must be <= end")
 
-    rows = fetch_vix(args.start, args.end)
-    df = normalize(rows)
-    study = df[(df["date"] >= start) & (df["date"] <= end)].copy()
-    if study.empty:
-        raise RuntimeError("No VIX rows remain in requested study window")
-    if study["date"].nunique() != len(study):
+    nse_rows = fetch_nse_vix(args.start, args.end)
+    nse_df = normalize(nse_rows)
+    nse_study = nse_df[(nse_df["date"] >= start) & (nse_df["date"] <= end)].copy()
+
+    # NSE's historical endpoint currently returns a bounded window even when
+    # a wider from/to range is supplied. Do not silently accept partial coverage.
+    nse_complete = (
+        not nse_study.empty
+        and nse_study["date"].min() <= start
+        and nse_study["date"].max() >= end
+    )
+
+    source = "nse_historical_vix"
+    chosen = nse_study
+    fallback_df = pd.DataFrame()
+    if not nse_complete:
+        fallback_rows = fetch_niftyindices_vix(args.start, args.end)
+        fallback_df = normalize(fallback_rows)
+        fallback_study = fallback_df[
+            (fallback_df["date"] >= start) & (fallback_df["date"] <= end)
+        ].copy()
+        if fallback_study.empty:
+            raise RuntimeError("NSE VIX was incomplete and Nifty Indices fallback returned no study-window rows")
+        if fallback_study["date"].min() > start or fallback_study["date"].max() < end:
+            raise RuntimeError(
+                "Neither NSE nor Nifty Indices supplied complete study-window coverage"
+            )
+        chosen = fallback_study
+        source = "niftyindices_india_vix_fallback_after_nse_partial"
+
+    chosen = chosen.drop_duplicates("date").sort_values("date").reset_index(drop=True)
+    if len(chosen) != chosen["date"].nunique():
         raise RuntimeError("Duplicate VIX dates remain after normalization")
+
     coverage = {
         "requested_start": args.start,
         "requested_end": args.end,
-        "rows": int(len(study)),
-        "date_min": str(study["date"].min()),
-        "date_max": str(study["date"].max()),
-        "unique_dates": int(study["date"].nunique()),
-        "source": NSE_VIX_URL,
+        "rows": int(len(chosen)),
+        "date_min": str(chosen["date"].min()),
+        "date_max": str(chosen["date"].max()),
+        "unique_dates": int(chosen["date"].nunique()),
+        "selected_source": source,
+        "nse_rows_in_window": int(len(nse_study)),
+        "nse_date_min": str(nse_study["date"].min()) if not nse_study.empty else None,
+        "nse_date_max": str(nse_study["date"].max()) if not nse_study.empty else None,
+        "nse_complete": bool(nse_complete),
+        "nse_vs_niftyindices_overlap": compare_overlap(nse_study, fallback_df),
+        "sources": {
+            "nse": NSE_VIX_URL,
+            "niftyindices_fallback": NIFTYINDICES_VIX_URL,
+        },
     }
 
     out = Path(args.output)
     out.parent.mkdir(parents=True, exist_ok=True)
-    study.to_csv(out, index=False, date_format="%Y-%m-%d")
+    chosen.to_csv(out, index=False)
 
     meta = Path(args.metadata)
     meta.parent.mkdir(parents=True, exist_ok=True)
-    meta.write_text(json.dumps(coverage, indent=2) + "\n", encoding="utf-8")
-    print(json.dumps(coverage, indent=2))
+    meta.write_text(json.dumps(coverage, indent=2, default=str) + "\n", encoding="utf-8")
+    print(json.dumps(coverage, indent=2, default=str))
 
 
 if __name__ == "__main__":
