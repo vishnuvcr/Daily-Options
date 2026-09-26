@@ -173,3 +173,18 @@ Authoritative run **36218652778** completed Base and Stress successfully at the 
 The simulator is corrected to normalize both timezone-aware (+05:30) and timezone-naive IST representations to the same naive Asia/Kolkata minute timestamp. A dedicated regression test now verifies both forms map to 09:30 IST. Economic rules, 270-cell grid, source, cost model and promotion gate are unchanged.
 
 Status: **OPEN — deterministic rerun required**
+
+
+## 2026-09-26 — Phase 30.2 Falcon final closure
+
+| Phase | Branch | Workflow run | Status | Accepted P&L |
+|---|---|---:|---|---|
+| 30.2 | phase-30.2-falcon-expiry-type-fix-v1 | 36220915944 | Base computation completed; Stress completed successfully; Base persistence race only | **Yes — audited historical backtest result** |
+
+Base artifact: 10899530531. Stress artifact: 10899630104.
+
+Final gate:
+- Base: 0/270 qualified; leading mean weekly net ₹1,432.03; positive-week rate 54.84%; execution coverage 96.875%.
+- Stress: 0/270 qualified; leading mean weekly net ₹733.84; positive-week rate 51.61%; execution coverage 96.875%.
+
+Phase 30.2 is closed without WFA/OOS. No Falcon parameter tuning is authorized after the result. Next frontier: source-faithful Bear Put Phase 30.3/30.4.
