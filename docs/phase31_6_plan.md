@@ -1,7 +1,7 @@
 # Phase 31.6 — IV–realized-volatility defined-risk discovery
 
 ## Status
-PREREGISTERED — numerical discovery pending.
+CLOSED — discovery complete; no cell advances to WFA/OOS.
 
 ## Research question
 Can a deterministic intraday NIFTY signal based on the difference between ATM option-implied volatility and a pre-signal realized-volatility estimate identify defined-risk option structures whose net weekly P&L survives Paytm-style costs and Base/Stress slippage?
@@ -46,3 +46,16 @@ Close after the finite grid and diagnostics. Do not expand the grid because of o
 
 ## Evidence note
 NSE states that NIFTY weekly index options expire Tuesday, with the prior trading day used when Tuesday is a holiday; this phase therefore uses the actual expiry files present in the pinned dataset rather than assuming a weekday.
+
+## Phase closure — 2026-09-26
+Authoritative workflow run: **36248538306** (Base + Stress + 12-cell validation + persistence succeeded).
+
+Result:
+- Base: 0/12 cells met the ₹5,000/week mean + median + ≥70% positive-week gate; all 12 had negative total net P&L.
+- Stress: 0/12 cells met the same gate; all 12 had negative total net P&L.
+- Best cell by mean weekly net in both frictions: 6 vol-point threshold, positive IV–RV SHORT_CONDOR, nearest expiry bucket, 200-point wings.
+- Best Base: 178 trades, total net **-₹23,018.38**, mean weekly **-₹166.80**, median weekly **₹50.11**, positive-week rate **50.00%**.
+- Best Stress: 178 trades, total net **-₹34,324.32**, mean weekly **-₹248.73**, median weekly **-₹29.93**, positive-week rate **50.00%**.
+- No WFA/OOS validation or parameter selection is authorized from this family.
+
+Data-quality observations are retained in `reports/phase31_6/base/diagnostics.csv` and `stress/diagnostics.csv`; missing ATM-IV observations are common for the next-expiry bucket, so the observed bucket-1 sample is materially smaller than bucket 0. The study is therefore negative evidence for this exact executable definition, not a claim that all NIFTY VRP implementations are unprofitable.
