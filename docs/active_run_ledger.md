@@ -200,3 +200,12 @@ Run 36213335815 is quarantined for runtime only. No Falcon P&L has been accepted
 Phase 31.6 is frozen. No parameter retuning, WFA, or holdout validation is authorized.
 
 Next bounded discovery family: **Phase 31.7 OI/volume microstructure with explicit null controls**, subject to data-field coverage validation and a new finite preregistration.
+
+
+## 2026-09-26 — Phase 31.7 preregistration / data gate pending
+
+| Phase | Branch | Run | Status | Accepted P&L |
+|---|---|---:|---|---|
+| 31.7 | phase-31.7-oi-volume-microstructure-v1 | pending first clean run | PREREGISTERED — data gate not yet executed | No |
+
+No Base/Stress numerical work is authorized until the data gate passes.
