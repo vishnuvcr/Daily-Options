@@ -679,3 +679,13 @@ Phase 31.6 is closed negative. **Phase 31.7** is now the bounded next discovery 
 Frozen true grid: 3 lagged microstructure features × 2 absolute thresholds × 2 expiry buckets = **12 cells**. Features are ATM CE/PE volume imbalance, 09:25→09:30 OI-change imbalance, and their fixed 50/50 joint score. Execution is a 1-lot 200-point debit spread from 09:31 to 15:10 with ₹0.20/₹0.40 Base/Stress slippage and the frozen Phase 31.3 charge model.
 
 A data gate must pass first: option schema must contain volume and open interest, nearest-expiry feature coverage ≥70%, next-expiry feature coverage ≥50%, and all feature timestamps must precede the 09:31 entry. Five deterministic null controls (seeds 101/202/303/404/505) are required for every true cell. No P&L is accepted before the data gate and unit tests pass.
+
+
+## 2026-09-26 — Phase 31.7 pre-result integrity correction
+
+Run **36250115094 (run 8)** is not evidentiary while the corrected engine is being prepared. The data gate and unit-test steps passed and Base entered numerical execution, but two preregistration/implementation mismatches were found before accepting any P&L:
+
+- **E0388:** execution-date/time selection needed to be derived from the normalized option timestamp itself, not the dataset's `trading_day` field, and the remaining direct timezone-to-TIME casts had to be eliminated.
+- **E0389:** the null controls were shuffling only already-qualified true signals, preserving the true signal-day set; the preregistered placebo requires permutation across the full feature panel before the frozen threshold is reapplied.
+
+The branch is being corrected without changing the frozen 12-cell true grid, entry/exit times, wing, lot-size schedule, cost model, or Base/Stress slippage. No Phase 31.7 numerical result from run 8 or earlier attempts is accepted. A fresh run is required after the corrected source and regression tests are persisted.
