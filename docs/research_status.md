@@ -797,3 +797,9 @@ Next authoritative run: **Phase 31.9 run 2** from branch head `d60f99a5da07a227d
 Run **36253528975** stopped in unit tests before acquisition. E0410 (null fixture) and E0411 (failure-path persistence) are closed.
 
 Next authoritative run: **Phase 31.9 run 3** from branch head `f56b5102f3e95356fbc8f6109947fff7c9dc54ee`.
+
+## 2026-09-26 — Phase 31.9 run 3 closure / run 4 frontier
+
+Run **36253620977** passed all six unit tests and restored the ~894 MB pinned NIFTY cache, then failed before VIX acquisition because of a malformed workflow heredoc. E0412 is closed. No numerical result exists.
+
+Next authoritative run: **Phase 31.9 run 4** from corrected workflow and branch head `c81d642a9243a59325828c61293fd42347f4ab6f`.
