@@ -410,3 +410,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 | E0400 | 2026-09-26 | Phase 31.8 global data gate | Run 36252076237 failed because `main()` passed a reduced NIFTY session frame without the `time` column into `build_panel` | No P&L accepted | Pass the full NIFTY index frame to `build_panel`; regression test added | OPEN — corrected rerun |
 | E0398-CORRECTION | 2026-09-26 | Phase 31.8 gate diagnosis | Earlier E0398 attributed the failure to datetime merge-key typing; authoritative traceback showed the actual missing-`time` handoff defect in E0400 | No result was affected | Supersede root-cause attribution; retain datetime64 normalization as a robustness improvement | CLOSED — superseded |
+
+| E0401 | 2026-09-26 | Phase 31.8 global data gate | Run 36252203841 failed because `merge_asof` saw datetime64 microseconds on the NIFTY side versus datetime64 nanoseconds on the global side | No P&L accepted | Coerce both merge keys to datetime64[ns] inside `build_panel` and add a microsecond-dtype regression | OPEN — corrected rerun |
