@@ -40,10 +40,10 @@ def main() -> None:
 
     lbs = sorted(args.root.rglob("leaderboard.csv"))
     weeklies = sorted(args.root.rglob("weekly.csv"))
-    if len(lbs) != 72:
-        raise RuntimeError(f"Expected 72 leaderboard files, got {len(lbs)}")
-    if len(weeklies) != 72:
-        raise RuntimeError(f"Expected 72 weekly files, got {len(weeklies)}")
+    if len(lbs) != 144:
+        raise RuntimeError(f"Expected 144 leaderboard files, got {len(lbs)}")
+    if len(weeklies) != 144:
+        raise RuntimeError(f"Expected 144 weekly files, got {len(weeklies)}")
 
     lb_frames = []
     for f in lbs:
@@ -53,8 +53,8 @@ def main() -> None:
         z["stage"] = stage_from_path(f)
         lb_frames.append(z)
     all_lb = pd.concat(lb_frames, ignore_index=True)
-    if len(all_lb) != 72 * 64:
-        raise RuntimeError(f"Expected 4608 leaderboard rows, got {len(all_lb)}")
+    if len(all_lb) != 144 * 720:
+        raise RuntimeError(f"Expected 103680 leaderboard rows, got {len(all_lb)}")
 
     for fold in (1, 2, 3):
         for stage in ("train", "oos"):
