@@ -499,7 +499,6 @@ def main() -> None:
     ap.add_argument("--end", default=END)
     args = ap.parse_args()
 
-    global START, END
     START, END = args.start, args.end
 
     out = args.out_root
