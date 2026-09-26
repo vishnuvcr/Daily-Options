@@ -526,3 +526,9 @@ The independently executed fixed 09:30 ratio structure completed Base and Stress
 The next bounded candidate is **Retail Option Seller's Diagonal Setup for Low Vix** (video 6_W4UpFsehs). Phase 30.13 acquires and hashes Python-retrieved caption evidence and resolves the exact diagonal legs, expiry, strike rule, low-VIX condition, adjustments, stop, target and exit before any P&L is allowed.
 
 [Phase 30.13 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.13-equity-income-low-vix-diagonal-source-resolution-v1/docs/phase30_13_plan.md) · [Research status](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md)
+
+
+### Phase 30.13 — Low-VIX Diagonal source resolution
+Phase 30.13 is **SOURCE-BLOCKED / DATA-LIMITED**. The public YouTube page is reachable, but deterministic Python caption acquisition is blocked by YouTube bot/IP controls. No transcript was substituted and no P&L was run.
+
+[Phase 30.13 final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.13-equity-income-low-vix-diagonal-source-resolution-v1/reports/phase30_13_final_result.md) · [Phase 30.13 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.13-equity-income-low-vix-diagonal-source-resolution-v1/docs/phase30_13_plan.md)
