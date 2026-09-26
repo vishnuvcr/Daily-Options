@@ -18,3 +18,16 @@ def test_lot_schedule():
 
 def test_fixed_ratio():
     assert [2,2,1] == [2,2,1]
+
+
+def test_slippage_floor_and_accounting():
+    raw_entry=0.10
+    raw_exit=0.10
+    slip=0.20
+    exec_entry=raw_entry+slip
+    exec_exit=max(0.0,raw_exit-slip)
+    assert exec_entry >= 0
+    assert exec_exit >= 0
+    raw_pnl=(raw_exit-raw_entry)*50
+    exec_pnl=(exec_exit-exec_entry)*50
+    assert raw_pnl-exec_pnl == 20.0
