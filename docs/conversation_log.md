@@ -159,3 +159,7 @@ Run 36250863176 was quarantined after the validation friction-field assertion fa
 ## 2026-09-26 — Phase 31.7 run 12 diagnosis and run 13 preparation
 
 Run 36251100372 was quarantined after validation found zero executable trades, despite the raw execution-row probe confirming valid 09:31/15:10 source rows. Repository audit localized the remaining coverage failure to expiry-file selection: feature expiry values had been pandas-coerced while expiry map keys were Python dates. The branch now converts expiry to a dedicated Python-date key before file selection and includes a regression test. The launcher persistence step was also hardened against non-fast-forward branch races. No P&L result from run 12 is accepted.
+
+## 2026-09-26 — Phase 31.7 closure / Phase 31.8 handoff
+
+Operational checkpoint: Phase 31.7 completed its frozen 12-cell Base/Stress grid and five-seed null controls in authoritative run 36251189770. All 12 true cells were negative in both frictions; the family was closed without WFA/OOS. Phase 31.8 is now the next separately branched, preregistered family testing global overnight cross-market transmission into the NIFTY open. Its literature review, frozen grid, no-lookahead alignment, data gate, cost model and manual launcher are persisted before computation. This log records operational research decisions only.
