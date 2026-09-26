@@ -388,3 +388,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0347 | 2026-09-26 | Main status synchronization | Main branch needed another synchronization after Phase 30.10 became the active numerical frontier | Older README/status text could misidentify the current phase | Updated main README and research status with Phase 30.10 and current evidence state | CLOSED |
+
+
+| E0350 | 2026-09-26 | Phase 30.11 WFA fold validation | Initial WFA run used a stale Fold 3 test date assertion after the preregistered fold was revised to a 20-week calendar window | No WFA result accepted | Corrected Fold 3 dates and synchronized the fold test, plan and runner; restarted the WFA run | CLOSED |
