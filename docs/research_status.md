@@ -820,3 +820,7 @@ Authoritative run **36253432190** stopped in unit tests before acquisition. Four
 ## 2026-09-26 — Phase 31.9 run 2 closure / null-test correction
  
 Run **36253528975** failed the unit-test stage before acquisition. The engine passed five of six tests; the null-control test used a toy panel whose computed labels were all HIGH, so the registered shuffle had no observable effect (E0410). The workflow also emitted a secondary persistence pathspec error when no report directory existed (E0411). Both are corrected; no data or P&L computation ran.
+
+## 2026-09-26 — Phase 31.9 run 3 closure / workflow correction
+
+Run **36253620977** passed all six regression tests, restored the pinned NIFTY cache, then failed in the source-acquisition shell block because the heredoc terminator was not parsed correctly. No VIX acquisition, gate or P&L ran. E0412 is closed after replacing the heredoc with a single-line Python invocation.
