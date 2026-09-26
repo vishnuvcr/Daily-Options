@@ -1,10 +1,11 @@
 import math
-from research.phase31_6_iv_rv_defined_risk import bs_call, implied_vol_straddle, yz_vol
+from research.phase31_6_iv_rv_defined_risk import bs_call, implied_vol_straddle, yz_vol, lot_size
 
 def test_black_scholes_round_trip():
     s,k,t=22000.0,22000.0,7/365
-    target=bs_call(s,k,t,0.0,0.20)
-    iv=implied_vol(s,k,t,target)
+    call=bs_call(s,k,t,0.0,0.20)
+    target=call-s+k
+    iv=implied_vol_straddle(s,k,t,call+target)
     assert iv is not None
     assert abs(iv-0.20)<1e-4
 
@@ -18,3 +19,10 @@ def test_defined_grid_is_finite():
     from research.phase31_6_iv_rv_defined_risk import THRESHOLDS, EXPIRY_BUCKETS, WINGS
     assert len(THRESHOLDS)*2*len(EXPIRY_BUCKETS)==12
     assert WINGS==(200,)
+
+
+def test_historical_lot_sizes_are_frozen():
+    assert lot_size("2024-04-25") == 50
+    assert lot_size("2024-04-26") == 25
+    assert lot_size("2024-11-21") == 75
+    assert lot_size("2026-01-06") == 65
