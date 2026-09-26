@@ -30,12 +30,11 @@ def bs_call(s,k,t,r,sigma):
     d1=(math.log(s/k)+(r+0.5*sigma*sigma)*t)/(sigma*math.sqrt(t)); d2=d1-sigma*math.sqrt(t)
     return s*norm_cdf(d1)-k*math.exp(-r*t)*norm_cdf(d2)
 
-def implied_vol(s,k,t,target):
+def implied_vol_straddle(s,k,t,target):
     if min(s,k,t,target)<=0: return None
     lo,hi=1e-6,5.0
-    if target<max(s-k*math.exp(-0.0*t),0.0) or target>s: return None
     for _ in range(80):
-        mid=(lo+hi)/2; v=bs_call(s,k,t,0.0,mid)
+        mid=(lo+hi)/2; call=bs_call(s,k,t,0.0,mid); put=call-s+k; v=call+put
         if v<target: lo=mid
         else: hi=mid
     return (lo+hi)/2
