@@ -67,52 +67,41 @@ def costs(price, side, qty, lot, d):
     return brokerage + exchange + sebi + stt + stamp + gst
 
 
-def trade_for_day(con, index, expiry_path, expiry, day, slippage):
-    entry_ts = f"{day} {ENTRY}"
-    exit_ts = f"{day} {EXIT}"
-    row = index[index.ts == pd.Timestamp(entry_ts)]
-    if row.empty:
-        return None
-    spot = float(row.iloc[0].open_px)
-    atm = nearest_strike(spot)
-    strikes = [atm + 200, atm - 200, atm - 400]
-    specs = [("CE", strikes[0], "BUY", 2), ("PE", strikes[1], "BUY", 2), ("PE", strikes[2], "SELL", 1)]
-    lot = lot_size(expiry)
-    legs = []
-    gross_pnl = 0.0
-    total_cost = 0.0
-    for side, strike, action, qty in specs:
-        ep = option_price(con, expiry_path, strike, side, entry_ts, "open")
-        xp = option_price(con, expiry_path, strike, side, exit_ts, "open")
-        if ep is None or xp is None:
-            return None
-        if action == "BUY":
-            exec_entry = ep + slippage
-            exec_exit = xp - slippage
-            pnl = (xp - ep - 2 * slippage) * qty * lot
+def trade_for_day(con,index,expiry_path,expiry,day,slippage):
+    et=f"{day} {ENTRY}"; xt=f"{day} {EXIT}"
+    r=index[index.ts==pd.Timestamp(et)]
+    if r.empty: return None
+    spot=float(r.iloc[0].open_px); atm=nearest_strike(spot); lot=lot_size(expiry)
+    specs=[("CE",atm+200,"BUY",2),("PE",atm-200,"BUY",2),("PE",atm-400,"SELL",1)]
+    legs=[]; raw_gross=0.0; execution_gross=0.0; transaction_costs=0.0; slippage_cost=0.0
+    for side,strike,action,qty in specs:
+        ep=option_price(con,expiry_path,strike,side,et,"open"); xp=option_price(con,expiry_path,strike,side,xt,"open")
+        if ep is None or xp is None: return None
+        if action=="BUY":
+            exec_entry=ep+slippage
+            exec_exit=max(0.0,xp-slippage)
+            raw_pnl=(xp-ep)*qty*lot
+            exec_pnl=(exec_exit-exec_entry)*qty*lot
+            exit_side="SELL"
         else:
-            exec_entry = ep - slippage
-            exec_exit = xp + slippage
-            pnl = (ep - xp - 2 * slippage) * qty * lot
-        c = costs(exec_entry, action, qty, lot, pd.Timestamp(day).date()) + costs(exec_exit, "SELL" if action == "BUY" else "BUY", qty, lot, pd.Timestamp(day).date())
-        gross_pnl += pnl + (2 * slippage * qty * lot)
-        total_cost += c
-        legs.append({
-            "side": side, "strike": strike, "action": action, "qty_lots": qty,
-            "quantity": qty * lot, "entry_price_raw": ep, "exit_price_raw": xp,
-            "entry_price_exec": exec_entry, "exit_price_exec": exec_exit,
-            "gross_pnl": pnl + 2 * slippage * qty * lot, "costs": c
-        })
-    return {
-        "trade_date": str(day), "expiry": str(expiry), "spot_0930": spot, "atm": atm,
-        "lot_size": lot, "entry_time": entry_ts, "exit_time": exit_ts,
-        "slippage_per_order": slippage, "gross_pnl": gross_pnl,
-        "costs": total_cost, "net_pnl": gross_pnl - total_cost,
-        "leg_1": json.dumps(legs[0], separators=(",", ":")),
-        "leg_2": json.dumps(legs[1], separators=(",", ":")),
-        "leg_3": json.dumps(legs[2], separators=(",", ":")),
-    }
-
+            exec_entry=max(0.0,ep-slippage)
+            exec_exit=xp+slippage
+            raw_pnl=(ep-xp)*qty*lot
+            exec_pnl=(exec_entry-exec_exit)*qty*lot
+            exit_side="BUY"
+        tc=costs(exec_entry,action,qty,lot,pd.Timestamp(day).date())
+        tc+=costs(exec_exit,exit_side,qty,lot,pd.Timestamp(day).date())
+        sc=raw_pnl-exec_pnl
+        raw_gross+=raw_pnl; execution_gross+=exec_pnl; transaction_costs+=tc; slippage_cost+=sc
+        legs.append({"side":side,"strike":strike,"action":action,"qty_lots":qty,"quantity":qty*lot,
+                     "entry_price_raw":ep,"exit_price_raw":xp,"entry_price_exec":exec_entry,
+                     "exit_price_exec":exec_exit,"raw_pnl":raw_pnl,"execution_pnl":exec_pnl,
+                     "slippage_cost":sc,"transaction_costs":tc})
+    return {"trade_date":str(day),"expiry":str(expiry),"spot_0930":spot,"atm":atm,"lot_size":lot,
+            "entry_time":et,"exit_time":xt,"gross_pnl_raw":raw_gross,
+            "slippage_cost":slippage_cost,"transaction_costs":transaction_costs,
+            "total_costs":slippage_cost+transaction_costs,"gross_pnl":execution_gross,
+            "net_pnl":execution_gross-transaction_costs,"legs":json.dumps(legs,separators=(",",":"))}
 
 def run(data: Path, out: Path, slippage: float):
     out.mkdir(parents=True, exist_ok=True)
