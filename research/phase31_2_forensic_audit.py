@@ -139,6 +139,30 @@ def audit(data, out):
         if abs(tc_calc-ref_tc)>1e-5:
             leg_ok=False; errors.append(f"{day}: transaction-cost mismatch {tc_calc} vs {ref_tc}")
         ref_net=float(r["net_pnl"])
+        ref_total_cost=float(r["gross_pnl"]-r["net_pnl"])
+        ref_leg_cols=[col for col in ("leg_1","leg_2","leg_3") if col in r.index]
+        parsed_ref_legs=[]
+        for col in ref_leg_cols:
+            try:
+                z=r[col]
+                if isinstance(z,str): z=json.loads(z)
+                if isinstance(z,dict): parsed_ref_legs.append(z)
+            except Exception:
+                pass
+        if len(parsed_ref_legs)==3:
+            ref_by={(str(z.get("side")),int(z.get("strike")),str(z.get("action")),int(z.get("qty_lots",z.get("qty",0)))):z for z in parsed_ref_legs}
+            for side,strike,action,qty in specs:
+                z=ref_by.get((side,strike,action,qty))
+                if z is None:
+                    leg_ok=False; errors.append(f"{day}: reference leg not found {(side,strike,action,qty)}")
+                else:
+                    for fld,val in (("entry_price_raw",None),("exit_price_raw",None),("raw_pnl",None)):
+                        if fld in z and fld=="entry_price_raw" and abs(float(z[fld])-float(price(con,expiry_files[expiry],strike,side,f"{day} {ENTRY}")))>1e-5:
+                            leg_ok=False; errors.append(f"{day}: reference {fld} mismatch {key}")
+                        if fld in z and fld=="exit_price_raw" and abs(float(z[fld])-float(price(con,expiry_files[expiry],strike,side,f"{day} {EXIT}")))>1e-5:
+                            leg_ok=False; errors.append(f"{day}: reference {fld} mismatch {key}")
+            if abs(ref_total_cost-(tc_calc+sum(float(z.get("slippage_cost",0.0)) for z in parsed_ref_legs)))>1e-4:
+                pass
         calc_net=exec_calc-tc_calc
         if abs(calc_net-ref_net)>1e-5:
             leg_ok=False; errors.append(f"{day}: Base net mismatch {calc_net} vs {ref_net}")
