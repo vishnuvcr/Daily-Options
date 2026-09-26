@@ -411,3 +411,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0338 | 2026-09-26 | Phase 30.8 workflow input packaging | The first automated source-resolution run 36233937116 failed because the branch did not contain the pinned Phase 27 transcript-evidence JSONL files required by the deterministic extractor | No source conclusion was accepted from the failed run; this was an input-packaging defect | Pinned the two required Python-generated evidence files onto the Phase 30.8 branch from the audited Phase 27.4 evidence branch; rerun unchanged extraction | CLOSED — input packaging corrected |
+
+
+| E0339 | 2026-09-26 | Phase 30.8 workflow YAML | Corrected rerun 36233983716 was rejected before job creation because the workflow file contained an escaped GitHub Actions expression in the GH_TOKEN environment field | No source-resolution computation ran; the failure was workflow configuration only | Replace the escaped expression with the valid GitHub Actions expression and trigger a new run | CLOSED — workflow syntax corrected |
