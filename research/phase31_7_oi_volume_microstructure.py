@@ -123,7 +123,10 @@ def load_prices(con, expiry_map, features):
                      CAST(o.trading_day AS DATE) trade_date,
                      UPPER(CAST(o.option_type AS VARCHAR)) option_type,
                      CAST(o.strike AS DOUBLE) strike,
-                     CAST(o.open AS DOUBLE) open_px
+                     CASE
+                       WHEN CAST(o.timestamp AS TIMESTAMP)=w.entry_ts THEN CAST(o.open AS DOUBLE)
+                       WHEN CAST(o.timestamp AS TIMESTAMP)=w.exit_ts THEN CAST(o.close AS DOUBLE)
+                     END AS exec_px
               FROM read_parquet('{p}') o
               JOIN wanted w
                 ON CAST(o.trading_day AS DATE)=w.trade_date
@@ -132,11 +135,12 @@ def load_prices(con, expiry_map, features):
                AND (CAST(o.strike AS DOUBLE)=w.atm
                     OR CAST(o.strike AS DOUBLE)=w.atm+{WING}
                     OR CAST(o.strike AS DOUBLE)=w.atm-{WING})
-              WHERE o.open>0"""
+              WHERE ((CAST(o.timestamp AS TIMESTAMP)=w.entry_ts AND o.open>0)
+                  OR (CAST(o.timestamp AS TIMESTAMP)=w.exit_ts AND o.close>0))"""
         z=con.execute(q).df()
         if z.empty: continue
         for r in z.itertuples(index=False):
-            prices[(r.trade_date,expiry,r.option_type,float(r.strike),pd.Timestamp(r.ts))]=float(r.open_px)
+            prices[(r.trade_date,expiry,r.option_type,float(r.strike),pd.Timestamp(r.ts))]=float(r.exec_px)
     con.close()
     return prices
 
@@ -242,7 +246,25 @@ def main():
                     side="CALL" if val>0 else "PUT"
                     sig.append({**r._asdict(),"feature":feature,"threshold":threshold,"side":side,"signal_value":val})
     signals=pd.DataFrame(sig)
+    if signals.empty:
+        pd.DataFrame(columns=["feature","threshold","bucket","side","signals"]).to_csv(out/"signal_counts.csv",index=False)
+    else:
+        (signals.groupby(["feature","threshold","bucket","side"]).size().reset_index(name="signals")
+         .sort_values(["feature","threshold","bucket","side"])
+         .to_csv(out/"signal_counts.csv",index=False))
     prices=load_prices(duckdb.connect(),expiry_map,signals)
+    coverage=[]
+    if not signals.empty:
+        for keys,g in signals.groupby(["feature","threshold","bucket","side"]):
+            complete=0
+            for r in g.itertuples(index=False):
+                typ="CE" if r.side=="CALL" else "PE"
+                wing=r.atm+WING if r.side=="CALL" else r.atm-WING
+                req=[(typ,r.atm,r.entry_ts),(typ,r.atm,r.exit_ts),(typ,wing,r.entry_ts),(typ,wing,r.exit_ts)]
+                complete += int(all((r.day,r.expiry,o,float(k),pd.Timestamp(ts)) in prices for o,k,ts in req))
+            coverage.append({"feature":keys[0],"threshold":float(keys[1]),"bucket":int(keys[2]),"side":keys[3],
+              "signals":int(len(g)),"complete_price_coverage":int(complete),"coverage_rate":float(complete/len(g))})
+    pd.DataFrame(coverage).to_csv(out/"price_coverage.csv",index=False)
     # Reuse prices for true and null controls.
     for friction,slip in (("base",0.20),("stress",0.40)):
         tr=[]
