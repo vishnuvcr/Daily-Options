@@ -42,6 +42,11 @@ jobs:
           fi
       - name: Run data gate
         run: PYTHONPATH=. python research/phase31_7_oi_volume_microstructure.py --data data/cache/phase31_trademarkk --out reports/phase31_7/gate --gate-only
+      - name: Probe raw execution rows
+        run: |
+          PYTHONPATH=. python research/phase31_7_execution_probe.py
+          test -f reports/phase31_7/gate/execution_probe.csv
+
       - name: Run Base discovery
         run: |
           if python -c 'import json,sys; g=json.load(open("reports/phase31_7/gate/data_gate.json")); sys.exit(0 if g["status"]=="PASS" else 1)'; then
