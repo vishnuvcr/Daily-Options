@@ -389,3 +389,6 @@ Authoritative run **36218652778** completed Base and Stress successfully at the 
 The simulator is corrected to normalize both timezone-aware (+05:30) and timezone-naive IST representations to the same naive Asia/Kolkata minute timestamp. A dedicated regression test now verifies both forms map to 09:30 IST. Economic rules, 270-cell grid, source, cost model and promotion gate are unchanged.
 
 Status: **OPEN — deterministic rerun required**
+
+
+| E0322 | 2026-09-26 | Phase 30.2 Falcon zero-setup implementation | The runtime-fixed loader stored exact-expiry values as pandas datetime64-like values, while `select_target()` compared them directly with `pd.Timestamp(expiry).date()`. Pandas makes that datetime64/date comparison false for every row, so every near-leg candidate was discarded even though signal/fill rows and positive-credit far-week candidates existed | Run 36220039329's 0-setup output is invalidated as an implementation artifact; no Falcon performance conclusion was taken | Normalize the expiry column to pandas timestamps before comparison and add a regression test covering both pandas datetime and Python `date` representations. Rerun unchanged Base/Stress | CLOSED — fixed in commit 17793cc3eb6ddcf40484dc75339c208459cc3aef; authoritative rerun 36220915944 in progress |
