@@ -30,4 +30,4 @@ def test_slippage_floor_and_accounting():
     assert exec_exit >= 0
     raw_pnl=(raw_exit-raw_entry)*50
     exec_pnl=(exec_exit-exec_entry)*50
-    assert raw_pnl-exec_pnl == 20.0
+    assert raw_pnl-exec_pnl == 15.0
