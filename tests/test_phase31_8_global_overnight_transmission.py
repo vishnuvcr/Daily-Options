@@ -66,3 +66,10 @@ def test_build_panel_uses_datetime_merge_keys_and_strict_prior_dates():
     assert panel["all_global_available"].all()
     assert panel["all_prior"].all()
     assert (panel["prior_date_GSPC"] < panel["date"]).all()
+
+
+def test_main_passes_raw_nifty_index_to_build_panel():
+    from pathlib import Path
+    src=Path("research/phase31_8_global_overnight_transmission.py").read_text(encoding="utf-8")
+    assert "panel=build_panel(g,idx)" in src
+    assert 'panel=build_panel(g,sessions)' not in src
