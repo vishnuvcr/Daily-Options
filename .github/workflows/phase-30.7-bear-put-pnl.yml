@@ -1,5 +1,5 @@
 name: Phase 30.7 - Bear Put full Base Stress matrix
-# v2 runtime dependency correction
+# v3 engine syntax correction
 
 on:
   workflow_dispatch:
