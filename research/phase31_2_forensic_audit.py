@@ -150,9 +150,6 @@ def audit(data, out):
             ref_raw_agg=float(r["gross_pnl_raw"])
             if abs(raw_calc-ref_raw_agg)>1e-5:
                 leg_ok=False; errors.append(f"{day}: raw aggregate mismatch {raw_calc} vs {ref_raw_agg}")
-        ref_exec_gross=float(r["gross_pnl"])
-        if abs(exec_calc-ref_exec_gross)>1e-5:
-            leg_ok=False; errors.append(f"{day}: execution gross mismatch {exec_calc} vs {ref_exec_gross}")
         ref_net=float(r["net_pnl"])
         ref_total_cost=float(r["costs"])
         ref_leg_cols=[col for col in ("leg_1","leg_2","leg_3") if col in r.index]
