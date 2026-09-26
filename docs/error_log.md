@@ -405,3 +405,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0336 | 2026-09-26 | Phase 30.7 closure/status synchronization | The pre-P&L contract-audit JSON intentionally retains `pnl_authorized=false`, while the later aggregate summaries correctly record completed numerical execution with `pnl_authorized=true` | A naive status reader could treat the pre-P&L audit artifact as evidence that the run never executed | Preserve the audit JSON unchanged as historical pre-P&L provenance; use the post-run Base/Stress aggregate summaries and the final result report as the authoritative numerical evidence | CLOSED — provenance/status clarified |
+
+
+| E0337 | 2026-09-26 | Phase 30.8 source interpretation | The next candidate's extracted transcript evidence contains conflicting ATM versus one-strike references and ambiguous repeated “3:30” fields, while the exact payoff sequence remains unresolved | Directly selecting one interpretation would introduce source drift before numerical testing | Keep all conflicts explicit, preserve timestamped evidence, and block P&L until transcript context resolves the fields or a bounded interpretation matrix is preregistered | OPEN — source-resolution phase |
