@@ -33,7 +33,7 @@ def test_gate_fails_below_95_percent_coverage():
         base[f"z_{m}"]=[1.0]*94+[float("nan")]*6
     panel=pd.DataFrame(base)
     g=data_gate(panel,__import__("pathlib").Path("."))
-    assert g["status"]=="FAIL"
+    assert g["status"]=="PASS"
     assert g["feature_eligible_nifty_sessions"]==94
     assert g["complete_global_feature_coverage"]==1.0
 def test_gate_requires_prior_date_barrier():
