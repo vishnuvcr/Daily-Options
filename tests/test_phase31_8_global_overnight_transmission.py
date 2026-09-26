@@ -47,8 +47,9 @@ def test_gate_requires_prior_date_barrier():
 
 def test_build_panel_uses_datetime_merge_keys_and_strict_prior_dates():
     dates = pd.date_range("2026-01-05", periods=4, freq="D")
+    nifty_dates_us = pd.Series(dates).astype("datetime64[us]")
     nifty = pd.DataFrame({
-        "date": dates,
+        "date": nifty_dates_us,
         "time": ["09:30:00"] * 4,
         "open_px": [25000, 25010, 25020, 25030],
         "close_px": [25005, 25015, 25025, 25035],
