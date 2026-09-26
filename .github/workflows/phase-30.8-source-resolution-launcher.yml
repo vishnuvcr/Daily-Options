@@ -1,0 +1,44 @@
+name: Phase 30.8 - source-resolution launcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "research/phase30_8_launcher_trigger.txt"
+
+permissions:
+  contents: write
+
+jobs:
+  run-phase30-8:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-30.8-equity-income-no-more-straddles-source-resolution-v1
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install test runtime
+        run: python -m pip install --disable-pip-version-check pytest
+      - name: Run deterministic source-resolution tests
+        run: PYTHONPATH=. python -m pytest -q tests/test_phase30_8_no_more_straddles_resolution.py
+      - name: Build deterministic source-resolution report
+        run: python research/phase30_8_no_more_straddles_resolution.py --output reports/phase30_8_no_more_straddles_source_resolution.json
+      - name: Upload source-resolution report
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase30-8-source-resolution-launcher
+          path: reports/phase30_8_no_more_straddles_source_resolution.json
+      - name: Persist report back to phase branch
+        env:
+          GH_TOKEN: \${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f reports/phase30_8_no_more_straddles_source_resolution.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Phase 30.8: persist launcher source-resolution report"
+            git push origin HEAD:phase-30.8-equity-income-no-more-straddles-source-resolution-v1
+          fi
