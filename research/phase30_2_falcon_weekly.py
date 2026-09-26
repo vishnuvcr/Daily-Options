@@ -660,3 +660,5 @@ if __name__ == "__main__":
     ap.add_argument("--brokerage", type=float, default=10.0)
     args = ap.parse_args()
     print(json.dumps(run(args.data, args.out, args.slippage, args.brokerage), indent=2, default=str))
+
+# Rerun trigger: timestamp normalization correction is authoritative.
