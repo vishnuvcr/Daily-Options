@@ -196,7 +196,15 @@ def frame_series(frame, trade_start, trade_end, strike, side):
 
 
 def select_target(chain, expiry, side, target, ref_strike=None, far_otm=False):
-    x = chain[(chain.expiry == pd.Timestamp(expiry).date()) & (chain.option_type == side)].copy()
+    # load_expiry_slice() already reads one exact expiry. Avoid comparing a
+    # pandas datetime64[ns] column to a Python datetime.date, which yields all
+    # False in pandas and silently eliminates every candidate setup.
+    expiry_key = pd.Timestamp(expiry).normalize()
+    if "expiry" in chain.columns:
+        expiry_values = pd.to_datetime(chain["expiry"], errors="coerce").dt.normalize()
+        x = chain[(expiry_values == expiry_key) & (chain.option_type == side)].copy()
+    else:
+        x = chain[chain.option_type == side].copy()
     if ref_strike is not None:
         if far_otm:
             x = x[x.strike >= float(ref_strike)] if side == "CE" else x[x.strike <= float(ref_strike)]
