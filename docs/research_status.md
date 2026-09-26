@@ -788,3 +788,10 @@ E0404 is now logged. The branch converts each panel trade date to a Python date 
 ## 2026-09-26 — Phase 31.8 run 7 closure / test-fixture correction
  
 Run **36252692972** stopped in unit tests after the engine correction. Seven tests passed; the new expiry regression alone failed because its fixture expected string labels rather than the Python-date keys returned by the actual expiry map. E0405 is closed after correcting the test. No data acquisition or P&L computation ran.
+
+ 
+## 2026-09-26 — Phase 31.8 run 8 closure / price-loader correction
+ 
+Run **36252808290** passed all eight regression tests and the corrected global gate, then failed in Base discovery because `load_prices` attempted to select an `exit_ts` column that `build_signals` does not create. The frozen horizon field already determines the exit timestamp through `HORIZON_TIMES`. No P&L is accepted from run 8.
+ 
+E0406 is logged. The unused column selection is removed and a regression test now enforces the price-loader input contract.
