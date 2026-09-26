@@ -385,3 +385,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0341 | 2026-09-26 | Main-branch research-status synchronization | Main README/status remained anchored to the older Falcon Phase 30.2 checkpoint while Phase 30.7 had already closed and Phase 30.8 had become active | Readers could incorrectly interpret Falcon as the active frontier | Synchronize main README and research status with Phase 30.7 closure and Phase 30.8 source-resolution state; retain older entries as historical audit trail | CLOSED — synchronization update |
+
+
+| E0347 | 2026-09-26 | Main status synchronization | Main branch needed another synchronization after Phase 30.10 became the active numerical frontier | Older README/status text could misidentify the current phase | Updated main README and research status with Phase 30.10 and current evidence state | CLOSED |
