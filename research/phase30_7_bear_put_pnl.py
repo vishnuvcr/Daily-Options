@@ -54,7 +54,7 @@ def cost(orders, slip):
 def fill_price(raw, side, slip):
     return raw+slip if side>0 else raw-slip
 
-def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BASE):
+def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BASE, def_start=0, def_count=0):
     out=Path(out_root); out.mkdir(parents=True,exist_ok=True)
     c=duckdb.connect()
     files=sorted(Path(data_root).glob("NIFTY_*.parquet"))
@@ -64,6 +64,8 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
     defs=[d for d in cov["definitions"] if d["signal_weeks"]>=20]
     if limit_defs: defs=defs[:limit_defs]
     if smoke: defs=defs[:2]
+    if def_start or def_count:
+        defs=defs[def_start:] if not def_count else defs[def_start:def_start+def_count]
     signals=[]
     for d in defs:
         for s in d["signals"]:
@@ -328,4 +330,5 @@ if __name__=="__main__":
     a.add_argument("--data-root",type=Path,required=True); a.add_argument("--spot-root",type=Path,required=True)
     a.add_argument("--out-root",type=Path,required=True); a.add_argument("--slippage",type=float,default=.20)
     a.add_argument("--limit-defs",type=int,default=0); a.add_argument("--smoke",action="store_true")
-    x=a.parse_args(); main(x.data_root,x.spot_root,x.out_root,x.limit_defs,x.smoke,x.slippage)
+    a.add_argument("--def-start",type=int,default=0); a.add_argument("--def-count",type=int,default=0)
+    x=a.parse_args(); main(x.data_root,x.spot_root,x.out_root,x.limit_defs,x.smoke,x.slippage,x.def_start,x.def_count)
