@@ -113,18 +113,15 @@ def load_prices(con, expiry_map, features):
     if features.empty:
         con.close()
         return prices
-    wanted=features[["day","bucket","expiry","atm","entry_ts","exit_ts"]].drop_duplicates().rename(columns={"day":"trade_date"})
+    wanted=features[["day","bucket","expiry","atm","entry_ts","exit_ts"]].drop_duplicates().rename(columns={"day":"trade_date"}).copy()
+    wanted["expiry_key"]=pd.to_datetime(wanted["expiry"]).dt.date
     for expiry,path in sorted(expiry_map.items()):
-        active=wanted[wanted.expiry==expiry].copy()
+        active=wanted[wanted.expiry_key==expiry].copy()
         if active.empty:
             continue
         dates=sorted(pd.to_datetime(active.trade_date).dt.date.unique().tolist())
         date_sql=",".join(f"DATE '{d}'" for d in dates)
         p=str(path).replace("'","''")
-        strikes=sorted(set(float(x) for x in active.atm.tolist()) |
-                       set(float(x)+WING for x in active.atm.tolist()) |
-                       set(float(x)-WING for x in active.atm.tolist()))
-        strike_sql=",".join(str(x) for x in strikes)
         strikes=sorted(set(float(x) for x in active.atm.tolist()) |
                        set(float(x)+WING for x in active.atm.tolist()) |
                        set(float(x)-WING for x in active.atm.tolist()))
