@@ -584,10 +584,16 @@ def main() -> None:
                 continue
             vk = (res["trigger"], res["action"], res["risk"])
             k = base_key + vk
-            st = cells.setdefault(k, {"weeks": {}, "trades": 0, "gross": 0.0, "net": 0.0, "cost": 0.0, "cap": []})
+            st = cells.setdefault(k, {"weeks": {}, "week_detail": {}, "trades": 0, "gross": 0.0, "net": 0.0, "cost": 0.0, "cap": []})
             if res.get("eligible"):
                 st["trades"] += 1
                 st["weeks"][r.week] = st["weeks"].get(r.week, 0.0) + float(res["net_pnl"])
+                st["week_detail"][r.week] = {
+                    "net_pnl": float(res["net_pnl"]),
+                    "gross_pnl": float(res["gross_pnl"]),
+                    "cost": float(res["cost"]),
+                    "capital_proxy": float(res["capital_proxy"]),
+                }
                 st["gross"] += float(res["gross_pnl"])
                 st["net"] += float(res["net_pnl"])
                 st["cost"] += float(res["cost"])
@@ -598,7 +604,7 @@ def main() -> None:
     # Above creates tuples like ((day,time,expiry,method),trigger,action,risk).
     for base_key, trig, action, risk in full_keys:
         key = tuple(base_key) + (trig, action, risk)
-        st = cells.get(key, {"weeks": {}, "trades": 0, "gross": 0.0, "net": 0.0, "cost": 0.0, "cap": []})
+        st = cells.get(key, {"weeks": {}, "week_detail": {}, "trades": 0, "gross": 0.0, "net": 0.0, "cost": 0.0, "cap": []})
         active = pd.Series(st["weeks"], dtype=float).sort_index()
         completed = int(len(active))
         mean_week = float(active.mean()) if completed else 0.0
@@ -645,6 +651,24 @@ def main() -> None:
 
     lb = pd.DataFrame(rows).sort_values(["gate", "mean_weekly_net"], ascending=[False, False])
     lb.to_csv(out / "leaderboard.csv", index=False)
+
+    weekly_rows = []
+    for base_key, trig, action, risk in full_keys:
+        key = tuple(base_key) + (trig, action, risk)
+        st = cells.get(key, {"week_detail": {}})
+        for week, detail in sorted(st.get("week_detail", {}).items()):
+            weekly_rows.append({
+                "entry_day": key[0],
+                "entry_time": key[1],
+                "expiry_choice": key[2],
+                "strike_method": key[3],
+                "trigger": key[4],
+                "action": key[5],
+                "risk": key[6],
+                "week": week,
+                **detail,
+            })
+    pd.DataFrame(weekly_rows).to_csv(out / "weekly.csv", index=False)
     diagnostics = {
         "base_definitions_registered": len(base_specs),
         "base_definitions_in_shard": len(shard_specs),
