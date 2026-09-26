@@ -350,6 +350,9 @@ def eval_event(event: dict, smap: dict, spot_ts: pd.Series, spot_df: pd.DataFram
             adj_quote = first_quote(adj_series, obs_ts)
             adj_ts = adj_quote.ts if adj_quote is not None else None
 
+        if trigger_ts is not None and adj_quote is None:
+            continue
+
         for action, risk in itertools.product(ACTIONS, RISKS):
             adjusted = bool(adj_quote is not None)
             if action == "protective_next_strike" and hedge_strike is not None and trigger_ts is not None:
@@ -465,6 +468,9 @@ def eval_event(event: dict, smap: dict, spot_ts: pd.Series, spot_df: pd.DataFram
             cap = capital_proxy(event["spot"], put_k, call_k, entry_credit, lot, adjusted and adj_ts <= xt)
 
             event_results.append({
+                "trigger": trigger,
+                "action": action,
+                "risk": risk,
                 "status": "ok",
                 "eligible": True,
                 "week": event["week"],
@@ -567,17 +573,10 @@ def main() -> None:
         results = eval_event(r._asdict(), smap, spot.set_index("Timestamp")["Close"], spot, args.slippage)
         if isinstance(results, dict):
             results = [results]
-        for trig in TRIGGERS:
-            for action in ACTIONS:
-                for risk in RISKS:
-                    # Results are generated in trigger/action/risk order.
-                    # There are exactly len(TRIGGERS)*len(ACTIONS)*len(RISKS) records
-                    # for successful events; missing variants remain explicit below.
-                    pass
-        # Re-run the event evaluator for the frozen combination dimensions.
-        # eval_event returns eight rows in deterministic itertools-product order.
-        variant_keys = list(itertools.product(TRIGGERS, ACTIONS, RISKS))
-        for vk, res in zip(variant_keys, results if isinstance(results, list) else []):
+        for res in results:
+            if not res.get("eligible"):
+                continue
+            vk = (res["trigger"], res["action"], res["risk"])
             k = base_key + vk
             st = cells.setdefault(k, {"weeks": {}, "trades": 0, "gross": 0.0, "net": 0.0, "cost": 0.0, "cap": []})
             if res.get("eligible"):
