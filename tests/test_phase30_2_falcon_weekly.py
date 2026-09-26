@@ -38,3 +38,20 @@ def test_timestamp_normalization_handles_naive_ist_and_offset_ist():
     ]))
     assert out.iloc[0] == pd.Timestamp("2025-09-03 09:30:00")
     assert out.iloc[1] == pd.Timestamp("2025-09-03 09:30:00")
+
+
+def test_select_target_accepts_duckdb_date_and_pandas_datetime_expiry_types():
+    from research.phase30_2_falcon_weekly import select_target
+
+    frame = pd.DataFrame([
+        {"expiry": pd.Timestamp("2025-09-09"), "strike": 25000.0, "option_type": "CE", "close_px": 20.2},
+        {"expiry": pd.Timestamp("2025-09-09"), "strike": 25050.0, "option_type": "CE", "close_px": 21.0},
+    ])
+    row = select_target(frame, date(2025, 9, 9), "CE", 20.0)
+    assert row is not None
+    assert float(row.strike) == 25000.0
+
+    frame["expiry"] = [date(2025, 9, 9), date(2025, 9, 9)]
+    row = select_target(frame, date(2025, 9, 9), "CE", 20.0)
+    assert row is not None
+    assert float(row.strike) == 25000.0
