@@ -9,3 +9,12 @@ def test_three_rolling_folds_are_non_overlapping_oos_and_hold_out_tail():
     assert FOLDS[2]["oos"] == ("2026-03-16", "2026-06-07")
     assert FOLDS[3]["train"] == ("2025-12-22", "2026-05-24")
     assert FOLDS[3]["oos"] == ("2026-05-25", "2026-08-16")
+
+
+def test_fold_week_counts():
+    from datetime import date
+    for fold in FOLDS.values():
+        train_start, train_end = map(date.fromisoformat, fold['train'])
+        oos_start, oos_end = map(date.fromisoformat, fold['oos'])
+        assert (train_end - train_start).days + 1 == 140
+        assert (oos_end - oos_start).days + 1 == 84
