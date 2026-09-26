@@ -1,7 +1,7 @@
 # Phase 31.3 — Friction-corrected Phase 31.1 reproduction
 
 ## Status
-ACTIVE — final reproduction before any optimization.
+CLOSED — authoritative friction-corrected reproduction completed; no optimization performed.
 
 ## Purpose
 Freeze one unambiguous accounting definition for the Phase 31.1 strategy and produce the authoritative friction-corrected result over the full study period.
@@ -32,3 +32,6 @@ Freeze one unambiguous accounting definition for the Phase 31.1 strategy and pro
 
 ## Stop rule
 Once Base and Stress are fully reproduced and the accounting identity passes, freeze the authoritative Phase 31.1 result. Do not optimize in this phase. The result determines whether a separate strategy-development phase is warranted.
+
+## Closure — 2026-09-26
+The full-period Base and Stress reproductions are present in `reports/phase31_3/` and the accounting identity passed for both regimes. The frozen Phase 31.1 strategy is therefore closed on its authoritative friction-corrected accounting definition. No parameter optimization or WFA is authorized from this phase.
