@@ -414,3 +414,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0339 | 2026-09-26 | Phase 30.8 workflow YAML | Corrected rerun 36233983716 was rejected before job creation because the workflow file contained an escaped GitHub Actions expression in the GH_TOKEN environment field | No source-resolution computation ran; the failure was workflow configuration only | Replace the escaped expression with the valid GitHub Actions expression and trigger a new run | CLOSED — workflow syntax corrected |
+
+
+| E0340 | 2026-09-26 | Phase 30.8 workflow orchestration | Corrected workflow run 36234005107 was created but had zero jobs after the prior workflow schema revision | No source computation ran | Replaced the workflow with a minimal schema matching the repository's known-valid manual workflows, removed branch/path filtering complexity and removed write-back/push logic from the workflow; report persistence remains a repository-controlled artifact step | OPEN — clean rerun pending |
