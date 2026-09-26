@@ -125,7 +125,7 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
     contracts=contracts.rename(columns={"expiry":"expiry","signal_date":"start_date"})
     c.register("contracts",contracts[["expiry","strike","start_date"]])
     opt=c.execute(f"""
-      SELECT CAST(q.date AS DATE) date, CAST(q.timestamp AS TIMESTAMP) ts,
+      SELECT CAST(q.date AS DATE) date, q.timestamp AS ts,
              CAST(q.expiry AS DATE) expiry, CAST(q.strike AS DOUBLE) strike,
              CAST(q.open AS DOUBLE) open_px, CAST(q.close AS DOUBLE) close_px
       FROM {S} q JOIN contracts k
