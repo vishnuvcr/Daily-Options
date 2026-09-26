@@ -656,3 +656,13 @@ The audit identified the substantive provenance defect E0375: the persisted Phas
 Therefore the original -₹537,097.06 result is numerically reproducible as the persisted artifact's own accounting, but it is **not accepted as the final friction-corrected result**. Phase 31.1 stays quarantined. The next permissible research phase is a provenance-corrected reproduction using one frozen accounting definition; no optimization is authorized until that reproduction is complete.
 
 Outputs: `reports/phase31_2/forensic_audit.json`, `reports/phase31_2/sample_reconciliation.csv`, `reports/phase31_2/payoff_diagnostics.csv`, `reports/phase31_2/final_result.md`.
+
+
+## 2026-09-26 — Phase 31.3 friction-corrected reproduction closed
+
+Phase 31.3 completed the frozen Phase 31.1 reproduction with one accounting definition and passed the accounting identity for both Base and Stress. No optimization was performed.
+
+- **Base:** total net **-₹664,631.66**; mean weekly **-₹2,556.28**; median weekly **-₹3,038.49**; positive weeks **25.38%**; slippage **₹127,530.00**; transaction/statutory costs **₹194,394.91**.
+- **Stress:** total net **-₹785,994.67**; mean weekly **-₹3,023.06**; median weekly **-₹3,451.82**; positive weeks **22.31%**; slippage **₹248,944.50**; transaction/statutory costs **₹194,343.42**.
+
+The strategy remains decisively below the project’s ₹5,000/week consistency gate. **Phase 31.3 is CLOSED; no WFA/OOS promotion or result-driven parameter tuning is authorized.**
