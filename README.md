@@ -572,3 +572,8 @@ The phase branch has been corrected for timestamp-safe execution joins and prere
 Run 36250452425 stopped at pytest collection before any Phase 31.7 data or P&L computation because a newly added regression test contained a literal backslash-n sequence. E0393 is logged; the test file is corrected.
 
 The next authoritative run will be run 10 from branch head 0fc95b29fba8558070368bdeb076d793d494e2ab. No Phase 31.7 numerical result is accepted yet.
+## 2026-09-26 — Phase 31.7 run 10 closure
+
+Run 36250549825 reached the data gate, Base and Stress, but validation failed before any Phase 31.7 P&L was accepted. The execution loader was subsequently replaced with explicit IST date/strike filtering; E0394 then caught a strike-SQL construction-order defect, which is now corrected and covered by a regression test.
+
+The next authoritative run will be run 11 from branch head 408d8d1cbb1fa5e121d2d2f72f3778432d07fa60. No Phase 31.7 numerical result is accepted yet.
