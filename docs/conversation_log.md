@@ -151,3 +151,7 @@ Operational checkpoint: corrected run 9 was triggered from the Phase 31.7 branch
 ## 2026-09-26 — Phase 31.7 run 10 audit and execution-loader correction
 
 Run 36250549825 (run 10) completed Base and Stress but validation again failed before accepting any P&L. Concurrent branch-audit commits then replaced the execution-price join with explicit IST date/strike filters. Review of that new loader found E0394: strike_sql was referenced before definition in the query f-string. The source was corrected and a regression test was added. No numerical result is accepted from run 10.
+
+## 2026-09-26 — Phase 31.7 run 11 closure / diagnostic probe
+
+Run 36250863176 was quarantined after the validation friction-field assertion failed again. The latest branch lineage also contains a raw execution-row probe and strike-filter initialization correction. The authoritative launcher is being instrumented with that probe before the next rerun, so the remaining zero-coverage path can be localized without changing the preregistered strategy grid or cost model.
