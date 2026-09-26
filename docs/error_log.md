@@ -412,3 +412,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0398-CORRECTION | 2026-09-26 | Phase 31.8 gate diagnosis | Earlier E0398 attributed the failure to datetime merge-key typing; authoritative traceback showed the actual missing-`time` handoff defect in E0400 | No result was affected | Supersede root-cause attribution; retain datetime64 normalization as a robustness improvement | CLOSED — superseded |
 
 | E0401 | 2026-09-26 | Phase 31.8 global data gate | Run 36252203841 failed because `merge_asof` saw datetime64 microseconds on the NIFTY side versus datetime64 nanoseconds on the global side | No P&L accepted | Coerce both merge keys to datetime64[ns] inside `build_panel` and add a microsecond-dtype regression | OPEN — corrected rerun |
+
+| E0402 | 2026-09-26 | Phase 31.8 data-gate methodology | Run 36252301406 counted the deterministic 60-observation warm-up in the coverage denominator, producing 94.788% against the 95% gate | No P&L produced; Base/Stress skipped | Gate coverage now uses feature-eligible sessions and reports warm-up exclusions separately; strict prior barrier remains independent | OPEN — corrected rerun |
