@@ -601,3 +601,8 @@ The final audited report is [reports/phase31_7/final_result.md](https://github.c
 **Phase 31.8 Global Overnight Cross-Market Transmission** is now preregistered on [phase-31.8-global-overnight-transmission-v1](https://github.com/vishnuvcr/Daily-Options/tree/phase-31.8-global-overnight-transmission-v1). It uses six global indices, strict pre-NIFTY no-lookahead alignment, three fixed regional/global composites, two thresholds, two fixed exits, Base/Stress costs, and five null seeds: **12 true cells + 60 null summaries per friction**. The [Phase 31.8 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.8-global-overnight-transmission-v1/docs/phase31_8_plan.md) and [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.8-global-overnight-transmission-v1/docs/phase31_8_literature_review.md) are persisted before computation.
  
 The new manual launcher is [.github/workflows/phase-31-8-main-launcher.yml](https://github.com/vishnuvcr/Daily-Options/blob/main/.github/workflows/phase-31-8-main-launcher.yml).
+
+ 
+## 2026-09-26 — Phase 31.8 run 1 gate failure / rerun
+ 
+The first Phase 31.8 run (**36251942190**) acquired the six pinned global-index sources but stopped at the global data gate before P&L because of a datetime merge-key implementation defect. E0398 is logged; the engine and regression tests are corrected. The next authoritative run is **run 2** from branch head `d73ce5e48d2d40a5a86bd53da91fec4629bab711`.
