@@ -507,3 +507,9 @@ Phase 30.11 WFA is now running the full frozen grid across three rolling train/O
 - WFA aggregation expects 144 leaderboard/weekly files from 24 artifacts × 3 folds × 2 stages.
 
 Clean run: **36236079821**. The prior stale run is not research-authoritative.
+
+## 2026-09-26 — Phase 30.11 WFA v2 active
+
+WFA v2 is now the authoritative validation execution topology for the Air Defense grid: **72 independent jobs** (3 folds × 12 definition shards × 2 regimes), with a hard aggregate audit of 144 leaderboard/weekly files.
+
+Run **36236194154** is active. No WFA survivor has been accepted.
