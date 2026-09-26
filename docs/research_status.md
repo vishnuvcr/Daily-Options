@@ -810,3 +810,8 @@ The branch now contains:
 - regression tests and a manual GitHub Actions launcher on main.
  
 No result has yet been accepted. The first gate is deterministic source coverage and prior-information integrity.
+
+ 
+## 2026-09-26 — Phase 31.9 run 1 closure / test corrections
+ 
+Authoritative run **36253432190** stopped in unit tests before acquisition. Four tests were affected by three independent authoring defects: an RV20 variable handoff typo (E0407), a prior-barrier test fixture missing the date field (E0408), and an incorrect nearest-expiry test expectation (E0409). No data or P&L computation ran. All three are corrected on the branch.
