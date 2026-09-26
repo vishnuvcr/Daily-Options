@@ -616,3 +616,8 @@ Run 36252076237 passed tests and source acquisition but stopped before numerical
 ## 2026-09-26 — Phase 31.8 run 3 closure
  
 Run 36252203841 passed acquisition but stopped before P&L on a datetime-unit mismatch in the no-lookahead merge. E0401 is logged; the engine now coerces both merge keys to datetime64[ns] and has a regression test. Run 4 will start from branch head `902098ba07db15388a99d32a0c5b5b74f038b3ad`.
+
+ 
+## 2026-09-26 — Phase 31.8 run 4 closure / warm-up correction
+ 
+Run 36252301406 stopped before P&L because 64 deterministic warm-up sessions were counted in the global-coverage denominator. The plan and gate logic now treat feature-eligible sessions as the coverage denominator and report warm-up exclusions separately. Run 5 will execute the corrected gate.
