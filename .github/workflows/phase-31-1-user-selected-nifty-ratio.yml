@@ -1,0 +1,88 @@
+name: Phase 31.1 - User-selected NIFTY 09:30 ratio
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/phase31_1-run.txt"
+      - "docs/phase31_1_user_selected_nifty_ratio_plan.md"
+      - "research/phase31_1_user_selected_nifty_ratio.py"
+      - "tests/test_phase31_1_user_selected_nifty_ratio.py"
+      - ".github/workflows/phase-31-1-user-selected-nifty-ratio.yml"
+permissions:
+  contents: write
+concurrency:
+  group: phase31-1-user-selected-nifty-ratio
+  cancel-in-progress: false
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: python -m pip install --disable-pip-version-check pandas==2.3.2 numpy==2.1.3 duckdb==1.3.2 pyarrow==19.0.1 pytest==8.4.2 huggingface_hub==0.35.3
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_phase31_1_user_selected_nifty_ratio.py
+      - name: Cache pinned NIFTY source
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase31_trademarkk
+          key: phase31-trademarkk-51ca58c-v1
+          restore-keys: |
+            phase30-trademarkk-51ca58c-
+      - name: Acquire or reuse exact-expiry NIFTY data
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase31_trademarkk
+          if [ ! -f data/cache/phase31_trademarkk/index/NIFTY.parquet ]; then
+            for attempt in 1 2 3 4; do
+              python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="thetrademarkk/india-index-options-1m",repo_type="dataset",revision="51ca58c",local_dir="data/cache/phase31_trademarkk",allow_patterns=["index/NIFTY.parquet","options/NIFTY/*.parquet"])' && break
+              if [ "$attempt" -eq 4 ]; then exit 1; fi
+              sleep $((attempt*15))
+            done
+          fi
+          test -f data/cache/phase31_trademarkk/index/NIFTY.parquet
+          test -d data/cache/phase31_trademarkk/options/NIFTY
+      - name: Validate data
+        run: |
+          python - <<'PY'
+          from datetime import date
+          from pathlib import Path
+          import pandas as pd
+          root=Path("data/cache/phase31_trademarkk")
+          files=[]
+          for p in (root/"options"/"NIFTY").glob("*.parquet"):
+            try:
+              d=pd.Timestamp(p.stem).date()
+              if date(2021,7,1)<=d<=date(2026,8,31): files.append(d)
+            except Exception: pass
+          sessions=pd.to_datetime(pd.read_parquet(root/"index"/"NIFTY.parquet",columns=["trading_day"])["trading_day"]).dt.date.drop_duplicates()
+          print({"expiry_files":len(files),"sessions":len(sessions),"first":str(min(files)),"last":str(max(files))})
+          if len(files)<180 or len(sessions)<800: raise SystemExit("Insufficient data coverage")
+          PY
+      - name: Run Base
+        run: PYTHONPATH=. python research/phase31_1_user_selected_nifty_ratio.py --data data/cache/phase31_trademarkk --out reports/phase31_1/base --slippage 0.20
+      - name: Run Stress
+        run: PYTHONPATH=. python research/phase31_1_user_selected_nifty_ratio.py --data data/cache/phase31_trademarkk --out reports/phase31_1/stress --slippage 0.40
+      - name: Persist results
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/phase31_1 || true
+          if ! git diff --cached --quiet; then
+            git commit -m "Phase 31.1: persist user-selected NIFTY results"
+            git push origin HEAD:"${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
+          fi
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase31-1-user-selected-nifty-results
+          path: reports/phase31_1/
