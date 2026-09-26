@@ -175,14 +175,16 @@ def audit(data, out):
 
     # Independent aggregation checks using the persisted trade ledger.
     t=trades.copy()
-    w=t.groupby(t["trade_date"].astype(str).str[:10].map(lambda s: pd.Timestamp(s).to_period("W-SUN").strftime("%Y-%m-%d/%Y-%m-%d")),as_index=False).agg(net_pnl=("net_pnl","sum"),gross_pnl=("gross_pnl","sum"),costs=("costs","sum"),trading_days=("trade_date","count"))
+    t["week"]=pd.to_datetime(t["trade_date"].astype(str)).dt.to_period("W-SUN").astype(str)
+    w=t.groupby("week",as_index=False).agg(net_pnl=("net_pnl","sum"),gross_pnl=("gross_pnl","sum"),costs=("costs","sum"),trading_days=("trade_date","count"))
     w["positive"]=w.net_pnl>0
     total_net=float(t.net_pnl.sum())
     mean_week=float(w.net_pnl.mean())
     median_week=float(w.net_pnl.median())
     positive=float(w.positive.mean())
     weekly_cost_col="costs" if "costs" in weekly.columns else "total_costs"
-    weekly_net_diff=float((w.net_pnl.sort_values("net_pnl").reset_index(drop=True)-weekly.net_pnl.sort_values("net_pnl").reset_index(drop=True)).abs().max())
+    wm=w[["week","net_pnl"]].merge(weekly[["week","net_pnl"]],on="week",suffixes=("_recalc","_ref"))
+    weekly_net_diff=float((wm["net_pnl_recalc"]-wm["net_pnl_ref"]).abs().max()) if not wm.empty else None
     source=parse_source_mismatch()
     source["persisted_weekly_has_costs_column"]="costs" in weekly.columns
     source["reference_trade_has_cost_column"]="costs" in trades.columns
