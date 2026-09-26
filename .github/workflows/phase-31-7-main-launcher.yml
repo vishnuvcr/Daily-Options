@@ -65,8 +65,19 @@ jobs:
           g=json.load(open("reports/phase31_7/gate/data_gate.json"))
           if g["status"]=="PASS":
               for k in ["base","stress"]:
-                  assert len(pd.read_csv(f"reports/phase31_7/{k}/true_cell_summary_{k}.csv"))==12
-                  assert len(pd.read_csv(f"reports/phase31_7/{k}/null_summary_{k}.csv"))==60
+                  x=pd.read_csv(f"reports/phase31_7/{k}/true_cell_summary_{k}.csv")
+                  assert len(x)==12,(k,len(x))
+                  assert set(x.friction)=={k}
+                  t=pd.read_csv(f"reports/phase31_7/{k}/trades_{k}.csv")
+                  assert len(t)>0,(k,"zero trades")
+                  sig=pd.read_csv(f"reports/phase31_7/{k}/signal_counts.csv")
+                  assert len(sig)>0,(k,"zero signals")
+                  cov=pd.read_csv(f"reports/phase31_7/{k}/price_coverage.csv")
+                  assert int(cov.complete_price_coverage.sum())==len(t),(k,"price coverage mismatch")
+                  n=pd.read_csv(f"reports/phase31_7/{k}/null_summary_{k}.csv")
+                  assert len(n)==60,(k,len(n))
+                  nt=pd.read_csv(f"reports/phase31_7/{k}/null_trades_{k}.csv")
+                  assert len(nt)>0,(k,"zero null trades")
           PY
       - name: Persist outputs to phase branch
         if: always()
