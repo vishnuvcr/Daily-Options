@@ -447,3 +447,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0352 | 2026-09-26 | Phase 30.11 plan calendar wording | The WFA plan described reserve weeks 49-52 as 2026-08-17 to 2026-08-30, omitting weeks 49-50 (2026-08-03 to 2026-08-16) | No WFA run used the prose range to generate dates; the executable FOLDS definition already ends OOS on 2026-08-02, so the computational fold boundaries remained correct | Corrected the plan text to the full reserve interval 2026-08-03 through 2026-08-30 plus 2026-08-31 | CLOSED — documentation |
+
+
+| E0353 | 2026-09-26 | Phase 30.11 WFA aggregate cardinality | The aggregate auditor expected 72 leaderboard/weekly files, but each of 24 regime/shard artifacts contains 6 files (3 folds × train/OOS), so the correct total is 144 files and 103,680 leaderboard rows | The auditor would reject the completed shards before any WFA survivor was accepted | Corrected the file and row cardinality checks to 144 files and 144×720 rows; no selection logic changed | CLOSED — aggregation corrected before acceptance |
