@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install test runtime
-        run: python -m pip install --disable-pip-version-check yt-dlp==2025.09.26 pytest==8.4.2
+        run: python -m pip install --disable-pip-version-check yt-dlp==2025.09.26 youtube-transcript-api==1.2.3 pytest==8.4.2
       - name: Run tests
         run: PYTHONPATH=. python -m pytest -q tests/test_phase30_13_low_vix_diagonal_resolution.py
       - name: Acquire and resolve source evidence
