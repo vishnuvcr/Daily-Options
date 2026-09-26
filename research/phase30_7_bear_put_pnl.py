@@ -179,60 +179,57 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
         D=float(le.open_px-se.open_px)
         if D<=0: nonpositive_debit+=1; continue
         lot=lot_size(r.expiry)
-        gap_events={g:first_gap(r.signal_date,r.resistance,g,r.expiry) for g in GAPS}
+        z=pd.merge(L[["ts","close_px"]].rename(columns={"close_px":"long"}),
+                   P[["ts","close_px"]].rename(columns={"close_px":"short"}),on="ts",how="inner")
+        z=z[(z.ts>=entry_ts)&(z.ts<=pd.Timestamp(r.expiry).tz_localize("Asia/Kolkata")+pd.Timedelta(hours=15))].copy()
+        if z.empty: continue
+        z["base_pnl"]=z["long"]-z["short"]-D
         for gap in GAPS:
-            gd=gap_events[gap]
+            gd=first_gap(r.signal_date,r.resistance,gap,r.expiry)
             for wait in WAITS:
-                adj=None
+                adj=None; reversal_ts=None; reversal_px=None; extra=0.0
                 if gd is not None:
                     obs=pd.Timestamp(gd).tz_localize("Asia/Kolkata")+pd.Timedelta(minutes=wait)
                     sv=spot_by_ts.get(obs)
                     if pd.notna(sv) and float(sv)>r.resistance:
-                        # Source says square off the new short if reversal occurs later; this is
-                        # handled as an explicit position state in the minute loop.
                         ae=exact_or_next(P,obs+pd.Timedelta(minutes=1),True)
-                        if ae is not None: adj=ae
+                        if ae is not None:
+                            adj=ae; extra=float(ae.open_px)
+                            post=spot_by_ts.loc[(spot_by_ts.index>ae.ts)&(spot_by_ts.index<=z.ts.max())]
+                            rev=post[post<=r.resistance]
+                            if not rev.empty:
+                                rt=rev.index[0]+pd.Timedelta(minutes=1)
+                                rb=exact_or_next(P,rt,True)
+                                if rb is not None: reversal_ts=rt; reversal_px=float(rb.open_px)
+                pnl=z["base_pnl"].to_numpy(dtype=float)
+                if adj is not None:
+                    during=(z.ts.to_numpy()>=np.datetime64(adj.ts))
+                    if reversal_ts is not None:
+                        during &= z.ts.to_numpy()<np.datetime64(reversal_ts)
+                        after=z.ts.to_numpy()>=np.datetime64(reversal_ts)
+                        pnl[after]+=extra-reversal_px
+                    pnl[during]+=extra-z.loc[during,"short"].to_numpy(dtype=float)
+                z["pnl"]=pnl
                 for risk in RISKS:
+                    if risk=="debit_stop_1x_expiry": stop_at=None
+                    else:
+                        ss=z.loc[z.pnl<=-D,"ts"]
+                        stop_at=ss.iloc[0] if not ss.empty else None
+                    if risk.endswith("50pct"):
+                        tt=z.loc[z.pnl>=0.5*(r.long_strike-r.short_strike),"ts"]; target_at=tt.iloc[0] if not tt.empty else None
+                    elif risk.endswith("75pct"):
+                        tt=z.loc[z.pnl>=0.75*(r.long_strike-r.short_strike),"ts"]; target_at=tt.iloc[0] if not tt.empty else None
+                    else: target_at=None
                     for tex in TIME_EXITS:
                         exit_day=pd.Timestamp(r.expiry).date() if tex=="expiry_day_15_00" else (pd.Timestamp(r.expiry)-pd.Timedelta(days=1)).date()
-                        # Monday exit is only valid if the day before Tuesday expiry is a trading day.
                         exit_ts=pd.Timestamp(f"{exit_day} 15:00").tz_localize("Asia/Kolkata")
-                        # Build aligned close marks. Adjustment is a single state transition.
-                        z=pd.merge(L[["ts","close_px"]].rename(columns={"close_px":"long"}),
-                                   P[["ts","close_px"]].rename(columns={"close_px":"short"}),
-                                   on="ts",how="inner")
-                        z=z[(z.ts>=entry_ts)&(z.ts<=exit_ts)]
-                        if z.empty: continue
-                        adjusted=False; adj_ts=None; extra=0.0; reversal_ts=None; reversal_px=None; stop_ts=None; target_ts=None
-                        target_frac=0.5 if risk.endswith("50pct") else 0.75 if risk.endswith("75pct") else None
-                        if adj is not None:
-                            post_spot=spot_by_ts.loc[(spot_by_ts.index>adj.ts)&(spot_by_ts.index<=exit_ts)]
-                            rev=post_spot[post_spot<=r.resistance]
-                            if not rev.empty:
-                                reversal_ts=rev.index[0]+pd.Timedelta(minutes=1)
-                                rb=exact_or_next(P,reversal_ts,True)
-                                if rb is not None: reversal_px=float(rb.open_px)
-                                else: reversal_ts=None
-                        for rr in z.itertuples():
-                            if adj is not None and (not adjusted) and rr.ts>=adj.ts:
-                                adjusted=True; adj_ts=adj.ts; extra=float(adj.open_px)
-                            if adjusted and reversal_ts is not None and rr.ts>=reversal_ts:
-                                adjusted=False
-                                realized_extra=extra-reversal_px
-                            else:
-                                realized_extra=0.0
-                            pnl=float(rr.long-rr.short-D) + realized_extra
-                            if adjusted: pnl += extra-float(rr.short)
-                            if risk!="debit_stop_1x_expiry" and pnl<=-D:
-                                stop_ts=rr.ts+pd.Timedelta(minutes=1); break
-                            if target_frac is not None and pnl>=target_frac*(r.long_strike-r.short_strike):
-                                target_ts=rr.ts+pd.Timedelta(minutes=1); break
-                        reason="STOP" if stop_ts is not None else "TARGET" if target_ts is not None else "TIME_EXIT"
-                        xt=stop_ts or target_ts or exit_ts
-                        if stop_ts is not None or target_ts is not None:
-                            le2=exact_or_next(L,xt,True); se2=exact_or_next(P,xt,True)
-                        else:
+                        candidates=[x for x in (stop_at,target_at) if x is not None and x<=exit_ts]
+                        xt=min(candidates) if candidates else exit_ts
+                        reason="STOP" if stop_at is not None and xt==stop_at else "TARGET" if target_at is not None and xt==target_at else "TIME_EXIT"
+                        if reason=="TIME_EXIT":
                             le2=exact_or_next(L,exit_ts); se2=exact_or_next(P,exit_ts)
+                        else:
+                            le2=exact_or_next(L,xt,True); se2=exact_or_next(P,xt,True)
                         if le2 is None or se2 is None: edge+=1; continue
                         orders=[
                             {"date":r.signal_date,"side":1,"price":fill_price(float(le.open_px),1,slip),"qty":lot},
@@ -241,27 +238,21 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
                             {"date":pd.Timestamp(xt).date(),"side":-1,"price":fill_price(float(se2.open_px),-1,slip),"qty":lot},
                         ]
                         if adj is not None:
-                            orders.insert(2,{"date":pd.Timestamp(adj.ts).date(),"side":-1,
-                                             "price":fill_price(float(adj.open_px),-1,slip),"qty":lot})
+                            orders.insert(2,{"date":pd.Timestamp(adj.ts).date(),"side":-1,"price":fill_price(float(adj.open_px),-1,slip),"qty":lot})
                             if reversal_ts is not None and reversal_ts<=pd.Timestamp(xt) and reversal_px is not None:
-                                orders.insert(3,{"date":pd.Timestamp(reversal_ts).date(),"side":1,
-                                                 "price":fill_price(float(reversal_px),1,slip),"qty":lot})
+                                orders.insert(3,{"date":pd.Timestamp(reversal_ts).date(),"side":1,"price":fill_price(float(reversal_px),1,slip),"qty":lot})
                             else:
-                                orders.append({"date":pd.Timestamp(xt).date(),"side":1,
-                                               "price":fill_price(float(se2.open_px),1,slip),"qty":lot})
+                                orders.append({"date":pd.Timestamp(xt).date(),"side":1,"price":fill_price(float(se2.open_px),1,slip),"qty":lot})
                         gross=sum((-1 if o["side"]>0 else 1)*o["price"]*o["qty"] for o in orders)
                         net=gross-cost(orders,slip)
                         iso=pd.Timestamp(r.signal_date).isocalendar(); week=f"{int(iso.year)}-W{int(iso.week):02d}"
-                        # Capital proxy: debit + 2% ELM on short notional, 3% for >10% OTM short.
                         cap=D*lot
-                        spot0=float(r.spot)
-                        elm_rate=0.03 if r.short_strike<0.90*spot0 else 0.02
-                        cap=max(cap,cap+elm_rate*r.short_strike*lot*(2 if adjusted else 1))
-                        results.append({"definition":r.definition,"expiry_choice":r.expiry_choice,
-                                        "strike_choice":r.strike_choice,"gap":gap,"wait":wait,
-                                        "risk":risk,"time_exit":tex,"trade_date":r.signal_date,
-                                        "week":week,"net_pnl":net,"gross_pnl":gross,
-                                        "capital_proxy":cap,"reason":reason,"adjusted":adjusted})
+                        spot0=float(r.spot); elm_rate=0.03 if r.short_strike<0.90*spot0 else 0.02
+                        cap=max(cap,cap+elm_rate*r.short_strike*lot*(2 if adj is not None else 1))
+                        results.append({"definition":r.definition,"expiry_choice":r.expiry_choice,"strike_choice":r.strike_choice,
+                                        "gap":gap,"wait":wait,"risk":risk,"time_exit":tex,"trade_date":r.signal_date,
+                                        "week":week,"net_pnl":net,"gross_pnl":gross,"capital_proxy":cap,"reason":reason,
+                                        "adjusted":adj is not None,"reversed":reversal_ts is not None})
     tr=pd.DataFrame(results)
     diagnostics={"signals":len(sig),"expiry_signal_rows":len(reqdf),"strike_resolved_specs":len(tradespec),
                   "option_rows_loaded":len(opt),"unique_option_series":len(series),
