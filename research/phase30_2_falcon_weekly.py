@@ -156,8 +156,23 @@ def load_expiry_slice(con, root, expiry, start_date, end_date):
     # The source publishes intraday timestamps as IST (often with +0530).
     # Parse the raw timestamp explicitly in IST rather than relying on DuckDB's
     # implicit TIMESTAMP/TIMESTAMPTZ cast, which can silently shift or strip TZ.
-    parsed = pd.to_datetime(x["ts_raw"], errors="coerce", utc=True)
-    x["ts"] = parsed.dt.tz_convert("Asia/Kolkata").dt.tz_localize(None).dt.floor("min")
+    raw = x["ts_raw"].astype(str).str.strip()
+    # Rissin's canonical Parquet schema declares timestamp as IST. Depending
+    # on the Parquet writer, the materialized value can be timezone-aware
+    # (+05:30) or timezone-naive while still representing IST. Handle both
+    # explicitly; treating a naive IST timestamp as UTC shifts every signal by
+    # 5h30 and can silently create zero exact-match setups.
+    parsed = pd.to_datetime(raw, errors="coerce")
+    aware = raw.str.contains(r"(?:[+-]\\d{2}:?\\d{2}|Z)$", regex=True, na=False)
+    ts = pd.Series(pd.NaT, index=x.index, dtype="datetime64[ns]")
+    if aware.any():
+        aware_parsed = pd.to_datetime(raw[aware], errors="coerce", utc=True)
+        ts.loc[aware] = aware_parsed.dt.tz_convert("Asia/Kolkata").dt.tz_localize(None)
+    naive = ~aware
+    if naive.any():
+        naive_parsed = pd.to_datetime(raw[naive], errors="coerce")
+        ts.loc[naive] = naive_parsed.dt.tz_localize("Asia/Kolkata").dt.tz_localize(None)
+    x["ts"] = ts.dt.floor("min")
     x = x.drop(columns=["ts_raw"]).dropna(subset=["ts"])
     return x.drop_duplicates(["ts", "strike", "option_type"]).sort_values(
         ["option_type", "strike", "ts"]
