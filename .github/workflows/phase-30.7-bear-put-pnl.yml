@@ -13,7 +13,7 @@ permissions:
 
 concurrency:
   group: phase30-7-bear-put-pnl
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   matrix:
@@ -66,7 +66,10 @@ jobs:
         run: |
           set -euo pipefail
           if ! find data/cache/phase30_5_nifty_spot -type f -name "*.csv" -print -quit | grep -q .; then
-            git clone --depth 1 --branch main https://github.com/technovusin/nifty50-historical-data external/nifty50-historical-data
+            git init external/nifty50-historical-data
+            git -C external/nifty50-historical-data remote add origin https://github.com/technovusin/nifty50-historical-data
+            git -C external/nifty50-historical-data fetch --depth 1 origin 75f273a2dec36b10f4ded3a00721fae2172edccb
+            git -C external/nifty50-historical-data checkout --detach 75f273a2dec36b10f4ded3a00721fae2172edccb
             mkdir -p data/cache/phase30_5_nifty_spot
             find external/nifty50-historical-data/1min/2025 external/nifty50-historical-data/1min/2026 -type f -name "*.csv" -print0 |
               while IFS= read -r -d "" f; do cp "$f" "data/cache/phase30_5_nifty_spot/$(basename "$f")"; done
