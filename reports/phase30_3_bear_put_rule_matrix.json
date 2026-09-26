@@ -1,0 +1,16 @@
+{
+  "video_id": "IpCuGEDxF1k",
+  "evidence_sha256": "a79b1e15c1f10fe053ffc0ba4999a8675cd26202ce70b27459328210d809c9a6",
+  "backtest_allowed": false,
+  "status": {
+    "structure": "RESOLVED",
+    "entry_condition": "PARTIAL",
+    "strike_rule": "PARTIAL",
+    "adjustment": "PARTIAL",
+    "stop_loss": "UNRESOLVED",
+    "profit_target": "UNRESOLVED",
+    "time_exit": "UNRESOLVED",
+    "expiry_selection": "UNRESOLVED",
+    "resistance_definition": "UNRESOLVED"
+  }
+}
