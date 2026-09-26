@@ -112,12 +112,9 @@ def audit(data, out):
                 continue
             slip=float(r["slippage_cost"])/max(sum(int(z["qty_lots"]) for z in ref_legs),1) if False else None
             # Infer the run's declared slippage from the phase report directory.
-            s=float(r["total_costs"]-r["transaction_costs"])
-            # total slippage is across all legs; reconstruct using quantity-weighted execution difference.
-            # Compare raw values first; execution values are compared to the known Base slippage from run metadata.
             raw_pnl=(xp-ep)*qty*lot_size(expiry) if action=="BUY" else (ep-xp)*qty*lot_size(expiry)
             raw_calc+=raw_pnl
-            slip_amt=0.20
+            slip_amt=float(r.get("slippage_per_order",0.20))
             if action=="BUY":
                 ee=ep+slip_amt; xx=max(0.0,xp-slip_amt); side_exit="SELL"
                 ex_pnl=(xx-ee)*qty*lot_size(expiry)
@@ -161,8 +158,9 @@ def audit(data, out):
                             leg_ok=False; errors.append(f"{day}: reference {fld} mismatch {key}")
                         if fld in z and fld=="exit_price_raw" and abs(float(z[fld])-float(price(con,expiry_files[expiry],strike,side,f"{day} {EXIT}")))>1e-5:
                             leg_ok=False; errors.append(f"{day}: reference {fld} mismatch {key}")
-            if abs(ref_total_cost-(tc_calc+sum(float(z.get("slippage_cost",0.0)) for z in parsed_ref_legs)))>1e-4:
-                pass
+        computed_total_cost=tc_calc+(raw_calc-exec_calc)
+        if abs(ref_total_cost-computed_total_cost)>1e-4:
+            leg_ok=False; errors.append(f"{day}: total-cost mismatch {computed_total_cost} vs {ref_total_cost}")
         calc_net=exec_calc-tc_calc
         if abs(calc_net-ref_net)>1e-5:
             leg_ok=False; errors.append(f"{day}: Base net mismatch {calc_net} vs {ref_net}")
