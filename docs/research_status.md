@@ -656,3 +656,9 @@ Result: **SOURCE-BLOCKED / DATA-LIMITED — P&L not authorized.**
 The pinned evidence still contains a strike conflict (ATM versus one-strike) plus unresolved exact payoff structure, entry timing, expiry, adjustment timing, stop, target, exit and capital convention. No numerical result is accepted for this candidate.
 
 The next frontier is a separate Phase 30.9 source-fidelity reconstruction of the Air Defense / VIX expected-range candidate, which has materially richer source-explicit fields and a public YouTube description corroborating its use of VIX, sigma ranges, short strangles/iron condors and adjustments.
+
+## 2026-09-26 — Phase 30.10 numerical execution started
+
+Phase 30.9 VIX coverage is complete: **248 unique trading-day rows from 2025-09-01 through 2026-08-31** are cached in the repository. No incomplete 70-row endpoint result is used.
+
+Phase 30.10 has started the frozen **720-cell per friction regime / 1,440 total-cell** Air Defense matrix. Workflow **36234875446** is the corrected run; 24 shard jobs are executing (12 Base + 12 Stress). The prior run 36234800534 was cancelled after a YAML matrix-variable interpolation defect and produced no accepted P&L.
