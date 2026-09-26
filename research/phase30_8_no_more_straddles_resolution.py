@@ -11,6 +11,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+# Phase-30.8 trigger checkpoint: deterministic evidence extraction only.
 VIDEO_ID = "OvaJumYancs"
 TITLE = "No More Straddles. This Strategy Is Smarter"
 
