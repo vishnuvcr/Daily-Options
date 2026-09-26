@@ -125,6 +125,10 @@ def load_prices(con, expiry_map, features):
                        set(float(x)+WING for x in active.atm.tolist()) |
                        set(float(x)-WING for x in active.atm.tolist()))
         strike_sql=",".join(str(x) for x in strikes)
+        strikes=sorted(set(float(x) for x in active.atm.tolist()) |
+                       set(float(x)+WING for x in active.atm.tolist()) |
+                       set(float(x)-WING for x in active.atm.tolist()))
+        strike_sql=",".join(str(x) for x in strikes)
         q=f"""
             WITH src AS (
                 SELECT
