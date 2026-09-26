@@ -748,3 +748,10 @@ Next authoritative run: **Phase 31.8 run 5** from branch head `0963392cb7f1a9b73
 Run **36252470696** stopped at a regression test that still reflected the old coverage denominator. E0403 is closed after aligning the test with methodological erratum 31.8-1. No data acquisition or P&L computation ran.
  
 Next authoritative run: **Phase 31.8 run 6** from branch head `491644ec70ab9c5d69fb0d8b7db85cf21f383f43`.
+
+ 
+## 2026-09-26 — Phase 31.8 run 6 closure / run 7 frontier
+ 
+Run **36252561747** passed the corrected unit tests and global gate, then failed at Base-stage expiry attachment with a Timestamp-vs-date comparison. E0404 is logged; Stress/Validate were skipped and no P&L is accepted.
+ 
+The branch now normalizes the NIFTY trade date to Python `date` before selecting the nearest expiry and has a regression test. Next authoritative run: **Phase 31.8 run 7** from branch head `2c04627733afb93d4bf0c08670b0da035e942874`.
