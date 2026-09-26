@@ -135,8 +135,8 @@ def load_prices(con, expiry_map, features):
                     OR CAST(o.strike AS DOUBLE)=w.atm-{WING})
               WHERE CAST(CAST(o.timestamp AS TIMESTAMP) AS TIME) IN (TIME '09:31:00',TIME '15:10:00')
                 AND UPPER(CAST(o.option_type AS VARCHAR)) IN ('CE','PE')
-                AND ((CAST(o.timestamp AS TIME)=TIME '09:31:00' AND o.open>0)
-                  OR (CAST(o.timestamp AS TIME)=TIME '15:10:00' AND o.close>0))"""
+                AND ((CAST(CAST(o.timestamp AS TIMESTAMP) AS TIME)=TIME '09:31:00' AND o.open>0)
+                  OR (CAST(CAST(o.timestamp AS TIMESTAMP) AS TIME)=TIME '15:10:00' AND o.close>0))"""
         z=con.execute(q).df()
         if z.empty: continue
         for r in z.itertuples(index=False):
