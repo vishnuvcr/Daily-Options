@@ -417,3 +417,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0340 | 2026-09-26 | Phase 30.8 workflow orchestration | Corrected workflow run 36234005107 was created but had zero jobs after the prior workflow schema revision | No source computation ran | Replaced the workflow with a minimal schema matching the repository's known-valid manual workflows, removed branch/path filtering complexity and removed write-back/push logic from the workflow; report persistence remains a repository-controlled artifact step | OPEN — clean rerun pending |
+
+
+| E0342 | 2026-09-26 | Phase 30.9 VIX data provenance | The first pinned secondary India-VIX dataset copied from RajeshMohan82 ends on 2026-02-11, leaving the registered 2026-02-12 to 2026-08-31 study window uncovered | No numerical result accepted; the file is retained only as a reproducibility reference | Build a deterministic NSE VIX acquisition script using the documented historical VIX endpoint; cache the resulting full study-window file in the research branch and make numerical workflows read only the pinned cache | OPEN — data acquisition |
