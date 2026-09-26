@@ -656,3 +656,17 @@ The audit identified the substantive provenance defect E0375: the persisted Phas
 Therefore the original -₹537,097.06 result is numerically reproducible as the persisted artifact's own accounting, but it is **not accepted as the final friction-corrected result**. Phase 31.1 stays quarantined. The next permissible research phase is a provenance-corrected reproduction using one frozen accounting definition; no optimization is authorized until that reproduction is complete.
 
 Outputs: `reports/phase31_2/forensic_audit.json`, `reports/phase31_2/sample_reconciliation.csv`, `reports/phase31_2/payoff_diagnostics.csv`, `reports/phase31_2/final_result.md`.
+
+
+## 2026-09-26 — Phase 31.6 IV-RV discovery closed
+
+Authoritative workflow run **36248538306** completed successfully after three pre-result engine corrections (E0378–E0380). The fixed 12-cell Base/Stress discovery was fully executed and persisted.
+
+- **Base:** 0/12 cells passed the ₹5,000/week discovery gate; all 12 cells had negative total net P&L.
+- **Stress:** 0/12 cells passed; all 12 cells had negative total net P&L.
+- Best Base/Stress cell by mean weekly net: **6 vol-point threshold + positive-spread 200-point short condor + nearest expiry**.
+- Best Base: **178 trades, -₹23,018.38 total net, -₹166.80 mean weekly, ₹50.11 median weekly, 50.00% positive weeks**.
+- Best Stress: **178 trades, -₹34,324.32 total net, -₹248.73 mean weekly, -₹29.93 median weekly, 50.00% positive weeks**.
+- No WFA/OOS branch is authorized for Phase 31.6. The family is closed as negative evidence under the declared gate.
+
+Final report: `reports/phase31_6/final_result.md`.
