@@ -422,3 +422,7 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0405 | 2026-09-26 | Phase 31.8 regression test | Run 36252692972 failed because the new expiry regression expected string labels instead of the Python-date keys actually returned by the expiry map | No data acquisition or P&L computation ran | Test corrected to assert the real date keys | CLOSED |
 
 | E0406 | 2026-09-26 | Phase 31.8 Base price loader | Run 36252808290 passed tests and the corrected global gate, then failed because `load_prices` referenced a nonexistent `exit_ts` signal column | No P&L accepted; Stress/Validate skipped | Removed the unused column selection; regression added | OPEN — corrected rerun |
+
+| E0407 | 2026-09-26 | Phase 31.9 unit tests | Run 36253432190 failed before acquisition because the RV20 DataFrame used an undefined variable instead of the calculated RV20 series | No computation ran | Corrected variable handoff | CLOSED |
+| E0408 | 2026-09-26 | Phase 31.9 test fixture | Prior-barrier fixture omitted the current-session date field | No computation ran | Added date column | CLOSED |
+| E0409 | 2026-09-26 | Phase 31.9 test fixture | Nearest-expiry fixture expected a later contract even when an on-date expiry existed | No computation ran | Corrected expected nearest expiry | CLOSED |
