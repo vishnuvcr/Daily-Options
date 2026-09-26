@@ -408,3 +408,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0337 | 2026-09-26 | Phase 30.8 source interpretation | The next candidate's extracted transcript evidence contains conflicting ATM versus one-strike references and ambiguous repeated “3:30” fields, while the exact payoff sequence remains unresolved | Directly selecting one interpretation would introduce source drift before numerical testing | Keep all conflicts explicit, preserve timestamped evidence, and block P&L until transcript context resolves the fields or a bounded interpretation matrix is preregistered | OPEN — source-resolution phase |
+
+
+| E0338 | 2026-09-26 | Phase 30.8 workflow input packaging | The first automated source-resolution run 36233937116 failed because the branch did not contain the pinned Phase 27 transcript-evidence JSONL files required by the deterministic extractor | No source conclusion was accepted from the failed run; this was an input-packaging defect | Pinned the two required Python-generated evidence files onto the Phase 30.8 branch from the audited Phase 27.4 evidence branch; rerun unchanged extraction | CLOSED — input packaging corrected |
