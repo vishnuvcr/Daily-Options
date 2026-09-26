@@ -162,9 +162,15 @@ def load_prices(con, expiry_map, features):
         if z.empty:
             continue
         for r in z.itertuples(index=False):
-            prices[(r.trade_date,expiry,r.option_type,float(r.strike),pd.Timestamp(r.ts))]=float(r.exec_px)
+            prices[price_key(r.trade_date,expiry,r.option_type,float(r.strike),pd.Timestamp(r.ts))]=float(r.exec_px)
     con.close()
     return prices
+
+def norm_date(x):
+    return pd.Timestamp(x).date()
+
+def price_key(day, expiry, option_type, strike, ts):
+    return (norm_date(day), norm_date(expiry), str(option_type).upper(), float(strike), pd.Timestamp(ts).tz_localize(None) if getattr(pd.Timestamp(ts), "tzinfo", None) else pd.Timestamp(ts))
 
 FEATURE_COLS={"VOL_IMB":"vol_imb","OI_CHANGE_IMB":"oi_change_imb","JOINT":"joint"}
 
@@ -207,14 +213,14 @@ def build_signals(panel, null_seed=None):
 
 
 def trade_from_signal(frow, side, prices, slip):
-    d=frow.day; expiry=frow.expiry; atm=frow.atm; lot=lot_size(expiry)
+    d=norm_date(frow.day); expiry=norm_date(frow.expiry); atm=int(frow.atm); lot=lot_size(expiry)
     typ="CE" if side=="CALL" else "PE"
     wing=atm+WING if side=="CALL" else atm-WING
     legs=[(typ,atm,"BUY"),(typ,wing,"SELL")]
     raw=exec_gross=slip_cost=tc=0.0
     for opt, strike, action in legs:
-        ep=prices.get((d,expiry,opt,float(strike),frow.entry_ts))
-        xp=prices.get((d,expiry,opt,float(strike),frow.exit_ts))
+        ep=prices.get(price_key(d,expiry,opt,float(strike),frow.entry_ts))
+        xp=prices.get(price_key(d,expiry,opt,float(strike),frow.exit_ts))
         if ep is None or xp is None:
             return None
         if action=="BUY":
@@ -311,7 +317,7 @@ def main():
                 typ="CE" if r.side=="CALL" else "PE"
                 wing=r.atm+WING if r.side=="CALL" else r.atm-WING
                 req=[(typ,r.atm,r.entry_ts),(typ,r.atm,r.exit_ts),(typ,wing,r.entry_ts),(typ,wing,r.exit_ts)]
-                complete += int(all((r.day,r.expiry,o,float(k),pd.Timestamp(ts)) in prices for o,k,ts in req))
+                complete += int(all(price_key(r.day,r.expiry,o,float(k),pd.Timestamp(ts)) in prices for o,k,ts in req))
             coverage.append({"feature":keys[0],"threshold":float(keys[1]),"bucket":int(keys[2]),"side":keys[3],
               "signals":int(len(g)),"complete_price_coverage":int(complete),"coverage_rate":float(complete/len(g))})
     pd.DataFrame(coverage).to_csv(out/"price_coverage.csv",index=False)
