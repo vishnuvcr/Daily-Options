@@ -89,3 +89,10 @@ def test_price_key_normalizes_pandas_timestamp_and_date_to_same_key():
     a=price_key(dt.date(2021,7,1),dt.date(2021,7,1),"CE",15700,pd.Timestamp("2021-07-01 09:31:00"))
     b=price_key(pd.Timestamp("2021-07-01"),pd.Timestamp("2021-07-01"),"ce",15700.0,pd.Timestamp("2021-07-01 09:31:00"))
     assert a==b
+
+
+def test_expiry_filter_normalizes_timestamp_and_date():
+    import datetime as dt
+    e=dt.date(2021,7,8)
+    series=pd.Series([pd.Timestamp("2021-07-08")])
+    assert set(pd.to_datetime(series).dt.date)=={e}
