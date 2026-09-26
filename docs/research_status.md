@@ -581,3 +581,12 @@ Phase 30.6 spot-only coverage completed the registered 54-cell resistance/trigge
 Phase 30.7 now freezes all 45 eligible entry definitions and explicitly registers the remaining unresolved mechanics: 2 expiry choices × 2 strike constructions × 3 gap-up adjustment thresholds × 2 adjustment waits × 3 risk/exit conventions × 2 time exits. Total registered grid: **6,480 cells**. No cell is selected using option results.
 
 Status: **OPEN — implementation/contract audit before numerical P&L**.
+
+
+## 2026-09-26 — Phase 30.7 execution-engine resume checkpoint
+
+The deterministic contract audit passed. The cached Rissin option set contains 109,865,640 one-minute rows, 384 quote dates, 82 expiries and 179 strikes; all contract/schema/lot/execution invariant checks passed. The second-expiry study-window edge is explicitly excluded only where fewer than two future weekly expiries remain, leaving **31–46 executable weeks per eligible definition**.
+
+The first numerical smoke attempts exposed and closed implementation defects E0326–E0332. The most important confirmed data finding is that Rissin option timestamps are stored as timezone-aware UTC and must be normalized to IST before next-minute execution matching; exact entry-minute probes confirm the required option rows exist. The latest corrected engine also normalizes expiry keys to Python dates and restores deterministic order construction.
+
+**Current state:** OPEN — corrected smoke rerun. Smoke is now bounded to 12 contract-resolved specifications while retaining all 36 interpretation combinations. Full 6,480-cell Base/Stress execution remains blocked until the corrected smoke passes.
