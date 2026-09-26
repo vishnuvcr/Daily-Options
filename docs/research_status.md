@@ -559,3 +559,18 @@ Authoritative run **36218652778** completed Base and Stress successfully at the 
 The simulator is corrected to normalize both timezone-aware (+05:30) and timezone-naive IST representations to the same naive Asia/Kolkata minute timestamp. A dedicated regression test now verifies both forms map to 09:30 IST. Economic rules, 270-cell grid, source, cost model and promotion gate are unchanged.
 
 Status: **OPEN — deterministic rerun required**
+
+
+## 2026-09-26 — Phase 30.2 Falcon final result
+
+The corrected Falcon run **36220915944** completed the full frozen 270-cell experiment after the E0322 exact-expiry type correction. The Base and Stress simulations each produced **468 candidate setups and 4,212 trade records**.
+
+The preregistered weekly promotion gate requires mean weekly net >= ₹5,000, median >= ₹5,000, profitable-week rate >=70%, >=20 completed weeks and >=80% execution coverage.
+
+**Base:** 0/270 qualified. Leading measured cell `10:00|p30|DIAGONAL_PREMIUM|adj11:00|stop1.5`: ₹1,432.03 mean weekly net, ₹834.58 median, 54.84% positive weeks, 96.875% coverage, PF 1.87, max drawdown -₹16,717.
+
+**Stress:** 0/270 qualified. Same leading measured cell: ₹733.84 mean weekly net, ₹54.58 median, 51.61% positive weeks, 96.875% coverage, PF 1.37, max drawdown -₹24,333.
+
+The zero-setup artifacts from earlier timestamp/loader runs are quarantined. After correction, executable coverage was high, so Phase 30.2's failure is economic against the pre-registered gate rather than a data-availability failure.
+
+**Phase 30.2 is CLOSED.** No walk-forward/OOS phase and no result-driven Falcon retuning are authorized. The next distinct Equity Income candidate is Bear Put source resolution (Phase 30.3/30.4); its numerical phase remains blocked until all material source ambiguities are frozen.
