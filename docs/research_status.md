@@ -713,3 +713,10 @@ The phase branch now normalizes feature expiry to a dedicated Python-date `expir
 Phase 31.7 is closed after authoritative run **36251189770**. The frozen OI/volume microstructure family produced **0/12 Base** and **0/12 Stress** promotion passes; all true cells had negative total net P&L. The best observed cell was VOL_IMB at threshold 0.40 with nearest expiry: **-₹191.41 mean weekly Base** and **-₹245.58 mean weekly Stress**, with **42.27% positive weeks**. No WFA/OOS was authorized.
  
 Phase 31.8 is now the active bounded numerical frontier on `phase-31.8-global-overnight-transmission-v1`. The preregistered hypothesis, literature review, unit tests and manual launcher are persisted. The first gate is global-data acquisition/coverage; no P&L will be interpreted until the gate passes.
+
+ 
+## 2026-09-26 — Phase 31.8 run 1 closure / corrected rerun
+ 
+Run **36251942190** completed global-source acquisition but failed in the data-gate stage before any numerical testing. E0398 records the date-key type mismatch in the strict `merge_asof` alignment. The six global source files and manifest were persisted successfully; the branch is corrected to normalize NIFTY/global dates to datetime64 and a regression test now covers the prior-date barrier.
+ 
+Next authoritative run: **Phase 31.8 run 2** from branch head `d73ce5e48d2d40a5a86bd53da91fec4629bab711`. No Phase 31.8 P&L is accepted.
