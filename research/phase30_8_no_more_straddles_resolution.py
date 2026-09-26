@@ -11,7 +11,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-# Phase-30.8 trigger checkpoint: deterministic evidence extraction only.
+# Phase-30.8 rerun checkpoint: deterministic evidence inputs are pinned on this branch.
 VIDEO_ID = "OvaJumYancs"
 TITLE = "No More Straddles. This Strategy Is Smarter"
 
