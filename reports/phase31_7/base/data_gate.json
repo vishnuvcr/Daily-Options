@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "eligible_sessions": 1228,
+  "feature_rows": 2094,
+  "schema_has_volume": true,
+  "schema_has_open_interest": true,
+  "nearest_coverage": 0.9812703583061889,
+  "next_coverage": 0.7239413680781759,
+  "required_nearest_coverage": 0.7,
+  "required_next_coverage": 0.5,
+  "study_start": "2021-07-01",
+  "study_end": "2026-08-31"
+}
