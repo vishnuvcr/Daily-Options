@@ -495,7 +495,12 @@ def main() -> None:
     ap.add_argument("--slippage", type=float, default=SLIP_BASE)
     ap.add_argument("--def-start", type=int, default=0)
     ap.add_argument("--def-count", type=int, default=8)
+    ap.add_argument("--start", default=START)
+    ap.add_argument("--end", default=END)
     args = ap.parse_args()
+
+    global START, END
+    START, END = args.start, args.end
 
     out = args.out_root
     out.mkdir(parents=True, exist_ok=True)
