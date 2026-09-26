@@ -757,3 +757,10 @@ The branch audit identified **E0398**: the NIFTY and global date keys were repre
 Run **36252076237** passed all unit tests and data acquisition but failed at the same gate step. The authoritative traceback showed the real defect: `main()` selected only `date/open_px/close_px` into a reduced `sessions` frame and then passed that frame to `build_panel`, which expects the full NIFTY frame including `time`.
  
 The earlier E0398 diagnosis was therefore superseded; no P&L was accepted. E0400 records the actual defect. The branch now passes the full `idx` frame to `build_panel` and adds a regression test. Datetime64 normalization remains in place as a separate robustness correction.
+
+ 
+## 2026-09-26 — Phase 31.8 run 3 closure / datetime-unit correction
+ 
+Run **36252203841** passed tests and acquisition but failed in `merge_asof`: DuckDB produced datetime64 microseconds for the NIFTY date key while the global series was datetime64 nanoseconds. The prior full-frame handoff defect is fixed; E0401 records this distinct dtype-unit issue.
+ 
+The branch now coerces both left and right merge keys inside `build_panel` to explicit datetime64[ns], with a regression test using datetime64[us]. No P&L is accepted.
