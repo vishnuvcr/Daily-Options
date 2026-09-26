@@ -35,12 +35,12 @@ jobs:
         run: pip install --disable-pip-version-check pandas numpy duckdb pyarrow pytest huggingface_hub
       - name: Unit tests
         run: PYTHONPATH=. pytest -q tests/test_phase30_2_falcon_weekly.py
-      - name: Cache Rissin NIFTY data
+      - name: Cache Rissin NIFTY data (pinned 78b1c54)
         uses: actions/cache@v4
         with:
           path: data/cache/phase30_2_rissin
-          key: phase30-2-rissin-nifty-runtime-resolved-v1
-      - name: Resolve and acquire exact Rissin NIFTY files
+          key: phase30-2-rissin-nifty-78b1c546-2025-2026-v1
+      - name: Acquire pinned Rissin NIFTY files
         run: |
           set -euo pipefail
           mkdir -p data/cache/phase30_2_rissin
@@ -49,8 +49,7 @@ jobs:
           import json
           from huggingface_hub import HfApi, hf_hub_download
           repo_id='rissin/nse-options-intraday'
-          info=HfApi().dataset_info(repo_id)
-          sha=info.sha
+          sha='78b1c5468255d18cf492984bfe6fe4e3ac874d7c'
           out=Path('data/cache/phase30_2_rissin')
           out.mkdir(parents=True,exist_ok=True)
           for year in ('2025','2026'):
