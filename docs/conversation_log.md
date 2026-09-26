@@ -133,3 +133,12 @@ The next run is the only accepted numerical evidence for this runtime-fix branch
 
 
 2026-09-26 — Phase 30.2 E0318 correction: authoritative run 36218439278 failed in both Base and Stress before simulation because load_expiry_slice projected timestamp as ts_raw but ordered by ts. This is an implementation defect, not strategy evidence. The SQL was corrected to order by ts_raw; no economic rule or frozen grid changed. Fresh rerun required.
+
+
+## E0319 — Phase 30.2 zero-setup timestamp representation correction (2026-09-26)
+
+Authoritative run **36218652778** completed Base and Stress successfully at the CI level but again produced **0/32 candidate setups and 0 trades** in both friction settings. This remains non-evidentiary for strategy performance. The public Rissin schema declares the timestamp as IST; the remaining implementation risk is that the Parquet materialization may be timezone-naive while semantically representing IST. The previous normalization treated every raw value as UTC, which can shift a naive 09:30 IST signal to 15:00 IST.
+
+The simulator is corrected to normalize both timezone-aware (+05:30) and timezone-naive IST representations to the same naive Asia/Kolkata minute timestamp. A dedicated regression test now verifies both forms map to 09:30 IST. Economic rules, 270-cell grid, source, cost model and promotion gate are unchanged.
+
+Status: **OPEN — deterministic rerun required**
