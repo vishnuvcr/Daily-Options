@@ -604,3 +604,10 @@ The first vectorized full-Base attempt reached numerical computation but was sup
 The monolithic full-Base runner was superseded before any result was accepted because it did not provide timely checkpoints. The frozen matrix is unchanged. The hardened workflow now runs **9 deterministic definition shards × 2 friction regimes = 18 parallel numerical jobs**, followed by a completeness/duplicate audit requiring exactly **6,480 cells per regime**.
 
 The current authoritative run is **36232762688**. All 18 shard jobs have reached their numerical execution stage; no shard result has yet been accepted. The next accepted research artifact will be the aggregate Base/Stress leaderboard after the 6,480-cell audit passes.
+
+
+## 2026-09-26 — Phase 30.7 shard integration correction
+
+All 18 first-pass numerical shards completed, but the aggregate job correctly rejected them because shard artifacts were not uploaded due to an output-path typo. Before rerunning, a second statistical issue was also corrected: weekly performance metrics now use **completed trading weeks**, matching the established project methodology, rather than zero-filling all calendar weeks. Cost-share is now measured as transaction-cost drag divided by absolute gross P&L.
+
+**No first-pass shard result is accepted.** The corrected 18-shard Base/Stress run is now the authoritative numerical attempt.
