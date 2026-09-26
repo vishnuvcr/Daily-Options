@@ -1,11 +1,11 @@
-name: Phase 30.7 - Bear Put full Base Stress matrix
-# v12 smoke-scope cleanup
+name: Phase 30.7 - Bear Put sharded Base Stress matrix
 
 on:
   workflow_dispatch:
   push:
     paths:
       - "research/phase30_7_bear_put_pnl.py"
+      - "research/phase30_7_bear_put_aggregate.py"
       - ".github/workflows/phase-30.7-bear-put-pnl.yml"
 
 permissions:
@@ -16,28 +16,30 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  matrix:
+  shard:
+    name: shard ${{ matrix.shard }} / ${{ matrix.regime }}
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3,4,5,6,7,8]
+        regime: [base, stress]
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
         with:
           ref: phase-30.7-bear-put-contract-interpretation-grid-v1
           fetch-depth: 0
-
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-
       - name: Install runtime
         run: python -m pip install --disable-pip-version-check pandas duckdb pyarrow huggingface_hub
-
       - name: Restore pinned option cache
         uses: actions/cache@v4
         with:
           path: data/cache/phase30_2_rissin
           key: phase30-2-rissin-nifty-runtime-resolved-v1
-
       - name: Acquire pinned option cache on cache miss
         run: |
           set -euo pipefail
@@ -55,13 +57,11 @@ jobs:
                                           repo_type="dataset",revision=revision,local_dir=str(out)))
                   if p != target: p.replace(target)
           PY
-
       - name: Restore pinned spot cache
         uses: actions/cache@v4
         with:
           path: data/cache/phase30_5_nifty_spot
           key: phase30-5-nifty-spot-2025-2026-pinned-v1
-
       - name: Acquire pinned spot cache on cache miss
         run: |
           set -euo pipefail
@@ -74,57 +74,80 @@ jobs:
             find external/nifty50-historical-data/1min/2025 external/nifty50-historical-data/1min/2026 -type f -name "*.csv" -print0 |
               while IFS= read -r -d "" f; do cp "$f" "data/cache/phase30_5_nifty_spot/$(basename "$f")"; done
           fi
-
       - name: Compile engine
-        run: python -m py_compile research/phase30_7_bear_put_pnl.py
-
+        run: python -m py_compile research/phase30_7_bear_put_pnl.py research/phase30_7_bear_put_aggregate.py
       - name: Verify contract audit
         run: |
           test -s reports/phase30_7_bear_put_contract_audit.json
           python - <<'PY'
           import json
-          x=json.load(open("reports/phase30_7_bear_put_contract_audit.json"))
-          assert x["audit_passed"] is True
+          assert json.load(open("reports/phase30_7_bear_put_contract_audit.json"))["audit_passed"] is True
           PY
-
-      - name: Smoke Base
+      - name: Run frozen definition shard
+        env:
+          SHARD: ${{ matrix.shard }}
+          REGIME: ${{ matrix.regime }}
         run: |
-          PYTHONPATH=. python research/phase30_7_bear_put_pnl.py             --data-root data/cache/phase30_2_rissin --spot-root data/cache/phase30_5_nifty_spot             --out-root reports/phase30_7_smoke_base --smoke --slippage 0.20
+          set -euo pipefail
+          START=$(($SHARD*5))
+          SLIP="0.20"
+          if [ "$REGIME" = "stress" ]; then SLIP="0.40"; fi
+          PYTHONPATH=. python research/phase30_7_bear_put_pnl.py \
+            --data-root data/cache/phase30_2_rissin \
+            --spot-root data/cache/phase30_5_nifty_spot \
+            --out-root "reports/phase30_7_shard_$SHARD_SHELL_REGIME__" \
+            --slippage "$SLIP" \
+            --def-start "$START" \
+            --def-count 5
+      - name: Upload shard results
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase30-7-shard-${{ matrix.shard }}-${{ matrix.regime }}
+          path: reports/phase30_7_shard_$SHARD_SHELL_REGIME__
 
-      - name: Smoke Stress
+  aggregate:
+    needs: shard
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-30.7-bear-put-contract-interpretation-grid-v1
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install runtime
+        run: python -m pip install --disable-pip-version-check pandas
+      - name: Download all shard results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: phase30-7-shard-*
+          path: shard_results
+          merge-multiple: false
+      - name: Aggregate and audit 6,480 cells
         run: |
-          PYTHONPATH=. python research/phase30_7_bear_put_pnl.py             --data-root data/cache/phase30_2_rissin --spot-root data/cache/phase30_5_nifty_spot             --out-root reports/phase30_7_smoke_stress --smoke --slippage 0.40
-
-      - name: Full Base matrix
-        run: |
-          PYTHONPATH=. python research/phase30_7_bear_put_pnl.py             --data-root data/cache/phase30_2_rissin --spot-root data/cache/phase30_5_nifty_spot             --out-root reports/phase30_7_base --slippage 0.20
-
-      - name: Full Stress matrix
-        run: |
-          PYTHONPATH=. python research/phase30_7_bear_put_pnl.py             --data-root data/cache/phase30_2_rissin --spot-root data/cache/phase30_5_nifty_spot             --out-root reports/phase30_7_stress --slippage 0.40
-
-      - name: Persist reports
-        if: always()
+          set -euo pipefail
+          PYTHONPATH=. python research/phase30_7_bear_put_aggregate.py \
+            --root shard_results --out-root reports/phase30_7_aggregate
+      - name: Persist aggregate summaries
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          for d in reports/phase30_7_smoke_base reports/phase30_7_smoke_stress reports/phase30_7_base reports/phase30_7_stress; do
-            find "$d" -maxdepth 1 -type f \( -name summary.json -o -name leaderboard.csv -o -name diagnostics.json \) -print0 2>/dev/null |
-              xargs -0 -r git add -f --
-          done
+          git add -f \
+            reports/phase30_7_aggregate/base/summary.json \
+            reports/phase30_7_aggregate/base/leaderboard.csv \
+            reports/phase30_7_aggregate/base/diagnostics.json \
+            reports/phase30_7_aggregate/stress/summary.json \
+            reports/phase30_7_aggregate/stress/leaderboard.csv \
+            reports/phase30_7_aggregate/stress/diagnostics.json
           if ! git diff --cached --quiet; then
-            git commit -m "Phase 30.7: persist Bear Put Base Stress matrix results"
+            git commit -m "Phase 30.7: aggregate sharded Bear Put Base Stress matrix"
             git push origin HEAD:phase-30.7-bear-put-contract-interpretation-grid-v1
           fi
-
-      - name: Upload results
-        if: always()
+      - name: Upload aggregate results
         uses: actions/upload-artifact@v4
         with:
-          name: phase30-7-bear-put-base-stress-results
-          path: |
-            reports/phase30_7_smoke_base
-            reports/phase30_7_smoke_stress
-            reports/phase30_7_base
-            reports/phase30_7_stress
+          name: phase30-7-bear-put-aggregate-results
+          path: reports/phase30_7_aggregate
