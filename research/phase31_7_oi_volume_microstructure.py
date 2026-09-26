@@ -144,7 +144,7 @@ def load_prices(con, expiry_map, features):
                 END AS exec_px
             FROM src s
             WHERE s.trade_date IN ({date_sql})
-              AND (s.strike IN (SELECT UNNEST(?::DOUBLE[])))
+              AND s.strike IN ({strike_sql})
               AND s.time_str IN ('09:31:00','15:10:00')
               AND s.option_type IN ('CE','PE')
               AND ((s.time_str='09:31:00' AND s.open_px>0)
@@ -153,7 +153,9 @@ def load_prices(con, expiry_map, features):
         strikes=sorted(set(float(x) for x in active.atm.tolist()) |
                        set(float(x)+WING for x in active.atm.tolist()) |
                        set(float(x)-WING for x in active.atm.tolist()))
-        z=con.execute(q,[strikes]).df()
+        strike_sql=",".join(str(x) for x in strikes)
+        q=q.format(strike_sql=strike_sql)
+        z=con.execute(q).df()
         if z.empty:
             continue
         for r in z.itertuples(index=False):
