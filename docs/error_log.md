@@ -426,3 +426,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0377 | 2026-09-26 | Phase 31.3 persistence | The corrected rerun still inherited the extra closing brace in the workflow's git-push ref expression, so Base/Stress calculations and accounting validation passed but persistence failed with a non-fast-forward push to the stray ref | Run 36242698184 produced valid Base/Stress artifacts and uploaded them, but repository persistence was not accepted | Remove the extra brace and rerun; accept numerical results only after the corrected run persists the artifacts to the intended branch | OPEN — workflow fixed in commit 19044f68; rerun pending |
+
+
+| E0377 | 2026-09-26 | Phase 31.3 persistence | The first corrected rerun calculated valid Base/Stress results but failed repository persistence because of an extra closing brace in the git-push ref expression | Numerical artifacts existed but the intended branch did not receive the authoritative report | Corrected the workflow ref expression and persisted the final Phase 31.3 report/artifacts; accounting identity passed for both regimes | CLOSED — superseded by completed reproduction |
