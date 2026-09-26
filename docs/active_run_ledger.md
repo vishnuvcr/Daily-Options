@@ -189,3 +189,11 @@ Earlier Phase 30.2 runs were cancelled/invalidated before numerical execution du
 
 Run 36213335815 is quarantined for runtime only. No Falcon P&L has been accepted.
 
+
+
+## 2026-09-26 — Phase 31.5 finite ORB discovery closure
+| Phase | Branch | Workflow run | Status | Accepted P&L |
+|---|---|---:|---|---|
+| 31.5 | phase-31.5-finite-candidate-testing-v1 | **36245174834** | Base + Stress complete; artifact persisted/uploaded; 18-cell grid audited | **No — discovery only** |
+
+Result: 0 candidates met the preregistered ₹5,000/week consistency gate and 70% positive-week gate. No WFA/OOS branch opened.
