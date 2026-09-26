@@ -426,3 +426,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0344 | 2026-09-26 | Phase 30.9 NSE VIX coverage | A successful endpoint request returned only 70 rows through 2025-12-10 for the full 2025-09-01 to 2026-08-31 query, demonstrating silent truncation/limited-window behavior | The 70-row file was quarantined as incomplete; no P&L authorized | Added coverage validation and an official NSE Indices `BindHistoricalIndiaVixData` fallback with overlap audit against the NSE response; full study-window coverage is now a hard prerequisite | OPEN — fallback rerun |
+
+
+| E0345 | 2026-09-26 | Phase 30.10 workflow matrix interpolation | First numerical launcher run 36234800534 used escaped GitHub Actions matrix expressions, producing literal values such as \\0 and \\base and failing before P&L | No numerical result was accepted; only the four unit tests were observed passing in one shard before the shell-variable failure | Removed the escaping from the checked-in YAML and enabled cancel-in-progress so stale runs cannot overlap; rerun 36234875446 is the authoritative attempt | CLOSED — stale run cancelled; corrected run active |
