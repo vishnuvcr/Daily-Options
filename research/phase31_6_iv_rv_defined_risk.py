@@ -129,12 +129,26 @@ def main():
     con.close()
     trades=pd.DataFrame(rows); trades.to_csv(out/"trades.csv",index=False); pd.DataFrame(diag).to_csv(out/"diagnostics.csv",index=False)
     if trades.empty: raise SystemExit("No executable IV-RV trades")
-    summaries=[]
+    # Emit every preregistered cell, including zero-trade cells.
+    observed = {}
     for keys,g in trades.groupby(["threshold","side","wing","bucket","friction"]):
         wk=g.assign(week=pd.to_datetime(g.day).dt.to_period("W-SUN").astype(str)).groupby("week").net_pnl.sum()
-        summaries.append({"threshold":float(keys[0]),"side":keys[1],"wing":int(keys[2]),"bucket":int(keys[3]),"friction":keys[4],
-          "trades":len(g),"total_net":g.net_pnl.sum(),"mean_weekly_net":wk.mean(),"median_weekly_net":wk.median(),
-          "positive_week_rate":(wk>0).mean(),"worst_trade":g.net_pnl.min(),"worst_week":wk.min(),
-          "total_slippage":g.slippage_cost.sum(),"total_transaction_costs":g.transaction_costs.sum()})
+        observed[(float(keys[0]),keys[1],int(keys[2]),int(keys[3]),keys[4])] = {
+          "trades":int(len(g)),"total_net":float(g.net_pnl.sum()),"mean_weekly_net":float(wk.mean()),
+          "median_weekly_net":float(wk.median()),"positive_week_rate":float((wk>0).mean()),
+          "worst_trade":float(g.net_pnl.min()),"worst_week":float(wk.min()),
+          "total_slippage":float(g.slippage_cost.sum()),"total_transaction_costs":float(g.transaction_costs.sum())
+        }
+    friction="base" if args.slippage==.20 else "stress"
+    summaries=[]
+    for thr in THRESHOLDS:
+      for side in ("SHORT_CONDOR","LONG_STRADDLE"):
+        for bucket in EXPIRY_BUCKETS:
+          wing=200
+          key=(float(thr),side,wing,int(bucket),friction)
+          summaries.append({"threshold":float(thr),"side":side,"wing":wing,"bucket":int(bucket),"friction":friction,
+            **observed.get(key, {"trades":0,"total_net":0.0,"mean_weekly_net":0.0,"median_weekly_net":0.0,
+              "positive_week_rate":0.0,"worst_trade":float("nan"),"worst_week":float("nan"),
+              "total_slippage":0.0,"total_transaction_costs":0.0})})
     pd.DataFrame(summaries).to_csv(out/"cell_summary.csv",index=False)
 if __name__=="__main__": main()
