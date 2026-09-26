@@ -783,3 +783,8 @@ Run **36252470696** stopped at the unit-test stage. The failing test still expec
 Run **36252561747** passed all seven regression tests and the corrected global data gate, then failed at the first numerical Base stage in `attach_expiry`. The traceback showed a pandas `Timestamp` being compared with Python `datetime.date` expiry keys. Stress and Validate were skipped. No P&L is accepted from run 6.
  
 E0404 is now logged. The branch converts each panel trade date to a Python date before selecting the nearest on/after NIFTY expiry, with a direct regression test. The frozen strategy grid and cost model are unchanged.
+
+ 
+## 2026-09-26 — Phase 31.8 run 7 closure / test-fixture correction
+ 
+Run **36252692972** stopped in unit tests after the engine correction. Seven tests passed; the new expiry regression alone failed because its fixture expected string labels rather than the Python-date keys returned by the actual expiry map. E0405 is closed after correcting the test. No data acquisition or P&L computation ran.
