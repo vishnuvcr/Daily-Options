@@ -26,34 +26,45 @@ def fetch_vix(start: str, end: str) -> list[dict]:
             "Connection": "keep-alive",
         }
     )
-    # NSE may return 403 on the public landing page from CI IPs.
-    # The historical endpoint itself is the required data request.
-    params = {
-        "from": pd.Timestamp(start).strftime("%d-%m-%Y"),
-        "to": pd.Timestamp(end).strftime("%d-%m-%Y"),
-    }
-    r = s.get(NSE_VIX_URL, params=params, timeout=60)
-    if r.status_code == 403:
-        # One deterministic retry with the browser-like headers most NSE clients use.
-        retry_headers = {
-            "User-Agent": s.headers["User-Agent"],
-            "Referer": "https://www.nseindia.com/reports-indices-historical-vix",
-            "Origin": "https://www.nseindia.com",
-            "Accept": "application/json, text/plain, */*",
-            "Sec-Fetch-Dest": "empty",
-            "Sec-Fetch-Mode": "cors",
-            "Sec-Fetch-Site": "same-origin",
+
+    def fetch_chunk(chunk_start: date, chunk_end: date) -> list[dict]:
+        params = {
+            "from": chunk_start.strftime("%d-%m-%Y"),
+            "to": chunk_end.strftime("%d-%m-%Y"),
         }
-        r = s.get(NSE_VIX_URL, params=params, headers=retry_headers, timeout=60)
-    r.raise_for_status()
-    payload = r.json()
-    if isinstance(payload, dict):
-        rows = payload.get("data") or payload.get("records") or payload
-    else:
-        rows = payload
-    if not isinstance(rows, list):
-        raise RuntimeError(f"Unexpected NSE VIX response type: {type(rows)!r}")
-    return rows
+        r = s.get(NSE_VIX_URL, params=params, timeout=60)
+        if r.status_code == 403:
+            retry_headers = {
+                "User-Agent": s.headers["User-Agent"],
+                "Referer": "https://www.nseindia.com/reports-indices-historical-vix",
+                "Origin": "https://www.nseindia.com",
+                "Accept": "application/json, text/plain, */*",
+                "Sec-Fetch-Dest": "empty",
+                "Sec-Fetch-Mode": "cors",
+                "Sec-Fetch-Site": "same-origin",
+            }
+            r = s.get(NSE_VIX_URL, params=params, headers=retry_headers, timeout=60)
+        r.raise_for_status()
+        payload = r.json()
+        if isinstance(payload, dict):
+            rows = payload.get("data") or payload.get("records") or payload
+        else:
+            rows = payload
+        if not isinstance(rows, list):
+            raise RuntimeError(f"Unexpected NSE VIX response type: {type(rows)!r}")
+        return rows
+
+    # The historical endpoint currently caps a single response at about 70
+    # trading-day rows. Use deterministic 60-calendar-day chunks to avoid
+    # silent truncation of the registered research window.
+    start_d, end_d = date.fromisoformat(start), date.fromisoformat(end)
+    out: list[dict] = []
+    chunk_start = start_d
+    while chunk_start <= end_d:
+        chunk_end = min(end_d, chunk_start + pd.Timedelta(days=59).to_pytimedelta())
+        out.extend(fetch_chunk(chunk_start, chunk_end))
+        chunk_start = chunk_end + pd.Timedelta(days=1).to_pytimedelta()
+    return out
 
 
 def normalize(rows: list[dict]) -> pd.DataFrame:
