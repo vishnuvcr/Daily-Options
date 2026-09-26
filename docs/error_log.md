@@ -380,3 +380,12 @@ Authoritative run **36218439278** reached the corrected Falcon simulator but fai
 The fix is code-only and economic-rule-neutral: order the raw source rows by `ts_raw`, then perform the already-registered explicit IST timestamp normalization in pandas. A fresh deterministic Base/Stress run is required.
 
 Status: **CLOSED — corrected in commit b731513c6e22c9f2a3774c5e90db0eeb4f022c9a; rerun required**
+
+
+## E0319 — Phase 30.2 zero-setup timestamp representation correction (2026-09-26)
+
+Authoritative run **36218652778** completed Base and Stress successfully at the CI level but again produced **0/32 candidate setups and 0 trades** in both friction settings. This remains non-evidentiary for strategy performance. The public Rissin schema declares the timestamp as IST; the remaining implementation risk is that the Parquet materialization may be timezone-naive while semantically representing IST. The previous normalization treated every raw value as UTC, which can shift a naive 09:30 IST signal to 15:00 IST.
+
+The simulator is corrected to normalize both timezone-aware (+05:30) and timezone-naive IST representations to the same naive Asia/Kolkata minute timestamp. A dedicated regression test now verifies both forms map to 09:30 IST. Economic rules, 270-cell grid, source, cost model and promotion gate are unchanged.
+
+Status: **OPEN — deterministic rerun required**
