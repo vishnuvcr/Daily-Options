@@ -130,3 +130,7 @@ The phase closes as:
 - **DATA-BLOCKED — required VIX/option data cannot be verified**.
 
 No result-driven reinterpretation is allowed.
+
+## Data-acquisition hardening — 2026-09-26
+
+The NSE historical VIX endpoint was verified in CI but returned only 70 rows through 2025-12-10 when asked for the full registered study window. This partial result is not accepted. The acquisition code now treats coverage as a hard invariant and falls back to the official NSE Indices historical India VIX endpoint `/Backpage.aspx/BindHistoricalIndiaVixData`, using its full date range and recording an overlap audit with the NSE response. Numerical testing remains blocked until the fallback covers 2025-09-01 through 2026-08-31.
