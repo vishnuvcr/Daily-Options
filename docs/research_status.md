@@ -764,3 +764,10 @@ The earlier E0398 diagnosis was therefore superseded; no P&L was accepted. E0400
 Run **36252203841** passed tests and acquisition but failed in `merge_asof`: DuckDB produced datetime64 microseconds for the NIFTY date key while the global series was datetime64 nanoseconds. The prior full-frame handoff defect is fixed; E0401 records this distinct dtype-unit issue.
  
 The branch now coerces both left and right merge keys inside `build_panel` to explicit datetime64[ns], with a regression test using datetime64[us]. No P&L is accepted.
+
+ 
+## 2026-09-26 — Phase 31.8 run 4 closure / warm-up gate correction
+ 
+Run **36252301406** completed all engineering and numerical *steps as commands*, but the global gate returned **FAIL** at 94.788% because the 64 deterministic 60-observation warm-up sessions were included in the coverage denominator. Base/Stress discovery were correctly skipped by the launcher; no P&L exists from this run.
+ 
+The plan is now clarified by methodological erratum 31.8-1: the 95% coverage threshold applies to feature-eligible sessions after the required prior-only lookback, while raw sessions and warm-up exclusions are reported separately. E0402 records the correction. The next run will determine whether the actual post-warm-up coverage passes and, only then, execute the 12-cell Base/Stress grid.
