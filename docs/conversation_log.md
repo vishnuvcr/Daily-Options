@@ -132,3 +132,8 @@ The Air Defense family completed both Base and Stress. It achieved a high positi
 User command: **“Ok proceed”**.
 Action: resumed the active Equity Income research frontier from Phase 30.2 Falcon.
 Checkpoint: read the current run ledger/status/error documentation and the Phase 30.2 preregistration before proceeding. Verified authoritative workflow run **36160873596**. Both Base and Stress passed tests and Rissin data acquisition and are in the numerical friction stage. No P&L was accepted. This turn does not record hidden chain-of-thought; only the operational research status is logged.
+
+## 2026-09-26 — Falcon stall diagnosis and runtime-fix rerun
+
+The authoritative Falcon run **36213335815** was found to be abnormally slow after more than six hours in `Run friction`. The stalled run is non-evidentiary. A runtime audit identified repeated full-file Parquet scans and setup-cache accumulation. The frozen 270-cell rule grid was preserved; the engine was reworked to preload exact-expiry slices per calendar, perform selection in memory, process one calendar at a time and release caches explicitly. The workflow now serializes Base and Stress. Authoritative rerun **36216668042** is active with Base executing and Stress queued; no P&L is accepted yet.
+
