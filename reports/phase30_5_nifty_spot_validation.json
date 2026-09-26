@@ -1,0 +1,152 @@
+{
+  "source_repo": "https://github.com/technovusin/nifty50-historical-data",
+  "source_commit": "75f273a2dec36b10f4ded3a00721fae2172edccb",
+  "file_count": 14,
+  "files": [
+    {
+      "file": "data/cache/phase30_5_nifty_spot/NIFTY50_1min_2025.csv",
+      "rows": 93090,
+      "bad_ohlc": 0,
+      "duplicate_timestamps": 0,
+      "start_ist": "2025-01-01 09:15:00+05:30",
+      "end_ist": "2025-12-31 15:29:00+05:30",
+      "sha256": "98793dd66c8638d165904390f1e755bd83b723110624918254ac1a10949dcb7f",
+      "bytes": 6046496
+    },
+    {
+      "file": "data/cache/phase30_5_nifty_spot/NIFTY50_1min_20260101_to_20260908.csv",
+      "rows": 63822,
+      "bad_ohlc": 0,
+      "duplicate_timestamps": 0,
+      "start_ist": "2026-01-01 09:15:00+05:30",
+      "end_ist": "2026-09-08 15:29:00+05:30",
+      "sha256": "8578d7e4d4a5d13acc5183601a298b3b778a4289e7fb70691364907303eb51ff",
+      "bytes": 4654994
+    },
+    {
+      "file": "data/cache/phase30_5_nifty_spot/NIFTY50_1min_20260909.csv",
+      "rows": 375,
+      "bad_ohlc": 0,
+      "duplicate_timestamps": 0,
+      "start_ist": "2026-09-09 09:15:00+05:30",
+      "end_ist": "2026-09-09 15:29:00+05:30",
+      "sha256": "764ae631f9d5d947e76a93e7ba73a16db35a7b18e752e534fb692992cccd64a0",
+      "bytes": 27367
+    },
+    {
+      "file": "data/cache/phase30_5_nifty_spot/NIFTY50_1min_20260910.csv",
+      "rows": 375,
+      "bad_ohlc": 0,
+      "duplicate_timestamps": 0,
+      "start_ist": "2026-09-10 09:15:00+05:30",
+      "end_ist": "2026-09-10 15:29:00+05:30",
+      "sha256": "5cbebc97475ad00be7810b9ab1435280b07682f36316c706e52b201b451e602e",
+      "bytes": 27325
+    },
+    {
+      "file": "data/cache/phase30_5_nifty_spot/NIFTY50_1min_20260911.csv",
+      "rows": 376,
+      "bad_ohlc": 0,
+      "duplicate_timestamps": 0,
+      "start_ist": "2026-09-11 09:15:00+05:30",
+      "end_ist": "2026-09-11 15:30:00+05:30",
+      "sha256": "98a584324984ad7c2d4552eeecd62b829d44fb3e4e058190950b4cfeff79f253",
+      "bytes": 27357
+    },
+    {
+      "file": "data/cache/phase30_5_nifty_spot/NIFTY50_1min_20260915.csv",
+      "rows": 385,
+      "bad_ohlc": 0,
+      "duplicate_timestamps": 0,
+      "start_ist": "2026-09-15 09:15:00+05:30",
+      "end_ist": "2026-09-15 15:39:00+05:30",
+      "sha256": "bd5de51ed1d8f4fd42ba30380a1bddd9e8ebbd8babd3b992f7258e5374df4b2d",
+      "bytes": 28105
+    },
+    {
+      "file": "data/cache/phase30_5_nifty_spot/NIFTY50_1min_20260916.csv",
+      "rows": 376,
+      "bad_ohlc": 0,
+      "duplicate_timestamps": 0,
+      "start_ist": "2026-09-16 09:15:00+05:30",
+      "end_ist": "2026-09-16 15:30:00+05:30",
+      "sha256": "e2bf3c05f4ad90f8131ef640ee164723f358307d292ffdc631f7bc9769e9fa2c",
+      "bytes": 27395
+    },
+    {
+      "file": "data/cache/phase30_5_nifty_spot/NIFTY50_1min_20260917.csv",
+      "rows": 375,
+      "bad_ohlc": 0,
+      "duplicate_timestamps": 0,
+      "start_ist": "2026-09-17 09:15:00+05:30",
+      "end_ist": "2026-09-17 15:29:00+05:30",
+      "sha256": "5ed5b082703b8858db701042ce5b79db07d483e4f6f16c5089f9170d66e1f357",
+      "bytes": 27332
+    },
+    {
+      "file": "data/cache/phase30_5_nifty_spot/NIFTY50_1min_20260918.csv",
+      "rows": 376,
+      "bad_ohlc": 0,
+      "duplicate_timestamps": 0,
+      "start_ist": "2026-09-18 09:15:00+05:30",
+      "end_ist": "2026-09-18 15:30:00+05:30",
+      "sha256": "a89eab723e5fdcddf5cd3b0d7a7af676e22c42e46a50f01ddf5fd2b393b06257",
+      "bytes": 27392
+    },
+    {
+      "file": "data/cache/phase30_5_nifty_spot/NIFTY50_1min_20260921.csv",
+      "rows": 375,
+      "bad_ohlc": 0,
+      "duplicate_timestamps": 0,
+      "start_ist": "2026-09-21 09:15:00+05:30",
+      "end_ist": "2026-09-21 15:29:00+05:30",
+      "sha256": "49b8ba41e9bd8a0b27dda5e0445ac2d891d0b0a7c7e1290a01dbd3df56e2bbee",
+      "bytes": 27075
+    },
+    {
+      "file": "data/cache/phase30_5_nifty_spot/NIFTY50_1min_20260922.csv",
+      "rows": 375,
+      "bad_ohlc": 0,
+      "duplicate_timestamps": 0,
+      "start_ist": "2026-09-22 09:15:00+05:30",
+      "end_ist": "2026-09-22 15:29:00+05:30",
+      "sha256": "601a42d1359bf00016d83c6689434007d18394c7752605d7b0e2f962f16b12e5",
+      "bytes": 27245
+    },
+    {
+      "file": "data/cache/phase30_5_nifty_spot/NIFTY50_1min_20260923.csv",
+      "rows": 376,
+      "bad_ohlc": 0,
+      "duplicate_timestamps": 0,
+      "start_ist": "2026-09-23 09:15:00+05:30",
+      "end_ist": "2026-09-23 15:30:00+05:30",
+      "sha256": "252bd9f13e2eeb1986cca72b5a30cac2c2e07f1296e3677c4a25f66470020731",
+      "bytes": 27372
+    },
+    {
+      "file": "data/cache/phase30_5_nifty_spot/NIFTY50_1min_20260924.csv",
+      "rows": 385,
+      "bad_ohlc": 0,
+      "duplicate_timestamps": 0,
+      "start_ist": "2026-09-24 09:15:00+05:30",
+      "end_ist": "2026-09-24 15:39:00+05:30",
+      "sha256": "84669bc3a47ba1aa334c947e95050431ec769c8ea6d2bd3033d0e6bc511cb80d",
+      "bytes": 27978
+    },
+    {
+      "file": "data/cache/phase30_5_nifty_spot/NIFTY50_1min_20260925.csv",
+      "rows": 385,
+      "bad_ohlc": 0,
+      "duplicate_timestamps": 0,
+      "start_ist": "2026-09-25 09:15:00+05:30",
+      "end_ist": "2026-09-25 15:39:00+05:30",
+      "sha256": "b6d25b3e9708a5ef14e61bdeae154070e3daaad95210e668ea949e38b8042cff",
+      "bytes": 27976
+    }
+  ],
+  "global_start_ist": "2025-01-01 09:15:00+05:30",
+  "global_end_ist": "2026-09-25 15:39:00+05:30",
+  "duplicate_global_timestamps": 0,
+  "resistance_rule_frozen": false,
+  "backtest_authorized": false
+}
