@@ -198,3 +198,8 @@ Run 36252692972 failed before data acquisition because the newly added expiry re
 ## 2026-09-26 — Phase 31.8 run 8 traceback and correction
  
 Run 36252808290 passed tests and gate, then stopped in Base price loading with `KeyError: ['exit_ts'] not in index`. E0406 records the defect. The loader has been corrected to rely only on the existing `date`, `atm`, `expiry` and `horizon` inputs; a regression test covers the column contract.
+
+ 
+## 2026-09-26 — Phase 31.9 preregistration
+ 
+Operational handoff from Phase 31.8: the global-overnight family closed without promotion. A new branch `phase-31.9-vix-rv-gap-opening-direction-v1` was created from the audited Phase 31.8 result. Its hypothesis, finite grid, no-lookahead barrier, official NSE VIX acquisition path, null controls, Base/Stress cost model and promotion gate are written before computation. This log records operational decisions only.
