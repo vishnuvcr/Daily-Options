@@ -5,6 +5,9 @@ on:
   push:
     paths:
       - ".github/phase30-2-diagnostic-launch.txt"
+  pull_request:
+    paths:
+      - ".github/phase30-2-diagnostic-launch.txt"
 
 permissions:
   contents: write
