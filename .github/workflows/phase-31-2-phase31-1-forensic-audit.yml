@@ -83,6 +83,8 @@ jobs:
                 f"Audited sample: {a.get('sample_rows',0)} executed days; exact raw-data reconciliation matches: {a.get('sample_matches',0)}; mismatches: {a.get('sample_mismatches',0)}.","",
                 f"Reference Base total net: ₹{a.get('reference_total_net',0):,.2f}; reference Base mean weekly net: ₹{a.get('reference_mean_week',0):,.2f}.",
                 f"Reference Stress total net: ₹{stress.get('total_net',0):,.2f}; reference Stress mean weekly net: ₹{stress.get('mean_weekly_net',0):,.2f}.","",
+                f"Persisted Base slippage identified in leg records: ₹{a.get('persisted_total_slippage_cost',0):,.2f}; slippage-adjusted total net: ₹{a.get('slippage_adjusted_total_net',0):,.2f}; slippage-adjusted mean weekly net: ₹{a.get('slippage_adjusted_mean_week',0):,.2f}; slippage-adjusted positive-week rate: {a.get('slippage_adjusted_positive_week_rate',0)*100:.2f}%.","",
+                "The persisted artifact reconciles to raw gross P&L minus transaction/statutory costs. The current checked-in simulator instead applies slippage inside execution gross. This semantic/provenance difference is why the Phase 31.1 result remains quarantined." ,
                 "The audit is diagnostic and does not tune parameters. The central expiry loss band is not treated as equivalent to the 15:10 mark-to-market outcome.","",
                 "See forensic_audit.json, sample_reconciliation.csv, and payoff_diagnostics.csv."
               ]
