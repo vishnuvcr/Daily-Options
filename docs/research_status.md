@@ -662,3 +662,14 @@ The next frontier is a separate Phase 30.9 source-fidelity reconstruction of the
 Phase 30.9 VIX coverage is complete: **248 unique trading-day rows from 2025-09-01 through 2026-08-31** are cached in the repository. No incomplete 70-row endpoint result is used.
 
 Phase 30.10 has started the frozen **720-cell per friction regime / 1,440 total-cell** Air Defense matrix. Workflow **36234875446** is the corrected run; 24 shard jobs are executing (12 Base + 12 Stress). The prior run 36234800534 was cancelled after a YAML matrix-variable interpolation defect and produced no accepted P&L.
+
+
+## 2026-09-26 — Phase 30.11 rolling WFA execution
+
+Phase 30.10 is numerically complete and audited: **720 Base + 720 Stress cells**, with **31 cells passing both friction gates**. This is discovery evidence only.
+
+Phase 30.11 is now the active validation phase. The corrected WFA workflow run is **36235740035**, using three preregistered rolling folds, 720 cells per fold per regime, and no new parameter values.
+
+A first WFA push exposed E0350: Fold 3 test dates were inconsistent with the intended 20-week window. The fold, test and plan are now synchronized. The corrected run is executing; no WFA survivor has yet been accepted.
+
+Phase 30.12 remains blocked until the WFA aggregate audit is complete.
