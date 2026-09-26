@@ -572,3 +572,12 @@ No numerical Bear Put test has been started and no rule values are being invente
 
 The prior authoritative Falcon run **36213335815** was quarantined for runtime failure after Base and Stress both remained in `Run friction` beyond six hours. No P&L was accepted. A static audit identified repeated full-file Parquet scans per exact leg/strike and setup-level cached DataFrames retained through the whole sweep. Branch **`phase-30.2-falcon-runtime-fix-v1`** preserves the frozen 270-cell source-faithful grid and changes only execution architecture: bounded exact-expiry loading per calendar, in-memory snapshot/strike/series selection, one-calendar-at-a-time processing, explicit cache release and progress logging. Authoritative rerun **36216668042** is now executing; Base is in friction and Stress is queued by design.
 
+
+
+## 2026-09-26 — Phase 30.7 Bear Put interpretation grid opened
+
+Phase 30.6 spot-only coverage completed the registered 54-cell resistance/trigger matrix. **45/54 definitions met the preregistered feasibility requirement of at least 20 signal weeks**, with eligible definitions spanning 33–53 signal weeks. This filter used only NIFTY spot data and no option P&L.
+
+Phase 30.7 now freezes all 45 eligible entry definitions and explicitly registers the remaining unresolved mechanics: 2 expiry choices × 2 strike constructions × 3 gap-up adjustment thresholds × 2 adjustment waits × 3 risk/exit conventions × 2 time exits. Total registered grid: **6,480 cells**. No cell is selected using option results.
+
+Status: **OPEN — implementation/contract audit before numerical P&L**.
