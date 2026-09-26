@@ -442,3 +442,18 @@ Falcon Phase 30.2 remains the authoritative active numerical run (36160873596; B
 
 The initial corrected Falcon run **36213335815** is quarantined: Base and Stress remained in the friction step for more than six hours. No P&L was accepted. Static audit found repeated full-file Parquet scans and unbounded setup-cache growth. The runtime-fix branch **`phase-30.2-falcon-runtime-fix-v1`** preserves the frozen 270-cell strategy grid and changes only execution architecture. New authoritative run **36216668042** is executing the fixed engine with serialized Base/Stress jobs.
 
+
+
+## 2026-09-26 — Phase 30.7 Bear Put execution-engine checkpoint
+
+Phase 30.7 contract audit is **PASS**. The frozen interpretation grid remains **6,480 cells** (45 eligible source-coverage definitions × 2 expiry choices × 2 strike choices × 3 adjustment gaps × 2 waits × 3 risk/exit conventions × 2 time exits). The cached Rissin option data passed schema/contract/lot-size/execution checks.
+
+Several pre-result implementation defects were found and logged as **E0326–E0332**. They are closed. The current engine preserves timezone-aware option timestamps, normalizes expiry keys, and uses a bounded smoke test of 12 resolved specifications × 36 interpretation combinations. **No Bear Put P&L is accepted yet.**
+
+- [Phase 30.7 interpretation plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.7-bear-put-contract-interpretation-grid-v1/docs/phase30_7_bear_put_contract_interpretation_grid_plan.md)
+- [Phase 30.7 manifest](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.7-bear-put-contract-interpretation-grid-v1/reports/phase30_7_bear_put_interpretation_grid_manifest.json)
+- [Phase 30.7 contract audit](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.7-bear-put-contract-interpretation-grid-v1/reports/phase30_7_bear_put_contract_audit.json)
+- [Phase 30.7 P&L engine](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.7-bear-put-contract-interpretation-grid-v1/research/phase30_7_bear_put_pnl.py)
+- [Phase 30.7 workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.7-bear-put-contract-interpretation-grid-v1/.github/workflows/phase-30.7-bear-put-pnl.yml)
+- [Research status](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.7-bear-put-contract-interpretation-grid-v1/docs/research_status.md)
+- [Error log](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.7-bear-put-contract-interpretation-grid-v1/docs/error_log.md)
