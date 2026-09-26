@@ -26,3 +26,12 @@ def test_historical_lot_sizes_are_frozen():
     assert lot_size("2024-04-26") == 25
     assert lot_size("2024-11-21") == 75
     assert lot_size("2026-01-06") == 65
+
+
+def test_yz_returns_finite_value_on_twenty_one_sessions():
+    import pandas as pd
+    d=pd.date_range("2026-01-01",periods=21,freq="B")
+    g=pd.DataFrame({"open":100.0,"high":101.0,"low":99.0,"close":100.5},index=d)
+    v=yz_vol(g)
+    assert v is not None
+    assert math.isfinite(v)
