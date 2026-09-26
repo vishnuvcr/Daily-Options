@@ -659,3 +659,7 @@ Phase 31.8 is closed without promotion: **0/12** cells passed the ₹5,000/week 
 [Phase 31.9 branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-31.9-vix-rv-gap-opening-direction-v1) · [Phase 31.9 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.9-vix-rv-gap-opening-direction-v1/docs/phase31_9_plan.md) · [Phase 31.9 literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.9-vix-rv-gap-opening-direction-v1/docs/phase31_9_literature_review.md) · [Phase 31.9 launcher](https://github.com/vishnuvcr/Daily-Options/blob/main/.github/workflows/phase-31-9-main-launcher.yml)
  
 The family is preregistered before numerical execution; no result-driven regime or threshold tuning is permitted.
+
+## 2026-09-26 — Phase 31.9 run 1 closure
+
+Run 36253432190 stopped in unit tests before acquisition; three test/source authoring defects were corrected (E0407–E0409). No Phase 31.9 P&L exists yet. Run 2 is the corrected authoritative attempt.
