@@ -1,0 +1,101 @@
+name: Phase 31.7 - OI-volume microstructure
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    paths:
+      - "docs/phase31_7_plan.md"
+      - "research/phase31_7_oi_volume_microstructure.py"
+      - "tests/test_phase31_7_oi_volume_microstructure.py"
+      - ".github/workflows/phase-31-7-oi-volume-microstructure.yml"
+      - ".github/phase31_7-run.txt"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase31-7-oi-volume-microstructure
+  cancel-in-progress: false
+
+jobs:
+  discovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: python -m pip install --disable-pip-version-check pandas==2.3.2 numpy==2.1.3 duckdb==1.3.2 pyarrow==19.0.1 pytest==8.4.2 huggingface_hub==0.35.3
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_phase31_7_oi_volume_microstructure.py
+      - name: Cache pinned NIFTY source
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase31_trademarkk
+          key: phase31-trademarkk-51ca58c-v1
+          restore-keys: |
+            phase31-trademarkk-51ca58c-
+            phase30-trademarkk-51ca58c-
+      - name: Acquire or reuse exact-expiry NIFTY data
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase31_trademarkk
+          if [ ! -f data/cache/phase31_trademarkk/index/NIFTY.parquet ]; then
+            python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="thetrademarkk/india-index-options-1m",repo_type="dataset",revision="51ca58c",local_dir="data/cache/phase31_trademarkk",allow_patterns=["index/NIFTY.parquet","options/NIFTY/*.parquet"])'
+          fi
+      - name: Data gate
+        run: |
+          PYTHONPATH=. python research/phase31_7_oi_volume_microstructure.py --data data/cache/phase31_trademarkk --out reports/phase31_7/gate --gate-only
+      - name: Run Base discovery
+        run: |
+          python - <<'PY'
+          import json,sys
+          g=json.load(open("reports/phase31_7/gate/data_gate.json"))
+          if g["status"]!="PASS":
+              print("DATA_GATE_FAIL")
+              sys.exit(0)
+          PY
+          PYTHONPATH=. python research/phase31_7_oi_volume_microstructure.py --data data/cache/phase31_trademarkk --out reports/phase31_7/base --slippage 0.20
+      - name: Run Stress discovery
+        run: |
+          python - <<'PY'
+          import json,sys
+          g=json.load(open("reports/phase31_7/gate/data_gate.json"))
+          if g["status"]!="PASS":
+              print("DATA_GATE_FAIL")
+              sys.exit(0)
+          PY
+          PYTHONPATH=. python research/phase31_7_oi_volume_microstructure.py --data data/cache/phase31_trademarkk --out reports/phase31_7/stress --slippage 0.40
+      - name: Validate outputs
+        run: |
+          python - <<'PY'
+          import json,pandas as pd
+          g=json.load(open("reports/phase31_7/gate/data_gate.json"))
+          if g["status"]=="PASS":
+              for k in ["base","stress"]:
+                  x=pd.read_csv(f"reports/phase31_7/{k}/true_cell_summary_{k}.csv")
+                  assert len(x)==12,(k,len(x))
+                  assert set(x.friction)=={k}
+                  n=pd.read_csv(f"reports/phase31_7/{k}/null_summary_{k}.csv")
+                  assert len(n)==60,(k,len(n))
+                  assert set(n.null_seed)=={101,202,303,404,505}
+          PY
+      - name: Persist outputs
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f reports/phase31_7
+          if ! git diff --cached --quiet; then
+            git commit -m "Phase 31.7: persist OI-volume discovery outputs"
+            git push origin HEAD:"${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
+          fi
+      - name: Upload artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase31-7-oi-volume-microstructure
+          path: reports/phase31_7/
