@@ -130,3 +130,6 @@ A new branch **`phase-30.2-falcon-runtime-fix-v1`** was created from the audited
 
 The next run is the only accepted numerical evidence for this runtime-fix branch; no result from the stalled run is promoted.
 
+
+
+2026-09-26 — Phase 30.2 E0318 correction: authoritative run 36218439278 failed in both Base and Stress before simulation because load_expiry_slice projected timestamp as ts_raw but ordered by ts. This is an implementation defect, not strategy evidence. The SQL was corrected to order by ts_raw; no economic rule or frozen grid changed. Fresh rerun required.
