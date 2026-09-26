@@ -64,3 +64,8 @@ def test_null_seeds_are_deterministic():
     src=Path("research/phase31_7_oi_volume_microstructure.py").read_text(encoding="utf-8")
     assert "CAST(o.timestamp AS TIME)" not in src
     assert "strftime(CAST(o.timestamp AS TIMESTAMP), '%H:%M:%S')" in src
+
+
+def test_ist_execution_date_derives_from_timestamp_not_dataset_day():
+    ts=pd.Timestamp("2026-01-01 18:45:00",tz="UTC")
+    assert ts.tz_convert("Asia/Kolkata").date().isoformat()=="2026-01-02"
