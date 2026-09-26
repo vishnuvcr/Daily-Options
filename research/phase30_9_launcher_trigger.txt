@@ -8,3 +8,5 @@ Retry chunked NSE VIX acquisition with serialized branch persistence.
 Retry Phase 30.9 using full-window Nifty Indices VIX fallback and overlap audit.
 2026-09-26T16:31:00+05:30
 Phase 30.10 launch marker.
+2026-09-26T16:34:00+05:30
+Phase 30.10 rerun after matrix-expression fix.
