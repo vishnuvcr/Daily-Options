@@ -635,3 +635,16 @@ Phase 30.12 final holdout remains blocked until the WFA aggregate produces audit
 The first packed-fold WFA topology was superseded after execution/cancellation issues. WFA v2 splits the validation into **72 independent jobs** (3 folds × 12 definition shards × 2 regimes) and audits 144 leaderboard/weekly files before any survivor is accepted.
 
 Clean v2 run **36236257189** is queued. The preceding v2 run **36236194154** is closed with failures caused by the WFA engine scope declaration; those results are quarantined.
+
+## 2026-09-26 — Phase 31.1 fixed-ratio audit and next frontier
+
+Phase 31.1 tested the fixed NIFTY 09:30 ratio structure (2x +200 CE, 2x -200 PE, 1x -400 PE; exit 15:10) on the pinned exact-expiry source across 1,209 executable trading days / 260 calendar weeks.
+
+- Base slippage ₹0.20/order: total net **-₹537,097.06**; mean weekly net **-₹2,065.76**; median weekly net **-₹2,534.49**; positive-week rate **26.92%**; max daily drawdown **-₹545,051.50**.
+- Stress slippage ₹0.40/order: total net **-₹537,032.22**; mean weekly net **-₹2,065.51**; median weekly net **-₹2,534.28**; positive-week rate **26.92%**; max daily drawdown **-₹544,992.80**.
+- Execution coverage: **97.97%**; 25 trading days had no complete executable trade.
+- The ₹5,000/week mean, median and 70% positive-week gates all failed in both regimes.
+
+Decision: **RETIRED / NEGATIVE**. No WFA or holdout promotion; no result-driven tuning is authorized. Implementation defects E0357–E0360 were fixed and logged before accepting this numerical result.
+
+The next source-faithful frontier is **Phase 30.13 — Equity Income Low-VIX Diagonal source resolution** on branch `phase-30.13-equity-income-low-vix-diagonal-source-resolution-v1`. Numerical P&L remains blocked until its transcript-defined mechanics are fully resolved.
