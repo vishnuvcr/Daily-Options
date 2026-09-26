@@ -227,6 +227,28 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
                                 stop_ts=rr.ts+pd.Timedelta(minutes=1); break
                             if target_frac is not None and pnl>=target_frac*(r.long_strike-r.short_strike):
                                 target_ts=rr.ts+pd.Timedelta(minutes=1); break
+                        reason="STOP" if stop_ts is not None else "TARGET" if target_ts is not None else "TIME_EXIT"
+                        xt=stop_ts or target_ts or exit_ts
+                        if stop_ts is not None or target_ts is not None:
+                            le2=exact_or_next(L,xt,True); se2=exact_or_next(P,xt,True)
+                        else:
+                            le2=exact_or_next(L,exit_ts); se2=exact_or_next(P,exit_ts)
+                        if le2 is None or se2 is None: edge+=1; continue
+                        orders=[
+                            {"date":r.signal_date,"side":1,"price":fill_price(float(le.open_px),1,slip),"qty":lot},
+                            {"date":r.signal_date,"side":-1,"price":fill_price(float(se.open_px),-1,slip),"qty":lot},
+                            {"date":pd.Timestamp(xt).date(),"side":1,"price":fill_price(float(le2.open_px),1,slip),"qty":lot},
+                            {"date":pd.Timestamp(xt).date(),"side":-1,"price":fill_price(float(se2.open_px),-1,slip),"qty":lot},
+                        ]
+                        if adj is not None:
+                            orders.insert(2,{"date":pd.Timestamp(adj.ts).date(),"side":-1,
+                                             "price":fill_price(float(adj.open_px),-1,slip),"qty":lot})
+                            if reversal_ts is not None and reversal_ts<=pd.Timestamp(xt) and reversal_px is not None:
+                                orders.insert(3,{"date":pd.Timestamp(reversal_ts).date(),"side":1,
+                                                 "price":fill_price(float(reversal_px),1,slip),"qty":lot})
+                            else:
+                                orders.append({"date":pd.Timestamp(xt).date(),"side":1,
+                                               "price":fill_price(float(se2.open_px),1,slip),"qty":lot})
                         gross=sum((-1 if o["side"]>0 else 1)*o["price"]*o["qty"] for o in orders)
                         net=gross-cost(orders,slip)
                         iso=pd.Timestamp(r.signal_date).isocalendar(); week=f"{int(iso.year)}-W{int(iso.week):02d}"
