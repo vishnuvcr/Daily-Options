@@ -750,3 +750,10 @@ The literature review is persisted at `docs/phase31_8_literature_review.md`. The
 Run **36251942190** completed dependency installation, unit tests, NIFTY cache and global-data acquisition, then failed in the global data-gate stage before Base/Stress. No P&L was produced. The acquired six-index cache is persisted with yfinance **1.7.0**, date coverage beginning 2021-07-01 (HSI 2021-07-02) through 2026-08-31.
  
 The branch audit identified **E0398**: the NIFTY and global date keys were represented as Python `date` objects in the `merge_asof` alignment path. The engine is now corrected to normalize both sides to datetime64, while keeping `allow_exact_matches=False` and the registered 60-observation prior-only standardization. A regression test now exercises the merge-key barrier. A fresh authoritative rerun is required.
+
+ 
+## 2026-09-26 — Phase 31.8 run 2 closure / actual build-panel defect
+ 
+Run **36252076237** passed all unit tests and data acquisition but failed at the same gate step. The authoritative traceback showed the real defect: `main()` selected only `date/open_px/close_px` into a reduced `sessions` frame and then passed that frame to `build_panel`, which expects the full NIFTY frame including `time`.
+ 
+The earlier E0398 diagnosis was therefore superseded; no P&L was accepted. E0400 records the actual defect. The branch now passes the full `idx` frame to `build_panel` and adds a regression test. Datetime64 normalization remains in place as a separate robustness correction.
