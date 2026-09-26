@@ -437,3 +437,8 @@ The former daily ₹1,000 objective is not being used for the Equity Income YouT
 
 ## 2026-09-25 — Research continuation checkpoint
 Falcon Phase 30.2 remains the authoritative active numerical run (36160873596; Base + Stress friction still executing). In parallel, the Equity Income transcript archive infrastructure was advanced: the malformed keyless Python archive writer was corrected, and the canonical archive workflow was promoted to `main` so the weekly schedule and manual dispatch can operate while updating the dedicated archive branch. The Bear Put candidate remains source-resolution blocked until its material rules are recovered from primary transcript evidence; no public description is being substituted for missing rule fields.
+
+### Phase 30.2 Falcon runtime correction — 2026-09-26
+
+The initial corrected Falcon run **36213335815** is quarantined: Base and Stress remained in the friction step for more than six hours. No P&L was accepted. Static audit found repeated full-file Parquet scans and unbounded setup-cache growth. The runtime-fix branch **`phase-30.2-falcon-runtime-fix-v1`** preserves the frozen 270-cell strategy grid and changes only execution architecture. New authoritative run **36216668042** is executing the fixed engine with serialized Base/Stress jobs.
+
