@@ -727,3 +727,10 @@ Next authoritative run: **Phase 31.8 run 2** from branch head `d73ce5e48d2d40a5a
 Run **36252076237** passed unit tests and global acquisition but failed before P&L in `build_panel`. The traceback showed that `main()` had passed a reduced NIFTY session frame without `time` into the session builder. E0400 records the actual defect; the earlier E0398 diagnosis is explicitly superseded.
  
 The corrected branch now passes the full NIFTY index frame and has a regression test. Next authoritative run: **run 3** from phase branch head `c08f1bc9faa126dbe5eaae84075963d0a66f18be`.
+
+ 
+## 2026-09-26 — Phase 31.8 run 3 closure / run 4 frontier
+ 
+Run **36252203841** reached the no-lookahead panel but failed on a pandas datetime-unit mismatch in `merge_asof` (microseconds vs nanoseconds). E0401 is logged. The corrected branch now forces both merge keys to datetime64[ns] inside `build_panel` and covers the case with a regression test.
+ 
+Next authoritative run: **Phase 31.8 run 4** from branch head `902098ba07db15388a99d32a0c5b5b74f038b3ad`.
