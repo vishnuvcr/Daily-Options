@@ -77,12 +77,20 @@ def build_panel(global_data, nifty):
 
 def data_gate(panel, root):
     manifest=json.loads((root/"manifest.json").read_text()) if (root/"manifest.json").exists() else {}
-    eligible=len(panel)
-    complete=int(panel.all_global_available.sum()) if eligible else 0
-    prior_ok=int(panel.all_prior.sum()) if eligible else 0
+    raw_sessions=int(len(panel))
+    feature_ready=(
+        panel[[f"z_{m}" for m in MARKETS]].notna().all(axis=1)
+        & panel["all_prior"].astype(bool)
+    )
+    eligible=int(feature_ready.sum())
+    complete=int((panel["all_global_available"] & panel["all_prior"]).sum())
+    warmup_excluded=int(raw_sessions-eligible)
+    prior_ok=int(panel.all_prior[feature_ready].sum()) if eligible else 0
     return {
         "status":"PASS" if eligible and complete/eligible>=0.95 and prior_ok==complete else "FAIL",
-        "eligible_nifty_sessions":int(eligible),
+        "raw_nifty_sessions":raw_sessions,
+        "feature_eligible_nifty_sessions":eligible,
+        "warmup_excluded_sessions":warmup_excluded,
         "complete_global_feature_sessions":complete,
         "complete_global_feature_coverage":float(complete/eligible) if eligible else 0.0,
         "all_prior_sessions_ok":prior_ok==complete,
