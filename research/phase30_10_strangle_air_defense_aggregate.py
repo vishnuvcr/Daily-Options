@@ -60,7 +60,7 @@ def main() -> None:
         }
         (out / "summary.json").write_text(json.dumps(summary, indent=2, default=str) + "\n")
         diagnostics = {
-            "shard_files": int(sum(1 for f in files if regime in f.parts)),
+            "shard_files": int(sum(1 for f in files if f.parent.name.lower().endswith("-" + regime))),
             "trade_records": int(z["trades"].sum()),
             "max_execution_coverage": float(z["execution_coverage"].max()),
             "vix_rows_expected": 248,
