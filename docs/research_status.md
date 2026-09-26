@@ -776,3 +776,12 @@ Next authoritative run: **Phase 31.8 run 9** from branch head `7094f73d35fa0c564
 Phase 31.8 authoritative run **36252922418** completed its frozen 12-cell Base/Stress discovery, five-seed null controls and validation. **0/12** cells passed the ₹5,000/week promotion gate in Base and **0/12** in Stress. Best cell: **ASIA_LEAD | z=1.00 | H10_30**, mean weekly net **₹107.37 Base / ₹37.13 Stress**, 45.45% positive weeks, negative medians. The final report is persisted on the Phase 31.8 branch.
  
 Phase 31.9 is now the next separately branched, preregistered family: **India VIX vs realized-volatility regime conditioning of NIFTY opening-gap direction**.
+
+ 
+## 2026-09-26 — Phase 31.9 preregistration / ready to run
+ 
+Phase 31.8 is closed without promotion after authoritative run **36252922418**: 0/12 cells passed the ₹5,000/week gate in Base or Stress.
+ 
+The new active branch is `phase-31.9-vix-rv-gap-opening-direction-v1`. Phase 31.9 tests the prior India VIX / prior-only NIFTY RV20 ratio as a three-regime state variable for opening-gap FOLLOW versus FADE with 10:30/15:10 exits. The 12-cell grid, five full-panel null seeds, official NSE VIX acquisition, strict prior-data barrier, Base/Stress costs and promotion gate are frozen in the plan before computation.
+ 
+No Phase 31.9 P&L is accepted yet. The next step is the authoritative unit-test + data-gate run.
