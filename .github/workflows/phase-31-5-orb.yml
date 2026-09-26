@@ -1,0 +1,32 @@
+name: Phase 31.5 - finite ORB candidate testing
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'research/phase31_5_orb_discovery.py'
+      - 'docs/phase31_5_plan.md'
+      - '.github/workflows/phase-31-5-orb.yml'
+
+jobs:
+  orb:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install duckdb pandas pyarrow
+      - name: Verify pinned cache
+        run: |
+          test -f data/cache/phase31_trademarkk/index/NIFTY.parquet
+          test $(find data/cache/phase31_trademarkk/options/NIFTY -name '*.parquet' | wc -l) -gt 0
+      - name: Run finite ORB discovery
+        run: python research/phase31_5_orb_discovery.py --data data/cache/phase31_trademarkk --out reports/phase31_5
+      - name: Persist outputs
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add reports/phase31_5
+          git diff --cached --quiet || git commit -m "Persist Phase 31.5 ORB discovery results"
+          git push origin HEAD:"${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
