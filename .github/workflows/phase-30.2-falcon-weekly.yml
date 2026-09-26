@@ -88,3 +88,5 @@ jobs:
         with:
           name: phase30-2-falcon-${{ matrix.friction }}
           path: reports/phase30_2_${{ matrix.friction }}/
+
+# Triggered timestamp-normalization correction rerun.
