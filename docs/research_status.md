@@ -743,3 +743,10 @@ Phase 31.7 is closed negative: the frozen OI/volume family failed the ₹5,000/w
 Phase 31.8 is preregistered on `phase-31.8-global-overnight-transmission-v1`. The frozen 12-cell grid is 3 global composites (US, Asia, all-six-market) × 2 z-score thresholds (0.50, 1.00) × 2 exits (10:30, 15:10). The signal uses only completed global sessions strictly before the NIFTY date; each z-score uses a 60-observation strictly prior rolling standardization. Base/Stress slippage remains ₹0.20/₹0.40 per order with the frozen transaction/statutory charge model.
 
 The literature review is persisted at `docs/phase31_8_literature_review.md`. The workflow will first pass the global data gate and only then run Base/Stress. No WFA/OOS is authorized unless a true cell clears the preregistered promotion gate.
+
+ 
+## 2026-09-26 — Phase 31.8 run 1 gate failure / correction
+ 
+Run **36251942190** completed dependency installation, unit tests, NIFTY cache and global-data acquisition, then failed in the global data-gate stage before Base/Stress. No P&L was produced. The acquired six-index cache is persisted with yfinance **1.7.0**, date coverage beginning 2021-07-01 (HSI 2021-07-02) through 2026-08-31.
+ 
+The branch audit identified **E0398**: the NIFTY and global date keys were represented as Python `date` objects in the `merge_asof` alignment path. The engine is now corrected to normalize both sides to datetime64, while keeping `allow_exact_matches=False` and the registered 60-observation prior-only standardization. A regression test now exercises the merge-key barrier. A fresh authoritative rerun is required.
