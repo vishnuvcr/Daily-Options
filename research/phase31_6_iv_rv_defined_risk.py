@@ -92,6 +92,7 @@ def main():
                         FROM read_parquet('{ip}') ORDER BY ts""").df()
     idx.ts=pd.to_datetime(idx.ts); idx["date"]=idx.ts.dt.date; idx["time"]=idx.ts.dt.strftime("%H:%M:%S")
     idx=idx[(idx.date>=START)&(idx.date<=END)]
+    daily=idx.groupby("date",sort=True).agg(open=("open","first"),high=("high","max"),low=("low","min"),close=("close","last")).reset_index()
     files={}
     for p in (root/"options/NIFTY").glob("*.parquet"):
         try: pd.Timestamp(p.stem); files[p.stem]=p
@@ -113,7 +114,7 @@ def main():
           t=max((pd.Timestamp(f"{expiry} 15:30:00")-pd.Timestamp(srow.iloc[0].ts)).total_seconds()/31536000,1/31536000)
           ce=opt(con,p,atm,"CE",srow.iloc[0].ts); pe=opt(con,p,atm,"PE",srow.iloc[0].ts)
           if ce is None or pe is None: diag.append({"day":str(day),"bucket":bucket,"status":"MISSING_ATM_IV"}); continue
-          iv=implied_vol(spot,atm,t,(ce+pe)/2.0)
+          iv=implied_vol_straddle(spot,atm,t,ce+pe)
           if iv is None: diag.append({"day":str(day),"bucket":bucket,"status":"IV_FAIL"}); continue
           spread=iv*100-rv
           for thr in THRESHOLDS:
