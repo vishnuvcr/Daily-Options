@@ -47,6 +47,14 @@ jobs:
           PYTHONPATH=. python research/phase31_7_execution_probe.py
           test -f reports/phase31_7/gate/execution_probe.csv
 
+      - name: Execution-row coverage probe
+        run: |
+          if python -c 'import json,sys; g=json.load(open("reports/phase31_7/gate/data_gate.json")); sys.exit(0 if g["status"]=="PASS" else 1)'; then
+            PYTHONPATH=. python research/phase31_7_execution_probe.py
+            head -n 25 reports/phase31_7/gate/execution_probe.csv || true
+          else
+            echo "DATA_GATE_FAIL: execution probe skipped"
+          fi
       - name: Run Base discovery
         run: |
           if python -c 'import json,sys; g=json.load(open("reports/phase31_7/gate/data_gate.json")); sys.exit(0 if g["status"]=="PASS" else 1)'; then
