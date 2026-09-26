@@ -294,21 +294,23 @@ def main(data_root, spot_root, out_root, limit_defs=0, smoke=False, slip=SLIP_BA
     keys=["definition","expiry_choice","strike_choice","gap","wait","risk","time_exit"]
     rows=[]
     for k,s in cell_stats.items():
-        allw=pd.Series(0.0,index=all_weeks)
-        for wk,val in s["weeks"].items():
-            if wk in allw.index: allw.loc[wk]=val
-        eq=allw.cumsum(); dd=eq-eq.cummax()
-        grosspos=float(allw[allw>0].sum()); grossneg=float(-allw[allw<0].sum())
-        q05=float(allw.quantile(0.05)); es=float(allw[allw<=q05].mean()) if (allw<=q05).any() else q05
-        rows.append(dict(zip(keys,k),trades=s["trades"],weeks_completed=int(sum(v!=0 for v in s["weeks"].values())),
-            mean_weekly_net=float(allw.mean()),median_weekly_net=float(allw.median()),
-            profitable_week_rate=float((allw>0).mean()),profit_factor=float(grosspos/grossneg) if grossneg else math.inf,
-            max_drawdown=float(dd.min()),weekly_q05=q05,weekly_es05=es,
-            execution_coverage=float(s["trades"]/max(1,expected_by_base.get(k[:3],1))),
+        active=pd.Series(s["weeks"],dtype=float).sort_index()
+        eq=active.cumsum(); dd=eq-eq.cummax()
+        grosspos=float(active[active>0].sum()); grossneg=float(-active[active<0].sum())
+        q05=float(active.quantile(0.05)); es=float(active[active<=q05].mean()) if (active<=q05).any() else q05
+        completed_weeks=int(active.size)
+        mean_week=float(active.mean()) if completed_weeks else 0.0
+        median_week=float(active.median()) if completed_weeks else 0.0
+        positive_rate=float((active>0).mean()) if completed_weeks else 0.0
+        rows.append(dict(zip(keys,k),trades=s["trades"],weeks_completed=completed_weeks,
+            mean_weekly_net=mean_week,median_weekly_net=median_week,
+            profitable_week_rate=positive_rate,profit_factor=float(grosspos/grossneg) if grossneg else math.inf,
+            max_drawdown=float(dd.min()) if completed_weeks else 0.0,weekly_q05=q05,weekly_es05=es,
+            execution_coverage=float(completed_weeks/max(1,expected_by_base.get(k[:3],1))),
             avg_capital_proxy=float(s["capital_sum"]/max(1,s["trades"])),
             peak_capital_proxy=float(s["peak_capital_proxy"]),gross_pnl=float(s["gross_pnl"]),
-            net_pnl=float(s["net_pnl"]),cost_share=float(1-s["net_pnl"]/s["gross_pnl"]) if s["gross_pnl"] else 0.0,
-            gate=bool(allw.mean()>=5000 and allw.median()>=5000 and (allw>0).mean()>=0.70 and sum(v!=0 for v in s["weeks"].values())>=20)))
+            net_pnl=float(s["net_pnl"]),cost_share=float((s["gross_pnl"]-s["net_pnl"])/abs(s["gross_pnl"])) if s["gross_pnl"] else 0.0,
+            gate=bool(mean_week>=5000 and median_week>=5000 and positive_rate>=0.70 and completed_weeks>=20)))
     full=list(itertools.product([d["definition"] for d in defs],EXPIRY_CHOICES,STRIKE_CHOICES,GAPS,WAITS,RISKS,TIME_EXITS))
     lb=pd.DataFrame(full,columns=keys)
     if rows: lb=lb.merge(pd.DataFrame(rows),on=keys,how="left")
