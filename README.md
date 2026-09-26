@@ -21,18 +21,20 @@ The final decision still requires nested walk-forward selection followed by inde
 
 ## Current research frontier
 
-| Phase | Purpose | Status |
-|---|---|---|
-| 26 | Complete Python-acquired Equity Income channel archive | COMPLETE — 169/169 transcripts verified |
-| 27 / 27.4 | Source-fidelity evidence extraction and precision cleanup | COMPLETE |
-| 29.1 | Data readiness | COMPLETE |
-| 29.2 | Contract coverage | COMPLETE |
-| 29.3 | Iron Dome content validation | COMPLETE |
-| 30 v8 | Iron Dome weekly numerical test | RETIRED — 0/12 cells passed the ₹5,000/week gate |
-| 30.1 | Air Defense weekly replication | RETIRED — 0/24 cells passed; best frozen mean weekly net ≈₹2.13k |
-| 30.2 | Falcon Spread weekly independent replication | **ACTIVE — authoritative run 36160873596, Base + Stress friction executing** |
+**Phase 31.6 IV–RV defined-risk discovery is closed.** Authoritative run **36248538306** completed Base + Stress and validated the frozen 12-cell grid. **0/12 Base and 0/12 Stress cells cleared the ₹5,000/week discovery gate; all 24 cell/friction combinations had negative total net P&L.**
 
-Current frontier links: [Research status](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md) · [Research plan](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_plan.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md) · [Phase 30.2 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.2-equity-income-falcon-weekly-v1/docs/phase30_2_falcon_weekly_plan.md)
+Best cell in both friction settings:
+- positive IV–RV spread → 200-point short iron condor;
+- 6-vol-point threshold;
+- nearest expiry;
+- Base: **-₹166.80 mean weekly net**, **₹50.11 median**, **50.00% positive weeks**, **-₹23,018.38 total net**;
+- Stress: **-₹248.73 mean weekly net**, **-₹29.93 median**, **50.00% positive weeks**, **-₹34,324.32 total net**.
+
+Phase 31.6 is frozen negative evidence; no WFA/OOS or result-driven tuning is authorized.
+
+**Next bounded research family:** Phase 31.7 — **OI/volume microstructure with explicit null controls**, subject to a new data-coverage gate and finite preregistration.
+
+Current status links: [Research status](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md) · [Research plan](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_plan.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md) · [Phase 31.6 final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.6-iv-rv-defined-risk-v1/reports/phase31_6/final_result.md)
 
 ## Current YouTube strategy program design
 
