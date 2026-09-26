@@ -1,0 +1,16 @@
+{
+  "regime": "stress",
+  "shard_files": [
+    "shard_results/phase30-7-shard-0-stress/leaderboard.csv",
+    "shard_results/phase30-7-shard-1-stress/leaderboard.csv",
+    "shard_results/phase30-7-shard-2-stress/leaderboard.csv",
+    "shard_results/phase30-7-shard-3-stress/leaderboard.csv",
+    "shard_results/phase30-7-shard-4-stress/leaderboard.csv",
+    "shard_results/phase30-7-shard-5-stress/leaderboard.csv",
+    "shard_results/phase30-7-shard-6-stress/leaderboard.csv",
+    "shard_results/phase30-7-shard-7-stress/leaderboard.csv",
+    "shard_results/phase30-7-shard-8-stress/leaderboard.csv"
+  ],
+  "duplicate_cells": 0,
+  "aggregated_cells": 6480
+}

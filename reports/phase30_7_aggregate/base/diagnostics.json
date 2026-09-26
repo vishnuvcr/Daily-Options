@@ -1,0 +1,16 @@
+{
+  "regime": "base",
+  "shard_files": [
+    "shard_results/phase30-7-shard-0-base/leaderboard.csv",
+    "shard_results/phase30-7-shard-1-base/leaderboard.csv",
+    "shard_results/phase30-7-shard-2-base/leaderboard.csv",
+    "shard_results/phase30-7-shard-3-base/leaderboard.csv",
+    "shard_results/phase30-7-shard-4-base/leaderboard.csv",
+    "shard_results/phase30-7-shard-5-base/leaderboard.csv",
+    "shard_results/phase30-7-shard-6-base/leaderboard.csv",
+    "shard_results/phase30-7-shard-7-base/leaderboard.csv",
+    "shard_results/phase30-7-shard-8-base/leaderboard.csv"
+  ],
+  "duplicate_cells": 0,
+  "aggregated_cells": 6480
+}

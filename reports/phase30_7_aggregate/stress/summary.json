@@ -1,0 +1,33 @@
+{
+  "regime": "stress",
+  "registered_cells": 6480,
+  "aggregated_cells": 6480,
+  "passed_gate": 0,
+  "best": {
+    "definition": "lb30|tol0.001|gapdown|thr0.005",
+    "expiry_choice": "nearest_weekly",
+    "strike_choice": "atm_consecutive",
+    "gap": 200,
+    "wait": 15,
+    "risk": "debit_stop_1x_expiry",
+    "time_exit": "expiry_day_15_00",
+    "trades": 57,
+    "weeks_completed": 30,
+    "mean_weekly_net": -5826.109042245595,
+    "median_weekly_net": -4937.2032161632505,
+    "profitable_week_rate": 0.0,
+    "profit_factor": 0.0,
+    "max_drawdown": -170980.2913676929,
+    "weekly_q05": -16102.783899405724,
+    "weekly_es05": -18323.654304694755,
+    "execution_coverage": 0.5263157894736842,
+    "avg_capital_proxy": 33750.63333333333,
+    "peak_capital_proxy": 40492.5,
+    "gross_pnl": -167001.34999999998,
+    "net_pnl": -174783.27126736788,
+    "cost_share": 0.0465979542522734,
+    "gate": false
+  },
+  "shard_files": 9,
+  "pnl_authorized": true
+}
