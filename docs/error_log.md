@@ -429,3 +429,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0378 | 2026-09-26 | Phase 31.5 workflow | First ORB discovery run failed at the pinned-cache verification step because GitHub checkout does not contain the large cached market-data directory by itself; the workflow incorrectly assumed the cache was present in the repository workspace | Run 36244187924 did not execute the ORB calculations | Added the same pinned Actions cache + Hugging Face acquisition/reuse pattern used by Phase 31.3; rerun triggered from corrected workflow | CLOSED — workflow corrected in commit 0cbde56 |
+
+| E0379 | 2026-09-26 | Phase 31.5 ORB engine | DuckDB treats `open`/OHLC aliases in the generated SELECT as problematic in the current parser context; discovery failed before calculations | Run 36244876294 stopped before producing any strategy result | Renamed OHLC output aliases to `open_px/high_px/low_px/close_px` and updated downstream references | CLOSED — corrected in commit 32846c0 |
