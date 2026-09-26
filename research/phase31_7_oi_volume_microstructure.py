@@ -78,7 +78,7 @@ def option_feature_rows(con, expiry_map, days_df):
                         (TIMESTAMP '{d} 09:25:00', TIMESTAMP '{d} 09:30:00')
                     AND CAST(strike AS DOUBLE)={float(atm)}
                     AND UPPER(CAST(option_type AS VARCHAR)) IN ('CE','PE')"""
-            z=con.execute(q).df()
+            z=con.execute(q).df().drop_duplicates(["ts","option_type"])
             if z.empty or len(z)!=4:
                 diag.append({"day":str(d),"bucket":bucket,"status":"MISSING_FEATURE_LEGS"})
                 continue
@@ -113,6 +113,10 @@ def load_prices(con, expiry_map, features):
     for expiry,path in sorted(expiry_map.items()):
         active=wanted[wanted.expiry==expiry]
         if active.empty: continue
+        try:
+            con.unregister("wanted")
+        except Exception:
+            pass
         con.register("wanted",active)
         p=str(path).replace("'","''")
         q=f"""SELECT CAST(o.timestamp AS TIMESTAMP) ts,
@@ -159,18 +163,28 @@ def trade_from_signal(frow, side, prices, slip):
         "transaction_costs":tc,"net_pnl":exec_gross-tc
     }
 
-def cell_summary(trades, mode):
+def cell_summary(trades, mode, seed=None):
     out=[]
-    for keys,g in trades.groupby(["feature","threshold","bucket","friction"],dropna=False):
+    declared=[(feature,float(thr),int(bucket)) for feature in FEATURES for thr in THRESHOLDS for bucket in BUCKETS]
+    friction=(trades.friction.iloc[0] if not trades.empty else None)
+    for feature,thr,bucket in declared:
+        g=trades[(trades.feature==feature)&(trades.threshold==thr)&(trades.bucket==bucket)] if not trades.empty else trades.iloc[0:0]
+        if seed is not None and "null_seed" in g.columns:
+            g=g[g.null_seed==seed]
+        if g.empty:
+            out.append({"mode":mode,"null_seed":seed,"feature":feature,"threshold":thr,"bucket":bucket,"friction":friction,
+              "trades":0,"weeks":0,"total_net":0.0,"mean_weekly_net":0.0,"median_weekly_net":0.0,
+              "positive_week_rate":0.0,"worst_trade":float("nan"),"worst_week":float("nan"),
+              "total_slippage":0.0,"total_transaction_costs":0.0,"raw_gross":0.0})
+            continue
         wk=g.assign(week=pd.to_datetime(g.day).dt.to_period("W-SUN").astype(str)).groupby("week").net_pnl.sum()
         out.append({
-            "mode":mode,"feature":keys[0],"threshold":float(keys[1]),"bucket":int(keys[2]),"friction":keys[3],
-            "trades":int(len(g)),"weeks":int(len(wk)),"total_net":float(g.net_pnl.sum()),
-            "mean_weekly_net":float(wk.mean()),"median_weekly_net":float(wk.median()),
-            "positive_week_rate":float((wk>0).mean()),"worst_trade":float(g.net_pnl.min()),
-            "worst_week":float(wk.min()),"total_slippage":float(g.slippage_cost.sum()),
-            "total_transaction_costs":float(g.transaction_costs.sum()),
-            "raw_gross":float(g.raw_gross.sum())
+          "mode":mode,"null_seed":seed,"feature":feature,"threshold":thr,"bucket":bucket,"friction":g.friction.iloc[0],
+          "trades":int(len(g)),"weeks":int(len(wk)),"total_net":float(g.net_pnl.sum()),
+          "mean_weekly_net":float(wk.mean()),"median_weekly_net":float(wk.median()),
+          "positive_week_rate":float((wk>0).mean()),"worst_trade":float(g.net_pnl.min()),
+          "worst_week":float(wk.min()),"total_slippage":float(g.slippage_cost.sum()),
+          "total_transaction_costs":float(g.transaction_costs.sum()),"raw_gross":float(g.raw_gross.sum())
         })
     return pd.DataFrame(out)
 
@@ -253,9 +267,8 @@ def main():
                     x["null_seed"]=seed; null_rows.append(x)
         nd=pd.DataFrame(null_rows)
         nd.to_csv(out/f"null_trades_{friction}.csv",index=False)
-        null_summary=cell_summary(nd,"NULL")
-        if not null_summary.empty:
-            null_summary.to_csv(out/f"null_summary_{friction}.csv",index=False)
+        null_parts=[cell_summary(nd,"NULL",seed=seed) for seed in NULL_SEEDS]
+        pd.concat(null_parts,ignore_index=True).to_csv(out/f"null_summary_{friction}.csv",index=False)
     print(json.dumps(gate,indent=2))
 if __name__=="__main__":
     main()
