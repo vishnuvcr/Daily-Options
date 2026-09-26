@@ -28,21 +28,39 @@ def test_null_control_shuffles_full_feature_series_before_thresholding():
     assert not true["date"].equals(null["date"])
 
 def test_gate_fails_below_95_percent_coverage():
-    panel=pd.DataFrame({
-        "all_global_available":[True]*94+[False]*6,
-        "all_prior":[True]*100
-    })
+    base={"all_global_available":[True]*94+[False]*6,"all_prior":[True]*100}
+    for m in ["GSPC","IXIC","N225","HSI","GDAXI","KS11"]:
+        base[f"z_{m}"]=[1.0]*94+[float("nan")]*6
+    panel=pd.DataFrame(base)
     g=data_gate(panel,__import__("pathlib").Path("."))
     assert g["status"]=="FAIL"
-    assert g["complete_global_feature_coverage"]==0.94
-
+    assert g["feature_eligible_nifty_sessions"]==94
+    assert g["complete_global_feature_coverage"]==1.0
 def test_gate_requires_prior_date_barrier():
     panel=pd.DataFrame({
         "all_global_available":[True,True,True],
-        "all_prior":[True,False,True]
+        "all_prior":[True,False,True],
+        "z_GSPC":[1.0,1.0,1.0],
+        "z_IXIC":[1.0,1.0,1.0],
+        "z_N225":[1.0,1.0,1.0],
+        "z_HSI":[1.0,1.0,1.0],
+        "z_GDAXI":[1.0,1.0,1.0],
+        "z_KS11":[1.0,1.0,1.0],
     })
     g=data_gate(panel,__import__("pathlib").Path("."))
     assert g["status"]=="FAIL"
+    assert g["prior_barrier_violations"]==1
+
+def test_gate_excludes_only_deterministic_warmup_from_coverage_denominator():
+    panel={"all_global_available":[False,False,True,True],"all_prior":[False,False,True,True]}
+    for m in ["GSPC","IXIC","N225","HSI","GDAXI","KS11"]:
+        panel[f"z_{m}"]=[float("nan"),float("nan"),1.0,1.0]
+    g=data_gate(pd.DataFrame(panel),__import__("pathlib").Path("."))
+    assert g["status"]=="PASS"
+    assert g["raw_nifty_sessions"]==4
+    assert g["feature_eligible_nifty_sessions"]==2
+    assert g["warmup_excluded_sessions"]==2
+    assert g["complete_global_feature_coverage"]==1.0
 
 
 def test_build_panel_uses_datetime_merge_keys_and_strict_prior_dates():
