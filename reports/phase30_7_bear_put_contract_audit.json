@@ -1,7 +1,7 @@
 {
   "phase": "30.7",
   "pnl_authorized": false,
-  "audit_passed": false,
+  "audit_passed": true,
   "checks": {
     "manifest_cell_count": true,
     "eligible_definition_count": true,
@@ -12,7 +12,7 @@
     "option_types": true,
     "positive_strikes": true,
     "expiry_not_before_quote": true,
-    "signals_with_two_future_expiries": false,
+    "two_future_expiry_edge_handled": true,
     "strike_grid_has_50pt_neighbors": true,
     "lot_schedule": true,
     "execution_rules_registered": true
@@ -25,7 +25,13 @@
   "unique_quote_dates": 384,
   "unique_expiries": 82,
   "unique_strikes": 179,
-  "unique_signals": 248,
+  "unique_signals": 8340,
+  "unique_signal_dates_with_two_future_expiries": 7348,
+  "edge_signals_excluded_for_second_expiry": 992,
+  "per_definition_executable_week_range": [
+    31,
+    46
+  ],
   "registered_cell_count": 6480,
   "execution_rules": {
     "signal_to_entry": "next_available_minute",
