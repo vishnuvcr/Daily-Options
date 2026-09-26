@@ -469,3 +469,14 @@ The active frontier is now **Phase 30.8 source resolution** for **OvaJumYancs �
 [Phase 30.7 final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.7-bear-put-contract-interpretation-grid-v1/reports/phase30_7_bear_put_final_result.md) · [Phase 30.8 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.8-equity-income-no-more-straddles-source-resolution-v1/docs/phase30_8_plan.md) · [Phase 30.8 source report](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.8-equity-income-no-more-straddles-source-resolution-v1/reports/phase30_8_no_more_straddles_source_resolution.json) · [Phase 30.8 workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.8-equity-income-no-more-straddles-source-resolution-v1/.github/workflows/phase-30.8-equity-income-no-more-straddles-source-resolution-v1.yml)
 
 A separate main-branch launcher is queued to keep Phase 30.8 source-resolution reporting reproducible without depending on hidden/private transcript material.
+
+## 2026-09-26 — Phase 30.10 numerical research active
+
+The live frontier has advanced beyond the stale screenshot checkpoint:
+
+- **Phase 30.7 Bear Put:** closed and retired after the full 6,480-cell Base/Stress matrix produced 0 passing cells in both friction regimes.
+- **Phase 30.8 No More Straddles:** source-blocked/data-limited; no P&L accepted because the exact payoff and timing mechanics could not be reconstructed from the available primary archive without the private decryption key.
+- **Phase 30.9 Air Defense/VIX:** India VIX cache completed with **248 unique trading-day rows from 2025-09-01 through 2026-08-31**. An initial 70-row partial endpoint response was rejected; deterministic coverage checks now prevent silent truncation.
+- **Phase 30.10 Air Defense P&L:** active corrected Base/Stress run **36234923838**, frozen **720 cells per regime / 1,440 total**, 12 definition shards × 2 friction regimes. The first matrix run was cancelled after a YAML interpolation defect and the corrected run is now executing.
+
+[Phase 30.10 numerical plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.10-strangle-air-defense-pnl-v1/docs/phase30_10_strangle_air_defense_pnl_plan.md) · [Phase 30.9 VIX acquisition plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.9-strangle-air-defense-vix-source-resolution-v1/docs/phase30_9_strangle_air_defense_plan.md) · [Phase 30.7 final Bear Put result](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.7-bear-put-contract-interpretation-grid-v1/reports/phase30_7_bear_put_final_result.md)
