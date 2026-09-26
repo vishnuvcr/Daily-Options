@@ -432,3 +432,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0346 | 2026-09-26 | Phase 30.10 numerical engine CLI | Corrected run 36234875446 reached the frozen engine but failed because the script parsed CLI arguments and then passed them into a zero-argument main() | No P&L accepted from failed shards; unit tests passed | Simplified the script entrypoint to call the existing CLI-aware main() exactly once; corrected rerun is required | CLOSED — rerun pending |
+
+
+| E0348 | 2026-09-26 | Phase 30.10 strike-key normalization | Corrected run 36234923838 passed unit tests but some shards reached the engine with zero event definitions because DuckDB expiry keys (timestamps) did not match Python date keys used by the strike map | No numerical results accepted from those shards | Normalize the cached strike table expiry column to Python dates before building the strike map; rerun the frozen matrix | CLOSED — rerun pending |
