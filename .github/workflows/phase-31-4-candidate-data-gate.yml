@@ -1,0 +1,49 @@
+name: Phase 31.4 - candidate data gate
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "docs/phase31_4_plan.md"
+      - "docs/phase31_4_candidate_catalog.md"
+      - "research/phase31_4_data_gate.py"
+      - ".github/workflows/phase-31-4-candidate-data-gate.yml"
+permissions:
+  contents: write
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Cache pinned NIFTY source
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase31_trademarkk
+          key: phase31-trademarkk-51ca58c-v1
+          restore-keys: |
+            phase31-trademarkk-51ca58c-
+            phase30-trademarkk-51ca58c-
+      - name: Acquire or reuse pinned NIFTY source
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase31_trademarkk
+          if [ ! -f data/cache/phase31_trademarkk/index/NIFTY.parquet ]; then
+            python -m pip install --disable-pip-version-check huggingface_hub==0.35.3
+            python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="thetrademarkk/india-index-options-1m",repo_type="dataset",revision="51ca58c",local_dir="data/cache/phase31_trademarkk",allow_patterns=["index/NIFTY.parquet","options/NIFTY/*.parquet"])'
+          fi
+      - name: Run deterministic data gate
+        run: PYTHONPATH=. python research/phase31_4_data_gate.py
+      - name: Persist gate report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f reports/phase31_4/data_gate.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Phase 31.4: persist candidate data gate"
+            git push origin HEAD:"${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
+          fi
