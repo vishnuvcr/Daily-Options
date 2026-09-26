@@ -716,3 +716,22 @@ Run **36251100372** completed unit tests, data gate, raw execution probes, Base 
 The branch now normalizes `wanted.expiry` into a dedicated Python-date `expiry_key` before expiry-file matching. A regression test covers timestamp/date normalization. The Phase 31.7 launcher persistence step has also been hardened with fetch/rebase retry logic, and the launcher has non-canceling concurrency enabled.
 
 Run 12 remains quarantined and its outputs are audit-only. The next authoritative computation is run 13 from the corrected branch after the latest branch head is recorded in the launch marker.
+
+
+## 2026-09-26 — Phase 31.7 OI/volume microstructure CLOSED
+
+Authoritative run **36251189770** completed the frozen 12-cell true grid and five null seeds per cell in Base and Stress.
+
+- Data gate: PASS.
+- Base: 0/12 cells passed the ₹5,000/week mean + median + ≥70% positive-week gate.
+- Stress: 0/12 passed.
+- All 12 Base and all 12 Stress cells had negative total net P&L.
+- Best cell: VOL_IMB threshold 0.40, nearest expiry.
+- Base best: **-₹18,566.48 total net; -₹191.41 mean weekly; -₹942.75 median weekly; 42.27% positive weeks**.
+- Stress best: **-₹23,821.47 total net; -₹245.58 mean weekly; -₹974.92 median weekly; 42.27% positive weeks**.
+- Five-seed placebo controls were generated from the complete feature panel; no true cell exceeded all five null controls.
+- Accounting reconciles with raw gross − slippage − transaction/statutory costs = net.
+
+No WFA/OOS promotion. Phase 31.7 is closed as negative evidence.
+
+Final report: `reports/phase31_7/final_result.md`.
