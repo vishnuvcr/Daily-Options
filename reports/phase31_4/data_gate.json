@@ -1,0 +1,23 @@
+{
+  "nifty_index": {
+    "path": "data/cache/phase31_trademarkk/index/NIFTY.parquet",
+    "exists": true,
+    "files": null
+  },
+  "nifty_options_dir": {
+    "path": "data/cache/phase31_trademarkk/options/NIFTY",
+    "exists": true,
+    "files": 267
+  },
+  "global_data": {
+    "available": false,
+    "candidate_paths": [
+      "data/cache/global",
+      "data/cache/phase31_global",
+      "data/cache/phase30_global"
+    ]
+  },
+  "india_vix": {
+    "available": false
+  }
+}
