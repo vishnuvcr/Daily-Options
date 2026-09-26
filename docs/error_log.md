@@ -366,3 +366,8 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 | E0316 | 2026-09-26 | Phase 30.2 Falcon runtime | Corrected Falcon run 36213335815 remained in `Run friction` for more than six hours in both Base and Stress. Static inspection found repeated full-file Parquet scans per exact leg/strike plus unbounded setup-level cached DataFrames retained across the whole sweep | No P&L result was accepted from the stalled run; the runtime exceeded the practical execution envelope and obscured whether the simulation was progressing | Rework the engine to load each near/far exact-expiry slice once per calendar, perform snapshot/strike/series selection in-memory, process one calendar at a time, release caches explicitly, emit per-calendar progress, and serialize Base/Stress jobs; add regression coverage for cached series equivalence | CLOSED — runtime fix committed; corrected rerun required |
 
+
+
+## E0317 — Phase 30.2 zero-setup result traced to timestamp normalization (2026-09-26)
+
+The runtime-fixed Falcon run 36216668042 completed quickly and correctly at the execution layer, but both Base and Stress produced 32/32 calendars with zero candidate setups. This is not accepted as a strategy result. Audit identified the Rissin intraday timestamp path as the remaining unverified boundary: the dataset publishes IST timestamps, including +0530 examples, while the simulator was implicitly casting them through DuckDB to TIMESTAMP before exact 09:30/10:00/11:00/13:00/14:00 signal matching. The code has been corrected to parse the raw timestamp explicitly as UTC and convert to Asia/Kolkata before minute matching. A deterministic rerun is required. The frozen economic rules and 270-cell grid are unchanged.
