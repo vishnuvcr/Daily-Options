@@ -49,7 +49,24 @@ def acquire(out):
             break
     (out/"acquisition.json").write_text(json.dumps({"video_id":VIDEO_ID,"url":URL,"attempts":attempts},indent=2),encoding="utf-8")
     vtts=list(out.glob("*.vtt"))
-    if not vtts: raise RuntimeError("No VTT caption track was acquired")
+    if not vtts:
+        try:
+            from youtube_transcript_api import YouTubeTranscriptApi
+            api=YouTubeTranscriptApi()
+            tr=api.fetch(VIDEO_ID)
+            rows=[{"start_sec":float(x.start),"text":str(x.text)} for x in tr]
+            raw="\\n".join(f"{x['start_sec']:.3f}\\t{x['text']}" for x in rows)
+            (out/"api_transcript.txt").write_text(raw,encoding="utf-8")
+            result={"video_id":VIDEO_ID,"title":"Retail Option Seller's Diagonal Setup for Low Vix","source_url":URL,
+                    "acquisition_method":"youtube-transcript-api","caption_rows":len(rows),
+                    "raw_sha256":hashlib.sha256(raw.encode()).hexdigest(),
+                    "field_requirements":["underlying","structure","expiry","entry_day","entry_time","strike_rule","premium_rule","ratio","low_vix_condition","adjustment_trigger","adjustment_action","stop","target","exit","capital"],
+                    "status":"SOURCE_REVIEW_REQUIRED","evidence":rows}
+            (out/"source_resolution.json").write_text(json.dumps(result,indent=2),encoding="utf-8")
+            return result
+        except Exception as e:
+            (out/"transcript_api_error.txt").write_text(str(e),encoding="utf-8")
+            raise RuntimeError("No caption track acquired through yt-dlp or YouTubeTranscriptApi") from e
     primary=max(vtts,key=lambda p:p.stat().st_size)
     raw=primary.read_text(encoding="utf-8",errors="replace")
     (out/"raw.vtt").write_text(raw,encoding="utf-8")
