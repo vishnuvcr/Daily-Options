@@ -650,3 +650,12 @@ Run 36252808290 passed tests and the global gate but stopped in Base price loadi
 [Phase 31.8 final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.8-global-overnight-transmission-v1/reports/phase31_8/final_result.md)
  
 **Phase 31.9** is now the active bounded frontier: [India VIX × realized-volatility regime × NIFTY opening-gap direction](https://github.com/vishnuvcr/Daily-Options/tree/phase-31.9-vix-rv-gap-opening-direction-v1).
+
+ 
+## 2026-09-26 — Phase 31.9 ready
+ 
+Phase 31.8 is closed without promotion: **0/12** cells passed the ₹5,000/week gate in either Base or Stress. The next bounded research family is **Phase 31.9 — India VIX × realized-volatility regime × NIFTY opening-gap direction**.
+ 
+[Phase 31.9 branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-31.9-vix-rv-gap-opening-direction-v1) · [Phase 31.9 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.9-vix-rv-gap-opening-direction-v1/docs/phase31_9_plan.md) · [Phase 31.9 literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.9-vix-rv-gap-opening-direction-v1/docs/phase31_9_literature_review.md) · [Phase 31.9 launcher](https://github.com/vishnuvcr/Daily-Options/blob/main/.github/workflows/phase-31-9-main-launcher.yml)
+ 
+The family is preregistered before numerical execution; no result-driven regime or threshold tuning is permitted.
