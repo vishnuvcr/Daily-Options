@@ -112,3 +112,7 @@ Close after the frozen 12 true cells plus 60 null summaries per friction. Do not
 - NSE working paper, *Transmission of Information and Return Spillovers Between U.S. and Indian Markets* (NIFTY/NASDAQ overnight/daytime decomposition): https://nsearchives.nseindia.com/content/research/Paper39.pdf
 - Benjamin Po finance dataset pipeline (global market categories; secondary source discovery): https://github.com/benjaminpo/finance-dataset
 - Pubmarks public-market datasets: https://github.com/Pubmarks/datasets
+
+
+## Methodological erratum 31.8-1 — deterministic warm-up handling
+The 60-observation strictly-prior standardization creates a deterministic warm-up interval at the beginning of the study window. The 95% global-feature coverage gate is therefore applied to **feature-eligible NIFTY sessions** (sessions for which all six standardized global features exist and the strict prior-date barrier holds), rather than counting unavoidable pre-lookback warm-up sessions in the denominator. The raw NIFTY session count and the number of warm-up-excluded sessions are persisted in the gate report for auditability. This clarification does not alter the study dates, signal grid, thresholds, entry/exit rules, null design, slippage, cost model, or promotion threshold.
