@@ -420,3 +420,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0404 | 2026-09-26 | Phase 31.8 Base execution | Run 36252561747 passed tests and the corrected global gate, then failed in `attach_expiry` because pandas Timestamps were compared directly to Python `datetime.date` expiry keys | No Phase 31.8 P&L accepted; Stress/Validate skipped | Normalize the panel trade date to Python `date` before expiry selection; regression added | OPEN — corrected rerun |
 
 | E0405 | 2026-09-26 | Phase 31.8 regression test | Run 36252692972 failed because the new expiry regression expected string labels instead of the Python-date keys actually returned by the expiry map | No data acquisition or P&L computation ran | Test corrected to assert the real date keys | CLOSED |
+
+| E0406 | 2026-09-26 | Phase 31.8 Base price loader | Run 36252808290 passed tests and the corrected global gate, then failed because `load_prices` referenced a nonexistent `exit_ts` signal column | No P&L accepted; Stress/Validate skipped | Removed the unused column selection; regression added | OPEN — corrected rerun |
