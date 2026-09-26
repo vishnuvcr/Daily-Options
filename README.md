@@ -524,3 +524,14 @@ The Phase 31.1 fixed NIFTY ratio result is **provisionally quarantined** for for
 Phase 31.2 freezes the strategy and independently re-reads the pinned raw NIFTY/index-options dataset to reconcile leg prices, strikes, expiry, lot size, raw P&L, execution P&L, costs, weekly aggregation and the empirical 09:30→15:10 loss-region diagnostic. No tuning is allowed.
 
 [Phase 31.2 plan](docs/phase31_2_forensic_audit_plan.md) · [Phase 31.2 workflow](.github/workflows/phase-31-2-phase31-1-forensic-audit.yml) · [Phase 31.2 branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-31.2-phase31-1-forensic-audit-v1)
+
+
+## Phase 31.2 final result
+
+The forensic audit is complete. **30/30 stratified executed days reconciled** and the 1,209-day persisted ledger/weekly summary reconciles to numerical tolerance. The result remains **QUARANTINED** because the persisted artifact's accounting semantics differ from the current simulator's slippage semantics.
+
+Persisted Base: -₹537,097.06 total net. Reconstructed persisted slippage: ₹130,750.00. Slippage-adjusted Base: **-₹667,847.06 total net**, **-₹2,568.64 mean weekly**, **-₹3,057.21 median weekly**, **25.38% positive weeks**.
+
+The next phase is a provenance-corrected reproduction, not optimization.
+
+[Final audit report](reports/phase31_2/final_result.md) · [Audit data](reports/phase31_2/forensic_audit.json) · [Audit plan](docs/phase31_2_forensic_audit_plan.md)
