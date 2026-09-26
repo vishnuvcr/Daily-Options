@@ -689,3 +689,10 @@ Run **36250115094 (run 8)** is not evidentiary while the corrected engine is bei
 - **E0389:** the null controls were shuffling only already-qualified true signals, preserving the true signal-day set; the preregistered placebo requires permutation across the full feature panel before the frozen threshold is reapplied.
 
 The branch is being corrected without changing the frozen 12-cell true grid, entry/exit times, wing, lot-size schedule, cost model, or Base/Stress slippage. No Phase 31.7 numerical result from run 8 or earlier attempts is accepted. A fresh run is required after the corrected source and regression tests are persisted.
+
+
+## 2026-09-26 — Phase 31.7 run 8 closure
+
+Run **36250115094** completed Base and Stress computation and persisted 27 report files, but its executable price coverage was **0 for every signal cell**, yielding zero true/null trades and blank friction fields. Validation failed before any numerical result could be accepted. The run is quarantined as an engineering artifact, not strategy evidence.
+
+The corrected branch now derives execution `trade_date` and execution clock directly from the normalized option timestamp, removes the remaining timezone-aware direct casts, and reconstructs the registered null controls from the full feature panel before applying thresholds. Regression tests for both defects are persisted. A fresh run is required.
