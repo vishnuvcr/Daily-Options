@@ -1,6 +1,7 @@
 name: Phase 31.6 - IV-RV defined-risk discovery
 on:
   workflow_dispatch:
+  pull_request:
   push:
     paths:
       - "docs/phase31_6_plan.md"
