@@ -41,13 +41,13 @@ def simulate(con, idx, path, expiry, day, window, mult, slip):
     or_end=pd.Timestamp(f"{day} 09:{15+window:02d}:00")
     orbars=bars[bars.ts<or_end]
     if len(orbars)<window: return None
-    hi=float(orbars.high.max()); lo=float(orbars.low.min()); width=hi-lo
+    hi=float(orbars.high_px.max()); lo=float(orbars.low_px.min()); width=hi-lo
     if width<=0: return None
     up=hi+mult*width; dn=lo-mult*width
     post=bars[bars.ts>=or_end]
     sig=None; direction=None
     for _,r in post.iterrows():
-        c=float(r.close)
+        c=float(r.close_px)
         if c>=up: sig=r; direction="UP"; break
         if c<=dn: sig=r; direction="DOWN"; break
     if sig is None: return {"status":"NO_SIGNAL"}
@@ -77,8 +77,8 @@ def main():
     root=Path(args.data); out=Path(args.out); out.mkdir(parents=True,exist_ok=True)
     con=duckdb.connect(); con.execute("SET TimeZone='Asia/Kolkata'")
     ip=root/"index/NIFTY.parquet"
-    idx=con.execute(f"""SELECT CAST(timestamp AS TIMESTAMP) ts, CAST(open AS DOUBLE) open,
-        CAST(high AS DOUBLE) high, CAST(low AS DOUBLE) low, CAST(close AS DOUBLE) close
+    idx=con.execute(f"""SELECT CAST(timestamp AS TIMESTAMP) ts, CAST(open AS DOUBLE) open_px,
+        CAST(high AS DOUBLE) high_px, CAST(low AS DOUBLE) low_px, CAST(close AS DOUBLE) close_px
         FROM read_parquet('{ip}') ORDER BY ts""").df()
     idx["ts"]=pd.to_datetime(idx.ts); idx["date"]=idx.ts.dt.date; idx["time"]=idx.ts.dt.strftime("%H:%M:%S")
     idx=idx[(idx.date>=START)&(idx.date<=END)]
