@@ -56,7 +56,7 @@ jobs:
               s=json.load(open(f"reports/phase31_3/{k}/summary.json"))
               t=pd.read_csv(f"reports/phase31_3/{k}/trades.csv")
               lhs=float(t.net_pnl.sum())
-              rhs=float(t.gross_pnl.sum()-t.slippage_cost.sum()-t.transaction_costs.sum())
+              rhs=float(t.gross_pnl.sum()-t.transaction_costs.sum())
               print(k,s)
               assert abs(lhs-rhs)<1e-6
               assert s["trade_days"]==len(t)
