@@ -49,11 +49,17 @@ def main():
     checks["positive_strikes"]=int(bad_strikes)==0
     checks["expiry_not_before_quote"]=int(bad_expiry)==0
 
-    sig_dates=sorted({s["signal_ts"][:10] for d in defs for s in d["signals"]})
     exp_dates=[x[0] for x in con.execute(
         "SELECT DISTINCT CAST(expiry AS DATE) FROM read_parquet(?, union_by_name=true) WHERE granularity='1min' ORDER BY 1",[file_args]).fetchall()]
-    enough=sum(sum(e > pd.Timestamp(d).date() for e in exp_dates)>=2 for d in sig_dates)
-    checks["signals_with_two_future_expiries"]=enough==len(sig_dates)
+    def executable_signal(s):
+        d=pd.Timestamp(s["signal_ts"]).date()
+        return sum(e > d for e in exp_dates) >= 2
+    per_def_exec_weeks={}
+    for d in defs:
+        exec_signals=[s for s in d["signals"] if executable_signal(s)]
+        weeks={tuple(pd.Timestamp(s["date"]).isocalendar()[:2]) for s in exec_signals}
+        per_def_exec_weeks[d["definition"]]=len(weeks)
+    checks["two_future_expiry_edge_handled"]=min(per_def_exec_weeks.values())>=20
 
     strikes_list=[float(x[0]) for x in con.execute(
         "SELECT DISTINCT strike FROM read_parquet(?, union_by_name=true) WHERE granularity='1min' AND strike IS NOT NULL",[file_args]).fetchall()]
@@ -84,7 +90,11 @@ def main():
         "cache_files":[str(x) for x in files],
         "cache_rows":int(rows),"unique_quote_dates":int(quote_dates),
         "unique_expiries":int(expiries),"unique_strikes":int(strikes),
-        "unique_signals":len(sig_dates),"registered_cell_count":m["registered_cell_count"],
+        "unique_signals":sum(len(d["signals"]) for d in defs),
+        "unique_signal_dates_with_two_future_expiries":sum(executable_signal(s) for d in defs for s in d["signals"]),
+        "edge_signals_excluded_for_second_expiry":sum(not executable_signal(s) for d in defs for s in d["signals"]),
+        "per_definition_executable_week_range":[min(per_def_exec_weeks.values()),max(per_def_exec_weeks.values())],
+        "registered_cell_count":m["registered_cell_count"],
         "execution_rules":execution_rules
     }
     OUT.parent.mkdir(parents=True,exist_ok=True)
