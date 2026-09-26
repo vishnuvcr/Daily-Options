@@ -442,3 +442,16 @@ Authoritative run **36218652778** completed Base and Stress successfully at the 
 The simulator is corrected to normalize both timezone-aware (+05:30) and timezone-naive IST representations to the same naive Asia/Kolkata minute timestamp. A dedicated regression test now verifies both forms map to 09:30 IST. Economic rules, 270-cell grid, source, cost model and promotion gate are unchanged.
 
 Status: **OPEN — deterministic rerun required**
+
+
+### Phase 30.2 — Falcon final closure — 2026-09-26
+
+Authoritative corrected run **36220915944** completed the frozen 270-cell Falcon experiment after E0322 was fixed. Base and Stress each produced 468 candidate setups and 4,212 trade records. **0/270 variants passed the ₹5,000/week promotion gate** in either friction regime.
+
+Base leading measured cell: `10:00|p30|DIAGONAL_PREMIUM|adj11:00|stop1.5`, mean weekly net **₹1,432.03**, median **₹834.58**, positive-week rate **54.84%**, execution coverage **96.875%**, PF **1.87**, max drawdown **-₹16,717**.
+
+Stress leading measured cell: same frozen cell, mean weekly net **₹733.84**, median **₹54.58**, positive-week rate **51.61%**, execution coverage **96.875%**, PF **1.37**, max drawdown **-₹24,333**.
+
+The earlier 0-setup Falcon results were engineering artifacts and are not evidence. The corrected run is fully auditable from its GitHub Actions artifacts and persisted Stress report. [Final audited report](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.2-falcon-closure-v1/reports/phase30_2_falcon_final_result.md)
+
+**Next research frontier: Phase 30.3/30.4 Bear Put source resolution and contract readiness.**
