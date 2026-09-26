@@ -420,3 +420,6 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0342 | 2026-09-26 | Phase 30.9 VIX data provenance | The first pinned secondary India-VIX dataset copied from RajeshMohan82 ends on 2026-02-11, leaving the registered 2026-02-12 to 2026-08-31 study window uncovered | No numerical result accepted; the file is retained only as a reproducibility reference | Build a deterministic NSE VIX acquisition script using the documented historical VIX endpoint; cache the resulting full study-window file in the research branch and make numerical workflows read only the pinned cache | OPEN — data acquisition |
+
+
+| E0343 | 2026-09-26 | Phase 30.9 NSE VIX acquisition | First NSE acquisition run 36234420997 received HTTP 403 from the NSE landing page before reaching the historical VIX endpoint | No VIX data was accepted and no P&L ran | Removed the unnecessary landing-page dependency and added one deterministic endpoint retry with NSE browser-like headers | CLOSED — acquisition hardened; rerun required |
