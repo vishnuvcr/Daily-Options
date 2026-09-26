@@ -47,3 +47,12 @@ Report worst week, max drawdown, profit factor, expected shortfall, 2025/2026 br
 ## Continuation
 - If 0 variants pass: retire Falcon without WFA and proceed to the next distinct source-faithful candidate.
 - If ≥1 passes: freeze passing cells and open a separate nested-WFA/OOS phase.
+
+## Runtime correction checkpoint — 2026-09-26
+
+Authoritative run **36213335815** exceeded the practical runtime envelope in Base and Stress without leaving the `Run friction` step. The strategy implementation was not economically evaluated from that run. Static audit identified repeated full-file Parquet scans and unbounded setup-level DataFrame retention as the principal runtime risks.
+
+The registered economic experiment is unchanged: 270 frozen Falcon cells, fixed source mechanics, Paytm Money/NSE costs, Base/Stress slippage, weekly mean/median/positive-week/coverage gate, and no result-driven parameter selection. The runtime-fix branch changes only execution architecture: bounded exact-expiry preloading per calendar, in-memory series selection, one-calendar-at-a-time processing, explicit cache release and progress reporting.
+
+Acceptance remains gated on a fresh non-stalled Base/Stress run with non-zero candidate setups/trades and complete artifact audit.
+
