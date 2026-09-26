@@ -106,7 +106,7 @@ def main():
         srow=bars[bars.time=="09:30:00"]
         entryrow=bars[bars.time=="09:31:00"]; exitrow=bars[bars.time=="15:10:00"]
         if rv is None or srow.empty or entryrow.empty or exitrow.empty: diag.append({"day":str(day),"status":"MISSING_RV_OR_BAR"}); continue
-        spot=float(srow.iloc[0].close); atm=int(round(spot/50)*50)
+        spot=float(srow.iloc[0].close_px); atm=int(round(spot/50)*50)
         avail=[e for e in expiries if e>=day]
         if len(avail)<2: diag.append({"day":str(day),"status":"MISSING_EXPIRY"}); continue
         for bucket in EXPIRY_BUCKETS:
