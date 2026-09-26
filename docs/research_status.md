@@ -696,3 +696,7 @@ The branch is being corrected without changing the frozen 12-cell true grid, ent
 Run **36250115094** completed Base and Stress computation and persisted 27 report files, but its executable price coverage was **0 for every signal cell**, yielding zero true/null trades and blank friction fields. Validation failed before any numerical result could be accepted. The run is quarantined as an engineering artifact, not strategy evidence.
 
 The corrected branch now derives execution `trade_date` and execution clock directly from the normalized option timestamp, removes the remaining timezone-aware direct casts, and reconstructs the registered null controls from the full feature panel before applying thresholds. Regression tests for both defects are persisted. A fresh run is required.
+
+## 2026-09-26 — Phase 31.7 run 9 pre-computation closure
+
+Authoritative run 36250452425 (run 9) stopped at pytest collection because the newly added regression tests contained a literal backslash-n sequence before a test definition. No data gate, Base, Stress or P&L computation ran in this attempt. The failure is logged as E0393 and the test source has been corrected. The next run will be triggered only after the corrected test file is persisted.
