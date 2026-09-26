@@ -34,7 +34,7 @@ jobs:
           path: reports/phase30_8_no_more_straddles_source_resolution.json
       - name: Persist generated report to branch
         env:
-          GH_TOKEN: \${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
