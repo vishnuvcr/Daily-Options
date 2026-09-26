@@ -389,3 +389,12 @@ Authoritative run **36218652778** completed Base and Stress successfully at the 
 The simulator is corrected to normalize both timezone-aware (+05:30) and timezone-naive IST representations to the same naive Asia/Kolkata minute timestamp. A dedicated regression test now verifies both forms map to 09:30 IST. Economic rules, 270-cell grid, source, cost model and promotion gate are unchanged.
 
 Status: **OPEN — deterministic rerun required**
+
+
+## E0320 — Phase 30.2 timestamp-offset regex defect (2026-09-26)
+
+The first post-E0319 rerun, workflow 36219733330, failed both Base and Stress at the unit-test gate. The new regression test correctly supplied a timezone-aware +05:30 timestamp, but the implementation regex contained an over-escaped \\d, so offset-bearing values were not recognized and normalized to NaT. No market-data acquisition or P&L computation ran, and no Falcon performance evidence was accepted.
+
+The fix is a one-line code correction only: restore the digit class to \\d in the raw-string regex. The frozen 270-cell Falcon grid, calendar, entry/fill information barrier, cost model, slippage settings and weekly promotion gate are unchanged.
+
+Status: CLOSED — fixed in commit edfd1608fa31ac8ee4d70c09e2a3ab1ce9303aae; workflow 36220039329 is the deterministic rerun.
