@@ -592,3 +592,13 @@ The previous Phase 30.2-era README/status text is superseded by the current YouT
 **Phase 30.8 No More Straddles:** active source-resolution-only phase on `phase-30.8-equity-income-no-more-straddles-source-resolution-v1`. Automated run 36234096126 passed the deterministic evidence tests and generated the source report. P&L remains blocked.
 
 A main-branch launcher is currently running to reproduce the same source-resolution report from the pinned phase branch.
+
+## 2026-09-26 — Live frontier: Phase 30.10
+
+Phase 30.7 Bear Put is retired after the complete frozen matrix failed the ₹5,000/week promotion gate.
+
+Phase 30.8 is source-blocked/data-limited; no P&L is accepted.
+
+Phase 30.9 completed the India VIX study-window cache: **248 unique trading days, 2025-09-01 to 2026-08-31**. The initial 70-row NSE endpoint response was quarantined as incomplete; the subsequent deterministic paginated acquisition produced the full window and persisted it to the phase branch.
+
+Phase 30.10 is the active numerical phase. Corrected workflow run **36234923838** is executing the preregistered **720 cells per regime** with Base slippage ₹0.20/order and Stress slippage ₹0.40/order. No result has been promoted yet.
