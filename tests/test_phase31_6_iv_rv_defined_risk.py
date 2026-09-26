@@ -1,5 +1,5 @@
 import math
-from research.phase31_6_iv_rv_defined_risk import bs_call, implied_vol, yz_vol
+from research.phase31_6_iv_rv_defined_risk import bs_call, implied_vol_straddle, yz_vol
 
 def test_black_scholes_round_trip():
     s,k,t=22000.0,22000.0,7/365
