@@ -621,3 +621,8 @@ Run 36252203841 passed acquisition but stopped before P&L on a datetime-unit mis
 ## 2026-09-26 — Phase 31.8 run 4 closure / warm-up correction
  
 Run 36252301406 stopped before P&L because 64 deterministic warm-up sessions were counted in the global-coverage denominator. The plan and gate logic now treat feature-eligible sessions as the coverage denominator and report warm-up exclusions separately. Run 5 will execute the corrected gate.
+
+ 
+## 2026-09-26 — Phase 31.8 run 5 closure
+ 
+Run 36252470696 stopped in unit tests because one regression expected the old pre-warm-up gate semantics. E0403 is closed; run 6 will execute the corrected gate and, if it passes, the frozen Base/Stress grid.
