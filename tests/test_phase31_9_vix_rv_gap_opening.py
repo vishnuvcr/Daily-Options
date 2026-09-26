@@ -35,14 +35,21 @@ def test_session_panel_uses_strict_prior_vix_and_rv20():
     assert (ready.prev_close.notna()).all()
 
 def test_null_permutation_is_on_feature_eligible_panel():
-    idx=toy_idx()
-    vix=pd.DataFrame({"date":pd.date_range("2026-01-01",periods=26,freq="D"),"open":12.0,"high":13.0,"low":11.0,"close":np.linspace(12,14,26)})
-    p=session_panel(idx,vix)
-    t=build_signals(p,null_seed=None)
-    n=build_signals(p,null_seed=101)
+    panel=pd.DataFrame({
+        "date":pd.date_range("2026-01-05",periods=8,freq="D"),
+        "all_prior":[True]*8,
+        "ratio":[0.8,0.8,1.0,1.0,1.2,1.2,1.0,0.8],
+        "gap_ret":[0.01,-0.01,0.02,-0.02,0.03,-0.03,0.01,-0.01],
+        "regime":["LOW","LOW","MID","MID","HIGH","HIGH","MID","LOW"],
+        "open_px":[25000.0]*8,
+        "prev_close":[24900.0]*8,
+        "vix_feature_date":pd.date_range("2026-01-04",periods=8,freq="D"),
+        "rv_feature_date":pd.date_range("2026-01-04",periods=8,freq="D"),
+    })
+    t=build_signals(panel,null_seed=None)
+    n=build_signals(panel,null_seed=101)
     assert len(t)>0 and len(n)>0
     assert set(zip(t["date"],t["regime"])) != set(zip(n["date"],n["regime"]))
-
 def test_gate_rejects_prior_barrier_violation():
     panel=pd.DataFrame({
         "date":pd.to_datetime(["2026-01-05","2026-01-06","2026-01-08"]),
