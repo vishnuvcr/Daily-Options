@@ -686,3 +686,8 @@ Phase 31.7 is the bounded OI/volume microstructure discovery family after Phase 
 Run 36250115094 is quarantined: Base and Stress completed but every signal cell had zero executable price coverage and validation failed before any P&L could be accepted. The defect chain is recorded as E0388/E0389/E0391.
 
 The phase branch has now been corrected to use normalized timestamp-derived execution dates/times and to build null controls from the full feature panel before thresholding. Regression tests are persisted. The next authoritative run is run 9 from branch head eb4724c74ec064d7b5d7e6490186d8766e5188fc.
+## 2026-09-26 — Phase 31.7 run 9 closure and run 10 preparation
+
+Authoritative run 36250452425 (run 9) failed at pytest collection because the added regression test file contained a literal backslash-n sequence. No data gate, Base, Stress or P&L computation ran. E0393 is logged and the phase branch test file is corrected.
+
+Run 10 will use the corrected Phase 31.7 branch head 0fc95b29fba8558070368bdeb076d793d494e2ab. No Phase 31.7 numerical result has yet been accepted.
