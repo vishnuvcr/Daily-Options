@@ -169,3 +169,22 @@ The program must not tune endlessly toward a weekly target. A research family is
 ## 8. Final deliverables
 
 Abstract, introduction, research questions, literature review, data, methodology, cost model, candidate strategy definitions, statistical analysis, results, robustness checks, discussion, strengths, limitations, conclusion, future research, references, appendices, source manifest, reproducibility instructions and execution checklist.
+
+ 
+## Phase 31.9 — India VIX × realized volatility × opening-gap direction
+ 
+Phase 31.8 closed with 0/12 promotion passes in both friction regimes. The next bounded family is therefore a distinct regime-conditioned hypothesis: prior-session India VIX relative to prior-only NIFTY RV20, used to condition a simple NIFTY opening-gap FOLLOW/FADE rule.
+ 
+Frozen before computation:
+- 3 VIX/RV regimes: LOW ≤0.90, MID (0.90,1.10], HIGH >1.10;
+- 2 directions: FOLLOW_GAP and FADE_GAP;
+- 2 exits: 10:30 and 15:10;
+- 12 true cells and 5 fixed full-panel null permutations per cell;
+- entry 09:31, nearest expiry, ATM ±200-point debit spread, historical lot size;
+- Base/Stress ₹0.20/₹0.40 slippage plus the existing Paytm Money/NSE/statutory cost model;
+- official NSE India VIX data and pinned NIFTY 1-minute parquet cache;
+- 20-session prior-only RV warm-up and strict no-lookahead merge barrier.
+ 
+A cell must meet the existing ₹5,000 mean/median weekly and ≥70% positive-week gate in both Base and Stress before WFA/OOS is considered. No post-result regime-threshold tuning is permitted.
+ 
+[Phase 31.9 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.9-vix-rv-gap-opening-direction-v1/docs/phase31_9_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.9-vix-rv-gap-opening-direction-v1/docs/phase31_9_literature_review.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-31.9-vix-rv-gap-opening-direction-v1)
