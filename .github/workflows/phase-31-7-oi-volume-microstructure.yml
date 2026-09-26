@@ -51,24 +51,20 @@ jobs:
           PYTHONPATH=. python research/phase31_7_oi_volume_microstructure.py --data data/cache/phase31_trademarkk --out reports/phase31_7/gate --gate-only
       - name: Run Base discovery
         run: |
-          python - <<'PY'
-          import json,sys
-          g=json.load(open("reports/phase31_7/gate/data_gate.json"))
-          if g["status"]!="PASS":
-              print("DATA_GATE_FAIL")
-              sys.exit(0)
-          PY
-          PYTHONPATH=. python research/phase31_7_oi_volume_microstructure.py --data data/cache/phase31_trademarkk --out reports/phase31_7/base --slippage 0.20
+          if python -c 'import json,sys; g=json.load(open("reports/phase31_7/gate/data_gate.json")); sys.exit(0 if g["status"]=="PASS" else 1)'; then
+            PYTHONPATH=. python research/phase31_7_oi_volume_microstructure.py --data data/cache/phase31_trademarkk --out reports/phase31_7/base --slippage 0.20
+          else
+            echo "DATA_GATE_FAIL: numerical stage intentionally skipped"
+          fi
+
       - name: Run Stress discovery
         run: |
-          python - <<'PY'
-          import json,sys
-          g=json.load(open("reports/phase31_7/gate/data_gate.json"))
-          if g["status"]!="PASS":
-              print("DATA_GATE_FAIL")
-              sys.exit(0)
-          PY
-          PYTHONPATH=. python research/phase31_7_oi_volume_microstructure.py --data data/cache/phase31_trademarkk --out reports/phase31_7/stress --slippage 0.40
+          if python -c 'import json,sys; g=json.load(open("reports/phase31_7/gate/data_gate.json")); sys.exit(0 if g["status"]=="PASS" else 1)'; then
+            PYTHONPATH=. python research/phase31_7_oi_volume_microstructure.py --data data/cache/phase31_trademarkk --out reports/phase31_7/stress --slippage 0.40
+          else
+            echo "DATA_GATE_FAIL: numerical stage intentionally skipped"
+          fi
+
       - name: Validate outputs
         run: |
           python - <<'PY'
