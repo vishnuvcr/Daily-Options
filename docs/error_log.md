@@ -426,3 +426,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 
 
 | E0377 | 2026-09-26 | Phase 31.3 persistence | The corrected rerun still inherited the extra closing brace in the workflow's git-push ref expression, so Base/Stress calculations and accounting validation passed but persistence failed with a non-fast-forward push to the stray ref | Run 36242698184 produced valid Base/Stress artifacts and uploaded them, but repository persistence was not accepted | Remove the extra brace and rerun; accept numerical results only after the corrected run persists the artifacts to the intended branch | OPEN — workflow fixed in commit 19044f68; rerun pending |
+
+| E0378 | 2026-09-26 | Phase 31.6 IV-RV discovery | DuckDB rejected the index SELECT because the source column `close` was also projected with reserved alias `close`; Base discovery stopped before any trade calculation | No numerical result accepted; Stress was skipped | Renamed the projected alias to `close_px` and mapped the daily OHLC aggregation to that field; rerun required | OPEN — corrected rerun |
