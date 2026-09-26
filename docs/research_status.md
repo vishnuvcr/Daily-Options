@@ -635,3 +635,13 @@ Phase 30.12 final holdout remains blocked until the WFA aggregate produces audit
 The first packed-fold WFA topology was superseded after execution/cancellation issues. WFA v2 splits the validation into **72 independent jobs** (3 folds × 12 definition shards × 2 regimes) and audits 144 leaderboard/weekly files before any survivor is accepted.
 
 Clean v2 run **36236257189** is queued. The preceding v2 run **36236194154** is closed with failures caused by the WFA engine scope declaration; those results are quarantined.
+
+## 2026-09-26 — Phase 31.2 forensic audit initiated
+
+Phase 31.1 is **provisionally quarantined pending independent reconciliation**. A post-result code/artifact inspection identified E0364: the current Phase 31.1 source aggregates a `costs` column that it does not create, while the persisted weekly artifact contains that column. This does not by itself prove the P&L is wrong, but it breaks direct provenance from the currently checked-in simulator to the persisted result.
+
+Phase 31.2 therefore freezes the Phase 31.1 strategy and performs a deterministic, independent raw-data reconciliation on a stratified sample spanning the full study period, plus persisted-ledger/weekly aggregation checks and a 09:30→15:10 payoff/loss-region diagnostic. No parameter tuning, WFA, or holdout promotion is permitted during the audit.
+
+Branch: `phase-31.2-phase31-1-forensic-audit-v1`.
+Plan: `docs/phase31_2_forensic_audit_plan.md`.
+Workflow: `.github/workflows/phase-31-2-phase31-1-forensic-audit.yml`.
