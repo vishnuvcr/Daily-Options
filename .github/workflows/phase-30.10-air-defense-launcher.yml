@@ -1,0 +1,35 @@
+name: Phase 30.10 - Air Defense numerical launcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "research/phase30_10_launcher_trigger.txt"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase30-10-air-defense-launcher
+  cancel-in-progress: false
+
+jobs:
+  launch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger phase branch workflow
+        uses: actions/checkout@v4
+        with:
+          ref: phase-30.10-strangle-air-defense-pnl-v1
+          fetch-depth: 0
+      - name: Touch phase branch trigger
+        env:
+          GH_TOKEN: \${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          echo "$(date -u +%FT%TZ)" > research/phase30_10_launcher_run_marker.txt
+          git add research/phase30_10_launcher_run_marker.txt
+          git commit -m "Phase 30.10: trigger numerical matrix workflow"
+          git push origin HEAD:phase-30.10-strangle-air-defense-pnl-v1
