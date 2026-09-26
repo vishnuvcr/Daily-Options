@@ -557,3 +557,13 @@ The strongest Base discovery cell was 30-minute / 1.00×: **₹47,477.23 total n
 **Phase 31.5 is closed as discovery evidence. No ORB candidate is promoted to WFA/OOS and no result-driven tuning is authorized.**
 
 [Phase 31.5 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.5-finite-candidate-testing-v1/docs/phase31_5_plan.md) · [Phase 31.5 final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.5-finite-candidate-testing-v1/reports/phase31_5/final_result.md) · [Research status](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md)
+
+## 2026-09-26 — Phase 31.7 execution checkpoint
+
+Phase 31.7 OI/volume microstructure is the current bounded numerical frontier. Its data gate passed on 1,228 eligible sessions with 98.13% nearest-expiry and 72.39% next-expiry feature coverage.
+
+The first corrected launch, run 36250115094, completed Base/Stress but had zero executable price coverage in every cell and failed validation. It is quarantined and provides no accepted P&L. E0388/E0389/E0391 are logged.
+
+The phase branch has been corrected for timestamp-safe execution joins and preregistered full-panel null permutations, with regression tests added. The next run is the authoritative rerun from branch head eb4724c74ec064d7b5d7e6490186d8766e5188fc.
+
+[Phase 31.7 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.7-oi-volume-microstructure-v1/docs/phase31_7_plan.md) · [Phase 31.7 branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-31.7-oi-volume-microstructure-v1) · [Research status](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md)
