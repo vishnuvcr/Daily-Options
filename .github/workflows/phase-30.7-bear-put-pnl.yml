@@ -93,6 +93,8 @@ jobs:
           d=next(x for x in cov["definitions"] if x["signal_weeks"]>=20)
           s=d["signals"][0]
           print("signal_ts",s["signal_ts"],"entry_plus_one",pd.Timestamp(s["signal_ts"])+pd.Timedelta(minutes=1))
+          print(c.execute(f"SELECT MIN(timestamp),MAX(timestamp),COUNT(*) FROM read_parquet('{f}') WHERE date='2025-09-01' AND granularity='1min'").fetchall())
+          print(c.execute(f"SELECT COUNT(*) FROM read_parquet('{f}') WHERE date='2025-09-01' AND granularity='1min' AND timestamp BETWEEN TIMESTAMPTZ '2025-09-01 04:35:00+00' AND TIMESTAMPTZ '2025-09-01 04:37:00+00'").fetchall())
           PY
 
       - name: Smoke Base
