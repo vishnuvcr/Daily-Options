@@ -673,3 +673,10 @@ Phase 30.11 is now the active validation phase. The corrected WFA workflow run i
 A first WFA push exposed E0350: Fold 3 test dates were inconsistent with the intended 20-week window. The fold, test and plan are now synchronized. The corrected run is executing; no WFA survivor has yet been accepted.
 
 Phase 30.12 remains blocked until the WFA aggregate audit is complete.
+
+
+## 2026-09-26 — Phase 30.11 authoritative run 36235817916
+
+The immediately preceding run 36235740035 failed because its checked-out runner still had the pre-correction Fold 3 dates even though the tests had already been updated (E0351). No WFA numerical result from that run is accepted.
+
+The runner is now definitively synchronized with the preregistered Fold 3 dates, and authoritative run **36235817916** is executing the rolling WFA. Current state: **16/24 shard jobs in progress, 8 queued; no accepted WFA survivor yet.**
