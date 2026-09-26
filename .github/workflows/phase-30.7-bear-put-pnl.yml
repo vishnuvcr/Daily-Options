@@ -1,5 +1,5 @@
 name: Phase 30.7 - Bear Put full Base Stress matrix
-# v7 IST normalization
+# v8 timestamp probe
 
 on:
   workflow_dispatch:
@@ -79,6 +79,20 @@ jobs:
           import json
           x=json.load(open("reports/phase30_7_bear_put_contract_audit.json"))
           assert x["audit_passed"] is True
+          PY
+
+      - name: Probe option timestamp convention
+        run: |
+          python - <<'PY'
+          import duckdb, json, pandas as pd
+          c=duckdb.connect()
+          f="data/cache/phase30_2_rissin/NIFTY_2025.parquet"
+          print(c.execute(f"DESCRIBE SELECT * FROM read_parquet('{f}') LIMIT 0").df().to_string())
+          print(c.execute(f"SELECT date,timestamp,expiry,strike,option_type,open,close FROM read_parquet('{f}') WHERE granularity='1min' LIMIT 5").df().to_string())
+          cov=json.load(open("reports/phase30_6_bear_put_signal_coverage.json"))
+          d=next(x for x in cov["definitions"] if x["signal_weeks"]>=20)
+          s=d["signals"][0]
+          print("signal_ts",s["signal_ts"],"entry_plus_one",pd.Timestamp(s["signal_ts"])+pd.Timedelta(minutes=1))
           PY
 
       - name: Smoke Base
