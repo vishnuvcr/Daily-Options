@@ -678,3 +678,11 @@ Phase 31.5 finite NIFTY ORB discovery completed successfully in authoritative ru
 - **Decision: Phase 31.5 closed; no candidate promoted to WFA/OOS and no result-driven tuning authorized.**
 
 [Phase 31.5 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.5-finite-candidate-testing-v1/docs/phase31_5_plan.md) · [Phase 31.5 final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.5-finite-candidate-testing-v1/reports/phase31_5/final_result.md)
+
+## 2026-09-26 — Phase 31.7 current frontier
+
+Phase 31.7 is the bounded OI/volume microstructure discovery family after Phase 31.6 closed negative. The data gate passed in run 36250115094 with 1,228 eligible sessions, 2,094 feature rows, 98.13% nearest-expiry coverage, and 72.39% next-expiry coverage.
+
+Run 36250115094 is quarantined: Base and Stress completed but every signal cell had zero executable price coverage and validation failed before any P&L could be accepted. The defect chain is recorded as E0388/E0389/E0391.
+
+The phase branch has now been corrected to use normalized timestamp-derived execution dates/times and to build null controls from the full feature panel before thresholding. Regression tests are persisted. The next authoritative run is run 9 from branch head eb4724c74ec064d7b5d7e6490186d8766e5188fc.
