@@ -1,0 +1,21 @@
+{
+  "status": "COMPLETE",
+  "slippage": 0.4,
+  "trade_days": 1209,
+  "weeks": 260,
+  "mean_daily_net": -444.1953814574638,
+  "median_daily_net": -856.93238589,
+  "mean_weekly_net": -2065.508523777207,
+  "median_weekly_net": -2534.27672284,
+  "positive_week_rate": 0.2692307692307692,
+  "total_net": -537032.2161820737,
+  "worst_day": -20816.8843599075,
+  "worst_week": -45613.99401891,
+  "max_drawdown_daily": -544992.8010762887,
+  "execution_coverage": 0.979740680713128,
+  "missing_trade_days": 25,
+  "weekly_target": 5000.0,
+  "target_mean_pass": false,
+  "target_median_pass": false,
+  "target_positive_week_pass": false
+}
