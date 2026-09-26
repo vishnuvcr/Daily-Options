@@ -117,7 +117,7 @@ jobs:
           path: shard_results
           merge-multiple: false
       - name: Audit and aggregate WFA
-        run: PYTHONPATH=. python research/phase30_11_wfa_aggregate.py --root shard_results --out-root reports/phase30_11_aggregate_v2
+        run: PYTHONPATH=. python research/phase30_11_wfa_v2_aggregate.py --root shard_results --out-root reports/phase30_11_aggregate_v2
       - name: Persist WFA v2 outputs
         env:
           GH_TOKEN: ${{ github.token }}
