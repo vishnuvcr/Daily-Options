@@ -92,23 +92,29 @@ def load_calendar(con, root: Path):
 
 
 def expiry_setups(sessions, expiries):
-    session_set = set(sessions)
-    usable = sorted(e for e in expiries if START_DATE <= e <= END_CAP)
+    # Build setups by the same calendar invariant used by the independently
+    # audited Phase-25 Falcon implementation: an entry date is valid only when
+    # it is exactly the fourth prior trading session to the near expiry.
+    # This avoids constructing candidate calendars from expiry rows that may
+    # not be present on the actual entry-date chain.
+    session_list = sorted(set(sessions))
+    usable = sorted(e for e in set(expiries) if START_DATE <= e <= END_CAP)
     out = []
-    for i, near_exp in enumerate(usable[:-1]):
-        future = [e for e in usable[i + 1:] if e > near_exp]
-        if not future:
-            continue
-        prior = sorted(d for d in session_set if d < near_exp)
-        if len(prior) < 4:
-            continue
-        entry_date, adjust_date, exit_date = prior[-4], prior[-3], prior[-1]
+    for entry_date in session_list:
         if not (START_DATE <= entry_date <= END_CAP):
             continue
+        future_exp = [e for e in usable if e >= entry_date]
+        if len(future_exp) < 2:
+            continue
+        near_exp, far_exp = future_exp[0], future_exp[1]
+        prior = [d for d in session_list if d < near_exp]
+        if len(prior) < 4 or prior[-4] != entry_date:
+            continue
+        adjust_date, exit_date = prior[-3], prior[-1]
         out.append(
             {
                 "near_expiry": near_exp,
-                "far_expiry": future[0],
+                "far_expiry": far_exp,
                 "entry_date": entry_date,
                 "adjust_date": adjust_date,
                 "exit_date": exit_date,
