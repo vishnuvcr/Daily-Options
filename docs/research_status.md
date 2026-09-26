@@ -648,3 +648,10 @@ Phase 31.1 tested the fixed NIFTY 09:30 ratio structure (2x +200 CE, 2x -200 PE,
 Decision: **RETIRED / NEGATIVE**. No WFA or holdout promotion; no result-driven tuning is authorized. Implementation defects E0357–E0360 were fixed and logged before accepting this numerical result.
 
 The next source-faithful frontier is **Phase 30.13 — Equity Income Low-VIX Diagonal source resolution** on branch `phase-30.13-equity-income-low-vix-diagonal-source-resolution-v1`. Numerical P&L remains blocked until its transcript-defined mechanics are fully resolved.
+
+
+## 2026-09-26 — Phase 30.13 source-resolution closure
+
+Phase 30.13 Low-VIX Diagonal is **SOURCE-BLOCKED / DATA-LIMITED**. GitHub Actions could reach the public YouTube page but deterministic Python caption acquisition was blocked by YouTube bot/IP controls across yt-dlp client modes and YouTubeTranscriptApi. No transcript evidence was accepted and no P&L was calculated. The candidate remains frozen for possible reopening when a reproducible primary-evidence path is available.
+
+[Phase 30.13 final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.13-equity-income-low-vix-diagonal-source-resolution-v1/reports/phase30_13_final_result.md) · [Phase 30.13 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-30.13-equity-income-low-vix-diagonal-source-resolution-v1/docs/phase30_13_plan.md)
