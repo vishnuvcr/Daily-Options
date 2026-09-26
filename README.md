@@ -590,3 +590,14 @@ The next authoritative run will be run 12 from branch head a73da3a7f29668b32f81f
 Run 36251100372 reached the full numerical stages and diagnostic probes, but validation failed because no executable trades were mapped. The raw probe confirmed valid 09:31/15:10 rows; the remaining issue was expiry-key type matching in the execution loader. The branch has been corrected with a Python-date `expiry_key` and regression test, and report persistence has been hardened against branch races.
 
 The next authoritative run is **run 13** from phase branch head **305fb81b6b4c48c01f713a9f8b57421af14145fc**. No Phase 31.7 numerical result is accepted yet.
+
+ 
+## 2026-09-26 — Phase 31.7 CLOSED / Phase 31.8 active frontier
+ 
+**Phase 31.7 OI/volume microstructure is closed as negative evidence.** Authoritative run **36251189770** passed the full frozen 12-cell Base/Stress grid and five null seeds. All 12 true cells had negative total net P&L in both friction regimes; the best cell (VOL_IMB, 0.40, nearest expiry) averaged **-₹191.41/week Base** and **-₹245.58/week Stress**, with about **42.27% positive weeks**. No WFA/OOS promotion occurred.
+ 
+The final audited report is [reports/phase31_7/final_result.md](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.7-oi-volume-microstructure-v1/reports/phase31_7/final_result.md).
+ 
+**Phase 31.8 Global Overnight Cross-Market Transmission** is now preregistered on [phase-31.8-global-overnight-transmission-v1](https://github.com/vishnuvcr/Daily-Options/tree/phase-31.8-global-overnight-transmission-v1). It uses six global indices, strict pre-NIFTY no-lookahead alignment, three fixed regional/global composites, two thresholds, two fixed exits, Base/Stress costs, and five null seeds: **12 true cells + 60 null summaries per friction**. The [Phase 31.8 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.8-global-overnight-transmission-v1/docs/phase31_8_plan.md) and [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.8-global-overnight-transmission-v1/docs/phase31_8_literature_review.md) are persisted before computation.
+ 
+The new manual launcher is [.github/workflows/phase-31-8-main-launcher.yml](https://github.com/vishnuvcr/Daily-Options/blob/main/.github/workflows/phase-31-8-main-launcher.yml).
