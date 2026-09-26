@@ -559,3 +559,8 @@ Authoritative run **36218652778** completed Base and Stress successfully at the 
 The simulator is corrected to normalize both timezone-aware (+05:30) and timezone-naive IST representations to the same naive Asia/Kolkata minute timestamp. A dedicated regression test now verifies both forms map to 09:30 IST. Economic rules, 270-cell grid, source, cost model and promotion gate are unchanged.
 
 Status: **OPEN — deterministic rerun required**
+
+
+## 2026-09-26 — Phase 30.2 E0320 correction and deterministic rerun
+
+Workflow 36219733330 failed both Base and Stress at the unit-test gate because the newly added timezone-aware timestamp regression exposed an over-escaped offset-detection regex. No data acquisition or P&L computation ran, and no Falcon performance result is accepted. The code-only fix is commit `edfd1608fa31ac8ee4d70c09e2a3ab1ce9303aae`. The corrected Falcon workflow **36220039329** is now queued from that commit. The frozen 270-cell strategy grid, cost model, information barrier and ₹5,000/week promotion gate are unchanged.
