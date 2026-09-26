@@ -544,3 +544,14 @@ Phase 30.13 is **SOURCE-BLOCKED / DATA-LIMITED**. The public YouTube page is rea
 - Next step is a provenance-corrected reproduction with one frozen accounting definition; no optimization is authorized before that reproduction.
 
 [Phase 31.2 plan](docs/phase31_2_forensic_audit_plan.md) · [Phase 31.2 final report](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.2-phase31-1-forensic-audit-v1/reports/phase31_2/final_result.md) · [Phase 31.2 branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-31.2-phase31-1-forensic-audit-v1)
+
+
+## 2026-09-26 — Phase 31.5 ORB discovery closure
+
+Phase 31.5 finite NIFTY opening-range-breakout discovery completed successfully in run **36245174834**. The frozen 18-cell grid included 5/15/30-minute opening ranges and 0.25/0.50/1.00× breakout multipliers, with Paytm-style transaction/statutory costs, Base/Stress slippage and exact-expiry NIFTY data.
+
+The strongest Base discovery cell was 30-minute / 1.00×: **₹47,477.23 total net**, **₹92.73 mean weekly net**, **47.13% positive weeks**. Its Stress result was **₹25,955.61 total net**, **₹50.69 mean weekly net**, **45.90% positive weeks**. These results are far below the project's ₹5,000/week consistency target and 70% positive-week gate.
+
+**Phase 31.5 is closed as discovery evidence. No ORB candidate is promoted to WFA/OOS and no result-driven tuning is authorized.**
+
+[Phase 31.5 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.5-finite-candidate-testing-v1/docs/phase31_5_plan.md) · [Phase 31.5 final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.5-finite-candidate-testing-v1/reports/phase31_5/final_result.md) · [Research status](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/research_status.md) · [Error log](https://github.com/vishnuvcr/Daily-Options/blob/main/docs/error_log.md)
