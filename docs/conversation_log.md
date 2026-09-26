@@ -213,3 +213,7 @@ Run 36253432190 stopped before acquisition. The test log was inspected directly 
 ## 2026-09-26 — Phase 31.9 run 2 unit-test closure
  
 Run 36253528975 stopped before acquisition. The null-control regression was too weak because the toy feature construction produced only HIGH regime labels; the fixture is now explicit and mixed. The failure-path persistence step is also hardened. No numerical result exists from run 2.
+
+## 2026-09-26 — Phase 31.9 run 3 acquisition-shell closure
+
+Run 36253620977 reached the pinned NIFTY cache and stopped on a malformed heredoc in the workflow's acquisition step. E0412 is closed by switching to a one-line Python invocation. No numerical result exists.
