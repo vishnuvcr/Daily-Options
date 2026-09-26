@@ -696,3 +696,8 @@ Run 10 will use the corrected Phase 31.7 branch head 0fc95b29fba8558070368bdeb07
 Run 36250549825 (run 10) reached the data gate, Base and Stress, but validation failed before any P&L acceptance. The concurrent branch audit then replaced the execution-price join with explicit per-expiry IST date and strike filters. That revision exposed E0394: strike_sql was referenced before definition in the query f-string. The branch source and regression tests are now corrected.
 
 Run 11 will use the corrected Phase 31.7 branch head 408d8d1cbb1fa5e121d2d2f72f3778432d07fa60. No Phase 31.7 numerical result is accepted yet.
+## 2026-09-26 — Phase 31.7 run 11 closure / run 12 diagnostic frontier
+
+Run 36250863176 reached the data gate, Base and Stress, but validation again failed before any Phase 31.7 P&L was accepted. The latest phase branch now includes a raw five-sample execution-row probe; the authoritative launcher has been instrumented to run it after the data gate.
+
+Run 12 will use the latest corrected Phase 31.7 branch head a73da3a7f29668b32f81fe1612b6ef31c40492a8. The probe is diagnostic only and does not change the frozen 12-cell strategy grid, entry/exit, slippage or cost model.
