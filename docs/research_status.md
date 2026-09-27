@@ -921,3 +921,7 @@ Phase 31.10 is closed as negative discovery evidence. Phase 32 is now the active
 The preregistered family uses the pinned thetrademarkk/india-index-options-1m revision 51ca58c, a strictly-next expiry, 09:30 surface construction, prior-only 60-session z-scores, thresholds 1.0/1.5, exits 10:30/13:30/15:10, two surface features, five full-panel null seeds, historical lot sizes and Base/Stress friction. The true grid is 12 cells.
 
 Initial workflow run 36338180973 stopped at unit tests before any data acquisition or P&L. E0428 identified a Black–Scholes IV convergence-boundary defect; E0429 identified a degenerate synthetic skew test fixture. Both are corrected. No research rule, threshold, structure or cost assumption changed. The corrected rerun is the first authoritative numerical attempt.
+
+## 2026-09-27 — Phase 32 run 2 closure / SQL correction
+
+Run **36338276277** passed all Phase 32 unit tests and restored the pinned options cache, but stopped in the data-gate computation with a DuckDB parser error caused by the unquoted reserved alias `time` in the surface quote query. No surface coverage or P&L result is accepted. E0430 is logged and the loader is corrected to use `local_time`. The frozen 12-cell research design is unchanged.
