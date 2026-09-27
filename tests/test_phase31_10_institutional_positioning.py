@@ -18,10 +18,14 @@ def test_participant_ratio_is_bounded():
 def test_prior_only_zscore_barrier():
     dates=pd.date_range("2026-01-01",periods=65,freq="D")
     oi=[]
-    for d in dates:
+    for i,d in enumerate(dates):
+        fii_long=700+i
+        fii_short=300+(i%7)
+        dii_long=650+(i%5)
+        dii_short=350+(i%3)
         oi.extend([
-            {"trade_date":d,"participant":"FII","fut_idx_long":800,"fut_idx_short":200,"idx_net_ratio":0.6,"idx_net":600},
-            {"trade_date":d,"participant":"DII","fut_idx_long":600,"fut_idx_short":400,"idx_net_ratio":0.2,"idx_net":200},
+            {"trade_date":d,"participant":"FII","fut_idx_long":fii_long,"fut_idx_short":fii_short,"idx_net_ratio":(fii_long-fii_short)/(fii_long+fii_short),"idx_net":fii_long-fii_short},
+            {"trade_date":d,"participant":"DII","fut_idx_long":dii_long,"fut_idx_short":dii_short,"idx_net_ratio":(dii_long-dii_short)/(dii_long+dii_short),"idx_net":dii_long-dii_short},
         ])
     nifty=pd.DataFrame({
         "date":[d.date() for d in dates],
@@ -84,5 +88,5 @@ def test_immediate_prior_positioning_is_required():
         "close_px":[25010.0]*len(dates)
     })
     p=feature_panel(nifty,pd.DataFrame(oi))
-    miss=p[p["date"]==dates[32].date()].iloc[0]
+    miss=p[p["date"]==dates[33].date()].iloc[0]
     assert not bool(miss.barrier_ok)
