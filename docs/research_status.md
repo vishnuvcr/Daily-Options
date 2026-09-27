@@ -859,3 +859,7 @@ Run **36336274435** completed official NSE participant-OI acquisition (1,234 fil
 ## 2026-09-27 — Phase 31.10 run 7 closure / run 8 frontier
 
 Run **36336951355** failed only in unit tests because fixtures lagged the corrected feature-panel contracts. E0424 is closed. Run 8 is the next authoritative attempt with no research-rule changes.
+
+## 2026-09-27 — Phase 31.10 run 8 closure / run 9 frontier
+
+Run **36337049593** stopped at the final remaining unit-test fixture defect. E0425 is closed. No numerical stage ran. The immediate-prior-positioning fixture now includes the required `ts` field. Run 9 is next.
