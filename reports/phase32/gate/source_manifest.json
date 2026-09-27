@@ -1,0 +1,11 @@
+{
+  "dataset_repo": "thetrademarkk/india-index-options-1m",
+  "revision": "51ca58c",
+  "study_start": "2021-07-01",
+  "study_end": "2026-08-31",
+  "source_urls": [
+    "https://huggingface.co/datasets/thetrademarkk/india-index-options-1m",
+    "https://www.nseindia.com/option-chain",
+    "https://www.nseindia.com/all-reports-derivatives"
+  ]
+}
