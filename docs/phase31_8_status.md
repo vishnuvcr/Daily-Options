@@ -2,7 +2,7 @@
 
 **State: CLOSED — NEGATIVE DISCOVERY**
 
-Authoritative run: **36341877019**
+Authoritative run: **36342193173**
 
 ## Data gate
 - Raw NIFTY sessions: 1,228
@@ -38,7 +38,7 @@ The five shuffled full-panel null seeds did not establish a comparable positive 
 **Retire Phase 31.8.** No parameter tuning, added indices, alternate thresholds, different horizons, WFA or OOS is authorized from this result.
 
 ## Integrity note
-The persisted global-data manifest records yfinance version **1.7.0**, while the newly authored workflow installs 0.2.66. The numerical run used the already-persisted cache and therefore did not re-download under the workflow's installed package. The exact cached source files and SHA-256 hashes are preserved in the manifest. This is logged as a reproducibility engineering issue, not as a result-changing data substitution.
+The persisted global-data manifest records yfinance version **1.7.0**, while the newly authored workflow installs 0.2.66. The authoritative run 36342193173 used the already-persisted cache and therefore did not re-download under the workflow's installed package. The exact cached source files and SHA-256 hashes are preserved in the manifest. This is logged as a reproducibility engineering issue, not as a result-changing data substitution.
 
 ## Next direction
 Return to the bounded research plan and advance to the next distinct family only after updating the main status/README and preserving this result.
