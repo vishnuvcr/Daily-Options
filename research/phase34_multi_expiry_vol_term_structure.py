@@ -228,7 +228,7 @@ def execution_price_map(signals,root):
         ps=str(path).replace("'","''")
         q=f"""SELECT CAST(trading_day AS DATE) trade_date,
                      CAST(expiry AS DATE) expiry,
-                     strftime(CAST(timestamp AS TIMESTAMP),'%H:%M:%S') time,
+                     strftime(CAST(timestamp AS TIMESTAMP),'%H:%M:%S') local_time,
                      UPPER(CAST(option_type AS VARCHAR)) option_type,
                      CAST(strike AS DOUBLE) strike,
                      CAST(open AS DOUBLE) open_px,
@@ -243,8 +243,8 @@ def execution_price_map(signals,root):
         z=con.execute(q).df()
         if z.empty: continue
         for r in z.itertuples(index=False):
-            key=(r.trade_date,r.expiry,r.time,r.option_type,float(r.strike))
-            prices[key]=float(r.open_px if r.time=="09:31:00" else r.close_px)
+            key=(r.trade_date,r.expiry,r.local_time,r.option_type,float(r.strike))
+            prices[key]=float(r.open_px if r.local_time=="09:31:00" else r.close_px)
     con.close(); return prices
 
 def trade_rows(signals,prices,slippage):
