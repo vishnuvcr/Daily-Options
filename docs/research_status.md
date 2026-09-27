@@ -854,3 +854,9 @@ Phase 31.9 is closed negative. Phase 31.10 is the next materially distinct famil
 The frozen discovery grid is 3 prior-only standardized positioning features × 2 absolute thresholds × 2 exit horizons = 12 true cells, with five full-panel null seeds per cell. The primary source is the official NSE participant-wise F&O OI archive. FII/DII cash flow is retained as an auxiliary coverage/cross-check dataset because the public historical endpoint is not a reliable daily backfill source.
 
 No Phase 31.10 P&L is accepted before the data gate and execution-coverage checks pass.
+
+## 2026-09-27 — Phase 31.10 run 1 closure / run 2 frontier
+
+Run **36335091335** reached the unit-test stage and stopped on two test-fixture defects before data acquisition. E0417 records the fixture correction: the prior-only z-score test used a constant series (zero rolling standard deviation), and the missing-position-date test checked the wrong trade date. E0418 records the secondary failure-path persistence defect where absent output directories caused a pathspec error.
+
+The research engine itself was not numerically executed. Both corrections are now persisted. The frozen Phase 31.10 grid, source hierarchy, cost model and promotion gate are unchanged. The next authoritative attempt is run 2.
