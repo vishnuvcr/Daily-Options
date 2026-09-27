@@ -1,2 +1,1 @@
-Phase 32 run 8 trigger: E0435 diagnostic rerun. Quote-key normalization, failure-reason diagnostics, feature-column fix, and explicit gate enforcement are all on branch head.
-Timestamp: 2026-09-27T23:55:00+05:30
+Phase 32 run 9 trigger: E0436 expiry-aware execution-key correction and empty-trade hardening verified on branch head.
