@@ -671,3 +671,9 @@ Run 36253528975 stopped before acquisition because the null-control regression f
 ## 2026-09-26 — Phase 31.9 run 3 closure
 
 Run 36253620977 passed tests and restored the pinned NIFTY cache but stopped on a workflow heredoc syntax defect before VIX acquisition. E0412 is closed; run 4 uses the corrected acquisition step.
+
+## 2026-09-27 — Phase 31.9 run 4 closure
+
+Run **36253716626** passed tests and restored the pinned NIFTY cache, then stopped at official NSE India VIX acquisition because the homepage request returned HTTP 403 on GitHub Actions. No VIX data or P&L result exists from that run.
+
+E0413 is logged and corrected: direct official NSE VIX historical endpoints are now tried without a homepage dependency, with response hashing and manifest provenance preserved. The next authoritative attempt is **run 5** from the corrected phase branch.
