@@ -1,1 +1,1 @@
-Phase 32 manual/automatic launch trigger file. Frozen research plan: docs/phase32_plan.md.
+Phase 32 rerun trigger after E0427/E0428 corrections.
