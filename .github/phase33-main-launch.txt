@@ -1,1 +1,1 @@
-Phase 33 run 2 trigger: E0439 DuckDB alias correction; no research-rule changes.
+Phase 33 run 3 trigger: vectorized gamma/IV engine, block-null permutation and corrected regression suite are on branch head.
