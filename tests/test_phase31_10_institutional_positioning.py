@@ -87,6 +87,7 @@ def test_immediate_prior_positioning_is_required():
     nifty=pd.DataFrame({
         "date":[d.date() for d in dates],
         "time":["09:30:00"]*len(dates),
+        "ts":dates,
         "open_px":[25000.0]*len(dates),
         "close_px":[25010.0]*len(dates)
     })
