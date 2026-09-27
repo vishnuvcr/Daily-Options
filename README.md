@@ -701,3 +701,25 @@ Run **36335091335** stopped during unit tests before any institutional data or P
 ## 2026-09-27 — Phase 31.10 run 9 numerical completion / validation correction
 
 Run **36337194946** completed the full numerical discovery after passing the official NSE participant-OI data gate. The gate had **1,164/1,164 feature-eligible sessions complete (100%)**, zero prior-positioning barrier violations, and all 1,234 participant-OI source files present. Base and Stress both produced the full 12-cell true grid, 60 null summaries and execution-price coverage above 95% for every cell. The run was quarantined only because validation expected a root-level coverage file while the engine writes separate friction-specific coverage files. **No P&L is accepted yet.** E0426 is logged; run 10 is the validation-only rerun.
+
+## 2026-09-27 — Phase 32 active frontier
+
+Phase 31.10 is closed as negative discovery evidence after authoritative run **36337462383**: 0/12 Base and 0/12 Stress promotion passes, no positive-total-net true cell, and no WFA/OOS promotion.
+
+**Phase 32 — Options Skew / Smile Dislocation** is now the active materially distinct research family on branch `phase-32-options-skew-smile-dislocation-v1`.
+
+Frozen before numerical discovery:
+- 2 surface features: SKEW_Z and SMILE_Z;
+- 2 absolute thresholds: 1.0 and 1.5;
+- 3 fixed exits: 10:30, 13:30 and 15:10 IST;
+- 12 true cells;
+- five full-panel null seeds per cell;
+- strictly next NIFTY expiry;
+- prior-only 60-session standardization;
+- historical lot sizes and the existing Paytm Money/NSE/statutory cost model;
+- Base/Stress slippage ₹0.20/₹0.40 per option-price unit per order;
+- the same ₹5,000/week mean + median + 70% positive-week promotion gate.
+
+Phase 32 plan, literature review, engine, tests and manual GitHub Actions workflow are persisted on the phase branch. The first workflow run, **36338180973**, was quarantined before data acquisition because of two test-stage defects (E0428/E0429); both were corrected. Corrected run **36338276277** is the current numerical frontier.
+
+[Phase 32 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-32-options-skew-smile-dislocation-v1/docs/phase32_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-32-options-skew-smile-dislocation-v1/docs/phase32_literature_review.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-32-options-skew-smile-dislocation-v1) · [workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-32-options-skew-smile-dislocation-v1/.github/workflows/phase-32-options-skew-smile-dislocation.yml)
