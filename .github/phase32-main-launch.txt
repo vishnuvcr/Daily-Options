@@ -1,1 +1,1 @@
-Phase 32 run 5 trigger: source-integrity guard active; exact local_time SQL fix verified at branch head.
+Phase 32 run 7 trigger: E0433 tuple-selection fix and regression are on branch head; source-integrity guard required.
