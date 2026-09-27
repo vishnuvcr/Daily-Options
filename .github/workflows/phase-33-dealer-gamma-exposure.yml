@@ -1,6 +1,9 @@
 name: Phase 33 Dealer Gamma Exposure
 
 on:
+  push:
+    paths:
+      - ".github/phase33-main-launch.txt"
   workflow_dispatch:
     inputs:
       force_refresh:
