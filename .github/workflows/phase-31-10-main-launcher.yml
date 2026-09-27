@@ -104,7 +104,8 @@ jobs:
                   assert len(n)==60,(k,len(n))
                   nt=pd.read_csv(f"reports/phase31_10/{k}/null_trades_{k}.csv")
                   assert len(nt)>0,(k,"zero null trades")
-                  cov=pd.read_csv(f"reports/phase31_10/{k}/price_coverage.csv") if False else pd.read_csv(f"reports/phase31_10/price_coverage.csv")
+                  cov=pd.read_csv(f"reports/phase31_10/{k}/price_coverage.csv")
+                  assert len(cov)==12,(k,len(cov))
                   assert cov.coverage_rate.min()>=0.95,(k,"coverage below 95%")
           PY
 
