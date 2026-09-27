@@ -88,6 +88,13 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/phase33_* reports/phase33 docs/phase33_* research/phase33_dealer_gamma_exposure.py tests/test_phase33_dealer_gamma_exposure.py || true
-          git diff --cached --quiet || git commit -m "Phase 33: persist workflow artifacts"
-          git push
+          git add docs/phase33_* reports/phase33 research/phase33_dealer_gamma_exposure.py tests/test_phase33_dealer_gamma_exposure.py || true
+          if ! git diff --cached --quiet; then
+            git commit -m "Phase 33: persist workflow artifacts"
+            for attempt in 1 2 3; do
+              if git push origin HEAD:phase-33-dealer-gamma-exposure-v1; then exit 0; fi
+              git fetch origin phase-33-dealer-gamma-exposure-v1
+              git rebase FETCH_HEAD
+            done
+            exit 1
+          fi
