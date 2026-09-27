@@ -204,3 +204,12 @@ Primary target: ₹5,000 net per completed trading week under the existing Base/
 ## Phase 32 — Options Skew / Smile Dislocation
 
 A materially distinct option-surface family is preregistered on `phase-32-options-skew-smile-dislocation-v1`. It uses 09:30 NIFTY option-implied skew and smile curvature from the pinned one-minute options cache, prior-only 60-session z-scores, thresholds 1.0/1.5 and fixed exits 10:30/13:30/15:10. The frozen discovery matrix is 12 true cells plus five complete-panel null permutations per cell and Base/Stress friction. Strict next-expiry selection avoids same-day expiry in the surface signal. No WFA/OOS is authorized unless a frozen cell clears the existing mean/median ₹5,000-week and ≥70% positive-week gate in both Base and Stress.
+
+## Phase 32 — Options Skew / Smile Dislocation — CLOSED
+
+Phase 32 completed its preregistered finite experiment on branch `phase-32-options-skew-smile-dislocation-v1`. The data gate and artifact validation passed on authoritative run **36339168867**, but all 12 true cells failed the economic promotion gate in both Base and Stress. No WFA/OOS was authorized and no post-result tuning is permitted.
+
+Result manuscript: `reports/phase32/final_result.md` on the Phase 32 branch.
+
+### Next materially distinct families
+The next phase, if authorized, should be a new preregistered family rather than an optimization of Phase 32. Candidate directions are dealer/gamma exposure proxies, multi-expiry volatility-surface structure, or cross-market/global transmission combined with an independently defined options-state variable.
