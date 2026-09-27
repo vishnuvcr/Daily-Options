@@ -906,3 +906,17 @@ Phase 32 is closed. Phase 33 — Dealer Gamma Exposure Proxies — is now the ac
 ## 2026-09-27 — Phase 33 CLOSED / Phase 34 next
 
 Phase 33 authoritative run **36340721257** is DATA-LIMITED: 1,228/1,233 prior-session snapshot coverage (99.59%), GEX_Z and ATM_GEX_SHARE_Z at 100% after warm-up, but FLIP_DISTANCE_Z only 26.54%. No P&L was accepted. Next family: Phase 34 multi-expiry volatility term structure.
+
+
+## 2026-09-28 — Phase 31.8 closed
+
+Phase 31.8 global overnight transmission authoritative run **36341877019** completed the frozen 12-cell Base/Stress discovery and null controls.
+
+- Data gate: PASS; 1,164/1,164 feature-eligible sessions complete; 100% coverage; 0 prior-date violations.
+- Base: 0/12 cells passed the ₹5,000 mean+median weekly net and ≥70% positive-week gate.
+- Stress: 0/12 cells passed.
+- Closest positive mean cell: ASIA_LEAD z≥1.0, 10:30; ₹107.37 mean weekly Base / ₹37.13 Stress; 45.45% positive weeks.
+- Decision: Phase 31.8 retired. No WFA/OOS or retuning.
+- Provenance audit E0454 logged the yfinance manifest/runtime version mismatch; exact cached files and hashes remain preserved.
+
+Next research family must be materially distinct and preregistered.
