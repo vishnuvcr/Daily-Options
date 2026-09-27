@@ -284,3 +284,7 @@ The first Phase 32 workflow run 36338180973 stopped in unit tests before acquisi
 ## 2026-09-27 — Phase 32 run 2 diagnosis
 
 Run **36338276277** passed unit tests and restored the pinned NIFTY/options cache, then failed before any P&L in the data-gate stage. The DuckDB traceback identified `time` as an invalid unquoted SQL alias in the quote loader. E0430 was logged. The field is now renamed `local_time` and all downstream quote indexing is aligned. No research rule changed.
+
+## 2026-09-27 — Phase 32 run 3 diagnosis
+
+Run **36338371946** reached the data-gate stage after six passing unit tests and cache restoration, but failed on the same DuckDB reserved-alias parser error. Inspection showed the first E0430 replacement had not matched the exact SQL string, so the old alias remained. E0431 records this correction-application defect. The exact SQL is now patched and the next run will be launched only from the verified branch head.
