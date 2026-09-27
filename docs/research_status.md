@@ -814,3 +814,19 @@ E0413 is logged. The phase branch now removes the homepage dependency and tries 
 ## 2026-09-27 — Phase 31.9 run 5 closure / run 6 frontier
 
 Run **36333819834** passed tests, restored the pinned NIFTY cache and reached the official NSE VIX endpoint, but only **391** VIX rows were returned for the 2021-07-01 to 2026-08-31 study window, so the coverage guard rejected the run before any gate or P&L. E0414 is logged. The acquisition helper now uses **89-day official NSE chunks**, aligned with the public NseKit implementation for the same endpoint, and persists per-chunk provenance. The frozen Phase 31.9 grid, null controls, costs and promotion gate are unchanged.
+
+
+## 2026-09-27 — Phase 31.9 CLOSED / Phase 31.10 activated
+
+Phase 31.9 authoritative run **36334135198** completed successfully. The India VIX × prior-only NIFTY RV20 × opening-gap family produced **0/12 Base** and **0/12 Stress** promotion passes; no WFA/OOS was authorized. Final report: `reports/phase31_9/final_result.md`.
+
+Phase 31.10 is now the active branch: `phase-31.10-institutional-positioning-gap-v1`.
+
+The new preregistered hypothesis uses prior-session **NSE participant-wise index-futures positioning**:
+- FII index-futures net-position z-score;
+- DII index-futures net-position z-score;
+- FII-minus-DII divergence z-score.
+
+Frozen grid: 3 features × 2 thresholds (0.50, 1.00) × 2 exits (10:30, 15:10) = **12 cells**. Five complete-panel null seeds are required. Opening-gap direction is a registered diagnostic, not an after-result filter.
+
+No Phase 31.10 P&L is accepted before the official participant-OI data gate, execution coverage, Base/Stress validation and null-control checks.
