@@ -2,46 +2,33 @@
 
 **Phase:** Dealer Gamma Exposure Proxies  
 **Branch:** `phase-33-dealer-gamma-exposure-v1`  
-**State:** PREREGISTERED — corrected rerun pending  
-**Numerical P&L:** none accepted
+**State:** **CLOSED — DATA-LIMITED; no economic P&L accepted**
 
-## Completed
-- Phase 32 closure verified.
-- New Phase 33 branch created from main.
-- Research question, aims, methodology, frozen grid, costs, data gates and stop rule written.
-- Literature review completed and persisted.
-- Primary methodological issue — GEX sign is an inventory assumption, not an intrinsic Greek property — explicitly frozen before numerical testing.
+## Authoritative data-gate run
 
-## Frozen experiment
-3 features × 2 thresholds × 2 exits = 12 true cells.
-Five null seeds per cell and Base/Stress friction are mandatory.
-No WFA/OOS before the economic gate.
+**36340721257**
 
-## Run 1
-Run **36339719895** passed all six unit tests and restored the pinned cache, but stopped before feature construction on E0439 (DuckDB reserved alias). No numerical result exists.
+- Expected prior-session observations: **1,233**
+- Gamma snapshots: **1,228**
+- Snapshot coverage: **99.59%**
+- Prior-information barrier violations: **0**
+- GEX_Z coverage: **100.00%**
+- FLIP_DISTANCE_Z coverage: **26.54%**
+- ATM_GEX_SHARE_Z coverage: **100.00%**
+- Feature-gate requirement per registered feature: **95%**
 
-## Current phase
-Build and unit-test the prior-session option/OI gamma reconstruction. The next numerical step is the source/schema gate; only after it passes may Base/Stress discovery run.
+Because FLIP_DISTANCE_Z is only 26.54% complete after warm-up, the preregistered feature gate fails. Base/Stress discovery is not authorized.
 
-## Key risk controls
-- Prior-session OI only.
-- Strict prior-information barrier.
-- Fixed ±1,500-point chain window.
-- Fixed conventional call-positive / put-negative dealer proxy.
-- No post-result sign switching.
-- Historical lot-size and cost model.
+## Quarantined runs
 
-## Run 2 / hardening
-Run **36339811180** was still in the data-gate stage when the performance/methodology audit was performed. Its checked-out commit predates the vectorized hardening. No P&L is accepted from that run. The live branch now contains E0440's vectorized engine, frozen block-null permutation, and corrected regression.
+Runs **36339719895**, **36339811180**, **36340037859**, **36340212329**, and **36340369225** are not economic evidence. The first four contain implementation failures; run 36340369225 predates the final audited cost/sign/timestamp corrections and is explicitly quarantined.
 
-Run 3 is the next authoritative attempt from the hardened branch head.
+## Decision
 
-## Run 4 closure
-Run **36340212329** completed unit tests, restored the cache, and generated the gamma feature panel plus signal panel, then failed in the execution-price query on the same unquoted `close` alias. No P&L was accepted. E0443 is logged; the exact query projection is now corrected.
+Phase 33 is closed as DATA-LIMITED. No strategy, P&L, null economics, WFA or OOS result is promoted.
 
-Run 5 is the next authoritative attempt.
+Final manuscript: `reports/phase33/final_result.md`.
 
-## Economic-accounting audit / run 5 quarantine
-The live run **36340369225** predates the E0444/E0445 corrections. Its eventual numerical output, if any, is **quarantined and cannot be used** for promotion because that checkout omitted audited transaction/statutory costs, had the wrong put-debit-spread sign handling, and did not explicitly cap prior-session option snapshots at the index-session information cutoff.
+## Next family
 
-Run **36340369225** is therefore not an authoritative P&L run. Run 6 is the first run eligible for economic interpretation.
+Phase 34: **multi-expiry volatility term structure**.
