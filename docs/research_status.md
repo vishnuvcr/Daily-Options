@@ -830,3 +830,8 @@ The new preregistered hypothesis uses prior-session **NSE participant-wise index
 Frozen grid: 3 features × 2 thresholds (0.50, 1.00) × 2 exits (10:30, 15:10) = **12 cells**. Five complete-panel null seeds are required. Opening-gap direction is a registered diagnostic, not an after-result filter.
 
 No Phase 31.10 P&L is accepted before the official participant-OI data gate, execution coverage, Base/Stress validation and null-control checks.
+
+
+## 2026-09-27 — Phase 31.10 run 1 closure / run 2 frontier
+
+Run **36335091335** stopped at unit tests before data acquisition. E0417/E0418 are closed: the regression fixtures are corrected and failure-path persistence is hardened. No Phase 31.10 numerical result exists yet. Run 2 will use the corrected institutional-positioning branch and the same frozen 12-cell grid, five null seeds and cost model.
