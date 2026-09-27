@@ -49,7 +49,7 @@ def test_prior_only_surface_zscore_barrier():
         panel[zcol]=(panel[raw]-prior.rolling(WARMUP,min_periods=WARMUP).mean())/prior.rolling(WARMUP,min_periods=WARMUP).std(ddof=1)
     assert pd.isna(panel.iloc[WARMUP-1].SKEW_Z)
     assert pd.notna(panel.iloc[WARMUP].SKEW_Z)
-    assert panel.iloc[WARMUP].date > panel.iloc[WARMUP].date
+    assert panel.iloc[WARMUP].date > panel.iloc[WARMUP-1].date
 
 def test_surface_formulas():
     p=pd.DataFrame({
