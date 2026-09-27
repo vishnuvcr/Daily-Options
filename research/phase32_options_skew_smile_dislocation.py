@@ -141,11 +141,22 @@ def load_quotes(root: Path, panel: pd.DataFrame, expiry_map: dict[date, Path]) -
 def build_surface(panel: pd.DataFrame, quotes: pd.DataFrame) -> pd.DataFrame:
     x = panel.copy()
     x["surface_valid"] = False
+    x["surface_fail_reason"] = ""
     x["iv_atm_ce"] = np.nan
     x["iv_atm_pe"] = np.nan
     x["iv_put100"] = np.nan
     x["iv_call100"] = np.nan
-    quote_idx = quotes.set_index(["date","local_time","option_type","strike"])
+
+    quote_map = {}
+    for r in quotes.itertuples(index=False):
+        dkey = pd.Timestamp(r.date).date()
+        tkey = str(r.local_time)
+        okey = str(r.option_type).upper()
+        skey = float(r.strike)
+        key = (dkey, tkey, okey, skey)
+        if key not in quote_map:
+            quote_map[key] = float(r.close_px) if pd.notna(r.close_px) else np.nan
+
     for i, r in x.iterrows():
         if pd.isna(r.expiry):
             continue
@@ -153,26 +164,32 @@ def build_surface(panel: pd.DataFrame, quotes: pd.DataFrame) -> pd.DataFrame:
         t = max((pd.Timestamp(f"{expiry} 15:30:00") - pd.Timestamp(f"{d} 09:30:00")).total_seconds() / 31536000.0, 1e-8)
         vals = {}
         ok = True
+        fail_reason = ""
         for typ, strike, col in (
             ("CE", atm, "iv_atm_ce"),
             ("PE", atm, "iv_atm_pe"),
             ("PE", atm - WING, "iv_put100"),
             ("CE", atm + WING, "iv_call100"),
         ):
-            try:
-                px = float(quote_idx.loc[(d, "09:30:00", typ, strike), "close_px"])
-            except Exception:
+            key = (d, "09:30:00", typ, float(strike))
+            px = quote_map.get(key, np.nan)
+            if not np.isfinite(px) or px <= 0:
+                fail_reason = f"MISSING_OR_NONPOSITIVE_{col}"
                 ok = False
                 break
-            iv = implied_vol(float(r.close_px), strike, t, px, typ == "CE")
+            iv = implied_vol(float(r.close_px), strike, t, float(px), typ == "CE")
             if iv is None:
+                fail_reason = f"IV_INVERSION_FAIL_{col}"
                 ok = False
                 break
             vals[col] = iv * 100.0
         if ok:
             x.at[i, "surface_valid"] = True
+            x.at[i, "surface_fail_reason"] = "OK"
             for k, v in vals.items():
                 x.at[i, k] = v
+        else:
+            x.at[i, "surface_fail_reason"] = fail_reason
     x["skew_volpts"] = x["iv_put100"] - x["iv_call100"]
     x["smile_volpts"] = ((x["iv_put100"] + x["iv_call100"]) / 2.0
                          - (x["iv_atm_ce"] + x["iv_atm_pe"]) / 2.0)
@@ -195,6 +212,25 @@ def data_gate(panel: pd.DataFrame, quotes: pd.DataFrame, expiry_map: dict[date, 
     iv_complete = int(warm["surface_valid"].sum())
     barrier_violations = int((panel["feature_eligible"] & ~panel["barrier_ok"]).sum())
     feature_sessions = int(panel["feature_eligible"].sum())
+    if "surface_fail_reason" in warm:
+        rc = warm.loc[~warm["surface_valid"], "surface_fail_reason"].value_counts().head(12)
+        reason_counts = {str(k): int(v) for k, v in rc.to_dict().items()}
+    else:
+        reason_counts = {}
+    q = quotes.copy()
+    if not q.empty:
+        q["date_key"] = pd.to_datetime(q["date"]).dt.date
+        q["time_key"] = q["local_time"].astype(str)
+        q["type_key"] = q["option_type"].astype(str).str.upper()
+        q["strike_key"] = q["strike"].astype(float)
+        key_cols = ["date_key","time_key","type_key","strike_key"]
+        unique_quote_keys = int(q.drop_duplicates(key_cols).shape[0])
+        duplicate_quote_rows = int(q.duplicated(key_cols).sum())
+        option_type_counts = {str(k): int(v) for k, v in q["type_key"].value_counts().to_dict().items()}
+    else:
+        unique_quote_keys = 0
+        duplicate_quote_rows = 0
+        option_type_counts = {}
     return {
         "status": "PASS" if (
             len(warm) and float(eligible_expiry.mean()) >= 0.95
@@ -207,6 +243,11 @@ def data_gate(panel: pd.DataFrame, quotes: pd.DataFrame, expiry_map: dict[date, 
         "warmup_expiry_coverage": float(eligible_expiry.mean()) if len(warm) else 0.0,
         "surface_quote_iv_coverage": surface_cov,
         "surface_complete_sessions": iv_complete,
+        "surface_failure_reason_counts": reason_counts,
+        "quote_rows": int(len(quotes)),
+        "unique_quote_keys": unique_quote_keys,
+        "duplicate_quote_rows": duplicate_quote_rows,
+        "quote_option_type_counts": option_type_counts,
         "prior_surface_barrier_violations": barrier_violations,
         "expiry_file_count": len(expiry_map),
         "required_surface_coverage": 0.95,
