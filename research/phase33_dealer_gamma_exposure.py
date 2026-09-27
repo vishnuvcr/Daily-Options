@@ -249,10 +249,13 @@ def simulate(signals,root,slippage):
     con.close()
     trades=pd.DataFrame(rows)
     cov=[]
-    if not signals.empty:
-        for keys,g in signals.groupby(["feature","threshold","exit_time"]):
-            n=len(g); t=len(trades[(trades.feature==keys[0])&(trades.threshold==keys[1])&(trades.exit_time==keys[2])])
-            cov.append({"feature":keys[0],"threshold":keys[1],"exit_time":keys[2],"signals":n,"trades":t,"coverage_rate":t/n if n else 0})
+    for f in FEATURES:
+        for th in THRESHOLDS:
+            for ex in EXITS:
+                n=int(((signals.feature==f)&(signals.threshold==th)&(signals.exit_time==ex)).sum()) if not signals.empty else 0
+                t=int(((trades.feature==f)&(trades.threshold==th)&(trades.exit_time==ex)).sum()) if not trades.empty else 0
+                cov.append({"feature":f,"threshold":th,"exit_time":ex,"signals":n,"trades":t,
+                             "coverage_rate":t/n if n else 1.0})
     return trades,pd.DataFrame(cov)
 
 def summarize(trades):
