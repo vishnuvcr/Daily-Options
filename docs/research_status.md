@@ -884,3 +884,7 @@ Run **36336145989** again used the old acquisition shell. Investigation showed t
 Run **36336274435** successfully fetched all **1,234** participant-OI source files, but the data gate returned FAIL: **1,164** feature-eligible sessions, **0** complete sessions, and **9** prior-positioning barrier violations. Audit of the persisted feature panel found that previous-session close/gap fields were blank because the implementation required an exact 15:10 index row, and positioning alignment could select participant reports on dates absent from the actual NIFTY session calendar. E0423 is logged.
 
 The engine is corrected to use the last available index bar of the prior NIFTY session, restrict participant reports to actual NIFTY session dates before `merge_asof`, and compute completeness from the declared feature/prior-position fields rather than unrelated diagnostic columns. Regression tests were added. Frozen feature definitions, grid, costs and promotion gate are unchanged. Next authoritative run: **run 7**.
+
+## 2026-09-27 — Phase 31.10 run 7 closure / test-fixture correction
+
+Run **36336951355** stopped at unit tests after the feature-panel correction. Three tests used pre-correction fixtures: two omitted the `ts` column now needed for prior-session close construction, and one data-gate fixture omitted `position_date`. E0424 is closed after updating the fixtures. No acquisition or P&L ran. Next authoritative run: **run 8**.
