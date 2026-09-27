@@ -855,3 +855,7 @@ Run **36336145989** used the old acquisition shell because workflow_dispatch tak
 ## 2026-09-27 — Phase 31.10 run 6 closure / run 7 frontier
 
 Run **36336274435** completed official NSE participant-OI acquisition (1,234 files) but data gate failed at 0% complete feature coverage with 9 prior-positioning barrier violations. E0423 is logged. The feature panel is corrected to use the prior NIFTY session's last available close, restrict participant reports to NIFTY session dates, and compute completeness on the registered feature/prior fields. Run 7 is next.
+
+## 2026-09-27 — Phase 31.10 run 7 closure / run 8 frontier
+
+Run **36336951355** failed only in unit tests because fixtures lagged the corrected feature-panel contracts. E0424 is closed. Run 8 is the next authoritative attempt with no research-rule changes.
