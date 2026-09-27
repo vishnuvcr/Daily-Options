@@ -199,3 +199,8 @@ Plan: `docs/phase31_10_plan.md`.
 Literature review: `docs/phase31_10_literature_review.md`.
 Primary source: official NSE participant-wise F&O OI archive.
 Primary target: ₹5,000 net per completed trading week under the existing Base/Stress friction model.
+
+
+## Phase 32 — Options Skew / Smile Dislocation
+
+A materially distinct option-surface family is preregistered on `phase-32-options-skew-smile-dislocation-v1`. It uses 09:30 NIFTY option-implied skew and smile curvature from the pinned one-minute options cache, prior-only 60-session z-scores, thresholds 1.0/1.5 and fixed exits 10:30/13:30/15:10. The frozen discovery matrix is 12 true cells plus five complete-panel null permutations per cell and Base/Stress friction. Strict next-expiry selection avoids same-day expiry in the surface signal. No WFA/OOS is authorized unless a frozen cell clears the existing mean/median ₹5,000-week and ≥70% positive-week gate in both Base and Stress.
