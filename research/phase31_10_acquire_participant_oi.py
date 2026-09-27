@@ -4,12 +4,35 @@ from __future__ import annotations
 from pathlib import Path
 from datetime import date, datetime, timedelta, timezone
 import argparse, csv, hashlib, json, time
-import requests
 import pandas as pd
+import threading
 
 START=date(2021,7,1)
 END=date(2026,8,31)
 PARTICIPANTS=("FII","DII","PRO","CLIENT")
+try:
+    from curl_cffi import requests as http_requests
+except Exception:
+    import requests as http_requests
+
+_thread_local=threading.local()
+
+def get_session():
+    if not hasattr(_thread_local,"session"):
+        sess=http_requests.Session(impersonate="chrome124") if "curl_cffi" in getattr(http_requests,"__name__","") else http_requests.Session()
+        sess.headers.update({
+            "User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140 Safari/537.36",
+            "Accept":"text/csv,text/plain,*/*",
+            "Referer":"https://www.nseindia.com/all-reports-derivatives",
+            "Accept-Language":"en-US,en;q=0.9",
+        })
+        try:
+            sess.get("https://www.nseindia.com/all-reports-derivatives",timeout=20)
+        except Exception:
+            pass
+        _thread_local.session=sess
+    return _thread_local.session
+
 URL_TEMPLATES=(
     "https://nsearchives.nseindia.com/content/nsccl/fao_participant_oi_{date}.csv",
     "https://archives.nseindia.com/content/nsccl/fao_participant_oi_{date}.csv",
@@ -100,7 +123,7 @@ def normalize_participant(df:pd.DataFrame, trade_date:date)->pd.DataFrame:
     out["idx_net_ratio"]=out["idx_net"]/den.where(den!=0)
     return out.dropna(subset=["fut_idx_long","fut_idx_short"])
 
-def fetch_one(session:requests.Session, d:date):
+def fetch_one(session, d:date):
     stamp=d.strftime("%d%m%Y")
     last=None
     for base in URL_TEMPLATES:
@@ -129,19 +152,12 @@ def main():
     nifty_root=Path(args.nifty_root); out=Path(args.out)
     out.mkdir(parents=True,exist_ok=True)
 
-    session=requests.Session()
-    session.headers.update({
-        "User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140 Safari/537.36",
-        "Accept":"text/csv,text/plain,*/*",
-        "Referer":"https://www.nseindia.com/all-reports-derivatives",
-        "Accept-Language":"en-US,en;q=0.9",
-    })
 
     days=load_nifty_days(nifty_root)
     rows=[]; manifest=[]; missing=[]
     for i,d in enumerate(days,1):
         try:
-            raw,url=fetch_one(session,d)
+            raw,url=fetch_one(get_session(),d)
             norm=normalize_participant(parse_csv_bytes(raw),d)
             rows.append(norm)
             manifest.append({
@@ -154,7 +170,7 @@ def main():
             manifest.append({"date":str(d),"error":repr(exc)})
         if i%25==0:
             print(f"processed {i}/{len(days)}")
-        time.sleep(0.10)
+        time.sleep(0.02)
 
     panel=pd.concat(rows,ignore_index=True) if rows else pd.DataFrame(
         columns=["participant","fut_idx_long","fut_idx_short","trade_date","idx_net","idx_net_ratio"]
