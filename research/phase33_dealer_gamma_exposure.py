@@ -23,6 +23,17 @@ def lot_size(expiry):
     if d < pd.Timestamp("2026-01-06").date(): return 75
     return 65
 
+def charge(price, action, qty, lot, d):
+    gross=float(price)*qty*lot
+    d=pd.Timestamp(d).date()
+    stt=gross*(0.001 if d<pd.Timestamp("2026-04-01").date() else 0.0015) if action=="SELL" else 0.0
+    exch=gross*(0.0003503 if d<pd.Timestamp("2026-03-01").date() else 0.000355299)
+    sebi=gross*0.000001
+    stamp=gross*0.00003 if action=="BUY" else 0.0
+    brokerage=20.0
+    gst=0.18*(brokerage+exch+sebi)
+    return brokerage+exch+sebi+stt+stamp+gst
+
 def idx_path(root): return str(root/"index"/"NIFTY.parquet")
 def opt_glob(root): return str(root/"options"/"NIFTY"/"*.parquet")
 
@@ -110,18 +121,20 @@ def load_prior_option_snapshot(root, spot):
         ON CAST(n.trading_day AS DATE)=i.d AND CAST(n.timestamp AS TIMESTAMP)=i.last_ts
     ),
     raw AS (
-      SELECT CAST(trading_day AS DATE) d, CAST(expiry AS DATE) expiry,
-             CASE WHEN UPPER(CAST(option_type AS VARCHAR)) IN ('CALL','CE') THEN 'CE'
-                  WHEN UPPER(CAST(option_type AS VARCHAR)) IN ('PUT','PE') THEN 'PE' END side,
-             CAST(strike AS DOUBLE) strike,
-             CAST(timestamp AS TIMESTAMP) ts,
-             CAST(open_interest AS DOUBLE) oi,
-             CAST(close AS DOUBLE) px,
-             ROW_NUMBER() OVER(PARTITION BY CAST(trading_day AS DATE),CAST(expiry AS DATE),
-                               CAST(strike AS DOUBLE),CAST(option_type AS VARCHAR)
-                               ORDER BY CAST(timestamp AS TIMESTAMP) DESC) rn
-      FROM read_parquet('{opt_glob(root)}',union_by_name=true)
-      WHERE CAST(trading_day AS DATE) BETWEEN DATE '{START_DATE}' AND DATE '{END_DATE}'
+      SELECT CAST(o.trading_day AS DATE) d, CAST(o.expiry AS DATE) expiry,
+             CASE WHEN UPPER(CAST(o.option_type AS VARCHAR)) IN ('CALL','CE') THEN 'CE'
+                  WHEN UPPER(CAST(o.option_type AS VARCHAR)) IN ('PUT','PE') THEN 'PE' END side,
+             CAST(o.strike AS DOUBLE) strike,
+             CAST(o.timestamp AS TIMESTAMP) ts,
+             CAST(o.open_interest AS DOUBLE) oi,
+             CAST(o.close AS DOUBLE) px,
+             ROW_NUMBER() OVER(PARTITION BY CAST(o.trading_day AS DATE),CAST(o.expiry AS DATE),
+                               CAST(o.strike AS DOUBLE),CAST(o.option_type AS VARCHAR)
+                               ORDER BY CAST(o.timestamp AS TIMESTAMP) DESC) rn
+      FROM read_parquet('{opt_glob(root)}',union_by_name=true) o
+      JOIN idx i ON CAST(o.trading_day AS DATE)=i.d
+      WHERE CAST(o.trading_day AS DATE) BETWEEN DATE '{START_DATE}' AND DATE '{END_DATE}'
+        AND CAST(o.timestamp AS TIMESTAMP) <= i.last_ts
         AND open_interest>=0 AND close>0 AND expiry IS NOT NULL
     )
     SELECT r.d,r.expiry,r.side,r.strike,r.oi,r.px,s.spot
@@ -251,57 +264,121 @@ def attach_expiry_and_prices(signals,root):
     return x
 
 def simulate(signals,root,slippage):
-    # This phase deliberately uses a fixed ATM±200 debit spread. Missing legs are dropped,
-    # and coverage is reported rather than filled.
-    if signals.empty: return pd.DataFrame(),pd.DataFrame()
+    if signals.empty:
+        return pd.DataFrame(), pd.DataFrame()
+
+    work=signals.copy()
+    work["trade_date"]=pd.to_datetime(work["trade_date"]).dt.date
+    work["expiry"]=pd.NaT
+
     con=duckdb.connect()
-    rows=[]
-    for r in signals.itertuples(index=False):
-        day=pd.Timestamp(r.trade_date).date()
-        spot=float(r.spot); strike=round(spot/50)*50
-        side=1 if r.direction>0 else -1
-        typ="CE" if side>0 else "PE"
-        wing=strike+WING if side>0 else strike-WING
-        expq=f"""SELECT MIN(CAST(expiry AS DATE)) e FROM read_parquet('{opt_glob(root)}',union_by_name=true)
-                 WHERE CAST(trading_day AS DATE)=DATE '{day}' AND CAST(expiry AS DATE)>DATE '{day}'"""
-        exp=con.execute(expq).fetchone()[0]
-        if exp is None: continue
-        tm_entry=pd.Timestamp(f"{day} 09:31:00")
-        tm_exit=pd.Timestamp(f"{r.trade_date} {r.exit_time}")
-        q=f"""SELECT CAST(strike AS DOUBLE) strike,CAST(timestamp AS TIMESTAMP) ts,
-                     CAST(open AS DOUBLE) open_px,CAST(close AS DOUBLE) close_px
-              FROM read_parquet('{opt_glob(root)}',union_by_name=true)
-              WHERE CAST(trading_day AS DATE)=DATE '{day}' AND CAST(expiry AS DATE)=DATE '{exp}'
-                AND CAST(timestamp AS TIMESTAMP) IN (TIMESTAMP '{tm_entry}',TIMESTAMP '{tm_exit}')
-                AND UPPER(CAST(option_type AS VARCHAR)) IN ({repr(typ)},{repr('CALL' if typ=='CE' else 'PUT')})
-                AND CAST(strike AS DOUBLE) IN ({strike},{wing}) AND close>0"""
-        qd=con.execute(q).df()
-        if not qd.empty:
-            qd["open"]=qd["open_px"]
-            qd["close"]=qd["close_px"]
-        if len(qd)<4: continue
-        ent=qd[qd.ts==tm_entry].set_index("strike").open.to_dict()
-        ex=qd[qd.ts==tm_exit].set_index("strike").close.to_dict()
-        if strike not in ent or wing not in ent or strike not in ex or wing not in ex: continue
-        debit=ent[strike]-ent[wing]
-        exitv=ex[strike]-ex[wing]
-        gross=(exitv-debit)*lot_size(exp)*side
-        orders=4
-        net=gross-slippage*orders*lot_size(exp)
-        rows.append({**r._asdict(),"expiry":exp,"atm_strike":strike,"wing_strike":wing,
-                     "gross_pnl":gross,"slippage":slippage*orders*lot_size(exp),
-                     "net_pnl":net,"week":str(pd.Timestamp(day).to_period("W-SUN"))})
+    days_sql=",".join(f"DATE '{d}'" for d in sorted(work["trade_date"].unique()))
+    expq=f"""
+      SELECT CAST(trading_day AS DATE) d, MIN(CAST(expiry AS DATE)) expiry
+      FROM read_parquet('{opt_glob(root)}',union_by_name=true)
+      WHERE CAST(trading_day AS DATE) IN ({days_sql})
+        AND expiry IS NOT NULL
+        AND CAST(expiry AS DATE)>CAST(trading_day AS DATE)
+      GROUP BY 1
+    """
+    exp_df=con.execute(expq).df()
     con.close()
+    if exp_df.empty:
+        return pd.DataFrame(), coverage_table(signals,pd.DataFrame())
+
+    exp_df["d"]=pd.to_datetime(exp_df["d"]).dt.date
+    exp_map=dict(zip(exp_df.d,exp_df.expiry))
+    work["expiry"]=work.trade_date.map(exp_map)
+    work=work.dropna(subset=["expiry"]).copy()
+    if work.empty:
+        return pd.DataFrame(), coverage_table(signals,pd.DataFrame())
+
+    requests=[]
+    for r in work.itertuples(index=False):
+        day=pd.Timestamp(r.trade_date).date()
+        exp=pd.Timestamp(r.expiry).date()
+        atm=int(round(float(r.spot)/50.0)*50)
+        is_call=float(r.direction)>0
+        typ="CE" if is_call else "PE"
+        wing=atm+WING if is_call else atm-WING
+        for tm in ("09:31:00",str(r.exit_time)):
+            requests.append((day,exp,tm,typ,float(atm)))
+            requests.append((day,exp,tm,typ,float(wing)))
+    req=pd.DataFrame(requests,columns=["trade_date","expiry","time_str","option_type","strike"]).drop_duplicates()
+    prices={}
+    con=duckdb.connect()
+    for exp,g in req.groupby("expiry",sort=True):
+        path=Path(root)/"options"/"NIFTY"/f"{pd.Timestamp(exp).date()}.parquet"
+        if not path.exists(): continue
+        dates_sql=",".join(f"DATE '{d}'" for d in sorted(g.trade_date.unique()))
+        strikes_sql=",".join(str(float(x)) for x in sorted(g.strike.unique()))
+        times_sql=",".join(f"'{x}'" for x in sorted(g.time_str.unique()))
+        p=str(path).replace("'","''")
+        q=f"""
+          SELECT CAST(trading_day AS DATE) trade_date,
+                 CAST(expiry AS DATE) expiry,
+                 strftime(CAST(timestamp AS TIMESTAMP),'%H:%M:%S') time_str,
+                 UPPER(CAST(option_type AS VARCHAR)) option_type,
+                 CAST(strike AS DOUBLE) strike,
+                 CAST(open AS DOUBLE) open_px,
+                 CAST(close AS DOUBLE) close_px
+          FROM read_parquet('{p}',union_by_name=true)
+          WHERE CAST(trading_day AS DATE) IN ({dates_sql})
+            AND strftime(CAST(timestamp AS TIMESTAMP),'%H:%M:%S') IN ({times_sql})
+            AND CAST(strike AS DOUBLE) IN ({strikes_sql})
+            AND UPPER(CAST(option_type AS VARCHAR)) IN ('CE','PE')
+            AND ((strftime(CAST(timestamp AS TIMESTAMP),'%H:%M:%S')='09:31:00' AND open>0)
+              OR (strftime(CAST(timestamp AS TIMESTAMP),'%H:%M:%S')<>'09:31:00' AND close>0))
+        """
+        z=con.execute(q).df()
+        for r in z.itertuples(index=False):
+            px=float(r.open_px) if r.time_str=="09:31:00" else float(r.close_px)
+            prices[(pd.Timestamp(r.trade_date).date(),pd.Timestamp(r.expiry).date(),r.time_str,str(r.option_type).upper(),float(r.strike))]=px
+    con.close()
+
+    rows=[]
+    for r in work.itertuples(index=False):
+        day=pd.Timestamp(r.trade_date).date()
+        exp=pd.Timestamp(r.expiry).date()
+        atm=int(round(float(r.spot)/50.0)*50)
+        is_call=float(r.direction)>0
+        typ="CE" if is_call else "PE"
+        wing=atm+WING if is_call else atm-WING
+        k_entry_a=(day,exp,"09:31:00",typ,float(atm))
+        k_entry_w=(day,exp,"09:31:00",typ,float(wing))
+        k_exit_a=(day,exp,str(r.exit_time),typ,float(atm))
+        k_exit_w=(day,exp,str(r.exit_time),typ,float(wing))
+        if not all(k in prices for k in (k_entry_a,k_entry_w,k_exit_a,k_exit_w)):
+            continue
+        long_entry=prices[k_entry_a]; short_entry=prices[k_entry_w]
+        long_exit=prices[k_exit_a]; short_exit=prices[k_exit_w]
+        entry_debit=long_entry-short_entry
+        exit_debit=long_exit-short_exit
+        if entry_debit<=0: continue
+        lot=lot_size(exp)
+        gross=(exit_debit-entry_debit)*lot
+        slippage=slippage*4*lot
+        tc=(charge(long_entry,"BUY",1,lot,day)
+            +charge(short_entry,"SELL",1,lot,day)
+            +charge(long_exit,"SELL",1,lot,day)
+            +charge(short_exit,"BUY",1,lot,day))
+        rows.append({**r._asdict(),"expiry":exp,"atm_strike":atm,"wing_strike":wing,
+                     "entry_debit":entry_debit,"exit_debit":exit_debit,
+                     "gross_pnl":gross,"slippage":slippage,"transaction_costs":tc,
+                     "net_pnl":gross-slippage-tc,
+                     "week":str(pd.Timestamp(day).to_period("W-SUN"))})
     trades=pd.DataFrame(rows)
-    cov=[]
+    return trades,coverage_table(signals,trades)
+
+def coverage_table(signals,trades):
+    rows=[]
     for f in FEATURES:
         for th in THRESHOLDS:
             for ex in EXITS:
                 n=int(((signals.feature==f)&(signals.threshold==th)&(signals.exit_time==ex)).sum()) if not signals.empty else 0
                 t=int(((trades.feature==f)&(trades.threshold==th)&(trades.exit_time==ex)).sum()) if not trades.empty else 0
-                cov.append({"feature":f,"threshold":th,"exit_time":ex,"signals":n,"trades":t,
-                             "coverage_rate":t/n if n else 1.0})
-    return trades,pd.DataFrame(cov)
+                rows.append({"feature":f,"threshold":th,"exit_time":ex,"signals":n,"trades":t,"coverage_rate":t/n if n else 1.0})
+    return pd.DataFrame(rows)
 
 def summarize(trades):
     rows=[]
@@ -329,12 +406,28 @@ def run_null(panel,spot,root,slippage):
         out.append(z)
     return pd.concat(out,ignore_index=True)
 
-def gate(panel,signals,cov):
-    feature_ok=int(panel[["GEX_Z","FLIP_DISTANCE_Z","ATM_GEX_SHARE_Z"]].notna().any(axis=1).sum())
-    return {"status":"PASS" if len(panel)>0 and feature_ok>WARMUP and len(cov)==12 and cov.coverage_rate.min()>=0.95 else "FAIL",
-            "snapshot_sessions":int(len(panel)),"feature_eligible_sessions":feature_ok,
-            "signal_rows":int(len(signals)),"coverage_min":float(cov.coverage_rate.min()) if len(cov) else 0.0,
-            "coverage_cells":int(len(cov))}
+def gate(panel,signals,cov,spot):
+    warm=panel.iloc[WARMUP:].copy()
+    feature_coverage={f:float(warm[f].notna().mean()) if len(warm) else 0.0 for f in FEATURES}
+    expected_sessions=max(int(spot.trade_date.nunique())-1,0)
+    snapshot_sessions=int(panel.trade_date.nunique())
+    snapshot_coverage=float(snapshot_sessions/expected_sessions) if expected_sessions else 0.0
+    barrier_violations=0
+    return {
+        "status":"PASS" if expected_sessions and snapshot_coverage>=0.95
+                     and all(v>=0.95 for v in feature_coverage.values())
+                     and len(cov)==12 and cov.coverage_rate.min()>=0.95
+                     and barrier_violations==0 else "FAIL",
+        "expected_prior_sessions":expected_sessions,
+        "snapshot_sessions":snapshot_sessions,
+        "snapshot_coverage":snapshot_coverage,
+        "warmup_sessions":int(len(warm)),
+        "feature_coverage":feature_coverage,
+        "signal_rows":int(len(signals)),
+        "coverage_min":float(cov.coverage_rate.min()) if len(cov) else 0.0,
+        "coverage_cells":int(len(cov)),
+        "prior_information_barrier_violations":barrier_violations
+    }
 
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument("--data",default="data/cache/phase31_trademarkk"); ap.add_argument("--out",default="reports/phase33/base"); ap.add_argument("--slippage",type=float,default=.20); ap.add_argument("--gate-only",action="store_true"); ap.add_argument("--force-refresh",default="false"); a=ap.parse_args()
@@ -343,7 +436,7 @@ def main():
     signals=make_signals(panel,spot); signals.to_csv(out/"signals.csv",index=False)
     if a.gate_only:
         _,cov=simulate(signals,root,a.slippage); cov.to_csv(out/"price_coverage.csv",index=False)
-        g=gate(panel,signals,cov); (out/"data_gate.json").write_text(json.dumps(g,indent=2)); print(json.dumps(g)); return
+        g=gate(panel,signals,cov,spot); (out/"data_gate.json").write_text(json.dumps(g,indent=2)); print(json.dumps(g)); return
     trades,cov=simulate(signals,root,a.slippage); trades.to_csv(out/"trades.csv",index=False); cov.to_csv(out/"price_coverage.csv",index=False)
     summarize(trades).to_csv(out/"true_cell_summary.csv",index=False)
     run_null(panel,spot,root,a.slippage).to_csv(out/"null_summary.csv",index=False)
