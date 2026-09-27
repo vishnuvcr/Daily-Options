@@ -1,0 +1,129 @@
+name: Phase 31.10 main launcher
+
+on:
+  push:
+    paths:
+      - ".github/phase31_10-main-launch.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase31-10-main-launcher
+  cancel-in-progress: false
+
+jobs:
+  phase31_10:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-31.10-institutional-positioning-gap-v1
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install pinned runtime
+        run: |
+          python -m pip install --disable-pip-version-check             pandas==2.3.2 numpy==2.1.3 duckdb==1.3.2 pyarrow==19.0.1             pytest==8.4.2 requests==2.32.5
+
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_phase31_10_institutional_positioning.py
+
+      - name: Restore pinned NIFTY cache
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase31_trademarkk
+          key: phase31-trademarkk-51ca58c-v1
+          restore-keys: |
+            phase31-trademarkk-51ca58c-
+            phase30-trademarkk-51ca58c-
+
+      - name: Acquire or reuse exact-expiry NIFTY source
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase31_trademarkk
+          if [ ! -f data/cache/phase31_trademarkk/index/NIFTY.parquet ]; then
+            python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="thetrademarkk/india-index-options-1m",repo_type="dataset",revision="51ca58c",local_dir="data/cache/phase31_trademarkk",allow_patterns=["index/NIFTY.parquet","options/NIFTY/*.parquet"])'
+          fi
+        env:
+          HF_HUB_DISABLE_TELEMETRY: "1"
+
+      - name: Acquire or reuse official NSE participant OI
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase31_10_institutional
+          if [ ! -f data/cache/phase31_10_institutional/participant_oi_normalized.parquet ]; then
+            PYTHONPATH=. python research/phase31_10_acquire_participant_oi.py               --nifty-root data/cache/phase31_trademarkk               --out data/cache/phase31_10_institutional
+          fi
+
+      - name: Run Phase 31.10 data gate
+        run: |
+          PYTHONPATH=. python research/phase31_10_institutional_positioning.py             --data data/cache/phase31_trademarkk             --institutional data/cache/phase31_10_institutional/participant_oi_normalized.parquet             --manifest data/cache/phase31_10_institutional/manifest.json             --out reports/phase31_10/gate             --gate-only
+
+      - name: Run Base discovery
+        run: |
+          if python -c 'import json,sys; g=json.load(open("reports/phase31_10/gate/data_gate.json")); sys.exit(0 if g["status"]=="PASS" else 1)'; then
+            PYTHONPATH=. python research/phase31_10_institutional_positioning.py               --data data/cache/phase31_trademarkk               --institutional data/cache/phase31_10_institutional/participant_oi_normalized.parquet               --manifest data/cache/phase31_10_institutional/manifest.json               --out reports/phase31_10/base --slippage 0.20
+          else
+            echo "DATA_GATE_FAIL: numerical stage intentionally skipped"
+          fi
+
+      - name: Run Stress discovery
+        run: |
+          if python -c 'import json,sys; g=json.load(open("reports/phase31_10/gate/data_gate.json")); sys.exit(0 if g["status"]=="PASS" else 1)'; then
+            PYTHONPATH=. python research/phase31_10_institutional_positioning.py               --data data/cache/phase31_trademarkk               --institutional data/cache/phase31_10_institutional/participant_oi_normalized.parquet               --manifest data/cache/phase31_10_institutional/manifest.json               --out reports/phase31_10/stress --slippage 0.40
+          else
+            echo "DATA_GATE_FAIL: numerical stage intentionally skipped"
+          fi
+
+      - name: Validate numerical artifacts
+        run: |
+          python - <<'PY'
+          import json
+          import pandas as pd
+          g=json.load(open("reports/phase31_10/gate/data_gate.json"))
+          if g["status"]=="PASS":
+              for k in ["base","stress"]:
+                  x=pd.read_csv(f"reports/phase31_10/{k}/true_cell_summary_{k}.csv")
+                  assert len(x)==12,(k,len(x))
+                  assert set(x.friction)=={k}
+                  t=pd.read_csv(f"reports/phase31_10/{k}/trades_{k}.csv")
+                  assert len(t)>0,(k,"zero trades")
+                  n=pd.read_csv(f"reports/phase31_10/{k}/null_summary_{k}.csv")
+                  assert len(n)==60,(k,len(n))
+                  nt=pd.read_csv(f"reports/phase31_10/{k}/null_trades_{k}.csv")
+                  assert len(nt)>0,(k,"zero null trades")
+                  cov=pd.read_csv(f"reports/phase31_10/{k}/price_coverage.csv") if False else pd.read_csv(f"reports/phase31_10/price_coverage.csv")
+                  assert cov.coverage_rate.min()>=0.95,(k,"coverage below 95%")
+          PY
+
+      - name: Persist cache and reports to phase branch
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f data/cache/phase31_10_institutional reports/phase31_10
+          if ! git diff --cached --quiet; then
+            git commit -m "Phase 31.10: persist institutional positioning data and outputs"
+            for attempt in 1 2 3; do
+              if git push origin HEAD:phase-31.10-institutional-positioning-gap-v1; then exit 0; fi
+              git fetch origin phase-31.10-institutional-positioning-gap-v1
+              git rebase FETCH_HEAD
+            done
+            exit 1
+          fi
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase31-10-institutional-positioning
+          path: |
+            data/cache/phase31_10_institutional
+            reports/phase31_10
