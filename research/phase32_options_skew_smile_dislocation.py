@@ -95,7 +95,7 @@ def attach_expiry(index_df: pd.DataFrame, expiry_map: dict[date, Path]) -> pd.Da
     return out
 
 def quote_time_row(q: pd.DataFrame, time_str: str, field: str) -> dict[tuple, float]:
-    x = q[q["time"] == time_str].copy()
+    x = q[q["local_time"] == time_str].copy()
     return {(r.date, r.option_type, float(r.strike)): float(getattr(r, field)) for r in x.itertuples(index=False)}
 
 def load_quotes(root: Path, panel: pd.DataFrame, expiry_map: dict[date, Path]) -> pd.DataFrame:
@@ -135,7 +135,7 @@ def load_quotes(root: Path, panel: pd.DataFrame, expiry_map: dict[date, Path]) -
         rows.append(z)
     con.close()
     return pd.concat(rows, ignore_index=True) if rows else pd.DataFrame(
-        columns=["ts","date","time","option_type","strike","open_px","close_px","volume","oi"]
+        columns=["ts","date","local_time","option_type","strike","open_px","close_px","volume","oi"]
     )
 
 def build_surface(panel: pd.DataFrame, quotes: pd.DataFrame) -> pd.DataFrame:
@@ -145,7 +145,7 @@ def build_surface(panel: pd.DataFrame, quotes: pd.DataFrame) -> pd.DataFrame:
     x["iv_atm_pe"] = np.nan
     x["iv_put100"] = np.nan
     x["iv_call100"] = np.nan
-    quote_idx = quotes.set_index(["date","time","option_type","strike"])
+    quote_idx = quotes.set_index(["date","local_time","option_type","strike"])
     for i, r in x.iterrows():
         if pd.isna(r.expiry):
             continue
@@ -263,9 +263,9 @@ def price_lookup(quotes: pd.DataFrame) -> dict[tuple,date]:
     for r in quotes.itertuples(index=False):
         px_open = float(r.open_px) if pd.notna(r.open_px) else np.nan
         px_close = float(r.close_px) if pd.notna(r.close_px) else np.nan
-        px = px_open if r.time == "09:31:00" else px_close
+        px = px_open if r.local_time == "09:31:00" else px_close
         if pd.notna(px) and px > 0:
-            out[(r.date, r.time, r.option_type, float(r.strike))] = px
+            out[(r.date, r.local_time, r.option_type, float(r.strike))] = px
     return out
 
 def trade_from_signal(r, prices: dict, slip: float):
