@@ -908,3 +908,7 @@ Authoritative **run 36337462383 (run 10)** completed the corrected validation su
 The full frozen **12-cell** grid was evaluated in Base and Stress, with 60 null-control summaries per friction. **0/12 true cells passed the ₹5,000/week promotion gate in Base and 0/12 in Stress.** No true cell had positive total net P&L. Best Base mean weekly net was **-₹929.82/week** (FII index-net z-score, threshold 1.0, 10:30 exit); best Stress mean weekly net was **-₹1,077.44/week** for the same cell. Positive-week rates remained below 30% for these cells.
 
 The institutional-positioning hypothesis therefore closes as negative discovery evidence. **No WFA/OOS promotion is authorized.** Final manuscript/report is now being persisted; the next family must be materially distinct and separately preregistered.
+
+## 2026-09-27 — Phase 31.10 final manuscript persisted
+
+The validated negative discovery result has been persisted to `reports/phase31_10_final_result.md`. Authoritative run **36337462383**: 1,164/1,164 feature-eligible sessions complete, zero prior-positioning violations, 1,234/1,234 source files, execution coverage >=97.409%, 0/12 Base promotion passes and 0/12 Stress promotion passes. No WFA/OOS promotion is authorized. Phase 31.10 is closed.
