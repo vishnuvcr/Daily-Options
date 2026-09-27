@@ -265,3 +265,7 @@ Run 36336951355 failed before acquisition because regressions had not been updat
 ## 2026-09-27 — Phase 31.10 run 8 unit-test correction
 
 Run 36337049593 failed one remaining unit test because its fixture omitted `ts`. E0425 was logged and the fixture was corrected. No acquisition or numerical result exists.
+
+## 2026-09-27 — Phase 31.10 run 9 validation diagnosis
+
+Run 36337194946 completed the numerical discovery stages, but validation failed on an incorrect root-level price-coverage path. The per-friction coverage files are present and their observed rates exceed 95%. E0426 was logged and the validation workflow was corrected in both main and phase definitions. No result is accepted until rerun validation passes.
