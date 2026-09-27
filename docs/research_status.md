@@ -846,3 +846,11 @@ Base and Stress each passed artifact validation and execution-coverage checks. *
 Registered null controls were completed (60 summaries per friction). Some true cells exceeded all five null means for the same cell, but absolute net economics remained negative and below the promotion threshold. **No WFA/OOS promotion is authorized.** Final report: `reports/phase31_9/final_result.md`.
 
 Phase 31.9 is closed; the next family must be materially distinct and separately preregistered.
+
+## 2026-09-27 — Phase 31.10 preregistered / ready for authoritative acquisition
+
+Phase 31.9 is closed negative. Phase 31.10 is the next materially distinct family: **participant-wise institutional index-futures positioning × NIFTY opening-gap translation**.
+
+The frozen discovery grid is 3 prior-only standardized positioning features × 2 absolute thresholds × 2 exit horizons = 12 true cells, with five full-panel null seeds per cell. The primary source is the official NSE participant-wise F&O OI archive. FII/DII cash flow is retained as an auxiliary coverage/cross-check dataset because the public historical endpoint is not a reliable daily backfill source.
+
+No Phase 31.10 P&L is accepted before the data gate and execution-coverage checks pass.
