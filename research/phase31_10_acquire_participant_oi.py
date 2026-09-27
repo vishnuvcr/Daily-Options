@@ -106,8 +106,8 @@ def normalize_participant(df:pd.DataFrame, trade_date:date)->pd.DataFrame:
 
     # Known NSE naming from public participant-OI parsers:
     # Client Type, Futures Index Long, Futures Index Short, ...
-    long_col=find_col(cols,"FUTURESINDEXLONG") or find_col(cols,"FUTIDX","LONG")
-    short_col=find_col(cols,"FUTURESINDEXSHORT") or find_col(cols,"FUTIDX","SHORT")
+    long_col=find_col(cols,"FUTUREINDEXLONG") or find_col(cols,"FUTURESINDEXLONG") or find_col(cols,"FUTIDX","LONG")
+    short_col=find_col(cols,"FUTUREINDEXSHORT") or find_col(cols,"FUTURESINDEXSHORT") or find_col(cols,"FUTIDX","SHORT")
     if long_col is None or short_col is None:
         raise ValueError(f"index-futures long/short columns not found: {cols}")
 
