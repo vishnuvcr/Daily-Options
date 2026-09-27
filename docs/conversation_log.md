@@ -223,3 +223,9 @@ Run 36253620977 reached the pinned NIFTY cache and stopped on a malformed heredo
 Continuation decision: resume Phase 31.9 from the live repository state without waiting for manual intervention. Before the next run, read the phase plan, status/error logs and current workflow state. Run 36253716626 was then diagnosed from its GitHub Actions job log: unit tests and NIFTY cache restore passed, but official India VIX acquisition failed because the helper made an initial homepage request that returned HTTP 403. No VIX data or P&L was produced.
 
 Correction: removed the homepage dependency, retained official NSE historical VIX endpoints only, preserved response hashing/manifest logic, added a regression test, logged E0413 and updated phase status. The frozen hypothesis/grid/cost model are unchanged. This operational log does not record hidden chain-of-thought.
+
+## 2026-09-27 — Phase 31.9 run 5 coverage diagnosis
+
+Run 36333819834 passed unit tests, restored the NIFTY cache, bypassed the prior NSE homepage 403, and reached official NSE historical VIX acquisition. The endpoint returned only 391 normalized rows for the five-year study window, so the source-coverage guard rejected the run before any P&L.
+
+Operational research step: inspected the current public NseKit implementation for the same official NSE VIX endpoint and found its chunked historical fetch uses 89-day windows. The Phase 31.9 acquisition helper is now aligned to 89-day windows, persists per-chunk row counts/hashes and includes a regression test. E0414 was logged. No strategy rule, threshold, cost or promotion gate changed.
