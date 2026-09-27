@@ -945,3 +945,7 @@ Run **36338601854** is the first run whose checked-out SHA equals the verified c
 ## 2026-09-27 — Phase 32 run 7 closure / surface data-gate failure
 
 Run **36338601854** passed source verification, all unit tests, pinned cache restore and source reuse. The gate reported **1,225** raw 09:30 NIFTY sessions, **100% strict-next-expiry coverage**, but **0 valid surface sessions after the 60-session warm-up**, so Base/Stress discovery was intentionally skipped. No P&L result exists. E0435 is logged. The engine is being instrumented to distinguish quote-key normalization failures from Black–Scholes IV inversion failures; the hypothesis and frozen grid remain unchanged.
+
+## 2026-09-27 — Phase 32 run 8 Base closure / execution-key correction
+
+Run **36338841139** passed the data gate: **1,143/1,165 warm-up-complete sessions (98.11%)** had a valid four-quote IV surface, with 0 prior-barrier violations. Base discovery then found **0% executable-price coverage in all 12 cells**, so no accepted P&L exists and Stress was skipped. Inspection showed Phase 32's execution dictionary omitted expiry from the key, unlike the validated Phase 31.7 loader; empty trades also exposed a weekly-output robustness defect. E0436 is logged and closed by aligning the execution key to `(date, expiry, time, option_type, strike)` and hardening empty weekly output.
