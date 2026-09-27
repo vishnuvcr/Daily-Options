@@ -1,4 +1,4 @@
-name: Phase 35 Global Shock Options Structure
+name: Phase 35 Global Shock Options Structure v1
 on:
   workflow_dispatch:
   push:
