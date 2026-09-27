@@ -288,3 +288,7 @@ Run **36338276277** passed unit tests and restored the pinned NIFTY/options cach
 ## 2026-09-27 — Phase 32 run 3 diagnosis
 
 Run **36338371946** reached the data-gate stage after six passing unit tests and cache restoration, but failed on the same DuckDB reserved-alias parser error. Inspection showed the first E0430 replacement had not matched the exact SQL string, so the old alias remained. E0431 records this correction-application defect. The exact SQL is now patched and the next run will be launched only from the verified branch head.
+
+## 2026-09-27 — Phase 32 run 5 diagnosis
+
+Run **36338447276** passed tests, source verification and cache restore but stopped during feature-panel construction. The traceback showed pandas treating the FEATURES tuple as one composite key. E0433 was logged; the engine now explicitly converts FEATURES to a list for DataFrame selection, with a regression test. No data-gate or P&L result exists from this run.
