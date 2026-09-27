@@ -249,3 +249,7 @@ Authoritative run 36335189575 reached official NSE participant-OI acquisition su
 ## 2026-09-27 — Phase 31.10 run 3 diagnosis
 
 Run 36335911562 used the existing participant-OI parquet/manifest instead of rerunning acquisition after E0419, because the workflow only tested file existence. The gate therefore stayed at 0% feature coverage. E0420 records the cache-invalidation defect. The corrected workflow now requires parser_version=v2-future-index-header and files_ok>0 before reusing the cache. No numerical result exists.
+
+## 2026-09-27 — Phase 31.10 run 5 workflow-definition diagnosis
+
+Run 36336145989 still showed the old acquisition block despite the phase branch containing the corrected cache-version logic. The cause was identified: manual dispatch uses the workflow definition on main, while the job then checks out the phase branch. E0422 records this. The cache-invalidation correction is now written to main as well. No research result exists.
