@@ -280,3 +280,7 @@ Run **36337462383** completed the corrected validation after run 9's path-only f
 Continuation decision: Phase 31.10 is closed at authoritative run 36337462383 with 0/12 Base and 0/12 Stress promotion passes. A new materially distinct branch, phase-32-options-skew-smile-dislocation-v1, was created from the audited Phase 31.10 endpoint. Phase 32 was preregistered with a finite 12-cell skew/smile grid, five null seeds, Base/Stress friction, the existing ₹5,000/week promotion gate, and a manual GitHub Actions workflow.
 
 The first Phase 32 workflow run 36338180973 stopped in unit tests before acquisition. E0428 (IV inversion convergence boundary) and E0429 (degenerate z-score fixture) were corrected. No market data or P&L was used from that run. The research design remains frozen.
+
+## 2026-09-27 — Phase 32 run 2 diagnosis
+
+Run **36338276277** passed unit tests and restored the pinned NIFTY/options cache, then failed before any P&L in the data-gate stage. The DuckDB traceback identified `time` as an invalid unquoted SQL alias in the quote loader. E0430 was logged. The field is now renamed `local_time` and all downstream quote indexing is aligned. No research rule changed.
