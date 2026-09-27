@@ -843,3 +843,7 @@ Run **36335189575** reached official NSE participant-OI acquisition but parser n
 ## 2026-09-27 — Phase 31.10 run 3 closure / run 4 frontier
 
 Run **36335911562** reused the stale participant-OI cache after E0419, so the data gate again failed at 0% coverage; no P&L was accepted. E0420 is logged. The workflow now requires a versioned parser manifest with positive source-file coverage before cache reuse, forcing fresh official NSE acquisition after parser changes. Next authoritative run: **run 4**.
+
+## 2026-09-27 — Phase 31.10 run 4 closure / run 5 frontier
+
+Run **36336026908** still executed the pre-E0420 acquisition shell despite the corrected workflow being present on the phase branch, so the stale participant-OI cache was not invalidated and the gate remained FAIL. E0421 is logged. The corrected workflow is now confirmed on the live phase branch and run 5 is the next authoritative attempt.
