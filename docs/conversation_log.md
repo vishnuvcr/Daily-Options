@@ -269,3 +269,7 @@ Run 36337049593 failed one remaining unit test because its fixture omitted `ts`.
 ## 2026-09-27 — Phase 31.10 run 9 validation diagnosis
 
 Run 36337194946 completed the numerical discovery stages, but validation failed on an incorrect root-level price-coverage path. The per-friction coverage files are present and their observed rates exceed 95%. E0426 was logged and the validation workflow was corrected in both main and phase definitions. No result is accepted until rerun validation passes.
+
+## 2026-09-27 — Phase 31.10 final closure
+
+Run **36337462383** completed the corrected validation after run 9's path-only failure. The complete frozen 12-cell institutional-positioning family was evaluated in Base and Stress with 60 null summaries per friction. Data coverage and execution coverage passed. No true cell reached the project promotion gate. Final manuscript persisted at `reports/phase31_10/final_result.md`. This operational record contains the research outcome, not hidden chain-of-thought.
