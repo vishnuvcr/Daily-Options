@@ -12,7 +12,10 @@ import pandas as pd
 import requests
 
 NSE_HOME = "https://www.nseindia.com/"
-NSE_VIX = "https://www.nseindia.com/api/historicalOR/vixhistory"
+NSE_VIX_ENDPOINTS = (
+    "https://www.nseindia.com/api/historical/vixhistory",
+    "https://www.nseindia.com/api/historicalOR/vixhistory",
+)
 
 def daterange_chunks(start: date, end: date, days: int = 365):
     cur = start
@@ -28,10 +31,11 @@ def session() -> requests.Session:
         "Accept": "application/json,text/plain,*/*",
         "Accept-Language": "en-US,en;q=0.9",
         "Referer": NSE_HOME,
+        "Origin": "https://www.nseindia.com",
         "Connection": "keep-alive",
     })
-    r = s.get(NSE_HOME, timeout=30)
-    r.raise_for_status()
+    # Do not fetch the NSE homepage first. GitHub Actions runners can receive
+    # a 403 from the landing page even when the historical endpoint is public.
     return s
 
 def extract_rows(payload):
@@ -85,20 +89,28 @@ def main():
     for cstart, cend in daterange_chunks(start, end):
         params = {"from": cstart.strftime("%d-%m-%Y"), "to": cend.strftime("%d-%m-%Y")}
         last_exc = None
-        for attempt in range(4):
-            try:
-                resp = sess.get(NSE_VIX, params=params, timeout=45)
-                resp.raise_for_status()
-                payload = resp.json()
-                chunk = extract_rows(payload)
-                rows.extend(chunk)
-                raw_sha_parts.append(hashlib.sha256(resp.content).hexdigest())
+        for endpoint in NSE_VIX_ENDPOINTS:
+            endpoint_error = None
+            for attempt in range(4):
+                try:
+                    resp = sess.get(endpoint, params=params, timeout=45)
+                    resp.raise_for_status()
+                    payload = resp.json()
+                    chunk = extract_rows(payload)
+                    rows.extend(chunk)
+                    raw_sha_parts.append({
+                        "endpoint": endpoint,
+                        "sha256": hashlib.sha256(resp.content).hexdigest(),
+                    })
+                    endpoint_error = None
+                    break
+                except Exception as exc:
+                    endpoint_error = exc
+                    time.sleep(1.5 * (attempt + 1))
+            if endpoint_error is None:
                 break
-            except Exception as exc:
-                last_exc = exc
-                time.sleep(1.5 * (attempt + 1))
         else:
-            raise RuntimeError(f"NSE VIX chunk failed {cstart}..{cend}: {last_exc}")
+            raise RuntimeError(f"NSE VIX chunk failed {cstart}..{cend}: {endpoint_error}")
 
     df = normalize(rows)
     if df.empty:
@@ -122,7 +134,7 @@ def main():
     sha = hashlib.sha256(out.read_bytes()).hexdigest()
     manifest = {
         "source": "NSE India VIX historical API",
-        "endpoint": NSE_VIX,
+        "endpoints_tried": list(NSE_VIX_ENDPOINTS),
         "homepage": NSE_HOME,
         "start": str(start),
         "end": str(end),
