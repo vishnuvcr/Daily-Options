@@ -851,3 +851,7 @@ Run **36336026908** still executed the pre-E0420 acquisition shell despite the c
 ## 2026-09-27 — Phase 31.10 run 5 closure / run 6 frontier
 
 Run **36336145989** used the old acquisition shell because workflow_dispatch takes the workflow definition from main. The phase-branch workflow correction therefore did not affect the job. E0422 is logged. The main launcher has now been corrected with cache-version invalidation; run 6 is the next authoritative attempt.
+
+## 2026-09-27 — Phase 31.10 run 6 closure / run 7 frontier
+
+Run **36336274435** completed official NSE participant-OI acquisition (1,234 files) but data gate failed at 0% complete feature coverage with 9 prior-positioning barrier violations. E0423 is logged. The feature panel is corrected to use the prior NIFTY session's last available close, restrict participant reports to NIFTY session dates, and compute completeness on the registered feature/prior fields. Run 7 is next.
