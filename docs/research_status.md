@@ -847,3 +847,7 @@ Run **36335911562** reused the stale participant-OI cache after E0419, so the da
 ## 2026-09-27 — Phase 31.10 run 4 closure / run 5 frontier
 
 Run **36336026908** still executed the pre-E0420 acquisition shell despite the corrected workflow being present on the phase branch, so the stale participant-OI cache was not invalidated and the gate remained FAIL. E0421 is logged. The corrected workflow is now confirmed on the live phase branch and run 5 is the next authoritative attempt.
+
+## 2026-09-27 — Phase 31.10 run 5 closure / run 6 frontier
+
+Run **36336145989** used the old acquisition shell because workflow_dispatch takes the workflow definition from main. The phase-branch workflow correction therefore did not affect the job. E0422 is logged. The main launcher has now been corrected with cache-version invalidation; run 6 is the next authoritative attempt.
