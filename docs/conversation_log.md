@@ -304,3 +304,7 @@ Run **36338601854** is the first run from the verified corrected head. It passed
 ## 2026-09-27 — Phase 32 run 8 execution failure
 
 Run **36338841139** passed the diagnostic surface gate but Base discovery stopped because all 12 cells had zero mapped execution prices. Intermediate artifacts show 691 feature-eligible sessions and 187/92/101/56 signals by feature/threshold. The execution lookup did not include expiry, unlike the validated Phase 31.7 price-key contract; all true trade rows were therefore absent. E0436 records the correction. No P&L is accepted from run 8.
+
+## 2026-09-27 — Phase 32 run 9 validation correction
+
+Run **36338974734** produced populated Base and Stress ledgers, but validation failed on `coverage_rate.min()>=0.95`. Inspection showed the reported coverage file was wrong, while actual trade counts were 96.7–100% of the corresponding signal counts. E0437 is the closed reporting defect; the next run recomputes coverage through the same expiry-aware execution-key predicate used by trade generation.
