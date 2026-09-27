@@ -37,8 +37,8 @@ def test_prior_only_surface_zscore_barrier():
     panel["surface_valid"]=True
     panel["iv_atm_ce"]=20+np.arange(n)*0.01
     panel["iv_atm_pe"]=20+np.arange(n)*0.01
-    panel["iv_put100"]=23+np.arange(n)*0.01
-    panel["iv_call100"]=20+np.arange(n)*0.01
+    panel["iv_put100"]=23+0.02*np.arange(n)
+    panel["iv_call100"]=20.0+0.005*np.sin(np.arange(n)/3.0)
     from research.phase32_options_skew_smile_dislocation import build_surface
     # build_surface needs quotes and IV inversion; barrier property is tested separately.
     panel["skew_volpts"]=panel["iv_put100"]-panel["iv_call100"]
