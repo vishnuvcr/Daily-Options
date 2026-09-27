@@ -242,7 +242,7 @@ def attach_expiry_and_prices(signals,root):
       SELECT CAST(trading_day AS DATE) d,CAST(expiry AS DATE) expiry,
              CASE WHEN UPPER(CAST(option_type AS VARCHAR)) IN ('CALL','CE') THEN 1 ELSE -1 END side,
              CAST(strike AS DOUBLE) strike,CAST(timestamp AS TIME) tm,
-             CAST(open AS DOUBLE) open,CAST(close AS DOUBLE) close
+             CAST(open AS DOUBLE) open,CAST(close AS DOUBLE) close_px
       FROM read_parquet('{opt_glob(root)}',union_by_name=true) WHERE close>0
     )
     SELECT * FROM ex
@@ -276,6 +276,7 @@ def simulate(signals,root,slippage):
                 AND UPPER(CAST(option_type AS VARCHAR)) IN ({repr(typ)},{repr('CALL' if typ=='CE' else 'PUT')})
                 AND CAST(strike AS DOUBLE) IN ({strike},{wing}) AND close>0"""
         qd=con.execute(q).df()
+        if not qd.empty: qd["close"]=qd["close_px"]
         if len(qd)<4: continue
         ent=qd[qd.ts==tm_entry].set_index("strike").open.to_dict()
         ex=qd[qd.ts==tm_exit].set_index("strike").close.to_dict()
