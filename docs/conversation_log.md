@@ -237,3 +237,7 @@ Authoritative run **36334135198** completed all frozen Phase 31.9 stages success
 ## 2026-09-27 — User: "Ok proceed" / Phase 31.10 activation
 
 Operational continuation: read the inherited research plan/status/error/conversation logs before creating the new branch work. Phase 31.10 was preregistered as a materially distinct institutional-positioning family using official NSE participant-wise index-futures OI. The frozen grid, prior-only feature barrier, null controls, execution model and ₹5,000/week promotion gate are persisted. E0416 records a pre-run workflow validation-path correction only; no numerical result was affected.
+
+## 2026-09-27 — Phase 31.10 run 1 closure
+
+Run **36335091335** passed dependency installation but failed two unit-test fixtures before acquisition. E0417: constant-value fixture made prior-only z-scores undefined and the missing-report fixture checked the wrong date. E0418: failure-path persistence attempted to add nonexistent output directories. Both are corrected without changing the registered strategy rules or data sources. No numerical result exists from run 1.
