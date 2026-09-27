@@ -233,3 +233,7 @@ Operational research step: inspected the current public NseKit implementation fo
 ## 2026-09-27 — Phase 31.9 final closure
 
 Authoritative run **36334135198** completed all frozen Phase 31.9 stages successfully after the 89-day official NSE VIX acquisition correction. Data gate: 1,206/1,206 eligible sessions complete, zero prior-date violations. Base and Stress both validated; 0/12 true cells passed the ₹5,000/week gate in either friction regime. The final Phase 31.9 report was persisted. No WFA/OOS is authorized and no result-driven tuning occurred. This operational log records the reproducible research outcome only, not hidden chain-of-thought.
+
+## 2026-09-27 — User: "Ok proceed" / Phase 31.10 activation
+
+Operational continuation: read the inherited research plan/status/error/conversation logs before creating the new branch work. Phase 31.10 was preregistered as a materially distinct institutional-positioning family using official NSE participant-wise index-futures OI. The frozen grid, prior-only feature barrier, null controls, execution model and ₹5,000/week promotion gate are persisted. E0416 records a pre-run workflow validation-path correction only; no numerical result was affected.
