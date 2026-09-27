@@ -758,3 +758,12 @@ Authoritative run **36341877019** passed its data gate (1,164/1,164 eligible ses
 [Phase 31.8 manuscript](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.8-global-overnight-transmission-v1/reports/phase31_8/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.8-global-overnight-transmission-v1/docs/phase31_8_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.8-global-overnight-transmission-v1/docs/phase31_8_status.md) · [error log](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.8-global-overnight-transmission-v1/docs/phase31_8_error_log.md)
 
 **Next:** move to a materially distinct, preregistered interaction family; do not retune Phase 31.8.
+
+
+## Phase 34 — Multi-Expiry Volatility Term Structure
+
+Phase 34 is **CLOSED / DATA-LIMITED**. Authoritative run **36341535504** reconstructed only 656/1,233 expected two-expiry surface sessions (53.20%), below the frozen 95% gate. No P&L, WFA or OOS was accepted.
+
+[Phase 34 manuscript](https://github.com/vishnuvcr/Daily-Options/blob/phase-34-multi-expiry-vol-term-structure-v1/reports/phase34/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-34-multi-expiry-vol-term-structure-v1/docs/phase34_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-34-multi-expiry-vol-term-structure-v1/docs/phase34_status.md)
+
+**Next planned family:** global overnight shock × India-local volatility/options state.
