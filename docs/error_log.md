@@ -453,3 +453,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0424 | 2026-09-27 | Phase 31.10 regression fixtures | Run 36336951355 stopped in unit tests because pre-correction fixtures lacked `ts` and `position_date` fields | No numerical stage ran | Update fixtures only; engine and research rules unchanged | CLOSED — test correction |
 
 | E0425 | 2026-09-27 | Phase 31.10 regression fixture | Run 36337049593 failed the last remaining unit test because the immediate-prior-positioning fixture lacked `ts` after the feature-panel contract changed | No acquisition or P&L ran | Add `ts` to the fixture only | CLOSED — test correction |
+
+| E0426 | 2026-09-27 | Phase 31.10 validation path | Run 36337194946 reached full discovery but validation looked for root `reports/phase31_10/price_coverage.csv`; outputs are under base/stress | Run not accepted | Validate friction-specific coverage files and require 12 rows with >=95% coverage | OPEN — corrected rerun |
