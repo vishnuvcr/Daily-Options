@@ -296,3 +296,7 @@ Run **36338447276** passed tests, source verification and cache restore but stop
 ## 2026-09-27 — Phase 32 run 6 stale-event closure
 
 Run **36338507099** used the delayed pre-E0433 trigger commit and failed on the already-identified FEATURES tuple-key defect. E0434 records this as a stale queued event; no P&L exists from it. The branch head now contains the corrected feature selection and regression.
+
+## 2026-09-27 — Phase 32 run 7 data-gate diagnosis
+
+Run **36338601854** is the first run from the verified corrected head. It passed the source-integrity guard and six unit tests, restored the pinned 894 MB cache, and completed source reuse. The numerical gate found **0/1,165** warm-up-complete valid option surfaces despite 100% next-expiry coverage; Base/Stress were skipped. No P&L is accepted. E0435 records the gate failure. The next correction instruments quote-key normalization, explicit failure reasons and quote type/key counts without altering the preregistered hypothesis.
