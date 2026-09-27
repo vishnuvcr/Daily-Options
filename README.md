@@ -727,3 +727,23 @@ Frozen experiment: prior-session NIFTY OI-derived GEX, gamma-flip distance and A
 Run 1 (**36339719895**) passed all six unit tests but stopped on E0439, a DuckDB alias defect before numerical calculation. Run 2 (**36339811180**) is the current numerical frontier after that correction; no P&L has been accepted.
 
 [Phase 33 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-33-dealer-gamma-exposure-v1/docs/phase33_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-33-dealer-gamma-exposure-v1/docs/phase33_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-33-dealer-gamma-exposure-v1/docs/phase33_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-33-dealer-gamma-exposure-v1)
+
+
+## 2026-09-27 — Phase 33 closed DATA-LIMITED
+
+**Phase 33 — Dealer Gamma Exposure Proxies** completed its corrected data-gate attempt on authoritative run **36340721257**.
+
+Result:
+- Prior-session snapshot coverage: **99.59%**
+- GEX_Z coverage: **100.00%**
+- FLIP_DISTANCE_Z coverage: **26.54%**
+- ATM_GEX_SHARE_Z coverage: **100.00%**
+- Prior-information barrier violations: **0**
+- P&L accepted: **No**
+- WFA/OOS: **Not authorized**
+
+Because the preregistered feature gate required at least 95% coverage for each registered feature, Phase 33 is closed as **DATA-LIMITED**, not economically rejected. The full result is in the Phase 33 branch manuscript.
+
+[Phase 33 manuscript](https://github.com/vishnuvcr/Daily-Options/blob/phase-33-dealer-gamma-exposure-v1/reports/phase33/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-33-dealer-gamma-exposure-v1/docs/phase33_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-33-dealer-gamma-exposure-v1/docs/phase33_status.md)
+
+**Next bounded family: Phase 34 — multi-expiry volatility term structure.**
