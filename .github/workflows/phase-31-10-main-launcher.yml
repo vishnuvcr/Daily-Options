@@ -57,7 +57,13 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p data/cache/phase31_10_institutional
-          if [ ! -f data/cache/phase31_10_institutional/participant_oi_normalized.parquet ]; then
+          NEED_REFRESH=0
+          if [ ! -s data/cache/phase31_10_institutional/participant_oi_normalized.parquet ]; then
+            NEED_REFRESH=1
+          elif ! python -c 'import json,sys; p="data/cache/phase31_10_institutional/manifest.json"; m=json.load(open(p)); sys.exit(0 if m.get("parser_version")=="v2-future-index-header" and int(m.get("files_ok",0))>0 else 1)'; then
+            NEED_REFRESH=1
+          fi
+          if [ "$NEED_REFRESH" -eq 1 ]; then
             PYTHONPATH=. python research/phase31_10_acquire_participant_oi.py               --nifty-root data/cache/phase31_trademarkk               --out data/cache/phase31_10_institutional
           fi
 
