@@ -261,3 +261,7 @@ Run 36336274435 completed acquisition and reached the data gate. Source coverage
 ## 2026-09-27 — Phase 31.10 run 7 unit-test correction
 
 Run 36336951355 failed before acquisition because regressions had not been updated for the new `ts` and `position_date` feature-panel contracts. E0424 was logged and the fixtures were corrected. No numerical result exists.
+
+## 2026-09-27 — Phase 31.10 run 8 unit-test correction
+
+Run 36337049593 failed one remaining unit test because its fixture omitted `ts`. E0425 was logged and the fixture was corrected. No acquisition or numerical result exists.
