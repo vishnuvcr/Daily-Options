@@ -925,3 +925,7 @@ Initial workflow run 36338180973 stopped at unit tests before any data acquisiti
 ## 2026-09-27 — Phase 32 run 2 closure / SQL correction
 
 Run **36338276277** passed all Phase 32 unit tests and restored the pinned options cache, but stopped in the data-gate computation with a DuckDB parser error caused by the unquoted reserved alias `time` in the surface quote query. No surface coverage or P&L result is accepted. E0430 is logged and the loader is corrected to use `local_time`. The frozen 12-cell research design is unchanged.
+
+## 2026-09-27 — Phase 32 run 3 closure / correction-application defect
+
+Run **36338371946** passed the six unit tests and cache restoration but hit the same DuckDB reserved-alias error during surface loading. The first E0430 patch had not matched the exact SQL literal, so the branch still executed the old query. E0431 is logged. The exact query text is now corrected to `local_time`; no data gate or P&L result is accepted from run 3.
