@@ -455,3 +455,8 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0425 | 2026-09-27 | Phase 31.10 regression fixture | Run 36337049593 failed the last remaining unit test because the immediate-prior-positioning fixture lacked `ts` after the feature-panel contract changed | No acquisition or P&L ran | Add `ts` to the fixture only | CLOSED — test correction |
 
 | E0426 | 2026-09-27 | Phase 31.10 validation path | Run 36337194946 reached full discovery but validation looked for root `reports/phase31_10/price_coverage.csv`; outputs are under base/stress | Run not accepted | Validate friction-specific coverage files and require 12 rows with >=95% coverage | OPEN — corrected rerun |
+
+
+| E0428 | 2026-09-27 | Phase 32 unit-test IV inversion | Run 36338180973 failed before acquisition because exact numerical convergence could make the IV midpoint equal the upper bisection bracket, and the final boundary check rejected the valid root | No data or P&L ran | Accept finite positive IV below the fixed volatility cap; retain round-trip regression | CLOSED — engine correction |
+
+| E0429 | 2026-09-27 | Phase 32 unit-test fixture | Run 36338180973 also used a constant synthetic skew series, producing zero rolling standard deviation and a NaN z-score | No data or P&L ran | Use a non-degenerate synthetic surface series; research rules unchanged | CLOSED — test correction |
