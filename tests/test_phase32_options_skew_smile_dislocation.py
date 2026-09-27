@@ -107,3 +107,30 @@ def test_execution_key_normalizes_date_expiry_and_option_type():
     b = exec_price_key(pd.Timestamp("2021-07-01"), pd.Timestamp("2021-07-08"), "09:31:00", "ce", 15700.0)
     assert a == b
     assert len(a) == 5
+
+
+def test_signal_execution_complete_requires_every_leg_and_timestamp():
+    from research.phase32_options_skew_smile_dislocation import signal_execution_complete, exec_price_key, HORIZON_TIMES
+    from types import SimpleNamespace
+    r = SimpleNamespace(
+        date=pd.Timestamp("2026-01-05").date(),
+        expiry=pd.Timestamp("2026-01-08").date(),
+        feature="SKEW_Z",
+        signal_value=2.0,
+        atm=22000,
+        horizon="H10_30",
+    )
+    legs = [
+        ("CE", 22050, "BUY"),
+        ("CE", 22100, "SELL"),
+        ("PE", 21900, "SELL"),
+        ("PE", 21950, "BUY"),
+    ]
+    prices = {
+        exec_price_key(r.date, r.expiry, tm, typ, strike): 100.0
+        for typ, strike, _ in legs
+        for tm in ("09:31:00", HORIZON_TIMES[r.horizon])
+    }
+    assert signal_execution_complete(r, prices)
+    prices.pop(exec_price_key(r.date, r.expiry, "10:30:00", "PE", 21900))
+    assert not signal_execution_complete(r, prices)
