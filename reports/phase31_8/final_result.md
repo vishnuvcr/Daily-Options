@@ -131,3 +131,28 @@ Relevant persisted artifacts:
 - `data/cache/phase31_8_global/manifest.json`
 
 No live-trading recommendation is implied by this discovery result.
+
+## Authoritative rerun audit — 2026-09-28
+
+The latest authoritative run is **36341877019**, replacing the earlier run as the evidentiary checkpoint. It passed the global data gate and completed Base/Stress plus null controls.
+
+Data gate:
+- 1,228 raw NIFTY sessions
+- 1,164 feature-eligible sessions
+- 1,164 complete global-feature sessions
+- 100% coverage among eligible sessions
+- 0 prior-date violations
+- option price coverage 96.92%–98.17% across true cells
+
+The frozen 12-cell grid produced **0/12 promotion-qualified cells in Base and 0/12 in Stress**.
+
+Closest positive-mean true cell:
+- ASIA_LEAD | z≥1.0 | 10:30
+- Base mean weekly net ₹107.37; median -₹122.78; positive-week rate 45.45%
+- Stress mean weekly net ₹37.13; median -₹211.39; positive-week rate 45.45%
+
+Decision remains: **retire Phase 31.8; no WFA/OOS or result-driven tuning.**
+
+### Provenance audit E0454
+
+The persisted global cache manifest records yfinance **1.7.0**, while the newly authored workflow installs 0.2.66. The authoritative run reused the persisted cache and therefore did not re-download under the workflow runtime. Exact cached-file SHA-256 hashes are preserved in the gate manifest. This is logged as a reproducibility engineering issue, not a silent data substitution.
