@@ -863,3 +863,7 @@ Run **36336951355** failed only in unit tests because fixtures lagged the correc
 ## 2026-09-27 — Phase 31.10 run 8 closure / run 9 frontier
 
 Run **36337049593** stopped at the final remaining unit-test fixture defect. E0425 is closed. No numerical stage ran. The immediate-prior-positioning fixture now includes the required `ts` field. Run 9 is next.
+
+## 2026-09-27 — Phase 31.10 run 9 closure / run 10 frontier
+
+Run **36337194946** completed unit tests, data gate, Base and Stress discovery, but validation failed on an incorrect root-level price-coverage path. The actual Base/Stress coverage files were present and above 95%. E0426 is logged. Validation is corrected in both main and phase workflow definitions; run 10 is the authoritative validation rerun.
