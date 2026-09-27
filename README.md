@@ -747,3 +747,14 @@ Because the preregistered feature gate required at least 95% coverage for each r
 [Phase 33 manuscript](https://github.com/vishnuvcr/Daily-Options/blob/phase-33-dealer-gamma-exposure-v1/reports/phase33/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-33-dealer-gamma-exposure-v1/docs/phase33_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-33-dealer-gamma-exposure-v1/docs/phase33_status.md)
 
 **Next bounded family: Phase 34 — multi-expiry volatility term structure.**
+
+
+## Latest research checkpoint — Phase 31.8
+
+**Phase 31.8 — Global Overnight Cross-Market Transmission is CLOSED / NEGATIVE DISCOVERY.**
+
+Authoritative run **36341877019** passed its data gate (1,164/1,164 eligible sessions; 100% global-feature coverage; zero prior-date violations) but **0/12** frozen cells met the ₹5,000/week Base+Stress consistency gate. The closest true cell, ASIA_LEAD z≥1.0 with 10:30 exit, produced ₹107.37 mean weekly net Base and ₹37.13 Stress, with negative weekly medians and 45.45% positive weeks.
+
+[Phase 31.8 manuscript](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.8-global-overnight-transmission-v1/reports/phase31_8/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.8-global-overnight-transmission-v1/docs/phase31_8_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.8-global-overnight-transmission-v1/docs/phase31_8_status.md) · [error log](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.8-global-overnight-transmission-v1/docs/phase31_8_error_log.md)
+
+**Next:** move to a materially distinct, preregistered interaction family; do not retune Phase 31.8.
