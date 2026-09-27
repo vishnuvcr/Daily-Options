@@ -69,3 +69,9 @@ def test_signal_structures_are_bounded_four_leg():
             assert all(a in {"BUY","SELL"} for _,_,a in legs)
             strikes=[k for _,k,_ in legs]
             assert max(strikes)-min(strikes) <= 200
+
+
+def test_feature_tuple_is_materialized_for_dataframe_selection():
+    p = pd.DataFrame({"SKEW_Z":[1.0], "SMILE_Z":[2.0]})
+    selected = p[list(FEATURES)]
+    assert list(selected.columns) == list(FEATURES)
