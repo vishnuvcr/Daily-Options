@@ -63,6 +63,10 @@ jobs:
         run: |
           PYTHONPATH=. python research/phase32_options_skew_smile_dislocation.py             --data data/cache/phase31_trademarkk             --out reports/phase32/gate             --gate-only
 
+      - name: Enforce data gate
+        run: |
+          python -c 'import json,sys; g=json.load(open("reports/phase32/gate/data_gate.json")); print(json.dumps(g,indent=2)); sys.exit(0 if g["status"]=="PASS" else 1)'
+
       - name: Run Base discovery
         run: |
           if python -c 'import json,sys; g=json.load(open("reports/phase32/gate/data_gate.json")); sys.exit(0 if g["status"]=="PASS" else 1)'; then
