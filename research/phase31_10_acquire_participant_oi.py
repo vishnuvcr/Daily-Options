@@ -178,6 +178,7 @@ def main():
     panel.to_parquet(out/"participant_oi_normalized.parquet",index=False)
     manifest_obj={
         "source":"NSE participant-wise F&O open-interest archive",
+        "parser_version":"v2-future-index-header",
         "study_start":str(START),"study_end":str(END),
         "nifty_sessions":len(days),"files_ok":len(manifest)-sum(1 for x in manifest if "error" in x),
         "missing_files":missing,
