@@ -55,7 +55,7 @@ def implied_vol(spot: float, strike: float, t: float, target: float, call: bool)
         else:
             hi = mid
     iv = 0.5 * (lo + hi)
-    return iv if np.isfinite(iv) and 0 < iv < hi else None
+    return iv if np.isfinite(iv) and 0 < iv < 5.0 else None
 
 def load_index(root: Path) -> pd.DataFrame:
     con = duckdb.connect()
@@ -375,7 +375,8 @@ def write_plots(summary_base, summary_stress, trades_base, out: Path):
         g = trades_base[(trades_base.feature==best.feature)&(trades_base.threshold==best.threshold)&(trades_base.horizon==best.horizon)]
         wk = g.assign(week=pd.to_datetime(g.day).dt.to_period("W-SUN").astype(str)).groupby("week").net_pnl.sum().sort_index().cumsum()
         plt.figure(figsize=(11,5))
-        plt.plot(pd.to_datetime(wk.index).to_timestamp(), wk.values)
+        plot_dates = pd.PeriodIndex(wk.index, freq="W-SUN").to_timestamp(how="end")
+        plt.plot(plot_dates, wk.values)
         plt.axhline(0, linestyle="--", linewidth=1)
         plt.ylabel("Cumulative weekly net P&L (₹)")
         plt.title(f"Phase 32 best Base cell: {best.feature} | |z|≥{best.threshold:g} | {best.horizon}")
