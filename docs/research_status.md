@@ -929,3 +929,7 @@ Run **36338276277** passed all Phase 32 unit tests and restored the pinned optio
 ## 2026-09-27 — Phase 32 run 3 closure / correction-application defect
 
 Run **36338371946** passed the six unit tests and cache restoration but hit the same DuckDB reserved-alias error during surface loading. The first E0430 patch had not matched the exact SQL literal, so the branch still executed the old query. E0431 is logged. The exact query text is now corrected to `local_time`; no data gate or P&L result is accepted from run 3.
+
+## 2026-09-27 — Phase 32 run 5 closure / feature-panel correction
+
+Run **36338447276** passed six unit tests, the checked-out-source guard and the pinned cache restore, then failed during surface feature construction before the data gate. The exact traceback was pandas KeyError on `x[FEATURES]` because FEATURES is a tuple. E0433 is logged. The engine now uses `x[list(FEATURES)]` and the regression suite covers the column-selection contract. No numerical P&L is accepted.
