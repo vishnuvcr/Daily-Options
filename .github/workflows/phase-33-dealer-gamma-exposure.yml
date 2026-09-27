@@ -1,0 +1,46 @@
+name: Phase 33 Dealer Gamma Exposure
+
+on:
+  workflow_dispatch:
+    inputs:
+      force_refresh:
+        description: "Force rebuild of the cached gamma/OI feature panel"
+        required: false
+        default: "false"
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  phase33:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Phase 33
+        env:
+          FORCE_REFRESH: ${{ inputs.force_refresh }}
+        run: |
+          python research/phase33_dealer_gamma_exposure.py --force-refresh "${FORCE_REFRESH}"
+
+      - name: Persist artifacts
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/phase33_* reports/phase33 research/phase33_dealer_gamma_exposure.py tests/test_phase33_dealer_gamma_exposure.py || true
+          git diff --cached --quiet || git commit -m "Phase 33: persist workflow artifacts"
+          git push
