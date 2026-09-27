@@ -462,3 +462,7 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0429 | 2026-09-27 | Phase 32 unit-test fixture | Run 36338180973 also used a constant synthetic skew series, producing zero rolling standard deviation and a NaN z-score | No data or P&L ran | Use a non-degenerate synthetic surface series; research rules unchanged | CLOSED — test correction |
 
 | E0435 | 2026-09-27 | Phase 32 data gate | Run 36338601854 had 1,225 NIFTY 09:30 sessions and 100% strict-next-expiry coverage, but 0/1,165 warm-up-complete sessions had a valid four-quote IV surface. No P&L ran | Discovery skipped correctly; root cause required quote/IV diagnostics | Normalize quote keys, persist failure reasons and enforce gate FAIL in the workflow; research rules unchanged | OPEN — diagnostic rerun |
+
+
+### Phase 32 closure notes
+E0435 (surface data-gate diagnosis) and E0437 (execution-coverage accounting) were both corrected and validated by authoritative run 36339168867. No outstanding Phase 32 implementation error remains.
