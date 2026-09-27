@@ -54,13 +54,14 @@ def bs_gamma(s,k,t,sigma):
 def load_spot(root):
     con=duckdb.connect()
     q=f"""SELECT CAST(trading_day AS DATE) trade_date, CAST(timestamp AS TIMESTAMP) ts,
-                  CAST(open AS DOUBLE) open, CAST(close AS DOUBLE) close
+                  CAST(open AS DOUBLE) open, CAST(close AS DOUBLE) close_px
            FROM read_parquet('{idx_path(root)}',union_by_name=true)
            WHERE CAST(trading_day AS DATE) BETWEEN DATE '{START_DATE}' AND DATE '{END_DATE}'
              AND close>0 ORDER BY trade_date,ts"""
     x=con.execute(q).df(); con.close()
     if x.empty: raise RuntimeError("NIFTY index cache is empty")
     x["trade_date"]=pd.to_datetime(x.trade_date).dt.date
+    x["close"]=x["close_px"]
     return x
 
 def load_prior_option_snapshot(root, spot):
