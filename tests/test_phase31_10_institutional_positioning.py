@@ -90,3 +90,14 @@ def test_immediate_prior_positioning_is_required():
     p=feature_panel(nifty,pd.DataFrame(oi))
     miss=p[p["date"]==dates[33].date()].iloc[0]
     assert not bool(miss.barrier_ok)
+
+def test_nse_participant_header_future_index_columns_are_parsed():
+    from research.phase31_10_acquire_participant_oi import normalize_participant
+    raw = pd.DataFrame([
+        {"Client Type":"FII","Future Index Long":"800","Future Index Short":"200","Future Stock Long":"0","Future Stock Short":"0"},
+        {"Client Type":"DII","Future Index Long":"600","Future Index Short":"400","Future Stock Long":"0","Future Stock Short":"0"},
+    ])
+    out = normalize_participant(raw, dt.date(2026, 9, 25))
+    assert set(out["participant"]) == {"FII","DII"}
+    fii = out[out["participant"]=="FII"].iloc[0]
+    assert float(fii["idx_net_ratio"]) == 0.6
