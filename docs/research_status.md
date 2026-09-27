@@ -949,3 +949,7 @@ Run **36338601854** passed source verification, all unit tests, pinned cache res
 ## 2026-09-27 — Phase 32 run 8 Base closure / execution-key correction
 
 Run **36338841139** passed the data gate: **1,143/1,165 warm-up-complete sessions (98.11%)** had a valid four-quote IV surface, with 0 prior-barrier violations. Base discovery then found **0% executable-price coverage in all 12 cells**, so no accepted P&L exists and Stress was skipped. Inspection showed Phase 32's execution dictionary omitted expiry from the key, unlike the validated Phase 31.7 loader; empty trades also exposed a weekly-output robustness defect. E0436 is logged and closed by aligning the execution key to `(date, expiry, time, option_type, strike)` and hardening empty weekly output.
+
+## 2026-09-27 — Phase 32 run 9 validation correction
+
+Run **36338974734** completed Base and Stress numerical discovery, including 12 true cells and 60 null-control rows per friction, but artifact validation failed because `price_coverage.csv` incorrectly reported 0% coverage. The persisted trade ledgers show executable trades for 96.7–100% of signal counts. E0437 identifies the coverage-reporting bug; a shared all-leg/all-timestamp execution predicate and regression test are now on the branch. The numerical P&L is retained as discovery evidence but validation remains unclosed until the corrected coverage artifact passes.
