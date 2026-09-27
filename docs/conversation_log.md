@@ -253,3 +253,7 @@ Run 36335911562 used the existing participant-OI parquet/manifest instead of rer
 ## 2026-09-27 — Phase 31.10 run 5 workflow-definition diagnosis
 
 Run 36336145989 still showed the old acquisition block despite the phase branch containing the corrected cache-version logic. The cause was identified: manual dispatch uses the workflow definition on main, while the job then checks out the phase branch. E0422 records this. The cache-invalidation correction is now written to main as well. No research result exists.
+
+## 2026-09-27 — Phase 31.10 run 6 gate diagnosis
+
+Run 36336274435 completed acquisition and reached the data gate. Source coverage was complete, but feature coverage failed because the gap previous-close calculation assumed a 15:10 index bar that was not present, and the positioning merge permitted participant reports on non-NIFTY-session dates to become prior observations. Nine barrier violations resulted. E0423 records the correction. No numerical result exists.
