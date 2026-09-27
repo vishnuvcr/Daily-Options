@@ -1,1 +1,1 @@
-Phase 34 run 3 trigger: exact live SQL f-string closure verified on branch head.
+Phase 34 run 4 trigger: expiry tuple and strike-aware execution fixes verified on branch head.
