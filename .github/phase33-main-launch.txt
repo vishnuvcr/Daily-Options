@@ -1,1 +1,1 @@
-Phase 33 run 3 trigger: vectorized gamma/IV engine, block-null permutation and corrected regression suite are on branch head.
+Phase 33 run 4 trigger: execution-loader close alias and persistence race fixes are on branch head.
