@@ -273,3 +273,10 @@ Run 36337194946 completed the numerical discovery stages, but validation failed 
 ## 2026-09-27 — Phase 31.10 final closure
 
 Run **36337462383** completed the corrected validation after run 9's path-only failure. The complete frozen 12-cell institutional-positioning family was evaluated in Base and Stress with 60 null summaries per friction. Data coverage and execution coverage passed. No true cell reached the project promotion gate. Final manuscript persisted at `reports/phase31_10/final_result.md`. This operational record contains the research outcome, not hidden chain-of-thought.
+
+
+## 2026-09-27 — User: "Resume the research" / Phase 32 activation
+
+Continuation decision: Phase 31.10 is closed at authoritative run 36337462383 with 0/12 Base and 0/12 Stress promotion passes. A new materially distinct branch, phase-32-options-skew-smile-dislocation-v1, was created from the audited Phase 31.10 endpoint. Phase 32 was preregistered with a finite 12-cell skew/smile grid, five null seeds, Base/Stress friction, the existing ₹5,000/week promotion gate, and a manual GitHub Actions workflow.
+
+The first Phase 32 workflow run 36338180973 stopped in unit tests before acquisition. E0428 (IV inversion convergence boundary) and E0429 (degenerate z-score fixture) were corrected. No market data or P&L was used from that run. The research design remains frozen.
