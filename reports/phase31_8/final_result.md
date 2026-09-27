@@ -119,7 +119,7 @@ The project roadmap still contains other materially distinct hybrid/regime-condi
 
 ## Reproducibility
 
-Authoritative numerical run: **36252922418**.
+Authoritative numerical run: **36342193173** (latest authoritative rerun).
 
 Relevant persisted artifacts:
 - `reports/phase31_8/gate/data_gate.json`
@@ -134,7 +134,7 @@ No live-trading recommendation is implied by this discovery result.
 
 ## Authoritative rerun audit — 2026-09-28
 
-The latest authoritative run is **36341877019**, replacing the earlier run as the evidentiary checkpoint. It passed the global data gate and completed Base/Stress plus null controls.
+The latest authoritative run is **36342193173**, replacing 36341877019 as the evidentiary checkpoint. It passed the global data gate and completed Base/Stress plus null controls.
 
 Data gate:
 - 1,228 raw NIFTY sessions
