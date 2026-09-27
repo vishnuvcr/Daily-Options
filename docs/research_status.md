@@ -835,3 +835,7 @@ No Phase 31.10 P&L is accepted before the official participant-OI data gate, exe
 ## 2026-09-27 — Phase 31.10 run 1 closure / run 2 frontier
 
 Run **36335091335** stopped at unit tests before data acquisition. E0417/E0418 are closed: the regression fixtures are corrected and failure-path persistence is hardened. No Phase 31.10 numerical result exists yet. Run 2 will use the corrected institutional-positioning branch and the same frozen 12-cell grid, five null seeds and cost model.
+
+## 2026-09-27 — Phase 31.10 run 2 closure / run 3 frontier
+
+Run **36335189575** reached official NSE participant-OI acquisition but parser normalization failed on the official singular header `Future Index Long/Short`; data gate returned FAIL with zero eligible sessions and no P&L. E0419 is logged. Parser now accepts both official singular/plural labels and a regression fixture covers the actual header. Next authoritative run: **run 3**.
