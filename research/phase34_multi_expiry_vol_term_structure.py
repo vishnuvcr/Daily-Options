@@ -148,6 +148,7 @@ def surface_panel(root):
                   SELECT option_type,strike,close_px,expiry
                   FROM src
                   QUALIFY ROW_NUMBER() OVER (PARTITION BY option_type,strike ORDER BY ts DESC)=1
+                  """
             con=duckdb.connect(); z=con.execute(q).df(); con.close()
             if z.empty: continue
             expiry_ts=pd.Timestamp(e)+pd.Timedelta(hours=15,minutes=30)
