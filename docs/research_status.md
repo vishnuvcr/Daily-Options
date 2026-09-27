@@ -897,3 +897,7 @@ Corrected Phase 32 run **36338601854** passed source verification and unit tests
 ## 2026-09-27 — Phase 32 final closure
 
 Authoritative run **36339168867** fully validated Phase 32. Data gate passed; execution coverage was 96.74–100.00%; 0/12 Base and 0/12 Stress promotion passes; every true cell trailed its matched five-seed null mean. No WFA/OOS. Phase 32 is closed and the full manuscript is on the Phase 32 branch at `reports/phase32/final_result.md`.
+
+## 2026-09-27 — Phase 33 activated
+
+Phase 32 is closed. Phase 33 — Dealer Gamma Exposure Proxies — is now the active preregistered frontier on `phase-33-dealer-gamma-exposure-v1`. Run 1 (36339719895) failed before numerical calculation on E0439; run 2 (36339811180) is the corrected numerical attempt. No P&L has been accepted.
