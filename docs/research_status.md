@@ -824,3 +824,9 @@ Run **36253528975** failed the unit-test stage before acquisition. The engine pa
 ## 2026-09-26 — Phase 31.9 run 3 closure / workflow correction
 
 Run **36253620977** passed all six regression tests, restored the pinned NIFTY cache, then failed in the source-acquisition shell block because the heredoc terminator was not parsed correctly. No VIX acquisition, gate or P&L ran. E0412 is closed after replacing the heredoc with a single-line Python invocation.
+
+## 2026-09-27 — Phase 31.9 run 4 closure / direct-NSE acquisition correction
+
+Run **36253716626** passed the Phase 31.9 unit tests and restored the pinned NIFTY cache, but stopped at official India VIX acquisition because the helper first requested the NSE homepage and received HTTP 403 on the GitHub Actions runner. No VIX data, data gate or P&L computation ran.
+
+E0413 is logged. The acquisition helper has been corrected to avoid the homepage dependency and to try two official NSE VIX historical endpoints while preserving source/response hashes and the manifest. A regression test now locks the direct-endpoint acquisition contract. The frozen Phase 31.9 signal grid, regime thresholds, cost model and promotion gate are unchanged.
