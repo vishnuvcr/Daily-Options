@@ -912,3 +912,12 @@ The institutional-positioning hypothesis therefore closes as negative discovery 
 ## 2026-09-27 — Phase 31.10 final manuscript persisted
 
 The validated negative discovery result has been persisted to `reports/phase31_10_final_result.md`. Authoritative run **36337462383**: 1,164/1,164 feature-eligible sessions complete, zero prior-positioning violations, 1,234/1,234 source files, execution coverage >=97.409%, 0/12 Base promotion passes and 0/12 Stress promotion passes. No WFA/OOS promotion is authorized. Phase 31.10 is closed.
+
+
+## 2026-09-27 — Phase 32 preregistration / initial CI correction
+
+Phase 31.10 is closed as negative discovery evidence. Phase 32 is now the active bounded frontier on phase-32-options-skew-smile-dislocation-v1: NIFTY option-skew / smile-surface dislocation.
+
+The preregistered family uses the pinned thetrademarkk/india-index-options-1m revision 51ca58c, a strictly-next expiry, 09:30 surface construction, prior-only 60-session z-scores, thresholds 1.0/1.5, exits 10:30/13:30/15:10, two surface features, five full-panel null seeds, historical lot sizes and Base/Stress friction. The true grid is 12 cells.
+
+Initial workflow run 36338180973 stopped at unit tests before any data acquisition or P&L. E0428 identified a Black–Scholes IV convergence-boundary defect; E0429 identified a degenerate synthetic skew test fixture. Both are corrected. No research rule, threshold, structure or cost assumption changed. The corrected rerun is the first authoritative numerical attempt.
