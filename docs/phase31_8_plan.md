@@ -116,3 +116,7 @@ Close after the frozen 12 true cells plus 60 null summaries per friction. Do not
 
 ## Methodological erratum 31.8-1 — deterministic warm-up handling
 The 60-observation strictly-prior standardization creates a deterministic warm-up interval at the beginning of the study window. The 95% global-feature coverage gate is therefore applied to **feature-eligible NIFTY sessions** (sessions for which all six standardized global features exist and the strict prior-date barrier holds), rather than counting unavoidable pre-lookback warm-up sessions in the denominator. The raw NIFTY session count and the number of warm-up-excluded sessions are persisted in the gate report for auditability. This clarification does not alter the study dates, signal grid, thresholds, entry/exit rules, null design, slippage, cost model, or promotion threshold.
+
+
+## Phase 31.8 result status
+The authoritative run 36341877019 passed the data gate and completed the frozen 12-cell Base/Stress discovery plus five null seeds per friction. No cell met the ₹5,000 mean+median weekly net and ≥70% positive-week promotion gate in both frictions. Therefore no WFA/OOS stage is authorized and the family is closed without retuning.
