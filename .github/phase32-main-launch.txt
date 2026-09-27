@@ -1,1 +1,1 @@
-Phase 32 run 9 trigger: E0436 expiry-aware execution-key correction and empty-trade hardening verified on branch head.
+Phase 32 run 10 trigger: corrected all-leg execution coverage predicate and regression are verified on branch head.
