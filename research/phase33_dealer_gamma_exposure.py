@@ -46,6 +46,37 @@ def implied_vol(price,s,k,t,call):
     iv=(lo+hi)/2
     return iv if np.isfinite(iv) and iv<5 else None
 
+def bs_price_vec(s,k,t,sigma,call):
+    s=np.asarray(s,float); k=np.asarray(k,float); t=np.asarray(t,float); sigma=np.asarray(sigma,float)
+    out=np.full(np.broadcast(s,k,t,sigma).shape,np.nan)
+    m=(s>0)&(k>0)&(t>0)&(sigma>0)
+    if not np.any(m): return out
+    ss,kk,tt,vv=np.broadcast_arrays(s,k,t,sigma)
+    d1=(np.log(ss[m]/kk[m])+0.5*vv[m]*vv[m]*tt[m])/(vv[m]*np.sqrt(tt[m]))
+    d2=d1-vv[m]*np.sqrt(tt[m])
+    if np.ndim(call)==0:
+        cc=bool(call)
+        out[m]=ss[m]*np.vectorize(ND.cdf)(d1)-kk[m]*np.vectorize(ND.cdf)(d2) if cc else kk[m]*np.vectorize(ND.cdf)(-d2)-ss[m]*np.vectorize(ND.cdf)(-d1)
+    else:
+        cc=np.asarray(call,bool)
+        cdf1=np.vectorize(ND.cdf)(d1); cdf2=np.vectorize(ND.cdf)(d2)
+        out[m]=np.where(cc[m],ss[m]*cdf1-kk[m]*cdf2,kk[m]*cdf2-ss[m]*cdf1+ss[m]-kk[m])
+    return out
+
+def implied_vol_vec(price,s,k,t,call):
+    price=np.asarray(price,float); s=np.asarray(s,float); k=np.asarray(k,float); t=np.asarray(t,float); call=np.asarray(call,bool)
+    lo=np.full(price.shape,1e-6); hi=np.full(price.shape,5.0)
+    intrinsic=np.where(call,np.maximum(s-k,0),np.maximum(k-s,0))
+    valid=np.isfinite(price)&(price>0)&np.isfinite(s)&(s>0)&np.isfinite(k)&(k>0)&np.isfinite(t)&(t>0)&(price>=intrinsic-1e-7)
+    for _ in range(70):
+        mid=(lo+hi)/2
+        p=bs_price_vec(s,k,t,mid,call)
+        hi=np.where(p>price,mid,hi)
+        lo=np.where(p>price,lo,mid)
+    iv=(lo+hi)/2
+    iv[~valid]=np.nan
+    return iv
+
 def bs_gamma(s,k,t,sigma):
     if min(s,k,t,sigma)<=0: return np.nan
     d1=(math.log(s/k)+0.5*sigma*sigma*t)/(sigma*math.sqrt(t))
@@ -107,35 +138,45 @@ def gex_snapshot(day, rows):
     spot=float(rows.spot.iloc[0])
     rows=rows.copy()
     rows["t"]=((pd.to_datetime(rows.expiry)-pd.Timestamp(day))+pd.Timedelta(hours=15,minutes=30)).dt.total_seconds()/31536000.0
-    ivs=[]; gs=[]
-    for r in rows.itertuples(index=False):
-        iv=implied_vol(float(r.px),spot,float(r.strike),float(r.t),r.side=="CE")
-        ivs.append(iv)
-        gs.append(bs_gamma(spot,float(r.strike),float(r.t),iv) if iv else np.nan)
-    rows["iv"]=ivs; rows["gamma"]=gs
+    s=np.full(len(rows),spot,float)
+    k=rows["strike"].to_numpy(float)
+    t=rows["t"].to_numpy(float)
+    px=rows["px"].to_numpy(float)
+    call=(rows["side"].to_numpy()=="CE")
+    iv=implied_vol_vec(px,s,k,t,call)
+    rows["iv"]=iv
+    rows["gamma"]=np.where(np.isfinite(iv),
+        np.exp(-0.5*((np.log(s/k)+0.5*iv*iv*t)/(iv*np.sqrt(t)))**2)/(np.sqrt(2*np.pi)*s*iv*np.sqrt(t)),
+        np.nan)
+    rows["lot"]=rows["expiry"].map(lot_size)
     rows=rows[np.isfinite(rows.gamma)&(rows.oi>0)].copy()
     if rows.empty: return None
-    rows["lot"]=rows.expiry.map(lot_size)
+    spot=float(rows.spot.iloc[0])
     rows["gex_unit"]=rows.gamma*rows.oi*rows.lot*spot*spot*0.01
     rows["signed_gex"]=np.where(rows.side=="CE",rows.gex_unit,-rows.gex_unit)
     total=float(rows.signed_gex.sum())
-    byk=rows.groupby("strike",as_index=False).signed_gex.sum().sort_values("strike")
-    # zero-gamma root from the frozen chain, evaluated on a fixed 50-point grid.
+
     grid=np.arange(spot-SPOT_WINDOW,spot+SPOT_WINDOW+50,50.0)
-    vals=[]
-    for s in grid:
-        z=0.0
-        for r in rows.itertuples(index=False):
-            gg=bs_gamma(float(s),float(r.strike),float(r.t),float(r.iv))
-            z += (1 if r.side=="CE" else -1)*gg*float(r.oi)*lot_size(r.expiry)*s*s*0.01
-        vals.append(z)
+    gv=[]
+    kval=rows.strike.to_numpy(float)[None,:]
+    tval=rows.t.to_numpy(float)[None,:]
+    ivval=rows.iv.to_numpy(float)[None,:]
+    oi=rows.oi.to_numpy(float)[None,:]
+    lot=rows.lot.to_numpy(float)[None,:]
+    side=np.where(rows.side.to_numpy()=="CE",1.0,-1.0)[None,:]
+    for sg in grid:
+        ss=np.full_like(kval,float(sg))
+        d1=(np.log(ss/kval)+0.5*ivval*ivval*tval)/(ivval*np.sqrt(tval))
+        gam=np.exp(-0.5*d1*d1)/(np.sqrt(2*np.pi)*ss*ivval*np.sqrt(tval))
+        gv.append(float(np.nansum(side*gam*oi*lot*ss*ss*0.01)))
     root=np.nan
-    for a,b,va,vb in zip(grid[:-1],grid[1:],vals[:-1],vals[1:]):
+    for a,b,va,vb in zip(grid[:-1],grid[1:],gv[:-1],gv[1:]):
         if va==0: root=float(a); break
         if va*vb<0:
             root=float(a+(0-va)*(b-a)/(vb-va)); break
     near=rows.loc[(rows.strike>=spot-100)&(rows.strike<=spot+100),"gex_unit"].abs().sum()
-    share=float(near/abs(rows.signed_gex).sum()) if abs(rows.signed_gex).sum()>0 else np.nan
+    denom=abs(rows.signed_gex).sum()
+    share=float(near/denom) if denom>0 else np.nan
     return {"trade_date":day,"spot":spot,"net_gex":total,"flip_distance":(spot-root if np.isfinite(root) else np.nan),
             "gamma_flip":root,"atm_gex_share":share,"rows":len(rows)}
 
@@ -158,11 +199,11 @@ def make_signals(panel,spot,permute_seed=None):
     panel=panel.copy()
     if permute_seed is not None:
         rng=np.random.default_rng(permute_seed)
-        for f in FEATURES:
-            idx=panel[f].dropna().index.to_numpy()
-            vals=panel.loc[idx,f].to_numpy().copy()
-            rng.shuffle(vals)
-            panel.loc[idx,f]=vals
+        idx=np.arange(len(panel))
+        rng.shuffle(idx)
+        cols=["net_gex",*FEATURES]
+        perm=panel.loc[idx,cols].to_numpy(copy=True)
+        panel.loc[:,cols]=perm
     s=spot.sort_values("ts").groupby("trade_date").agg(open=("open","first"),close=("close","last")).copy()
     s.index=pd.to_datetime(s.index).date
     prev_close={d:float(r.close) for d,r in s.iterrows()}
