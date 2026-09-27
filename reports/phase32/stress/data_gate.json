@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "raw_nifty_09_30_sessions": 1225,
+  "warmup_sessions": 60,
+  "feature_eligible_sessions": 691,
+  "warmup_expiry_coverage": 1.0,
+  "surface_quote_iv_coverage": 0.9811158798283262,
+  "surface_complete_sessions": 1143,
+  "surface_failure_reason_counts": {
+    "MISSING_OR_NONPOSITIVE_iv_atm_ce": 15,
+    "IV_INVERSION_FAIL_iv_atm_pe": 3,
+    "MISSING_OR_NONPOSITIVE_iv_atm_pe": 3,
+    "IV_INVERSION_FAIL_iv_atm_ce": 1
+  },
+  "quote_rows": 189016,
+  "unique_quote_keys": 138282,
+  "duplicate_quote_rows": 50734,
+  "quote_option_type_counts": {
+    "PE": 95230,
+    "CE": 93786
+  },
+  "prior_surface_barrier_violations": 0,
+  "expiry_file_count": 267,
+  "required_surface_coverage": 0.95,
+  "study_start": "2021-07-01",
+  "study_end": "2026-08-31",
+  "dataset_revision": "51ca58c",
+  "option_cache_files_observed": 1215
+}
