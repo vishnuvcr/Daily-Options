@@ -900,3 +900,11 @@ Run **36337194946** completed unit tests, official source/cache, data gate, Base
 ## 2026-09-27 — Phase 31.10 run 9 closure / validation-only correction
 
 Run **36337194946** completed unit tests, official NSE participant-OI acquisition, the full data gate, Base and Stress discovery. The data gate passed at **1,164/1,164 feature-eligible sessions (100%)** with zero prior-positioning barrier violations; every true-cell execution coverage value was above 97.4% and therefore above the 95% requirement. The run nevertheless failed the final validation step because the launcher expected a root-level `reports/phase31_10/price_coverage.csv`, while the engine stores separate `base/price_coverage.csv` and `stress/price_coverage.csv` files. E0426 is logged. No P&L is accepted until the corrected validation step completes.
+
+## 2026-09-27 — Phase 31.10 CLOSED: validated negative discovery
+
+Authoritative **run 36337462383 (run 10)** completed the corrected validation successfully. Phase 31.10 data gate: **1,164/1,164 feature-eligible sessions complete (100%)**, **0 prior-positioning barrier violations**, **1,234/1,234 participant-OI source files**, with all four participant classes present. Every true-cell execution coverage value was >=97.409% in both Base and Stress.
+
+The full frozen **12-cell** grid was evaluated in Base and Stress, with 60 null-control summaries per friction. **0/12 true cells passed the ₹5,000/week promotion gate in Base and 0/12 in Stress.** No true cell had positive total net P&L. Best Base mean weekly net was **-₹929.82/week** (FII index-net z-score, threshold 1.0, 10:30 exit); best Stress mean weekly net was **-₹1,077.44/week** for the same cell. Positive-week rates remained below 30% for these cells.
+
+The institutional-positioning hypothesis therefore closes as negative discovery evidence. **No WFA/OOS promotion is authorized.** Final manuscript/report is now being persisted; the next family must be materially distinct and separately preregistered.
