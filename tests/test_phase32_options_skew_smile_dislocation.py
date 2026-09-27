@@ -75,3 +75,26 @@ def test_feature_tuple_is_materialized_for_dataframe_selection():
     p = pd.DataFrame({"SKEW_Z":[1.0], "SMILE_Z":[2.0]})
     selected = p[list(FEATURES)]
     assert list(selected.columns) == list(FEATURES)
+
+
+def test_surface_quote_key_normalization_and_iv_reconstruction():
+    from research.phase32_options_skew_smile_dislocation import bs_price, build_surface
+    d = pd.Timestamp("2026-01-02").date()
+    expiry = pd.Timestamp("2026-01-08").date()
+    spot = 22000.0
+    atm = 22000.0
+    t = (pd.Timestamp(f"{expiry} 15:30:00") - pd.Timestamp(f"{d} 09:30:00")).total_seconds() / 31536000.0
+    rows = []
+    for typ, strike in (("CE", atm), ("PE", atm), ("PE", atm - 100), ("CE", atm + 100)):
+        px = bs_price(spot, strike, t, 0.20, typ == "CE")
+        rows.append({
+            "date": pd.Timestamp(d),
+            "local_time": "09:30:00",
+            "option_type": typ,
+            "strike": strike,
+            "close_px": px,
+        })
+    panel = pd.DataFrame([{"date": d, "close_px": spot, "expiry": expiry, "atm": atm}])
+    out = build_surface(panel, pd.DataFrame(rows))
+    assert bool(out.iloc[0].surface_valid)
+    assert out.iloc[0].surface_fail_reason == "OK"
