@@ -1,0 +1,9 @@
+feature,threshold,exit_time,signals,execution_complete,coverage_rate
+ATM_TERM_Z,0.75,10:30:00,95,0,0.0
+ATM_TERM_Z,0.75,15:10:00,95,0,0.0
+ATM_TERM_Z,1.25,10:30:00,53,0,0.0
+ATM_TERM_Z,1.25,15:10:00,53,0,0.0
+WING_TERM_Z,0.75,10:30:00,93,0,0.0
+WING_TERM_Z,0.75,15:10:00,93,0,0.0
+WING_TERM_Z,1.25,10:30:00,54,0,0.0
+WING_TERM_Z,1.25,15:10:00,54,0,0.0

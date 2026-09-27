@@ -1,0 +1,14 @@
+{
+  "status": "FAIL",
+  "expected_prior_sessions": 1233,
+  "snapshot_sessions": 656,
+  "snapshot_coverage": 0.5320356853203568,
+  "warmup_sessions": 596,
+  "feature_coverage": {
+    "ATM_TERM_Z": 1.0,
+    "WING_TERM_Z": 1.0
+  },
+  "signal_rows": 590,
+  "coverage_min": 0.0,
+  "coverage_cells": 8
+}
