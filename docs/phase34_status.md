@@ -19,3 +19,6 @@
 
 ## Run 1 closure
 Run **36341124742** stopped during Python test collection on E0448. No data acquisition or P&L ran. The SQL string is corrected; run 2 is the next authoritative attempt.
+
+## Run 3 closure / pre-P&L hardening
+Run **36341283898** passed all 6 tests and restored the pinned cache, then stopped in the surface loader on E0450. No data gate or P&L result exists. A pre-P&L execution audit also identified E0451: the price map lacked strike in its key. Both are corrected before the next run.
