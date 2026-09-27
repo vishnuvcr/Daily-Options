@@ -893,3 +893,7 @@ Phase 32 plan, literature review, engine, tests and manual GitHub Actions workfl
 ## 2026-09-27 — Phase 32 run 7 data-gate failure
 
 Corrected Phase 32 run **36338601854** passed source verification and unit tests but found **0 valid surface sessions after warm-up** despite 100% strict-next-expiry coverage. No Base/Stress P&L was accepted. E0435 is open for diagnostic rerun; the branch now normalizes option quote keys, records surface-failure reasons and makes a FAIL data gate an explicit workflow failure.
+
+## 2026-09-27 — Phase 32 final closure
+
+Authoritative run **36339168867** fully validated Phase 32. Data gate passed; execution coverage was 96.74–100.00%; 0/12 Base and 0/12 Stress promotion passes; every true cell trailed its matched five-seed null mean. No WFA/OOS. Phase 32 is closed and the full manuscript is on the Phase 32 branch at `reports/phase32/final_result.md`.
