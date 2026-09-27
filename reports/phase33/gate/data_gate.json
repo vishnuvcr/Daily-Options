@@ -1,0 +1,16 @@
+{
+  "status": "FAIL",
+  "expected_prior_sessions": 1233,
+  "snapshot_sessions": 1228,
+  "snapshot_coverage": 0.9959448499594485,
+  "warmup_sessions": 1168,
+  "feature_coverage": {
+    "GEX_Z": 1.0,
+    "FLIP_DISTANCE_Z": 0.2654109589041096,
+    "ATM_GEX_SHARE_Z": 1.0
+  },
+  "signal_rows": 3158,
+  "coverage_min": 0.0,
+  "coverage_cells": 12,
+  "prior_information_barrier_violations": 0
+}
