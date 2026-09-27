@@ -874,3 +874,7 @@ Run **36335911562** executed successfully but reused the stale zero-row particip
 ## 2026-09-27 — Phase 31.10 run 4 closure / launcher-ref race
 
 Run **36336026908** completed successfully but its job log shows the older acquisition block (`if [ ! -f participant_oi_normalized.parquet ]`) rather than the corrected parser-version invalidation block. The branch subsequently confirms the corrected workflow is present. This is treated as a launcher/ref synchronization defect, not research evidence. E0421 is logged. No P&L is accepted. Run 5 will be triggered only after confirming the corrected workflow is the branch head.
+
+## 2026-09-27 — Phase 31.10 run 5 closure / main-workflow definition correction
+
+Run **36336145989** again used the old acquisition shell. Investigation showed the main launcher is a `workflow_dispatch` workflow whose job definition comes from the main-branch workflow file; the phase-branch workflow update was not sufficient to change the dispatched job. E0422 is logged. The authoritative main workflow has now been updated with the parser-version/files_ok cache invalidation check. No P&L is accepted. Next authoritative run: **run 6**.
