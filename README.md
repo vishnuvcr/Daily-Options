@@ -691,3 +691,8 @@ Phase 31.9 closed after authoritative run **36334135198**: 0/12 Base and 0/12 St
 **Phase 31.10** is now the active bounded numerical frontier on `phase-31.10-institutional-positioning-gap-v1`. It tests prior-session NSE participant-wise F&O index-futures positioning (FII, DII and their divergence) against same-day NIFTY directional debit spreads, with a frozen 12-cell grid, five null seeds, historical lot sizes and Base/Stress friction.
 
 [Phase 31.10 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.10-institutional-positioning-gap-v1/docs/phase31_10_plan.md) · [Literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.10-institutional-positioning-gap-v1/docs/phase31_10_literature_review.md)
+
+
+## 2026-09-27 — Phase 31.10 run 1 closure
+
+Run **36335091335** stopped during unit tests before any institutional data or P&L computation. E0417/E0418 are corrected. The next authoritative attempt is run 2 from the corrected Phase 31.10 branch.
