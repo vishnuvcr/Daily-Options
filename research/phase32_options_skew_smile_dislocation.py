@@ -117,7 +117,7 @@ def load_quotes(root: Path, panel: pd.DataFrame, expiry_map: dict[date, Path]) -
         q = f"""
           SELECT CAST(timestamp AS TIMESTAMP) ts,
                  CAST(CAST(timestamp AS TIMESTAMP) AS DATE) date,
-                 strftime(CAST(timestamp AS TIMESTAMP),'%H:%M:%S') time,
+                 strftime(CAST(timestamp AS TIMESTAMP),'%H:%M:%S') local_time,
                  UPPER(CAST(option_type AS VARCHAR)) option_type,
                  CAST(strike AS DOUBLE) strike,
                  CAST(open AS DOUBLE) open_px,
