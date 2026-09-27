@@ -241,3 +241,7 @@ Operational continuation: read the inherited research plan/status/error/conversa
 ## 2026-09-27 — Phase 31.10 run 1 closure
 
 Run **36335091335** passed dependency installation but failed two unit-test fixtures before acquisition. E0417: constant-value fixture made prior-only z-scores undefined and the missing-report fixture checked the wrong date. E0418: failure-path persistence attempted to add nonexistent output directories. Both are corrected without changing the registered strategy rules or data sources. No numerical result exists from run 1.
+
+## 2026-09-27 — Phase 31.10 run 2 diagnosis and correction
+
+Authoritative run 36335189575 reached official NSE participant-OI acquisition successfully but normalized zero files because the parser expected `Futures Index Long/Short` and the actual archive header is `Future Index Long/Short`. The gate consequently failed at 0% feature coverage; Base/Stress did not run. E0419 was logged. The parser and regression suite were corrected without changing the preregistered research design. Operational log only.
