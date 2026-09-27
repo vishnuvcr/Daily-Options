@@ -11,3 +11,5 @@
 | E0450 | 2026-09-27 | Phase 34 data gate | Run 36341283898 passed 6 unit tests but failed immediately in the term-structure surface builder because front/back expiry records are `(date,path)` tuples while the loop treated the date as a tuple | No data or P&L accepted | Use the date directly in term-structure keys; no research-rule change |
 
 | E0451 | 2026-09-27 | Phase 34 execution mapping audit | Pre-P&L audit found the execution dictionary keyed only by date/expiry/time/type and therefore ignored strike, making a future calendar trade susceptible to using an arbitrary strike quote | Economic execution would be invalid if left unchanged | Freeze signal-side ATM strike and require strike-aware execution keys; add regression | CLOSED — pre-P&L execution hardening |
+
+| E0452 | 2026-09-27 | Phase 34 pre-P&L execution audit | Calendar entry uses the 09:31 option open, so execution eligibility must require `open>0`; relying on `close>0` could admit invalid entry bars | Could contaminate execution coverage/P&L | Enforce positive 09:31 open and positive exit close separately in the bulk execution query | CLOSED — pre-P&L audit |
