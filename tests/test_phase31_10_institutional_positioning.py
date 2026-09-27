@@ -30,6 +30,7 @@ def test_prior_only_zscore_barrier():
     nifty=pd.DataFrame({
         "date":[d.date() for d in dates],
         "time":["09:30:00"]*65,
+        "ts":dates,
         "open_px":[25000.0]*65,
         "close_px":[25010.0]*65
     })
@@ -60,6 +61,8 @@ def test_data_gate_rejects_barrier_violation():
     panel=pd.DataFrame({
         "feature_eligible":[True,True,True],
         "barrier_ok":[True,False,True],
+        "position_date":pd.to_datetime(["2026-01-01","2026-01-02","2026-01-03"]),
+        "expected_position_date":pd.to_datetime(["2026-01-01","2026-01-02","2026-01-03"]),
         "FII_IDX_NET_Z":[1.0,1.0,1.0],
         "DII_IDX_NET_Z":[1.0,1.0,1.0],
         "FII_DII_DIVERGENCE_Z":[1.0,1.0,1.0]
