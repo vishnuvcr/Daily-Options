@@ -941,3 +941,7 @@ Run **36338507099** was the delayed execution of the earlier pre-E0433 trigger c
 ## 2026-09-27 — Phase 32 run 7 active
 
 Run **36338601854** is the first run whose checked-out SHA equals the verified corrected trigger commit. The source-integrity guard and unit-test suite are part of the run. No numerical result is accepted until the data gate, Base/Stress discovery and artifact validation complete.
+
+## 2026-09-27 — Phase 32 run 7 closure / surface data-gate failure
+
+Run **36338601854** passed source verification, all unit tests, pinned cache restore and source reuse. The gate reported **1,225** raw 09:30 NIFTY sessions, **100% strict-next-expiry coverage**, but **0 valid surface sessions after the 60-session warm-up**, so Base/Stress discovery was intentionally skipped. No P&L result exists. E0435 is logged. The engine is being instrumented to distinguish quote-key normalization failures from Black–Scholes IV inversion failures; the hypothesis and frozen grid remain unchanged.
