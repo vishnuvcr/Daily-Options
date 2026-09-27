@@ -431,3 +431,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0411 | 2026-09-26 | Phase 31.9 workflow | Failure-path persistence hit a missing-path error when tests stopped before output creation | No research result affected | Persistence now creates directories before git add | CLOSED |
 
 | E0412 | 2026-09-26 | Phase 31.9 workflow | Run 36253620977 stopped in the NIFTY acquisition shell block because the heredoc terminator was not parsed correctly | No VIX, gate or P&L computation ran | Replaced with one-line pinned Python call | CLOSED |
+
+| E0413 | 2026-09-27 | Phase 31.9 official NSE VIX acquisition | Run 36253716626 passed unit tests and restored the pinned NIFTY cache, but the VIX acquisition helper failed before requesting historical data because its initial NSE homepage GET returned HTTP 403 on the GitHub Actions runner | No VIX data, data gate or P&L result was produced | Remove homepage dependency, retain official NSE-only historical VIX endpoints with a current endpoint plus official fallback, preserve response hashes and manifest, and add a regression test for direct endpoint acquisition | OPEN — corrected rerun |
