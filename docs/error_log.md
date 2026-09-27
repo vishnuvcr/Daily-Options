@@ -441,3 +441,5 @@ Every subsequent error gets a new row. Fixes are never silently discarded.
 | E0418 | 2026-09-27 | Phase 31.10 workflow persistence | Failure-path persistence attempted to git-add cache/report directories that did not exist after the unit-test failure | No research result affected | Create those directories before persistence | CLOSED — workflow hardening |
 
 | E0419 | 2026-09-27 | Phase 31.10 participant-OI source parser | Run 36335189575 acquired NSE participant files but normalized zero because the parser expected `Futures Index Long/Short` while the official header is `Future Index Long/Short` | Data gate FAIL; no P&L accepted | Accept both header variants and add regression fixture | OPEN — corrected rerun |
+
+| E0420 | 2026-09-27 | Phase 31.10 workflow cache invalidation | Run 36335911562 reused stale participant-OI cache after E0419 because acquisition checked only file existence, so the corrected parser did not rerun and data gate remained FAIL | No P&L accepted | Require parser-version/files_ok validation before cache reuse; force fresh official NSE acquisition after parser changes | OPEN — corrected rerun |
