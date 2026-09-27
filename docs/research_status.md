@@ -889,3 +889,7 @@ Frozen before numerical discovery:
 Phase 32 plan, literature review, engine, tests and manual GitHub Actions workflow are persisted on the phase branch. The first workflow run, **36338180973**, was quarantined before data acquisition because of two test-stage defects (E0428/E0429); both were corrected. Corrected run **36338276277** is the current numerical frontier.
 
 [Phase 32 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-32-options-skew-smile-dislocation-v1/docs/phase32_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-32-options-skew-smile-dislocation-v1/docs/phase32_literature_review.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-32-options-skew-smile-dislocation-v1) · [workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-32-options-skew-smile-dislocation-v1/.github/workflows/phase-32-options-skew-smile-dislocation.yml)
+
+## 2026-09-27 — Phase 32 run 7 data-gate failure
+
+Corrected Phase 32 run **36338601854** passed source verification and unit tests but found **0 valid surface sessions after warm-up** despite 100% strict-next-expiry coverage. No Base/Stress P&L was accepted. E0435 is open for diagnostic rerun; the branch now normalizes option quote keys, records surface-failure reasons and makes a FAIL data gate an explicit workflow failure.
