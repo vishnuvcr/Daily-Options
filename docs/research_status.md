@@ -878,3 +878,9 @@ Run **36336026908** completed successfully but its job log shows the older acqui
 ## 2026-09-27 — Phase 31.10 run 5 closure / main-workflow definition correction
 
 Run **36336145989** again used the old acquisition shell. Investigation showed the main launcher is a `workflow_dispatch` workflow whose job definition comes from the main-branch workflow file; the phase-branch workflow update was not sufficient to change the dispatched job. E0422 is logged. The authoritative main workflow has now been updated with the parser-version/files_ok cache invalidation check. No P&L is accepted. Next authoritative run: **run 6**.
+
+## 2026-09-27 — Phase 31.10 run 6 closure / feature-panel correction
+
+Run **36336274435** successfully fetched all **1,234** participant-OI source files, but the data gate returned FAIL: **1,164** feature-eligible sessions, **0** complete sessions, and **9** prior-positioning barrier violations. Audit of the persisted feature panel found that previous-session close/gap fields were blank because the implementation required an exact 15:10 index row, and positioning alignment could select participant reports on dates absent from the actual NIFTY session calendar. E0423 is logged.
+
+The engine is corrected to use the last available index bar of the prior NIFTY session, restrict participant reports to actual NIFTY session dates before `merge_asof`, and compute completeness from the declared feature/prior-position fields rather than unrelated diagnostic columns. Regression tests were added. Frozen feature definitions, grid, costs and promotion gate are unchanged. Next authoritative run: **run 7**.
