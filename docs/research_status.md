@@ -953,3 +953,9 @@ Run **36338841139** passed the data gate: **1,143/1,165 warm-up-complete session
 ## 2026-09-27 — Phase 32 run 9 validation correction
 
 Run **36338974734** completed Base and Stress numerical discovery, including 12 true cells and 60 null-control rows per friction, but artifact validation failed because `price_coverage.csv` incorrectly reported 0% coverage. The persisted trade ledgers show executable trades for 96.7–100% of signal counts. E0437 identifies the coverage-reporting bug; a shared all-leg/all-timestamp execution predicate and regression test are now on the branch. The numerical P&L is retained as discovery evidence but validation remains unclosed until the corrected coverage artifact passes.
+
+## 2026-09-27 — Phase 32 final closure
+
+Authoritative run **36339168867** completed the preregistered Phase 32 experiment and passed final artifact validation. Data gate: 1,143/1,165 warm-up-complete valid surfaces (98.11%), 0 prior-surface violations, and 96.74–100.00% execution coverage across all 12 true cells. Economic promotion: **0/12 Base, 0/12 Stress**. Maximum mean weekly net was **-₹408.84 Base** and **-₹521.02 Stress**; maximum positive-week share was **16.42% Base** and **11.94% Stress**. Every true cell trailed its matched five-seed null mean. WFA/OOS is not authorized. Phase 32 is closed; no post-result tuning.
+
+Final manuscript: `reports/phase32/final_result.md`.
