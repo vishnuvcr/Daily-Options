@@ -65,6 +65,10 @@ def feature_panel(nifty:pd.DataFrame, oi:pd.DataFrame)->pd.DataFrame:
     s["fii_raw"]=left["fii_raw"]
     s["dii_raw"]=left["dii_raw"]
     s["div_raw"]=left["div_raw"]
+    ordered_dates=pd.Series(pd.to_datetime(s["date"]).drop_duplicates().sort_values())
+    expected=ordered_dates.shift(1)
+    exp_map=dict(zip(ordered_dates.dt.date, expected.dt.date))
+    s["expected_position_date"]=s["date"].map(exp_map)
 
     for raw_col, zcol in [("fii_raw","FII_IDX_NET_Z"),("dii_raw","DII_IDX_NET_Z"),("div_raw","FII_DII_DIVERGENCE_Z")]:
         prior=s[raw_col].shift(1)
@@ -72,7 +76,7 @@ def feature_panel(nifty:pd.DataFrame, oi:pd.DataFrame)->pd.DataFrame:
         sd=prior.rolling(60,min_periods=60).std(ddof=1)
         s[zcol]=(s[raw_col]-mu)/sd
     s["feature_eligible"]=s[list(FEATURES)].notna().all(axis=1)
-    s["barrier_ok"]=s["position_date"].notna() & (pd.to_datetime(s["position_date"]) < pd.to_datetime(s["date"]))
+    s["barrier_ok"]=s["position_date"].notna() & (pd.to_datetime(s["position_date"]) < pd.to_datetime(s["date"])) & (s["position_date"]==s["expected_position_date"])
     return s
 
 def data_gate(panel:pd.DataFrame, manifest:dict)->dict:
@@ -185,7 +189,7 @@ def trade_from_signal(r,prices,slip):
     gap_align = ("ALIGNED" if ((r.signal_value>0 and gap>0) or (r.signal_value<0 and gap<0))
                  else "OPPOSED" if ((r.signal_value>0 and gap<0) or (r.signal_value<0 and gap>0))
                  else "FLAT")
-    return {"day":str(d),"position_date":str(pd.Timestamp(r.position_date).date()),
+    return {"day":str(d),"position_date":str(pd.Timestamp(r.position_date).date()),"expected_position_date":str(pd.Timestamp(r.expected_position_date).date()),
             "feature":r.feature,"threshold":float(r.threshold),"horizon":r.horizon,"side":r.side,
             "gap_pct":gap,"gap_alignment":gap_align,
             "friction":"base" if slip==0.20 else "stress",
