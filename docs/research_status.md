@@ -870,3 +870,7 @@ E0419 is logged. The parser now accepts both singular and plural official header
 ## 2026-09-27 — Phase 31.10 run 3 closure / cache invalidation correction
 
 Run **36335911562** executed successfully but reused the stale zero-row participant-OI cache created before E0419 because the acquisition step only checked whether the parquet file existed. The data gate remained FAIL with 0 eligible sessions; no P&L was accepted. E0420 is logged. The workflow now validates a parser-version marker and positive file count before allowing cache reuse, forcing a fresh official NSE acquisition after parser changes. Next authoritative run: **run 4**.
+
+## 2026-09-27 — Phase 31.10 run 4 closure / launcher-ref race
+
+Run **36336026908** completed successfully but its job log shows the older acquisition block (`if [ ! -f participant_oi_normalized.parquet ]`) rather than the corrected parser-version invalidation block. The branch subsequently confirms the corrected workflow is present. This is treated as a launcher/ref synchronization defect, not research evidence. E0421 is logged. No P&L is accepted. Run 5 will be triggered only after confirming the corrected workflow is the branch head.
