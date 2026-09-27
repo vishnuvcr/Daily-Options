@@ -59,7 +59,7 @@ Instrument: one-lot ATM directional debit spread on the next valid NIFTY expiry,
 - Exits: **10:30 and 15:10 IST**
 - True cells: **3 × 2 × 2 = 12**
 - Null seeds: **101, 202, 303, 404, 505**
-- Five complete-panel permutations per true cell and friction regime.
+- Five complete-panel permutations per true cell and friction regime. Each seed applies one common row permutation jointly to `net_gex` and all three registered gamma-state features, preserving their cross-sectional relationships while destroying their time alignment to the trade date.
 - Base slippage: ₹0.20 per option-price unit per order.
 - Stress slippage: ₹0.40 per option-price unit per order.
 - Existing date-aware Paytm Money/NSE/statutory cost model.
