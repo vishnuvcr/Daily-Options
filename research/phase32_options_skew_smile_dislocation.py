@@ -320,6 +320,14 @@ def price_lookup(quotes: pd.DataFrame) -> dict[tuple, float]:
             out[exec_price_key(r.date, r.expiry, r.local_time, r.option_type, r.strike)] = px
     return out
 
+def signal_execution_complete(r, prices: dict) -> bool:
+    d = pd.Timestamp(r.date).date()
+    return all(
+        exec_price_key(d, r.expiry, tm, typ, float(strike)) in prices
+        for typ, strike, _action in legs_for_signal(r.feature, float(r.signal_value), int(r.atm))
+        for tm in ("09:31:00", HORIZON_TIMES[r.horizon])
+    )
+
 def trade_from_signal(r, prices: dict, slip: float):
     d = pd.Timestamp(r.date).date()
     legs = legs_for_signal(r.feature, float(r.signal_value), int(r.atm))
@@ -480,13 +488,7 @@ def main():
     for key, g in sig.groupby(["feature","threshold","horizon"]):
         complete = 0
         for r in g.itertuples(index=False):
-            d = pd.Timestamp(r.date).date()
-            complete += int(all(
-                (d, tm, typ, float(strike)) in prices
-                for typ, strike, action in legs_for_signal(r.feature,float(r.signal_value),int(r.atm))
-                for tm in ("09:31:00", HORIZON_TIMES[r.horizon])
-                if exec_price_key(d, r.expiry, tm, typ, float(strike)) in prices
-            ))
+            complete += int(signal_execution_complete(r, prices))
         cov_rows.append({
             "feature":key[0],"threshold":float(key[1]),"horizon":key[2],
             "signals":int(len(g)),"complete_price_coverage":int(complete),
