@@ -937,3 +937,7 @@ Run **36338447276** passed six unit tests, the checked-out-source guard and the 
 ## 2026-09-27 — Phase 32 run 6 closure / stale trigger replay
 
 Run **36338507099** was the delayed execution of the earlier pre-E0433 trigger commit and reproduced the FEATURES tuple-key defect in surface construction. It is quarantined as a stale workflow event; no P&L is accepted. E0434 records the replay. The live branch now contains E0433's engine fix and the regression test.
+
+## 2026-09-27 — Phase 32 run 7 active
+
+Run **36338601854** is the first run whose checked-out SHA equals the verified corrected trigger commit. The source-integrity guard and unit-test suite are part of the run. No numerical result is accepted until the data gate, Base/Stress discovery and artifact validation complete.
