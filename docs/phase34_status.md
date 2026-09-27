@@ -22,3 +22,10 @@ Run **36341124742** stopped during Python test collection on E0448. No data acqu
 
 ## Run 3 closure / pre-P&L hardening
 Run **36341283898** passed all 6 tests and restored the pinned cache, then stopped in the surface loader on E0450. No data gate or P&L result exists. A pre-P&L execution audit also identified E0451: the price map lacked strike in its key. Both are corrected before the next run.
+
+## Final closure
+Authoritative run **36341535504** completed the corrected term-structure reconstruction. The data gate found **656/1,233 = 53.20%** complete two-expiry surface sessions, below the frozen 95% requirement. Conditional feature coverage was 100% for both ATM_TERM_Z and WING_TERM_Z. Base/Stress discovery was therefore not authorized.
+
+**Decision: CLOSED — DATA-LIMITED.** No P&L, null economics, WFA or OOS result is accepted.
+
+Final manuscript: `reports/phase34/final_result.md`.
