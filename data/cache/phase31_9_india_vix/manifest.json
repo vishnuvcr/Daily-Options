@@ -1,0 +1,230 @@
+{
+  "source": "NSE India VIX historical API",
+  "endpoints_tried": [
+    "https://www.nseindia.com/api/historical/vixhistory",
+    "https://www.nseindia.com/api/historicalOR/vixhistory"
+  ],
+  "homepage": "https://www.nseindia.com/",
+  "start": "2021-07-01",
+  "end": "2026-08-31",
+  "rows": 1281,
+  "min_date": "2021-07-01",
+  "max_date": "2026-08-31",
+  "file_sha256": "09b413117e73cb7323ae791daf04e908172c0f3d18ea67ce839eb9709a92eeb1",
+  "response_chunk_sha256": [
+    {
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "sha256": "ca0bb4f78d11992e11123fac3fd6847941941760584e527c3fc22e7644444e94"
+    },
+    {
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "sha256": "846c6118c7bafbdedf92f2f99d35b022144147b45f04fa789378371ebcb8c475"
+    },
+    {
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "sha256": "5da160c9ba31364b0d3d316d2b6222a42248934dd5573a1a7afb15036e7f2b57"
+    },
+    {
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "sha256": "3ae5092a2beb998240d08c59b8b02fb1e850c5070f08e135798decd4cf87c11e"
+    },
+    {
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "sha256": "c29b0a99f1c7fb0a4e9c404b715a2534d28c83f4c5bc4d3c483a315ae1e617c6"
+    },
+    {
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "sha256": "5b67cea5fc07261963dccbff842d6dac78473287d4440f9d170656d4e69303da"
+    },
+    {
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "sha256": "551b7cddbc1b92bd41cddf5f50b7cde8a9a26038dd9a85fd5f8e4ccf6e42f907"
+    },
+    {
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "sha256": "d8466faceef700c77a684cf8a457835f8159f48a42f8621c374a358a77fe12c8"
+    },
+    {
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "sha256": "529647069cc7c52febc9583f0b5ee727fb2f58b6c7cf5db6b4ad25c73c3220d2"
+    },
+    {
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "sha256": "f09a015724bb19cfa9e82878367f824c8b865dcc002d1849c30e601f29f6c825"
+    },
+    {
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "sha256": "9dd2a05505be14f2cb420bed46828516c37669446bafdd6c21aeb6e5e4d19e04"
+    },
+    {
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "sha256": "af92e52f7cf0fcc90a5d2abd4a549c16f5192e16a8553aacb50e384922ea65b8"
+    },
+    {
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "sha256": "bd8ffcf81db6ecbdc46c5038df6e9d4ea17b8e1df055e879188a22765ae41f66"
+    },
+    {
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "sha256": "e6ba8a83e256fe67792dbdb3a6f32c13e5dbab9749f99dee2d3016436c0bd2ad"
+    },
+    {
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "sha256": "6fb190ada1763edcb65e62c19084062968cd4b26ab92d852171dea81419abf26"
+    },
+    {
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "sha256": "ffec6b4c27fbe3834a07cea267ff486c7a8e5bb486237963cceb358197a5ce5a"
+    },
+    {
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "sha256": "d8ccbe29766568d7fbeb66eb779784b91045cb9d1178b78e27c84195d495c64c"
+    },
+    {
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "sha256": "e1550980a22e7bee1aeba27cdf7bb93740e93de3350ce8571c1ccce21649bbb6"
+    },
+    {
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "sha256": "8181a9bd1d359ef88ba6edaa66515566bda24ed75452ef2ed0cb1e8734e657d6"
+    },
+    {
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "sha256": "40937c605b96040c829dc6a8ceaab7da0f172a6057ebf54ac0b5aef687993ed1"
+    },
+    {
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "sha256": "f02301f8920fc65db4c84bd88f721dfe6c6cad57dcfcc2e7e8e8f74fffc37ce1"
+    }
+  ],
+  "chunks": [
+    {
+      "from": "2021-07-01",
+      "to": "2021-09-28",
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "rows": 61
+    },
+    {
+      "from": "2021-09-29",
+      "to": "2021-12-27",
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "rows": 61
+    },
+    {
+      "from": "2021-12-28",
+      "to": "2022-03-27",
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "rows": 61
+    },
+    {
+      "from": "2022-03-28",
+      "to": "2022-06-25",
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "rows": 62
+    },
+    {
+      "from": "2022-06-26",
+      "to": "2022-09-23",
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "rows": 62
+    },
+    {
+      "from": "2022-09-24",
+      "to": "2022-12-22",
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "rows": 61
+    },
+    {
+      "from": "2022-12-23",
+      "to": "2023-03-22",
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "rows": 62
+    },
+    {
+      "from": "2023-03-23",
+      "to": "2023-06-20",
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "rows": 59
+    },
+    {
+      "from": "2023-06-21",
+      "to": "2023-09-18",
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "rows": 62
+    },
+    {
+      "from": "2023-09-19",
+      "to": "2023-12-17",
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "rows": 60
+    },
+    {
+      "from": "2023-12-18",
+      "to": "2024-03-16",
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "rows": 62
+    },
+    {
+      "from": "2024-03-17",
+      "to": "2024-06-14",
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "rows": 60
+    },
+    {
+      "from": "2024-06-15",
+      "to": "2024-09-12",
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "rows": 61
+    },
+    {
+      "from": "2024-09-13",
+      "to": "2024-12-11",
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "rows": 61
+    },
+    {
+      "from": "2024-12-12",
+      "to": "2025-03-11",
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "rows": 63
+    },
+    {
+      "from": "2025-03-12",
+      "to": "2025-06-09",
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "rows": 58
+    },
+    {
+      "from": "2025-06-10",
+      "to": "2025-09-07",
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "rows": 62
+    },
+    {
+      "from": "2025-09-08",
+      "to": "2025-12-06",
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "rows": 62
+    },
+    {
+      "from": "2025-12-07",
+      "to": "2026-03-06",
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "rows": 62
+    },
+    {
+      "from": "2026-03-07",
+      "to": "2026-06-04",
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "rows": 58
+    },
+    {
+      "from": "2026-06-05",
+      "to": "2026-08-31",
+      "endpoint": "https://www.nseindia.com/api/historicalOR/vixhistory",
+      "rows": 61
+    }
+  ],
+  "chunk_window_days": 89,
+  "fetched_at_utc": "2026-09-27T16:47:24Z"
+}
