@@ -30,3 +30,8 @@ Build and unit-test the prior-session option/OI gamma reconstruction. The next n
 - Fixed conventional call-positive / put-negative dealer proxy.
 - No post-result sign switching.
 - Historical lot-size and cost model.
+
+## Run 2 / hardening
+Run **36339811180** was still in the data-gate stage when the performance/methodology audit was performed. Its checked-out commit predates the vectorized hardening. No P&L is accepted from that run. The live branch now contains E0440's vectorized engine, frozen block-null permutation, and corrected regression.
+
+Run 3 is the next authoritative attempt from the hardened branch head.
