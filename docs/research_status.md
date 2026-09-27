@@ -830,3 +830,9 @@ Run **36253620977** passed all six regression tests, restored the pinned NIFTY c
 Run **36253716626** passed the Phase 31.9 unit tests and restored the pinned NIFTY cache, but stopped at official India VIX acquisition because the helper first requested the NSE homepage and received HTTP 403 on the GitHub Actions runner. No VIX data, data gate or P&L computation ran.
 
 E0413 is logged. The acquisition helper has been corrected to avoid the homepage dependency and to try two official NSE VIX historical endpoints while preserving source/response hashes and the manifest. A regression test now locks the direct-endpoint acquisition contract. The frozen Phase 31.9 signal grid, regime thresholds, cost model and promotion gate are unchanged.
+
+## 2026-09-27 — Phase 31.9 run 5 closure / run 6 frontier
+
+Run **36333819834** passed unit tests, restored the pinned NIFTY cache, and successfully bypassed the previous NSE homepage 403. The official historical VIX endpoint responded, but the acquisition normalized to only **391 rows** for the 2021-07-01 to 2026-08-31 study window and failed the source-coverage guard. No VIX gate or P&L was accepted.
+
+Post-run audit of the public NseKit implementation shows that the same official NSE VIX historical endpoint is fetched in **89-day windows**, which is more restrictive than the previous 365-day request windows. The Phase 31.9 acquisition helper has therefore been corrected to 89-day official-NSE chunks and now persists per-chunk endpoint/row-count provenance in the manifest. E0414 is logged and a regression test enforces the window size. The frozen research grid and economics remain unchanged.
