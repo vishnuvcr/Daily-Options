@@ -101,3 +101,49 @@ def test_nse_participant_header_future_index_columns_are_parsed():
     assert set(out["participant"]) == {"FII","DII"}
     fii = out[out["participant"]=="FII"].iloc[0]
     assert float(fii["idx_net_ratio"]) == 0.6
+
+def test_gap_uses_previous_completed_session_close():
+    dates=pd.to_datetime(["2026-01-02","2026-01-05","2026-01-06"])
+    nifty=pd.DataFrame({
+        "date":[d.date() for d in dates for _ in range(2)],
+        "time":["09:30:00","15:20:00"]*3,
+        "ts":[pd.Timestamp(d)+pd.Timedelta(minutes=m) for d in dates for m in (0,350)],
+        "open_px":[100,100,105,105,103,103],
+        "close_px":[100,104,105,109,103,101],
+    })
+    oi=[]
+    for d in dates:
+        oi.extend([
+            {"trade_date":d,"participant":"FII","fut_idx_long":800,"fut_idx_short":200,"idx_net_ratio":0.6,"idx_net":600},
+            {"trade_date":d,"participant":"DII","fut_idx_long":600,"fut_idx_short":400,"idx_net_ratio":0.2,"idx_net":200},
+        ])
+    p=feature_panel(nifty,pd.DataFrame(oi))
+    row=p[p["date"]==dates[1].date()].iloc[0]
+    assert abs(float(row["prev_close"])-104.0)<1e-12
+    assert abs(float(row["gap_pct"])-(105-104)/104)<1e-12
+
+def test_positioning_ignores_non_nifty_session_reports():
+    dates=pd.bdate_range("2026-01-01",periods=65)
+    nifty=pd.DataFrame({
+        "date":[d.date() for d in dates],
+        "time":["09:30:00"]*len(dates),
+        "ts":dates,
+        "open_px":[25000.0+i for i in range(len(dates))],
+        "close_px":[25010.0+i for i in range(len(dates))],
+    })
+    oi=[]
+    for d in dates:
+        oi.extend([
+            {"trade_date":d,"participant":"FII","fut_idx_long":800,"fut_idx_short":200,"idx_net_ratio":0.6,"idx_net":600},
+            {"trade_date":d,"participant":"DII","fut_idx_long":600,"fut_idx_short":400,"idx_net_ratio":0.2,"idx_net":200},
+        ])
+    # Insert a participant report on a Saturday that is not a NIFTY session.
+    saturday=dates[-1] + pd.Timedelta(days=1)
+    oi.extend([
+        {"trade_date":saturday,"participant":"FII","fut_idx_long":200,"fut_idx_short":800,"idx_net_ratio":-0.6,"idx_net":-600},
+        {"trade_date":saturday,"participant":"DII","fut_idx_long":700,"fut_idx_short":300,"idx_net_ratio":0.4,"idx_net":400},
+    ])
+    p=feature_panel(nifty,pd.DataFrame(oi))
+    last=p.iloc[-1]
+    assert last.position_date == dates[-2].date()
+    assert bool(last.barrier_ok)
