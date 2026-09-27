@@ -569,3 +569,10 @@ The accepted run also established that the correct reconciliation is **raw gross
 | E0436 | 2026-09-27 | Phase 32 execution mapping | Run 36338841139 passed the data gate but Base discovery mapped **0/12 cells to executable prices**. The engine's price lookup omitted expiry from the key, unlike the validated Phase 31.7 execution key; the empty trade frame then also caused weekly aggregation to reference a missing day column | No accepted P&L; Base failed before Stress | Use normalized expiry-aware execution keys and harden empty weekly output; add regression coverage | CLOSED — execution-loader correction |
 
 | E0437 | 2026-09-27 | Phase 32 execution-coverage validator | Run 36338974734 produced valid Base/Stress trades (96.7–100% of corresponding signal counts) but persisted `price_coverage.csv` at 0% because the coverage `all()` generator filtered missing keys out instead of requiring every required key | Validation failed; no promotion accepted | Use one shared `signal_execution_complete` predicate requiring all four legs at both entry and exit timestamps; add regression | CLOSED — coverage-accounting correction |
+
+
+### E0435 closure
+Phase 32 run 8 surface data-gate failure was resolved by explicit quote-key normalization and failure diagnostics. Final run 36339168867 passed the data gate with 98.11% surface coverage. **CLOSED.**
+
+### E0437 closure
+Phase 32 run 9 coverage-reporting defect was resolved by a shared all-leg/all-timestamp execution-coverage predicate. Final run 36339168867 reported 96.74–100.00% coverage and passed validation. **CLOSED.**
