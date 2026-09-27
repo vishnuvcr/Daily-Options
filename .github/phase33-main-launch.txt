@@ -1,1 +1,1 @@
-Phase 33 run 1 trigger: preregistered dealer gamma exposure engine and tests are on branch head.
+Phase 33 run 2 trigger: E0439 DuckDB alias correction; no research-rule changes.
