@@ -68,3 +68,21 @@ def test_gap_sign_is_formulaic():
     prev=25000.0; open_px=25125.0
     gap=(open_px-prev)/prev
     assert abs(gap-0.005)<1e-12
+
+def test_immediate_prior_positioning_is_required():
+    dates=pd.date_range("2026-01-01",periods=65,freq="D")
+    oi=[]
+    for d in dates.delete(32):
+        oi.extend([
+            {"trade_date":d,"participant":"FII","fut_idx_long":800,"fut_idx_short":200,"idx_net_ratio":0.6,"idx_net":600},
+            {"trade_date":d,"participant":"DII","fut_idx_long":600,"fut_idx_short":400,"idx_net_ratio":0.2,"idx_net":200},
+        ])
+    nifty=pd.DataFrame({
+        "date":[d.date() for d in dates],
+        "time":["09:30:00"]*len(dates),
+        "open_px":[25000.0]*len(dates),
+        "close_px":[25010.0]*len(dates)
+    })
+    p=feature_panel(nifty,pd.DataFrame(oi))
+    miss=p[p["date"]==dates[32].date()].iloc[0]
+    assert not bool(miss.barrier_ok)
