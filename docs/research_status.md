@@ -901,3 +901,8 @@ Authoritative run **36339168867** fully validated Phase 32. Data gate passed; ex
 ## 2026-09-27 — Phase 33 activated
 
 Phase 32 is closed. Phase 33 — Dealer Gamma Exposure Proxies — is now the active preregistered frontier on `phase-33-dealer-gamma-exposure-v1`. Run 1 (36339719895) failed before numerical calculation on E0439; run 2 (36339811180) is the corrected numerical attempt. No P&L has been accepted.
+
+
+## 2026-09-27 — Phase 33 CLOSED / Phase 34 next
+
+Phase 33 authoritative run **36340721257** is DATA-LIMITED: 1,228/1,233 prior-session snapshot coverage (99.59%), GEX_Z and ATM_GEX_SHARE_Z at 100% after warm-up, but FLIP_DISTANCE_Z only 26.54%. No P&L was accepted. Next family: Phase 34 multi-expiry volatility term structure.
