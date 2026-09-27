@@ -257,3 +257,7 @@ Run 36336145989 still showed the old acquisition block despite the phase branch 
 ## 2026-09-27 — Phase 31.10 run 6 gate diagnosis
 
 Run 36336274435 completed acquisition and reached the data gate. Source coverage was complete, but feature coverage failed because the gap previous-close calculation assumed a 15:10 index bar that was not present, and the positioning merge permitted participant reports on non-NIFTY-session dates to become prior observations. Nine barrier violations resulted. E0423 records the correction. No numerical result exists.
+
+## 2026-09-27 — Phase 31.10 run 7 unit-test correction
+
+Run 36336951355 failed before acquisition because regressions had not been updated for the new `ts` and `position_date` feature-panel contracts. E0424 was logged and the fixtures were corrected. No numerical result exists.
