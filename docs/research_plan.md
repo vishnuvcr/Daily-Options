@@ -217,3 +217,12 @@ The next phase, if authorized, should be a new preregistered family rather than 
 ## Phase 33 — Dealer Gamma Exposure
 
 Phase 33 is a new preregistered family testing prior-session NIFTY dealer-gamma proxies: GEX_Z, gamma-flip distance and ATM gamma concentration. Frozen matrix: 12 true cells plus five full-panel null seeds per cell, Base/Stress friction, and no WFA/OOS until the existing ₹5,000 mean/median weekly and 70% positive-week gate clears in both regimes. See the Phase 33 branch plan and literature review.
+
+
+## Phase 33 — Dealer Gamma Exposure — CLOSED DATA-LIMITED
+
+Authoritative run **36340721257** passed corrected unit/data reconstruction but failed the frozen feature-completeness gate because FLIP_DISTANCE_Z coverage was only **26.54%** after the prior-only warm-up. No P&L was accepted and no post-result feature redesign is permitted.
+
+## Phase 34 — Multi-Expiry Volatility Term Structure — next planned family
+
+The next bounded family will use prior-session NIFTY option-implied volatility across two fixed expiries. The hypothesis is that unusually steep/inverted front-versus-back IV term structure may predict short-horizon mean reversion of a defined-risk calendar structure. A finite preregistered grid, Base/Stress friction, null controls, strict prior-information timing, and the same ₹5,000/week economic gate are mandatory before testing.
