@@ -716,3 +716,14 @@ Authoritative run **36339168867** passed the data and artifact gates:
 Economic result: **0/12 Base promotion passes and 0/12 Stress promotion passes**. Maximum mean weekly net was **-₹408.84 Base** and **-₹521.02 Stress**; maximum positive-week share was **16.42% Base** and **11.94% Stress**. Every true cell trailed its matched five-seed null mean. **WFA/OOS is not authorized.**
 
 [Phase 32 manuscript](https://github.com/vishnuvcr/Daily-Options/blob/phase-32-options-skew-smile-dislocation-v1/reports/phase32/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-32-options-skew-smile-dislocation-v1/docs/phase32_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-32-options-skew-smile-dislocation-v1/docs/phase32_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-32-options-skew-smile-dislocation-v1/docs/phase32_status.md) · [figures](https://github.com/vishnuvcr/Daily-Options/tree/phase-32-options-skew-smile-dislocation-v1/reports/phase32)
+
+
+## 2026-09-27 — Phase 33 active frontier
+
+**Phase 33 — Dealer Gamma Exposure Proxies** is the next materially distinct preregistered family on [phase-33-dealer-gamma-exposure-v1](https://github.com/vishnuvcr/Daily-Options/tree/phase-33-dealer-gamma-exposure-v1).
+
+Frozen experiment: prior-session NIFTY OI-derived GEX, gamma-flip distance and ATM gamma concentration; thresholds 0.75/1.25; exits 10:30/15:10; 12 true cells; five full-panel null permutations; historical lot sizes; existing Paytm Money/NSE/statutory costs and Base/Stress slippage. The GEX sign convention is explicitly frozen because dealer inventory is not observable from public OI.
+
+Run 1 (**36339719895**) passed all six unit tests but stopped on E0439, a DuckDB alias defect before numerical calculation. Run 2 (**36339811180**) is the current numerical frontier after that correction; no P&L has been accepted.
+
+[Phase 33 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-33-dealer-gamma-exposure-v1/docs/phase33_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-33-dealer-gamma-exposure-v1/docs/phase33_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-33-dealer-gamma-exposure-v1/docs/phase33_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-33-dealer-gamma-exposure-v1)
