@@ -68,8 +68,8 @@ Instrument: one-lot ATM directional debit spread on the next valid NIFTY expiry,
 
 ## Data gates
 Before any P&L:
-1. >=95% prior-session OI/price coverage for feature-eligible sessions.
-2. >=95% expiry/strike coverage for the fixed chain window.
+1. >=95% prior-session NIFTY-session coverage in the gamma snapshot.
+2. >=95% non-null feature coverage separately for GEX_Z, FLIP_DISTANCE_Z and ATM_GEX_SHARE_Z after the prior-only warm-up.
 3. >=95% executable entry/exit coverage for every true cell.
 4. Zero prior-positioning/lookahead violations.
 5. Valid gamma and IV inputs for >=95% of required feature rows.
