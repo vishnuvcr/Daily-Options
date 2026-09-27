@@ -98,3 +98,12 @@ def test_surface_quote_key_normalization_and_iv_reconstruction():
     out = build_surface(panel, pd.DataFrame(rows))
     assert bool(out.iloc[0].surface_valid)
     assert out.iloc[0].surface_fail_reason == "OK"
+
+
+def test_execution_key_normalizes_date_expiry_and_option_type():
+    from research.phase32_options_skew_smile_dislocation import exec_price_key
+    import datetime as dt
+    a = exec_price_key(dt.date(2021, 7, 1), dt.date(2021, 7, 8), "09:31:00", "CE", 15700)
+    b = exec_price_key(pd.Timestamp("2021-07-01"), pd.Timestamp("2021-07-08"), "09:31:00", "ce", 15700.0)
+    assert a == b
+    assert len(a) == 5
