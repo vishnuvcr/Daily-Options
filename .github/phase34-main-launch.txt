@@ -1,1 +1,1 @@
-Phase 34 run 1 trigger: preregistered multi-expiry IV term structure engine, tests and workflow are complete.
+Phase 34 run 2 trigger: SQL-string syntax correction; research design unchanged.
