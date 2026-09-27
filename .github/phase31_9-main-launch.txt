@@ -1,4 +1,4 @@
-run=5
+run=6
 phase=31.9
 branch=phase-31.9-vix-rv-gap-opening-direction-v1
-head=37793fefcf6c7ecb41fa46f02ae96dc0d341152d
+head=5d0200624818128d281c866d6ef6f2e58197dd11
