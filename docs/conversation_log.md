@@ -137,3 +137,7 @@ Checkpoint: read the current run ledger/status/error documentation and the Phase
 
 The authoritative Falcon run **36213335815** was found to be abnormally slow after more than six hours in `Run friction`. The stalled run is non-evidentiary. A runtime audit identified repeated full-file Parquet scans and setup-cache accumulation. The frozen 270-cell rule grid was preserved; the engine was reworked to preload exact-expiry slices per calendar, perform selection in memory, process one calendar at a time and release caches explicitly. The workflow now serializes Base and Stress. Authoritative rerun **36216668042** is active with Base executing and Stress queued; no P&L is accepted yet.
 
+
+## 2026-09-27 — User: "Ok proceed" / Phase 31.9 continuation
+
+Continuation action: inspected the Phase 31.9 plan, branch status, error log, conversation log and latest GitHub Actions run before proceeding. Run 36253716626 failed at official NSE VIX acquisition with HTTP 403 from the initial NSE homepage request; no VIX data or P&L was produced. E0413 was logged and the acquisition helper was corrected to bypass the homepage, use official NSE historical VIX endpoints only, preserve manifest/response hashes, and add a direct-acquisition regression test. Run 5 will use the corrected phase branch. This log contains operational research decisions only and not hidden chain-of-thought.
