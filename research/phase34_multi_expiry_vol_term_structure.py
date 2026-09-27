@@ -133,15 +133,21 @@ def surface_panel(root):
             types="'CE','PE'"
             ts=f"TIMESTAMP '{pd.Timestamp(s.last_ts)}'"
             ps=str(p).replace("'","''")
-            q=f"""SELECT UPPER(CAST(option_type AS VARCHAR)) option_type,
-                         CAST(strike AS DOUBLE) strike,
-                         CAST(close AS DOUBLE) close_px,
-                         CAST(expiry AS DATE) expiry
-                  FROM read_parquet('{ps}')
-                  WHERE CAST(timestamp AS TIMESTAMP)={ts}
-                    AND CAST(strike AS DOUBLE) IN ({strikes})
-                    AND UPPER(CAST(option_type AS VARCHAR)) IN ({types})
-                    AND close>0"""
+            q=f"""WITH src AS (
+                    SELECT UPPER(CAST(option_type AS VARCHAR)) option_type,
+                           CAST(strike AS DOUBLE) strike,
+                           CAST(close AS DOUBLE) close_px,
+                           CAST(expiry AS DATE) expiry,
+                           CAST(timestamp AS TIMESTAMP) ts
+                    FROM read_parquet('{ps}')
+                    WHERE CAST(timestamp AS TIMESTAMP)<={ts}
+                      AND CAST(strike AS DOUBLE) IN ({strikes})
+                      AND UPPER(CAST(option_type AS VARCHAR)) IN ({types})
+                      AND close>0
+                  )
+                  SELECT option_type,strike,close_px,expiry
+                  FROM src
+                  QUALIFY ROW_NUMBER() OVER (PARTITION BY option_type,strike ORDER BY ts DESC)=1
             con=duckdb.connect(); z=con.execute(q).df(); con.close()
             if z.empty: continue
             expiry_ts=pd.Timestamp(e)+pd.Timedelta(hours=15,minutes=30)
