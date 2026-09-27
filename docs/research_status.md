@@ -809,3 +809,8 @@ Next authoritative run: **Phase 31.9 run 4** from corrected workflow and branch 
 Run **36253716626** passed Phase 31.9 unit tests and restored the pinned NIFTY cache, but failed in official India VIX acquisition because the helper first requested the NSE homepage and received HTTP 403. No VIX data, data gate or P&L was produced.
 
 E0413 is logged. The phase branch now removes the homepage dependency and tries two official NSE historical VIX endpoints while retaining source/response hashing and the manifest. A regression test was added. The next authoritative run is **run 5** from the corrected Phase 31.9 branch; the frozen hypothesis, 12-cell grid, null controls, cost model and promotion gate remain unchanged.
+
+
+## 2026-09-27 — Phase 31.9 run 5 closure / run 6 frontier
+
+Run **36333819834** passed tests, restored the pinned NIFTY cache and reached the official NSE VIX endpoint, but only **391** VIX rows were returned for the 2021-07-01 to 2026-08-31 study window, so the coverage guard rejected the run before any gate or P&L. E0414 is logged. The acquisition helper now uses **89-day official NSE chunks**, aligned with the public NseKit implementation for the same endpoint, and persists per-chunk provenance. The frozen Phase 31.9 grid, null controls, costs and promotion gate are unchanged.
