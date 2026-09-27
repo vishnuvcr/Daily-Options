@@ -292,3 +292,7 @@ Run **36338371946** reached the data-gate stage after six passing unit tests and
 ## 2026-09-27 — Phase 32 run 5 diagnosis
 
 Run **36338447276** passed tests, source verification and cache restore but stopped during feature-panel construction. The traceback showed pandas treating the FEATURES tuple as one composite key. E0433 was logged; the engine now explicitly converts FEATURES to a list for DataFrame selection, with a regression test. No data-gate or P&L result exists from this run.
+
+## 2026-09-27 — Phase 32 run 6 stale-event closure
+
+Run **36338507099** used the delayed pre-E0433 trigger commit and failed on the already-identified FEATURES tuple-key defect. E0434 records this as a stale queued event; no P&L exists from it. The branch head now contains the corrected feature selection and regression.
