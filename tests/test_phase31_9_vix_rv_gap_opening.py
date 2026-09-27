@@ -82,3 +82,10 @@ def test_vix_acquisition_does_not_depend_on_homepage_session():
     assert s is not None
     assert len(NSE_VIX_ENDPOINTS)>=2
     assert all("nseindia.com" in u for u in NSE_VIX_ENDPOINTS)
+
+def test_vix_acquisition_uses_89_day_chunks_for_full_history():
+    from research.phase31_9_acquire_vix import daterange_chunks
+    from datetime import date
+    chunks=list(daterange_chunks(date(2021,7,1),date(2022,1,1)))
+    assert chunks
+    assert all((b-a).days<=89 for a,b in chunks)
