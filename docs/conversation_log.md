@@ -217,3 +217,9 @@ Run 36253528975 stopped before acquisition. The null-control regression was too 
 ## 2026-09-26 — Phase 31.9 run 3 acquisition-shell closure
 
 Run 36253620977 reached the pinned NIFTY cache and stopped on a malformed heredoc in the workflow's acquisition step. E0412 is closed by switching to a one-line Python invocation. No numerical result exists.
+
+## 2026-09-27 — User: "Ok proceed"
+
+Continuation decision: resume Phase 31.9 from the live repository state without waiting for manual intervention. Before the next run, read the phase plan, status/error logs and current workflow state. Run 36253716626 was then diagnosed from its GitHub Actions job log: unit tests and NIFTY cache restore passed, but official India VIX acquisition failed because the helper made an initial homepage request that returned HTTP 403. No VIX data or P&L was produced.
+
+Correction: removed the homepage dependency, retained official NSE historical VIX endpoints only, preserved response hashing/manifest logic, added a regression test, logged E0413 and updated phase status. The frozen hypothesis/grid/cost model are unchanged. This operational log does not record hidden chain-of-thought.
