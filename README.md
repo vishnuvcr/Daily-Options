@@ -682,3 +682,12 @@ E0413 is logged and corrected: direct official NSE VIX historical endpoints are 
 ## 2026-09-27 — Phase 31.9 run 5 closure
 
 Run **36333819834** bypassed the NSE homepage 403 but official India VIX acquisition returned only 391 normalized rows for the study window, so no P&L was run. E0414 is logged. The corrected branch now fetches the same official NSE VIX endpoint in 89-day chunks with per-chunk provenance; run 6 is the next authoritative attempt.
+
+
+## 2026-09-27 — Phase 31.9 closure / Phase 31.10 active frontier
+
+Phase 31.9 closed after authoritative run **36334135198**: 0/12 Base and 0/12 Stress promotion passes. No WFA/OOS was authorized.
+
+**Phase 31.10** is now the active bounded numerical frontier on `phase-31.10-institutional-positioning-gap-v1`. It tests prior-session NSE participant-wise F&O index-futures positioning (FII, DII and their divergence) against same-day NIFTY directional debit spreads, with a frozen 12-cell grid, five null seeds, historical lot sizes and Base/Stress friction.
+
+[Phase 31.10 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.10-institutional-positioning-gap-v1/docs/phase31_10_plan.md) · [Literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.10-institutional-positioning-gap-v1/docs/phase31_10_literature_review.md)
