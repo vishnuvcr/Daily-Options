@@ -269,14 +269,16 @@ def simulate(signals,root,slippage):
         tm_entry=pd.Timestamp(f"{day} 09:31:00")
         tm_exit=pd.Timestamp(f"{r.trade_date} {r.exit_time}")
         q=f"""SELECT CAST(strike AS DOUBLE) strike,CAST(timestamp AS TIMESTAMP) ts,
-                     CAST(open AS DOUBLE) open,CAST(close AS DOUBLE) close
+                     CAST(open AS DOUBLE) open_px,CAST(close AS DOUBLE) close_px
               FROM read_parquet('{opt_glob(root)}',union_by_name=true)
               WHERE CAST(trading_day AS DATE)=DATE '{day}' AND CAST(expiry AS DATE)=DATE '{exp}'
                 AND CAST(timestamp AS TIMESTAMP) IN (TIMESTAMP '{tm_entry}',TIMESTAMP '{tm_exit}')
                 AND UPPER(CAST(option_type AS VARCHAR)) IN ({repr(typ)},{repr('CALL' if typ=='CE' else 'PUT')})
                 AND CAST(strike AS DOUBLE) IN ({strike},{wing}) AND close>0"""
         qd=con.execute(q).df()
-        if not qd.empty: qd["close"]=qd["close_px"]
+        if not qd.empty:
+            qd["open"]=qd["open_px"]
+            qd["close"]=qd["close_px"]
         if len(qd)<4: continue
         ent=qd[qd.ts==tm_entry].set_index("strike").open.to_dict()
         ex=qd[qd.ts==tm_exit].set_index("strike").close.to_dict()
