@@ -1,5 +1,8 @@
 # Phase 31.9 — India VIX × Realized Volatility × NIFTY Opening-Gap Direction
 
+## FINAL STATUS
+**CLOSED — negative discovery evidence. Authoritative run 36334135198. 0/12 Base and 0/12 Stress promotion passes. No WFA/OOS authorized.**
+
 ## Status
 Preregistered research family. No numerical result is accepted before the data gate, unit tests, Base/Stress validation and artifact audit complete.
 
