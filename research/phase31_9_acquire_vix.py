@@ -17,7 +17,7 @@ NSE_VIX_ENDPOINTS = (
     "https://www.nseindia.com/api/historicalOR/vixhistory",
 )
 
-def daterange_chunks(start: date, end: date, days: int = 365):
+def daterange_chunks(start: date, end: date, days: int = 89):
     cur = start
     while cur <= end:
         nxt = min(end, cur + timedelta(days=days))
@@ -86,6 +86,7 @@ def main():
     sess = session()
     rows = []
     raw_sha_parts = []
+    chunk_manifest = []
     for cstart, cend in daterange_chunks(start, end):
         params = {"from": cstart.strftime("%d-%m-%Y"), "to": cend.strftime("%d-%m-%Y")}
         last_exc = None
@@ -101,6 +102,12 @@ def main():
                     raw_sha_parts.append({
                         "endpoint": endpoint,
                         "sha256": hashlib.sha256(resp.content).hexdigest(),
+                    })
+                    chunk_manifest.append({
+                        "from": str(cstart),
+                        "to": str(cend),
+                        "endpoint": endpoint,
+                        "rows": len(chunk),
                     })
                     endpoint_error = None
                     break
@@ -143,6 +150,8 @@ def main():
         "max_date": str(df.date.max().date()),
         "file_sha256": sha,
         "response_chunk_sha256": raw_sha_parts,
+        "chunks": chunk_manifest,
+        "chunk_window_days": 89,
         "fetched_at_utc": datetime.utcnow().isoformat(timespec="seconds")+"Z",
     }
     meta.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
