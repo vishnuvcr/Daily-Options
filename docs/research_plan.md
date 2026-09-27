@@ -188,3 +188,14 @@ Frozen before computation:
 A cell must meet the existing ₹5,000 mean/median weekly and ≥70% positive-week gate in both Base and Stress before WFA/OOS is considered. No post-result regime-threshold tuning is permitted.
  
 [Phase 31.9 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.9-vix-rv-gap-opening-direction-v1/docs/phase31_9_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-31.9-vix-rv-gap-opening-direction-v1/docs/phase31_9_literature_review.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-31.9-vix-rv-gap-opening-direction-v1)
+
+
+## Phase 31.10 — Institutional Positioning × Opening-Gap Translation
+
+This phase is the next distinct branch after the validated negative Phase 31.9 result. It tests prior-session NSE participant-wise F&O index-futures positioning rather than reusing VIX/global signals. The frozen family consists of FII index-futures net-position z-score, DII index-futures net-position z-score, and FII-minus-DII divergence z-score; two absolute thresholds; and two fixed exits. The opening gap is a registered diagnostic/stratification variable, not a post-result selection filter.
+
+Branch: `phase-31.10-institutional-positioning-gap-v1`.
+Plan: `docs/phase31_10_plan.md`.
+Literature review: `docs/phase31_10_literature_review.md`.
+Primary source: official NSE participant-wise F&O OI archive.
+Primary target: ₹5,000 net per completed trading week under the existing Base/Stress friction model.
