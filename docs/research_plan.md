@@ -213,3 +213,7 @@ Result manuscript: `reports/phase32/final_result.md` on the Phase 32 branch.
 
 ### Next materially distinct families
 The next phase, if authorized, should be a new preregistered family rather than an optimization of Phase 32. Candidate directions are dealer/gamma exposure proxies, multi-expiry volatility-surface structure, or cross-market/global transmission combined with an independently defined options-state variable.
+
+## Phase 33 — Dealer Gamma Exposure
+
+Phase 33 is a new preregistered family testing prior-session NIFTY dealer-gamma proxies: GEX_Z, gamma-flip distance and ATM gamma concentration. Frozen matrix: 12 true cells plus five full-panel null seeds per cell, Base/Stress friction, and no WFA/OOS until the existing ₹5,000 mean/median weekly and 70% positive-week gate clears in both regimes. See the Phase 33 branch plan and literature review.
