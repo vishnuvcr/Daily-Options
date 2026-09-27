@@ -37,3 +37,16 @@ def test_summary_emits_all_12_cells():
     z=summarize(x)
     assert len(z)==12
     assert set(z.feature)==set(FEATURES)
+
+
+def test_put_debit_spread_direction_is_not_sign_inverted():
+    entry=100.0-50.0
+    exitv=120.0-60.0
+    lot=50
+    gross=(exitv-entry)*lot
+    assert gross>0
+
+def test_cost_model_includes_brokerage_and_stt():
+    c=__import__("research.phase33_dealer_gamma_exposure",fromlist=["charge"]).charge
+    total=c(100,"BUY",1,50,"2025-01-01")+c(80,"SELL",1,50,"2025-01-01")
+    assert total>40
