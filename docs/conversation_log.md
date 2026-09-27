@@ -229,3 +229,7 @@ Correction: removed the homepage dependency, retained official NSE historical VI
 Run 36333819834 passed unit tests, restored the NIFTY cache, bypassed the prior NSE homepage 403, and reached official NSE historical VIX acquisition. The endpoint returned only 391 normalized rows for the five-year study window, so the source-coverage guard rejected the run before any P&L.
 
 Operational research step: inspected the current public NseKit implementation for the same official NSE VIX endpoint and found its chunked historical fetch uses 89-day windows. The Phase 31.9 acquisition helper is now aligned to 89-day windows, persists per-chunk row counts/hashes and includes a regression test. E0414 was logged. No strategy rule, threshold, cost or promotion gate changed.
+
+## 2026-09-27 — Phase 31.9 final closure
+
+Authoritative run **36334135198** completed all frozen Phase 31.9 stages successfully after the 89-day official NSE VIX acquisition correction. Data gate: 1,206/1,206 eligible sessions complete, zero prior-date violations. Base and Stress both validated; 0/12 true cells passed the ₹5,000/week gate in either friction regime. The final Phase 31.9 report was persisted. No WFA/OOS is authorized and no result-driven tuning occurred. This operational log records the reproducible research outcome only, not hidden chain-of-thought.
