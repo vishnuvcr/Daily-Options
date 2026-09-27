@@ -704,22 +704,9 @@ Run **36337194946** completed the full numerical discovery after passing the off
 
 ## 2026-09-27 — Phase 32 active frontier
 
-Phase 31.10 is closed as negative discovery evidence after authoritative run **36337462383**: 0/12 Base and 0/12 Stress promotion passes, no positive-total-net true cell, and no WFA/OOS promotion.
+**Phase 32 — Options Skew / Smile Dislocation** is the current bounded numerical frontier on [phase-32-options-skew-smile-dislocation-v1](https://github.com/vishnuvcr/Daily-Options/tree/phase-32-options-skew-smile-dislocation-v1).
 
-**Phase 32 — Options Skew / Smile Dislocation** is now the active materially distinct research family on branch `phase-32-options-skew-smile-dislocation-v1`.
+Run **36338601854** passed source verification, unit tests and pinned-cache restore, but the data gate found **0 valid four-quote IV surfaces out of 1,165 warm-up-complete sessions**, despite 100% strict-next-expiry coverage. No P&L was accepted. E0435 is logged. The branch now has quote-key normalization diagnostics and explicit data-gate enforcement before any Base/Stress discovery can run.
 
-Frozen before numerical discovery:
-- 2 surface features: SKEW_Z and SMILE_Z;
-- 2 absolute thresholds: 1.0 and 1.5;
-- 3 fixed exits: 10:30, 13:30 and 15:10 IST;
-- 12 true cells;
-- five full-panel null seeds per cell;
-- strictly next NIFTY expiry;
-- prior-only 60-session standardization;
-- historical lot sizes and the existing Paytm Money/NSE/statutory cost model;
-- Base/Stress slippage ₹0.20/₹0.40 per option-price unit per order;
-- the same ₹5,000/week mean + median + 70% positive-week promotion gate.
+[Phase 32 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-32-options-skew-smile-dislocation-v1/docs/phase32_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-32-options-skew-smile-dislocation-v1/docs/phase32_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-32-options-skew-smile-dislocation-v1/docs/phase32_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-32-options-skew-smile-dislocation-v1) · [workflow](https://github.com/vishnuvcr/Daily-Options/blob/main/.github/workflows/phase-32-main-launcher.yml)
 
-Phase 32 plan, literature review, engine, tests and manual GitHub Actions workflow are persisted on the phase branch. The first workflow run, **36338180973**, was quarantined before data acquisition because of two test-stage defects (E0428/E0429); both were corrected. Corrected run **36338276277** is the current numerical frontier.
-
-[Phase 32 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-32-options-skew-smile-dislocation-v1/docs/phase32_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-32-options-skew-smile-dislocation-v1/docs/phase32_literature_review.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-32-options-skew-smile-dislocation-v1) · [workflow](https://github.com/vishnuvcr/Daily-Options/blob/phase-32-options-skew-smile-dislocation-v1/.github/workflows/phase-32-options-skew-smile-dislocation.yml)
