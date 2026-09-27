@@ -866,3 +866,7 @@ The research engine itself was not numerically executed. Both corrections are no
 Run **36335189575** completed dependency installation, tests, NIFTY cache restore and official NSE participant-OI acquisition. The source files were reached successfully, but normalization rejected every file because the parser looked for `Futures Index Long/Short` while the actual NSE archive header is `Future Index Long/Short`. The data gate therefore returned FAIL with zero feature-eligible sessions; Base/Stress were correctly skipped. No P&L is accepted.
 
 E0419 is logged. The parser now accepts both singular and plural official header variants, and a regression test uses the actual NSE header names. The frozen 12-cell grid, source, costs and promotion gate remain unchanged. The next authoritative run is run 3.
+
+## 2026-09-27 — Phase 31.10 run 3 closure / cache invalidation correction
+
+Run **36335911562** executed successfully but reused the stale zero-row participant-OI cache created before E0419 because the acquisition step only checked whether the parquet file existed. The data gate remained FAIL with 0 eligible sessions; no P&L was accepted. E0420 is logged. The workflow now validates a parser-version marker and positive file count before allowing cache reuse, forcing a fresh official NSE acquisition after parser changes. Next authoritative run: **run 4**.
