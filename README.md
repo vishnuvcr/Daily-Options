@@ -677,3 +677,8 @@ Run 36253620977 passed tests and restored the pinned NIFTY cache but stopped on 
 Run **36253716626** passed tests and restored the pinned NIFTY cache, then stopped at official NSE India VIX acquisition because the homepage request returned HTTP 403 on GitHub Actions. No VIX data or P&L result exists from that run.
 
 E0413 is logged and corrected: direct official NSE VIX historical endpoints are now tried without a homepage dependency, with response hashing and manifest provenance preserved. The next authoritative attempt is **run 5** from the corrected phase branch.
+
+
+## 2026-09-27 — Phase 31.9 run 5 closure
+
+Run **36333819834** bypassed the NSE homepage 403 but official India VIX acquisition returned only 391 normalized rows for the study window, so no P&L was run. E0414 is logged. The corrected branch now fetches the same official NSE VIX endpoint in 89-day chunks with per-chunk provenance; run 6 is the next authoritative attempt.
