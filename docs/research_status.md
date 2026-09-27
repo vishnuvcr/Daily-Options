@@ -839,3 +839,7 @@ Run **36335091335** stopped at unit tests before data acquisition. E0417/E0418 a
 ## 2026-09-27 — Phase 31.10 run 2 closure / run 3 frontier
 
 Run **36335189575** reached official NSE participant-OI acquisition but parser normalization failed on the official singular header `Future Index Long/Short`; data gate returned FAIL with zero eligible sessions and no P&L. E0419 is logged. Parser now accepts both official singular/plural labels and a regression fixture covers the actual header. Next authoritative run: **run 3**.
+
+## 2026-09-27 — Phase 31.10 run 3 closure / run 4 frontier
+
+Run **36335911562** reused the stale participant-OI cache after E0419, so the data gate again failed at 0% coverage; no P&L was accepted. E0420 is logged. The workflow now requires a versioned parser manifest with positive source-file coverage before cache reuse, forcing fresh official NSE acquisition after parser changes. Next authoritative run: **run 4**.
