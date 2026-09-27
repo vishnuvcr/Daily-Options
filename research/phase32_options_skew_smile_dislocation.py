@@ -185,7 +185,7 @@ def build_surface(panel: pd.DataFrame, quotes: pd.DataFrame) -> pd.DataFrame:
     x["barrier_ok"] = x["prior_surface_date"].notna() & (
         pd.to_datetime(x["prior_surface_date"]) < pd.to_datetime(x["date"])
     )
-    x["feature_eligible"] = x[FEATURES].notna().all(axis=1)
+    x["feature_eligible"] = x[list(FEATURES)].notna().all(axis=1)
     return x
 
 def data_gate(panel: pd.DataFrame, quotes: pd.DataFrame, expiry_map: dict[date, Path]) -> dict:
