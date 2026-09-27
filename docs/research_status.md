@@ -860,3 +860,9 @@ No Phase 31.10 P&L is accepted before the data gate and execution-coverage check
 Run **36335091335** reached the unit-test stage and stopped on two test-fixture defects before data acquisition. E0417 records the fixture correction: the prior-only z-score test used a constant series (zero rolling standard deviation), and the missing-position-date test checked the wrong trade date. E0418 records the secondary failure-path persistence defect where absent output directories caused a pathspec error.
 
 The research engine itself was not numerically executed. Both corrections are now persisted. The frozen Phase 31.10 grid, source hierarchy, cost model and promotion gate are unchanged. The next authoritative attempt is run 2.
+
+## 2026-09-27 — Phase 31.10 run 2 closure / parser correction
+
+Run **36335189575** completed dependency installation, tests, NIFTY cache restore and official NSE participant-OI acquisition. The source files were reached successfully, but normalization rejected every file because the parser looked for `Futures Index Long/Short` while the actual NSE archive header is `Future Index Long/Short`. The data gate therefore returned FAIL with zero feature-eligible sessions; Base/Stress were correctly skipped. No P&L is accepted.
+
+E0419 is logged. The parser now accepts both singular and plural official header variants, and a regression test uses the actual NSE header names. The frozen 12-cell grid, source, costs and promotion gate remain unchanged. The next authoritative run is run 3.
