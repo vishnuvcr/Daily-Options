@@ -123,7 +123,7 @@ def surface_panel(root):
                 ("CE",atm,"atm_ce"),("PE",atm,"atm_pe"),
                 ("PE",atm-WING,"put100"),("CE",atm+WING,"call100")
             ):
-                req.append((exp[0],p,typ,float(strike),label))
+                req.append((exp,p,typ,float(strike),label))
         by_exp={front[0]:[],back[0]:[]}
         for e,p,t,k,l in req: by_exp[e].append((p,t,k,l))
         vals={}
@@ -204,7 +204,7 @@ def build_signals(panel,sessions):
                     rows.append({"feature":f,"threshold":th,"exit_time":ex,
                                  "signal_date":d,"trade_date":td,
                                  "front_expiry":r.front_expiry,"back_expiry":r.back_expiry,
-                                 "spot":r.spot,"signal_value":z})
+                                 "spot":r.spot,"atm_strike":round(float(r.spot)/STRIKE_STEP)*STRIKE_STEP,"signal_value":z})
     return pd.DataFrame(rows)
 
 def execution_price_map(signals,root):
@@ -212,17 +212,19 @@ def execution_price_map(signals,root):
     if signals.empty: return prices
     req=[]
     for r in signals.itertuples(index=False):
+        atm=float(r.atm_strike)
         for exp in (r.front_expiry,r.back_expiry):
             for tm in ("09:31:00",str(r.exit_time)):
                 for typ in ("CE","PE"):
-                    req.append((r.trade_date,exp,tm,typ))
-    req=pd.DataFrame(req,columns=["trade_date","expiry","time","type"]).drop_duplicates()
+                    req.append((r.trade_date,exp,tm,typ,atm))
+    req=pd.DataFrame(req,columns=["trade_date","expiry","time","type","strike"]).drop_duplicates()
     con=duckdb.connect()
     for exp,g in req.groupby("expiry"):
         path=root/"options"/"NIFTY"/f"{pd.Timestamp(exp).date()}.parquet"
         if not path.exists(): continue
         dates=",".join(f"DATE '{d}'" for d in sorted(pd.to_datetime(g.trade_date).dt.date.unique()))
         times=",".join(f"'{x}'" for x in sorted(g.time.unique()))
+        strikes=",".join(str(float(x)) for x in sorted(g.strike.unique()))
         ps=str(path).replace("'","''")
         q=f"""SELECT CAST(trading_day AS DATE) trade_date,
                      CAST(expiry AS DATE) expiry,
@@ -234,13 +236,14 @@ def execution_price_map(signals,root):
               FROM read_parquet('{ps}')
               WHERE CAST(trading_day AS DATE) IN ({dates})
                 AND strftime(CAST(timestamp AS TIMESTAMP),'%H:%M:%S') IN ({times})
+                AND CAST(strike AS DOUBLE) IN ({strikes})
                 AND UPPER(CAST(option_type AS VARCHAR)) IN ('CE','PE')
                 AND ((strftime(CAST(timestamp AS TIMESTAMP),'%H:%M:%S')='09:31:00' AND open>0)
-                  OR (strftime(CAST(timestamp AS TIMESTAMP),'%H:%M:%S')<>'09:31:00' AND close>0)"""
+                  OR (strftime(CAST(timestamp AS TIMESTAMP),'%H:%M:%S')<>'09:31:00' AND close>0))"""
         z=con.execute(q).df()
         if z.empty: continue
         for r in z.itertuples(index=False):
-            key=(r.trade_date,r.expiry,r.time,r.option_type)
+            key=(r.trade_date,r.expiry,r.time,r.option_type,float(r.strike))
             prices[key]=float(r.open_px if r.time=="09:31:00" else r.close_px)
     con.close(); return prices
 
@@ -252,8 +255,9 @@ def trade_rows(signals,prices,slippage):
         d=pd.Timestamp(r.trade_date).date()
         fe=pd.Timestamp(r.front_expiry).date(); be=pd.Timestamp(r.back_expiry).date(); lot=lot_size(fe)
         entry_tm="09:31:00"; exit_tm=str(r.exit_time)
-        keys=[(d,fe,entry_tm,"CE"),(d,fe,entry_tm,"PE"),(d,be,entry_tm,"CE"),(d,be,entry_tm,"PE"),
-              (d,fe,exit_tm,"CE"),(d,fe,exit_tm,"PE"),(d,be,exit_tm,"CE"),(d,be,exit_tm,"PE")]
+        atm=float(r.atm_strike)
+        keys=[(d,fe,entry_tm,"CE",atm),(d,fe,entry_tm,"PE",atm),(d,be,entry_tm,"CE",atm),(d,be,entry_tm,"PE",atm),
+              (d,fe,exit_tm,"CE",atm),(d,fe,exit_tm,"PE",atm),(d,be,exit_tm,"CE",atm),(d,be,exit_tm,"PE",atm)]
         complete=all(k in prices for k in keys)
         if complete:
             fce=prices[keys[0]]; fpe=prices[keys[1]]; bce=prices[keys[2]]; bpe=prices[keys[3]]
