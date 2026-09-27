@@ -234,7 +234,8 @@ def execution_price_map(signals,root):
               WHERE CAST(trading_day AS DATE) IN ({dates})
                 AND strftime(CAST(timestamp AS TIMESTAMP),'%H:%M:%S') IN ({times})
                 AND UPPER(CAST(option_type AS VARCHAR)) IN ('CE','PE')
-                AND close>0"""
+                AND ((strftime(CAST(timestamp AS TIMESTAMP),'%H:%M:%S')='09:31:00' AND open>0)
+                  OR (strftime(CAST(timestamp AS TIMESTAMP),'%H:%M:%S')<>'09:31:00' AND close>0)"""
         z=con.execute(q).df()
         if z.empty: continue
         for r in z.itertuples(index=False):
@@ -244,18 +245,27 @@ def execution_price_map(signals,root):
 
 def trade_rows(signals,prices,slippage):
     rows=[]
+    coverage_rows=[]
+    debit_rows=[]
     for r in signals.itertuples(index=False):
         d=pd.Timestamp(r.trade_date).date()
         fe=pd.Timestamp(r.front_expiry).date(); be=pd.Timestamp(r.back_expiry).date(); lot=lot_size(fe)
         entry_tm="09:31:00"; exit_tm=str(r.exit_time)
         keys=[(d,fe,entry_tm,"CE"),(d,fe,entry_tm,"PE"),(d,be,entry_tm,"CE"),(d,be,entry_tm,"PE"),
               (d,fe,exit_tm,"CE"),(d,fe,exit_tm,"PE"),(d,be,exit_tm,"CE"),(d,be,exit_tm,"PE")]
-        if not all(k in prices for k in keys): continue
-        fce=prices[keys[0]]; fpe=prices[keys[1]]; bce=prices[keys[2]]; bpe=prices[keys[3]]
-        xfc=prices[keys[4]]; xfp=prices[keys[5]]; xbc=prices[keys[6]]; xbp=prices[keys[7]]
-        entry_debit=(bce+bpe)-(fce+fpe)
+        complete=all(k in prices for k in keys)
+        if complete:
+            fce=prices[keys[0]]; fpe=prices[keys[1]]; bce=prices[keys[2]]; bpe=prices[keys[3]]
+            xfc=prices[keys[4]]; xfp=prices[keys[5]]; xbc=prices[keys[6]]; xbp=prices[keys[7]]
+            entry_debit=(bce+bpe)-(fce+fpe)
+            debit_ok=entry_debit>0
+        else:
+            entry_debit=np.nan; debit_ok=False
+        coverage_rows.append((r.feature,r.threshold,r.exit_time,complete))
+        debit_rows.append((r.feature,r.threshold,r.exit_time,complete and debit_ok))
+        if not complete or not debit_ok:
+            continue
         exit_value=(xbc+xbp)-(xfc+xfp)
-        if entry_debit<=0: continue
         gross=(exit_value-entry_debit)*lot
         slip=slippage*8*lot
         tc=(charge(fce,"SELL",1,lot,d)+charge(fpe,"SELL",1,lot,d)+
@@ -265,16 +275,38 @@ def trade_rows(signals,prices,slippage):
         rows.append({**r._asdict(),"entry_debit":entry_debit,"exit_value":exit_value,
                      "gross_pnl":gross,"slippage":slip,"transaction_costs":tc,
                      "net_pnl":gross-slip-tc,"week":str(pd.Timestamp(d).to_period("W-SUN"))})
-    return pd.DataFrame(rows)
+    cov_df=coverage_table(signals,coverage_rows)
+    debit_df=debit_coverage_table(signals,debit_rows)
+    return pd.DataFrame(rows),cov_df,debit_df
 
-def coverage(signals,trades):
+def coverage_table(signals,checks):
     out=[]
+    checks_by={}
+    for f,th,ex,ok in checks:
+        checks_by.setdefault((f,th,ex),[]).append(ok)
     for f in FEATURES:
         for th in THRESHOLDS:
             for ex in EXITS:
+                vals=checks_by.get((f,th,ex),[])
                 n=int(((signals.feature==f)&(signals.threshold==th)&(signals.exit_time==ex)).sum()) if not signals.empty else 0
-                t=int(((trades.feature==f)&(trades.threshold==th)&(trades.exit_time==ex)).sum()) if not trades.empty else 0
-                out.append({"feature":f,"threshold":th,"exit_time":ex,"signals":n,"trades":t,"coverage_rate":t/n if n else 1.0})
+                ok=int(sum(vals))
+                out.append({"feature":f,"threshold":th,"exit_time":ex,"signals":n,"execution_complete":ok,
+                            "coverage_rate":ok/n if n else 1.0})
+    return pd.DataFrame(out)
+
+def debit_coverage_table(signals,checks):
+    out=[]
+    checks_by={}
+    for f,th,ex,ok in checks:
+        checks_by.setdefault((f,th,ex),[]).append(ok)
+    for f in FEATURES:
+        for th in THRESHOLDS:
+            for ex in EXITS:
+                vals=checks_by.get((f,th,ex),[])
+                n=int(((signals.feature==f)&(signals.threshold==th)&(signals.exit_time==ex)).sum()) if not signals.empty else 0
+                ok=int(sum(vals))
+                out.append({"feature":f,"threshold":th,"exit_time":ex,"signals":n,"positive_debit":ok,
+                            "debit_rate":ok/n if n else 1.0})
     return pd.DataFrame(out)
 
 def summarize(trades):
@@ -302,7 +334,7 @@ def null_summary(panel,sessions,root,slippage):
         idx=np.arange(len(x)); rng.shuffle(idx)
         x.loc[:,list(FEATURES)]=x.loc[idx,list(FEATURES)].to_numpy()
         sig=build_signals(x,sessions)
-        tr=trade_rows(sig,execution_price_map(sig,root),slippage)
+        tr,_,_=trade_rows(sig,execution_price_map(sig,root),slippage)
         z=summarize(tr); z["null_seed"]=seed; out.append(z)
     return pd.concat(out,ignore_index=True)
 
@@ -330,13 +362,15 @@ def main():
     panel,sessions=surface_panel(root); panel.to_csv(out/"term_structure_panel.csv",index=False)
     signals=build_signals(panel,sessions); signals.to_csv(out/"signals.csv",index=False)
     if a.gate_only:
-        tr=trade_rows(signals,execution_price_map(signals,root),a.slippage)
-        cov=coverage(signals,tr); cov.to_csv(out/"price_coverage.csv",index=False)
+        tr,cov,debit=trade_rows(signals,execution_price_map(signals,root),a.slippage)
+        cov.to_csv(out/"price_coverage.csv",index=False)
+        debit.to_csv(out/"debit_admissibility.csv",index=False)
         g=gate(panel,signals,cov,sessions); (out/"data_gate.json").write_text(json.dumps(g,indent=2)); print(json.dumps(g)); return
     prices=execution_price_map(signals,root)
-    trades=trade_rows(signals,prices,a.slippage)
+    trades,cov,debit=trade_rows(signals,prices,a.slippage)
     trades.to_csv(out/"trades.csv",index=False)
-    coverage(signals,trades).to_csv(out/"price_coverage.csv",index=False)
+    cov.to_csv(out/"price_coverage.csv",index=False)
+    debit.to_csv(out/"debit_admissibility.csv",index=False)
     summarize(trades).to_csv(out/"true_cell_summary.csv",index=False)
     null_summary(panel,sessions,root,a.slippage).to_csv(out/"null_summary.csv",index=False)
 
