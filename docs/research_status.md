@@ -920,3 +920,10 @@ Phase 31.8 global overnight transmission authoritative run **36341877019** compl
 - Provenance audit E0454 logged the yfinance manifest/runtime version mismatch; exact cached files and hashes remain preserved.
 
 Next research family must be materially distinct and preregistered.
+
+
+## 2026-09-28 — Phase 34 closure
+
+Phase 34 multi-expiry volatility term structure authoritative run **36341535504** is closed **DATA-LIMITED**: only 656/1,233 expected prior-session two-expiry surfaces were complete (53.20%) versus the frozen 95% requirement. No economic P&L was accepted.
+
+Next family: global overnight shock × India-local volatility/options state, with a new preregistered branch and independent gate.
