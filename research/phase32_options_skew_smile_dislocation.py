@@ -132,6 +132,8 @@ def load_quotes(root: Path, panel: pd.DataFrame, expiry_map: dict[date, Path]) -
                 IN ('09:30:00','09:31:00','10:30:00','13:30:00','15:10:00')
         """
         z = con.execute(q).df()
+        if not z.empty:
+            z["expiry"] = expiry
         rows.append(z)
     con.close()
     return pd.concat(rows, ignore_index=True) if rows else pd.DataFrame(
@@ -299,14 +301,23 @@ def legs_for_signal(feature: str, signal_value: float, atm: int) -> list[tuple[s
         return positive
     return [(typ, strike, "SELL" if action == "BUY" else "BUY") for typ, strike, action in positive]
 
-def price_lookup(quotes: pd.DataFrame) -> dict[tuple,date]:
+def exec_price_key(day, expiry, local_time, option_type, strike):
+    return (
+        pd.Timestamp(day).date(),
+        pd.Timestamp(expiry).date(),
+        str(local_time),
+        str(option_type).upper(),
+        float(strike),
+    )
+
+def price_lookup(quotes: pd.DataFrame) -> dict[tuple, float]:
     out = {}
     for r in quotes.itertuples(index=False):
         px_open = float(r.open_px) if pd.notna(r.open_px) else np.nan
         px_close = float(r.close_px) if pd.notna(r.close_px) else np.nan
         px = px_open if r.local_time == "09:31:00" else px_close
-        if pd.notna(px) and px > 0:
-            out[(r.date, r.local_time, r.option_type, float(r.strike))] = px
+        if pd.notna(px) and px > 0 and pd.notna(r.expiry):
+            out[exec_price_key(r.date, r.expiry, r.local_time, r.option_type, r.strike)] = px
     return out
 
 def trade_from_signal(r, prices: dict, slip: float):
@@ -317,8 +328,8 @@ def trade_from_signal(r, prices: dict, slip: float):
     raw = execgross = slippage_cost = transaction_costs = 0.0
     leg_rows = []
     for typ, strike, action in legs:
-        ep = prices.get((d, "09:31:00", typ, float(strike)))
-        xp = prices.get((d, exit_time, typ, float(strike)))
+        ep = prices.get(exec_price_key(d, r.expiry, "09:31:00", typ, float(strike)))
+        xp = prices.get(exec_price_key(d, r.expiry, exit_time, typ, float(strike)))
         if ep is None or xp is None:
             return None
         if action == "BUY":
@@ -474,6 +485,7 @@ def main():
                 (d, tm, typ, float(strike)) in prices
                 for typ, strike, action in legs_for_signal(r.feature,float(r.signal_value),int(r.atm))
                 for tm in ("09:31:00", HORIZON_TIMES[r.horizon])
+                if exec_price_key(d, r.expiry, tm, typ, float(strike)) in prices
             ))
         cov_rows.append({
             "feature":key[0],"threshold":float(key[1]),"horizon":key[2],
@@ -493,9 +505,14 @@ def main():
     trades.to_csv(out/f"trades_{friction}.csv", index=False)
     summary = add_summary_rows(trades, friction)
     summary.to_csv(out/f"true_cell_summary_{friction}.csv", index=False)
-    weekly = trades.assign(week=pd.to_datetime(trades.day).dt.to_period("W-SUN").astype(str)).groupby(
-        ["feature","threshold","horizon","week"], as_index=False).net_pnl.sum()
-    weekly.to_csv(out/f"weekly_{friction}.csv", index=False)
+    if trades.empty:
+        pd.DataFrame(columns=["feature","threshold","horizon","week","net_pnl"]).to_csv(
+            out/f"weekly_{friction}.csv", index=False
+        )
+    else:
+        weekly = trades.assign(week=pd.to_datetime(trades.day).dt.to_period("W-SUN").astype(str)).groupby(
+            ["feature","threshold","horizon","week"], as_index=False).net_pnl.sum()
+        weekly.to_csv(out/f"weekly_{friction}.csv", index=False)
 
     null_rows = []
     for seed in NULL_SEEDS:
