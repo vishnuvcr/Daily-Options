@@ -308,3 +308,7 @@ Run **36338841139** passed the diagnostic surface gate but Base discovery stoppe
 ## 2026-09-27 — Phase 32 run 9 validation correction
 
 Run **36338974734** produced populated Base and Stress ledgers, but validation failed on `coverage_rate.min()>=0.95`. Inspection showed the reported coverage file was wrong, while actual trade counts were 96.7–100% of the corresponding signal counts. E0437 is the closed reporting defect; the next run recomputes coverage through the same expiry-aware execution-key predicate used by trade generation.
+
+## 2026-09-27 — Phase 32 final conclusion
+
+Run **36339168867** is authoritative and fully validated. Data gate passed; Base and Stress completed; 12 true cells and 60 null summaries per friction were persisted; coverage ranged 96.74–100%. All 12 true cells were economically negative in both frictions. No cell reached the ₹5,000/week mean/median gate or 70% positive-week requirement. Every true cell had a lower mean weekly result than its five-seed null mean. Phase 32 is closed and no WFA/OOS is authorized. Final manuscript: `reports/phase32/final_result.md`.
