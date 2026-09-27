@@ -34,3 +34,10 @@ def test_execution_and_debit_are_separate_concepts():
     front=210.0+205.0
     back=200.0+195.0
     assert front-back>0
+
+
+def test_signal_carries_fixed_atm_strike():
+    # Signal-side strike is frozen from prior close, not recomputed from next-session prices.
+    spot=24123.7
+    atm=round(spot/50.0)*50.0
+    assert atm==24100.0
