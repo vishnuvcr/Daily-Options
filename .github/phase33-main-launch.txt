@@ -1,1 +1,1 @@
-Phase 33 run 5 trigger: exact execution SQL close/open aliases corrected; no economic-rule changes.
+Phase 33 run 6 trigger: bulk execution, audited costs, debit-spread sign, feature-wise data gates, and strict prior-timestamp barrier are verified on branch head.
