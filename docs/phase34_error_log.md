@@ -8,10 +8,12 @@
 
 | E0449 | 2026-09-27 | Phase 34 trigger synchronization | Run 36341195920 checked out a pre-fix trigger commit, reproducing the Phase 34 SQL-string syntax error | No data or P&L ran | Correct the exact live branch-head string and trigger only after source verification | CLOSED |
 
-| E0450 | 2026-09-27 | Phase 34 data gate | Run 36341283898 passed 6 unit tests but failed immediately in the term-structure surface builder because front/back expiry records are `(date,path)` tuples while the loop treated the date as a tuple | No data or P&L accepted | Use the date directly in term-structure keys; no research-rule change |
+| E0450 | 2026-09-27 | Phase 34 data gate | Run 36341283898 passed 6 unit tests but failed immediately in the term-structure surface builder because front/back expiry records are `(date,path)` tuples while the loop treated the date as a tuple | No data or P&L accepted | Use the date directly in term-structure keys; no research-rule change | CLOSED — corrected rerun |
 
 | E0451 | 2026-09-27 | Phase 34 execution mapping audit | Pre-P&L audit found the execution dictionary keyed only by date/expiry/time/type and therefore ignored strike, making a future calendar trade susceptible to using an arbitrary strike quote | Economic execution would be invalid if left unchanged | Freeze signal-side ATM strike and require strike-aware execution keys; add regression | CLOSED — pre-P&L execution hardening |
 
 | E0452 | 2026-09-27 | Phase 34 pre-P&L execution audit | Calendar entry uses the 09:31 option open, so execution eligibility must require `open>0`; relying on `close>0` could admit invalid entry bars | Could contaminate execution coverage/P&L | Enforce positive 09:31 open and positive exit close separately in the bulk execution query | CLOSED — pre-P&L audit |
 
 | E0453 | 2026-09-27 | Phase 34 execution loader | Run 36341359531 passed unit tests and term-structure reconstruction, then failed before economics because DuckDB rejected reserved alias `time` in the execution quote query | No P&L accepted | Use `local_time` throughout execution SQL/Python keys; research design unchanged | CLOSED |
+
+| E0454 | 2026-09-27 | Phase 34 authoritative data gate | Run 36341535504 completed the corrected term-structure reconstruction but failed the preregistered 95% source/session-coverage gate: only **656/1,233 expected prior sessions (53.20%)** had complete front/back ATM/wing IV surfaces. Both standardized features were 100% complete conditional on the surviving panel. | No Base/Stress P&L, null economics, WFA or OOS authorized | Close Phase 34 as DATA-LIMITED. Do not relax the two-expiry/strike coverage rule after observing the result. | CLOSED — phase stop |
