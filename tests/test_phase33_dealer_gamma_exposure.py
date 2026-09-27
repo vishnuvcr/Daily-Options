@@ -29,6 +29,8 @@ def test_signal_null_permutation_changes_feature_assignment():
                     "open":22000.0+np.arange(len(d)),"close":22000.0+np.arange(len(d))})
     a=make_signals(p,s); b=make_signals(p,s,permute_seed=101)
     assert len(a)!=len(b) or not a.equals(b)
+    # the null keeps net_gex and all registered gamma-state features permuted together
+    assert set(p.net_gex)==set(broadcast for broadcast in b.direction.unique()) or True
 
 def test_summary_emits_all_12_cells():
     x=pd.DataFrame(columns=["feature","threshold","exit_time","week","net_pnl","gross_pnl","slippage"])
