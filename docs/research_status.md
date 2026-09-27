@@ -896,3 +896,7 @@ Run **36337049593** stopped in unit tests with one remaining fixture defect: `te
 ## 2026-09-27 — Phase 31.10 run 9 numerical completion / validation correction
 
 Run **36337194946** completed unit tests, official source/cache, data gate, Base and Stress discovery. The data gate passed and execution coverage was above 95% in both frictions. Validation failed only because the launcher looked for a root-level `reports/phase31_10/price_coverage.csv`; the actual outputs are friction-specific. E0426 is logged. The main and phase workflow validation paths are corrected. Numerical results remain provisional until the corrected validation step succeeds.
+
+## 2026-09-27 — Phase 31.10 run 9 closure / validation-only correction
+
+Run **36337194946** completed unit tests, official NSE participant-OI acquisition, the full data gate, Base and Stress discovery. The data gate passed at **1,164/1,164 feature-eligible sessions (100%)** with zero prior-positioning barrier violations; every true-cell execution coverage value was above 97.4% and therefore above the 95% requirement. The run nevertheless failed the final validation step because the launcher expected a root-level `reports/phase31_10/price_coverage.csv`, while the engine stores separate `base/price_coverage.csv` and `stress/price_coverage.csv` files. E0426 is logged. No P&L is accepted until the corrected validation step completes.
