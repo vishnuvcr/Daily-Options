@@ -27,3 +27,10 @@ def test_negative_calendar_value_is_skipped():
     front=210.0+205.0
     back=200.0+195.0
     assert back-front<=0
+
+
+def test_execution_and_debit_are_separate_concepts():
+    # Complete quotes can exist even when the calendar is a negative debit.
+    front=210.0+205.0
+    back=200.0+195.0
+    assert front-back>0
