@@ -34,11 +34,12 @@ jobs:
       - name: Data gate
         run: PYTHONPATH=. python research/phase35_global_shock_options_structure.py --data data/cache/phase31_trademarkk --global-data data/cache/phase31_8_global --out reports/phase35/gate --gate-only
       - name: Enforce gate
-        run: python - <<'PY'
-import json,sys
-g=json.load(open("reports/phase35/gate/data_gate.json"))
-sys.exit(0 if g["status"]=="PASS" else 1)
-PY
+        run: |
+          python - <<'PY'
+          import json,sys
+          g=json.load(open("reports/phase35/gate/data_gate.json"))
+          sys.exit(0 if g["status"]=="PASS" else 1)
+          PY
       - name: Base discovery
         run: PYTHONPATH=. python research/phase35_global_shock_options_structure.py --data data/cache/phase31_trademarkk --global-data data/cache/phase31_8_global --out reports/phase35/base --slippage 0.20
       - name: Stress discovery
