@@ -245,3 +245,7 @@ Run **36335091335** passed dependency installation but failed two unit-test fixt
 ## 2026-09-27 — Phase 31.10 run 2 diagnosis and correction
 
 Authoritative run 36335189575 reached official NSE participant-OI acquisition successfully but normalized zero files because the parser expected `Futures Index Long/Short` and the actual archive header is `Future Index Long/Short`. The gate consequently failed at 0% feature coverage; Base/Stress did not run. E0419 was logged. The parser and regression suite were corrected without changing the preregistered research design. Operational log only.
+
+## 2026-09-27 — Phase 31.10 run 3 diagnosis
+
+Run 36335911562 used the existing participant-OI parquet/manifest instead of rerunning acquisition after E0419, because the workflow only tested file existence. The gate therefore stayed at 0% feature coverage. E0420 records the cache-invalidation defect. The corrected workflow now requires parser_version=v2-future-index-header and files_ok>0 before reusing the cache. No numerical result exists.
