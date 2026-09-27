@@ -108,6 +108,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir -p data/cache/phase31_10_institutional reports/phase31_10
           git add -f data/cache/phase31_10_institutional reports/phase31_10
           if ! git diff --cached --quiet; then
             git commit -m "Phase 31.10: persist institutional positioning data and outputs"
