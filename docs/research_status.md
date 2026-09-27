@@ -836,3 +836,13 @@ E0413 is logged. The acquisition helper has been corrected to avoid the homepage
 Run **36333819834** passed unit tests, restored the pinned NIFTY cache, and successfully bypassed the previous NSE homepage 403. The official historical VIX endpoint responded, but the acquisition normalized to only **391 rows** for the 2021-07-01 to 2026-08-31 study window and failed the source-coverage guard. No VIX gate or P&L was accepted.
 
 Post-run audit of the public NseKit implementation shows that the same official NSE VIX historical endpoint is fetched in **89-day windows**, which is more restrictive than the previous 365-day request windows. The Phase 31.9 acquisition helper has therefore been corrected to 89-day official-NSE chunks and now persists per-chunk endpoint/row-count provenance in the manifest. E0414 is logged and a regression test enforces the window size. The frozen research grid and economics remain unchanged.
+
+## 2026-09-27 — Phase 31.9 CLOSED
+
+Authoritative run **36334135198 (run 6)** completed the full preregistered Phase 31.9 pipeline successfully. Official NSE VIX acquisition returned **1,281 rows** for 2021-07-01 through 2026-08-31 in 89-day chunks; the feature gate passed with **1,206/1,206 feature-eligible sessions complete** and **0 prior-barrier violations**.
+
+Base and Stress each passed artifact validation and execution-coverage checks. **0/12 true cells passed the ₹5,000/week promotion gate in Base and 0/12 in Stress.** Best Base mean weekly net: **-₹114.44** (LOW/FADE/15:10). Best Stress mean weekly net: **-₹238.14** (MID/FADE/15:10). No true cell had positive total net P&L in either friction regime.
+
+Registered null controls were completed (60 summaries per friction). Some true cells exceeded all five null means for the same cell, but absolute net economics remained negative and below the promotion threshold. **No WFA/OOS promotion is authorized.** Final report: `reports/phase31_9/final_result.md`.
+
+Phase 31.9 is closed; the next family must be materially distinct and separately preregistered.
