@@ -300,3 +300,7 @@ Run **36338507099** used the delayed pre-E0433 trigger commit and failed on the 
 ## 2026-09-27 — Phase 32 run 7 data-gate diagnosis
 
 Run **36338601854** is the first run from the verified corrected head. It passed the source-integrity guard and six unit tests, restored the pinned 894 MB cache, and completed source reuse. The numerical gate found **0/1,165** warm-up-complete valid option surfaces despite 100% next-expiry coverage; Base/Stress were skipped. No P&L is accepted. E0435 records the gate failure. The next correction instruments quote-key normalization, explicit failure reasons and quote type/key counts without altering the preregistered hypothesis.
+
+## 2026-09-27 — Phase 32 run 8 execution failure
+
+Run **36338841139** passed the diagnostic surface gate but Base discovery stopped because all 12 cells had zero mapped execution prices. Intermediate artifacts show 691 feature-eligible sessions and 187/92/101/56 signals by feature/threshold. The execution lookup did not include expiry, unlike the validated Phase 31.7 price-key contract; all true trade rows were therefore absent. E0436 records the correction. No P&L is accepted from run 8.
