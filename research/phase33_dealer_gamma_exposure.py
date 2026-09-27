@@ -114,8 +114,8 @@ def gex_snapshot(day, rows):
     rows["iv"]=ivs; rows["gamma"]=gs
     rows=rows[np.isfinite(rows.gamma)&(rows.oi>0)].copy()
     if rows.empty: return None
-    mult=lot_size(rows.expiry.min())
-    rows["gex_unit"]=rows.gamma*rows.oi*mult*spot*spot*0.01
+    rows["lot"]=rows.expiry.map(lot_size)
+    rows["gex_unit"]=rows.gamma*rows.oi*rows.lot*spot*spot*0.01
     rows["signed_gex"]=np.where(rows.side=="CE",rows.gex_unit,-rows.gex_unit)
     total=float(rows.signed_gex.sum())
     byk=rows.groupby("strike",as_index=False).signed_gex.sum().sort_values("strike")
@@ -126,7 +126,7 @@ def gex_snapshot(day, rows):
         z=0.0
         for r in rows.itertuples(index=False):
             gg=bs_gamma(float(s),float(r.strike),float(r.t),float(r.iv))
-            z += (1 if r.side=="CE" else -1)*gg*float(r.oi)*mult*s*s*0.01
+            z += (1 if r.side=="CE" else -1)*gg*float(r.oi)*lot_size(r.expiry)*s*s*0.01
         vals.append(z)
     root=np.nan
     for a,b,va,vb in zip(grid[:-1],grid[1:],vals[:-1],vals[1:]):
@@ -153,8 +153,16 @@ def build_feature_panel(root):
         panel[{"net_gex":"GEX_Z","flip_distance":"FLIP_DISTANCE_Z","atm_gex_share":"ATM_GEX_SHARE_Z"}[col]]=(panel[col]-mu)/sd
     return panel,spot
 
-def make_signals(panel,spot):
-    s=spot.sort_values("ts").groupby("trade_date").first()[["open","close"]].copy()
+def make_signals(panel,spot,permute_seed=None):
+    panel=panel.copy()
+    if permute_seed is not None:
+        rng=np.random.default_rng(permute_seed)
+        for f in FEATURES:
+            idx=panel[f].dropna().index.to_numpy()
+            vals=panel.loc[idx,f].to_numpy().copy()
+            rng.shuffle(vals)
+            panel.loc[idx,f]=vals
+    s=spot.sort_values("ts").groupby("trade_date").agg(open=("open","first"),close=("close","last")).copy()
     s.index=pd.to_datetime(s.index).date
     prev_close={d:float(r.close) for d,r in s.iterrows()}
     next_open={d:float(r.open) for d,r in s.iterrows()}
@@ -249,31 +257,36 @@ def simulate(signals,root,slippage):
 
 def summarize(trades):
     rows=[]
-    for keys,g in trades.groupby(["feature","threshold","exit_time"]):
-        w=g.groupby("week").net_pnl.sum()
-        rows.append({"feature":keys[0],"threshold":keys[1],"exit_time":keys[2],"trades":len(g),
-                     "weeks":len(w),"total_net":g.net_pnl.sum(),"mean_weekly_net":w.mean(),
-                     "median_weekly_net":w.median(),"positive_week_rate":(w>0).mean(),
-                     "raw_gross":g.gross_pnl.sum(),"total_slippage":g.slippage.sum()})
+    for f in FEATURES:
+        for th in THRESHOLDS:
+            for ex in EXITS:
+                g=trades[(trades.feature==f)&(trades.threshold==th)&(trades.exit_time==ex)] if not trades.empty else pd.DataFrame()
+                w=g.groupby("week").net_pnl.sum() if not g.empty else pd.Series(dtype=float)
+                rows.append({"feature":f,"threshold":th,"exit_time":ex,"trades":len(g),
+                             "weeks":len(w),"total_net":float(g.net_pnl.sum()) if not g.empty else 0.0,
+                             "mean_weekly_net":float(w.mean()) if len(w) else 0.0,
+                             "median_weekly_net":float(w.median()) if len(w) else 0.0,
+                             "positive_week_rate":float((w>0).mean()) if len(w) else 0.0,
+                             "raw_gross":float(g.gross_pnl.sum()) if not g.empty else 0.0,
+                             "total_slippage":float(g.slippage.sum()) if not g.empty else 0.0})
     return pd.DataFrame(rows)
 
-def run_null(signals,root,slippage,out_dir):
-    rng_seeds=NULL_SEEDS
+def run_null(panel,spot,root,slippage):
     out=[]
-    for seed in rng_seeds:
-        s=signals.copy()
-        rng=np.random.default_rng(seed)
-        s["trade_date"]=rng.permutation(s.trade_date.to_numpy())
+    for seed in NULL_SEEDS:
+        s=make_signals(panel,spot,permute_seed=seed)
         t,_=simulate(s,root,slippage)
         z=summarize(t)
-        if not z.empty: z["null_seed"]=seed; out.append(z)
-    return pd.concat(out,ignore_index=True) if out else pd.DataFrame()
+        z["null_seed"]=seed
+        out.append(z)
+    return pd.concat(out,ignore_index=True)
 
 def gate(panel,signals,cov):
     feature_ok=int(panel[["GEX_Z","FLIP_DISTANCE_Z","ATM_GEX_SHARE_Z"]].notna().any(axis=1).sum())
-    return {"status":"PASS" if len(panel)>0 and feature_ok>WARMUP and len(cov)==12 and cov.coverage_rate.min()>=0 else "FAIL",
+    return {"status":"PASS" if len(panel)>0 and feature_ok>WARMUP and len(cov)==12 and cov.coverage_rate.min()>=0.95 else "FAIL",
             "snapshot_sessions":int(len(panel)),"feature_eligible_sessions":feature_ok,
-            "signal_rows":int(len(signals)),"coverage_min":float(cov.coverage_rate.min()) if len(cov) else 0.0}
+            "signal_rows":int(len(signals)),"coverage_min":float(cov.coverage_rate.min()) if len(cov) else 0.0,
+            "coverage_cells":int(len(cov))}
 
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument("--data",default="data/cache/phase31_trademarkk"); ap.add_argument("--out",default="reports/phase33/base"); ap.add_argument("--slippage",type=float,default=.20); ap.add_argument("--gate-only",action="store_true"); ap.add_argument("--force-refresh",default="false"); a=ap.parse_args()
@@ -285,6 +298,6 @@ def main():
         g=gate(panel,signals,cov); (out/"data_gate.json").write_text(json.dumps(g,indent=2)); print(json.dumps(g)); return
     trades,cov=simulate(signals,root,a.slippage); trades.to_csv(out/"trades.csv",index=False); cov.to_csv(out/"price_coverage.csv",index=False)
     summarize(trades).to_csv(out/"true_cell_summary.csv",index=False)
-    run_null(signals,root,a.slippage,out).to_csv(out/"null_summary.csv",index=False)
+    run_null(panel,spot,root,a.slippage).to_csv(out/"null_summary.csv",index=False)
 
 if __name__=="__main__": main()
