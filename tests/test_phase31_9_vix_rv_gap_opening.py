@@ -75,3 +75,10 @@ def test_price_and_signal_engine_contracts_are_explicit():
     assert "10:30:00" in src and "15:10:00" in src
     assert "allow_exact_matches=False" in src
     assert "lot_size" in src and "charge" in src
+
+def test_vix_acquisition_does_not_depend_on_homepage_session():
+    from research.phase31_9_acquire_vix import session, NSE_VIX_ENDPOINTS
+    s=session()
+    assert s is not None
+    assert len(NSE_VIX_ENDPOINTS)>=2
+    assert all("nseindia.com" in u for u in NSE_VIX_ENDPOINTS)
