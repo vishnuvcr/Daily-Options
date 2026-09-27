@@ -892,3 +892,7 @@ Run **36336951355** stopped at unit tests after the feature-panel correction. Th
 ## 2026-09-27 — Phase 31.10 run 8 closure / run 9 frontier
 
 Run **36337049593** stopped in unit tests with one remaining fixture defect: `test_immediate_prior_positioning_is_required` still lacked the new `ts` column. E0425 is closed after updating that fixture. No data acquisition or numerical P&L ran. The next authoritative attempt is **run 9**.
+
+## 2026-09-27 — Phase 31.10 run 9 numerical completion / validation correction
+
+Run **36337194946** completed unit tests, official source/cache, data gate, Base and Stress discovery. The data gate passed and execution coverage was above 95% in both frictions. Validation failed only because the launcher looked for a root-level `reports/phase31_10/price_coverage.csv`; the actual outputs are friction-specific. E0426 is logged. The main and phase workflow validation paths are corrected. Numerical results remain provisional until the corrected validation step succeeds.
