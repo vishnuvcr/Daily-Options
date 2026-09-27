@@ -35,3 +35,8 @@ Build and unit-test the prior-session option/OI gamma reconstruction. The next n
 Run **36339811180** was still in the data-gate stage when the performance/methodology audit was performed. Its checked-out commit predates the vectorized hardening. No P&L is accepted from that run. The live branch now contains E0440's vectorized engine, frozen block-null permutation, and corrected regression.
 
 Run 3 is the next authoritative attempt from the hardened branch head.
+
+## Run 4 closure
+Run **36340212329** completed unit tests, restored the cache, and generated the gamma feature panel plus signal panel, then failed in the execution-price query on the same unquoted `close` alias. No P&L was accepted. E0443 is logged; the exact query projection is now corrected.
+
+Run 5 is the next authoritative attempt.
