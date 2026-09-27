@@ -702,11 +702,17 @@ Run **36335091335** stopped during unit tests before any institutional data or P
 
 Run **36337194946** completed the full numerical discovery after passing the official NSE participant-OI data gate. The gate had **1,164/1,164 feature-eligible sessions complete (100%)**, zero prior-positioning barrier violations, and all 1,234 participant-OI source files present. Base and Stress both produced the full 12-cell true grid, 60 null summaries and execution-price coverage above 95% for every cell. The run was quarantined only because validation expected a root-level coverage file while the engine writes separate friction-specific coverage files. **No P&L is accepted yet.** E0426 is logged; run 10 is the validation-only rerun.
 
-## 2026-09-27 — Phase 32 active frontier
+## 2026-09-27 — Phase 32 closed
 
-**Phase 32 — Options Skew / Smile Dislocation** is the current bounded numerical frontier on [phase-32-options-skew-smile-dislocation-v1](https://github.com/vishnuvcr/Daily-Options/tree/phase-32-options-skew-smile-dislocation-v1).
+**Phase 32 — Options Skew / Smile Dislocation** has completed its frozen 12-cell discovery experiment on [phase-32-options-skew-smile-dislocation-v1](https://github.com/vishnuvcr/Daily-Options/tree/phase-32-options-skew-smile-dislocation-v1).
 
-Run **36338601854** passed source verification, unit tests and pinned-cache restore, but the data gate found **0 valid four-quote IV surfaces out of 1,165 warm-up-complete sessions**, despite 100% strict-next-expiry coverage. No P&L was accepted. E0435 is logged. The branch now has quote-key normalization diagnostics and explicit data-gate enforcement before any Base/Stress discovery can run.
+Authoritative run **36339168867** passed the data and artifact gates:
+- 1,225 NIFTY 09:30 sessions
+- 98.11% valid four-quote IV-surface coverage after warm-up
+- 0 prior-surface look-ahead violations
+- 96.74–100.00% execution coverage across all 12 cells
+- 60 Base + 60 Stress null-control summaries
 
-[Phase 32 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-32-options-skew-smile-dislocation-v1/docs/phase32_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-32-options-skew-smile-dislocation-v1/docs/phase32_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-32-options-skew-smile-dislocation-v1/docs/phase32_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-32-options-skew-smile-dislocation-v1) · [workflow](https://github.com/vishnuvcr/Daily-Options/blob/main/.github/workflows/phase-32-main-launcher.yml)
+Economic result: **0/12 Base promotion passes and 0/12 Stress promotion passes**. Maximum mean weekly net was **-₹408.84 Base** and **-₹521.02 Stress**; maximum positive-week share was **16.42% Base** and **11.94% Stress**. Every true cell trailed its matched five-seed null mean. **WFA/OOS is not authorized.**
 
+[Phase 32 manuscript](https://github.com/vishnuvcr/Daily-Options/blob/phase-32-options-skew-smile-dislocation-v1/reports/phase32/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-32-options-skew-smile-dislocation-v1/docs/phase32_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-32-options-skew-smile-dislocation-v1/docs/phase32_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-32-options-skew-smile-dislocation-v1/docs/phase32_status.md) · [figures](https://github.com/vishnuvcr/Daily-Options/tree/phase-32-options-skew-smile-dislocation-v1/reports/phase32)
