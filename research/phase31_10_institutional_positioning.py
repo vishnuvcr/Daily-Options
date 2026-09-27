@@ -35,11 +35,15 @@ def load_nifty(root:Path)->pd.DataFrame:
 
 def feature_panel(nifty:pd.DataFrame, oi:pd.DataFrame)->pd.DataFrame:
     s=nifty[nifty.time=="09:30:00"][["date","open_px","close_px"]].drop_duplicates("date").sort_values("date").copy()
-    prev_close=nifty[nifty.time=="15:10:00"][["date","close_px"]].drop_duplicates("date").sort_values("date").rename(columns={"close_px":"prev_close"})
-    # previous completed NIFTY close for the opening gap
-    s=s.merge(prev_close,left_on=s["date"].map(lambda d: d),right_on=prev_close["date"],how="left").drop(columns=["key_0"],errors="ignore") if False else s
-    close_by_date=prev_close.set_index("date")["prev_close"]
-    s["prev_close"]=s["date"].map(close_by_date.shift(1))
+    # Previous completed NIFTY session close = last available index bar of the
+    # prior NIFTY trading session. Do not assume an exact 15:10 index print.
+    day_close=(nifty.sort_values("ts").groupby("date",as_index=False).tail(1)[["date","close_px"]]
+               .rename(columns={"close_px":"session_close"})
+               .sort_values("date"))
+    close_map=day_close.set_index("date")["session_close"]
+    ordered_dates=pd.Series(pd.to_datetime(s["date"]).drop_duplicates().sort_values())
+    prev_close_map=dict(zip(ordered_dates.dt.date, close_map.reindex([d.date() for d in ordered_dates]).shift(1)))
+    s["prev_close"]=s["date"].map(prev_close_map)
     s["gap_pct"]=(s["open_px"]-s["prev_close"])/s["prev_close"]
 
     oi=oi.copy()
@@ -49,6 +53,12 @@ def feature_panel(nifty:pd.DataFrame, oi:pd.DataFrame)->pd.DataFrame:
         if p not in piv: piv[p]=np.nan
     raw=piv[["FII","DII"]].rename(columns={"FII":"fii_raw","DII":"dii_raw"}).sort_index()
     raw["div_raw"]=raw["fii_raw"]-raw["dii_raw"]
+    # Only participant reports whose dates are themselves NIFTY trading
+    # sessions may serve as the prior-session observation. This prevents a
+    # special/clearing-date report that is absent from the NIFTY session
+    # calendar from being selected by merge_asof.
+    nifty_session_dates=set(s["date"].tolist())
+    raw=raw[raw.index.isin(nifty_session_dates)].copy()
     # Positioning used for NIFTY date t is t-1; no current-day positioning.
     s["position_date"]=s["date"].map(lambda d: pd.Timestamp(d).date()-pd.Timedelta(days=1))
     # map to the latest participant report strictly before the trade date
@@ -82,7 +92,12 @@ def feature_panel(nifty:pd.DataFrame, oi:pd.DataFrame)->pd.DataFrame:
 def data_gate(panel:pd.DataFrame, manifest:dict)->dict:
     raw_sessions=len(panel)
     eligible=int(panel.feature_eligible.sum())
-    complete=int(panel[panel.feature_eligible].notna().all(axis=1).sum()) if eligible else 0
+    eligible_rows=panel[panel.feature_eligible].copy()
+    complete_mask=(eligible_rows[list(FEATURES)].notna().all(axis=1)
+                   & eligible_rows["position_date"].notna()
+                   & eligible_rows["expected_position_date"].notna()
+                   & eligible_rows["barrier_ok"])
+    complete=int(complete_mask.sum()) if eligible else 0
     barrier_violations=int((~panel.barrier_ok & panel.feature_eligible).sum())
     missing_files=len(manifest.get("missing_files",[]))
     return {
