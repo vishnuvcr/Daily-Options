@@ -1,1 +1,1 @@
-Phase 32 run 4 trigger after verified E0430/E0431 SQL fix.
+Phase 32 run 5 trigger: source-integrity guard active; exact local_time SQL fix verified at branch head.
