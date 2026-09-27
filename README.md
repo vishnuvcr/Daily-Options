@@ -696,3 +696,8 @@ Phase 31.9 closed after authoritative run **36334135198**: 0/12 Base and 0/12 St
 ## 2026-09-27 — Phase 31.10 run 1 closure
 
 Run **36335091335** stopped during unit tests before any institutional data or P&L computation. E0417/E0418 are corrected. The next authoritative attempt is run 2 from the corrected Phase 31.10 branch.
+
+
+## 2026-09-27 — Phase 31.10 run 9 numerical completion / validation correction
+
+Run **36337194946** completed the full numerical discovery after passing the official NSE participant-OI data gate. The gate had **1,164/1,164 feature-eligible sessions complete (100%)**, zero prior-positioning barrier violations, and all 1,234 participant-OI source files present. Base and Stress both produced the full 12-cell true grid, 60 null summaries and execution-price coverage above 95% for every cell. The run was quarantined only because validation expected a root-level coverage file while the engine writes separate friction-specific coverage files. **No P&L is accepted yet.** E0426 is logged; run 10 is the validation-only rerun.
