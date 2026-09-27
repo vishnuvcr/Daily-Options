@@ -1,1 +1,1 @@
-Phase 33 run 4 trigger: execution-loader close alias and persistence race fixes are on branch head.
+Phase 33 run 5 trigger: exact execution SQL close/open aliases corrected; no economic-rule changes.
