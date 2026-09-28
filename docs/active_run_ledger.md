@@ -214,3 +214,6 @@ Authoritative run **36342637912** completed its full data gate, Base and Stress 
 Best frozen cell: GLOBAL_ABS >=1.5, 200-point long strangle, 09:31→15:10; Base mean weekly net **-₹139.27**; Stress mean weekly net **-₹186.93**. No WFA/OOS or result-driven tuning is authorized.
 
 [Phase 35 final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-35-global-shock-options-structure-v1/reports/phase35/final_result.md)
+
+## 2026-09-28 — Phase 35 closure
+Phase 35 global overnight shock × India-local IV–RV state is **RETIRED — DATA-LIMITED**. Authoritative successful workflow 36378249952 passed the feature gate (1,164 global-eligible; 1,144 IV-RV-complete; 98.28%; 0 prior-date violations). The frozen candidate population was 16 HIGH_VOL_STATE and 1 LOW_VOL_STATE days. HIGH_VOL_STATE quote coverage was 100% for both exits; LOW_VOL_STATE coverage was 0% in both exits. The preregistered requirement is >=95% coverage in every true cell, so no P&L, null inference, WFA/OOS, or promotion is accepted. [Phase 35 final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-35-global-shock-india-volatility-v1/reports/phase35/final_result.md)
