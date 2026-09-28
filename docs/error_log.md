@@ -488,3 +488,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0454 | 2026-09-27 | Phase 34 | Authoritative run 36341535504 found only 656/1,233 complete prior-session two-expiry surfaces (53.20%), below the preregistered 95% observability gate | No P&L, null economics, WFA or OOS accepted | Close Phase 34 DATA-LIMITED; do not relax expiry/strike coverage | CLOSED |
 
 | E0391 | 2026-09-28 | Phase 39 | Python banker’s rounding failed the frozen half-step ATM strike convention in unit test run 36409062624 | No data/P&L accepted | Replace with deterministic half-up ₹50 rounding and rerun | OPEN |
+
+| E0392 | 2026-09-28 | Phase 39 | Exact 09:30 option quote lookup yielded zero IV inputs on the pinned source, so the data gate failed before economic computation | No P&L accepted | Align option signal lookup to latest valid observation at or before 09:30, consistent with the repository's audited timestamp-cutoff convention | OPEN |
