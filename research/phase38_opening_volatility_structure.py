@@ -175,6 +175,8 @@ def add_0930_spot(panel: pd.DataFrame, nifty: pd.DataFrame) -> pd.DataFrame:
          .drop_duplicates("date").rename(columns={"close_px": "spot_0930"}))
     x = panel.drop(columns=["atm", "atm_0930"], errors="ignore").merge(s, on="date", how="left")
     x["atm"] = x["spot_0930"].map(lambda v: round_strike(v) if pd.notna(v) else np.nan)
+    x["feature_eligible"] = x["feature_eligible"] & x["spot_0930"].notna() & x["atm"].notna()
+    x["barrier_ok"] = x["barrier_ok"] & x["feature_eligible"]
     return x
 
 
