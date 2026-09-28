@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+  <title>Phase 35 mean weekly net by frozen cell</title>
+  <rect width="1200" height="760" fill="white"/>
+  <text x="40" y="38" font-family="Arial" font-size="24" font-weight="700">Phase 35 — Mean weekly net by frozen cell</text>
+  <text x="40" y="64" font-family="Arial" font-size="14">All 16 cells were negative in Base and Stress; target = +₹5,000/week.</text>
+  <line x1="520" y1="85" x2="520" y2="720" stroke="black"/>
+  <line x1="520" y1="720" x2="1160" y2="720" stroke="black"/>
+  <text x="508" y="742" text-anchor="end" font-family="Arial" font-size="12">0</text>
+  <text x="40" y="86" font-family="Arial" font-size="12">Cells ordered by feature / threshold / structure / exit</text>
+<text x="40" y="115" font-family="Arial" font-size="11">GLOBAL_ABS 1.0 STRADDLE 10:30</text>
+  <rect x="425.9824" y="105" width="94.0176" height="11" fill="#333"/>
+  <rect x="404.764" y="120" width="115.236" height="11" fill="#999"/>
+  <text x="530" y="115" font-family="Arial" font-size="10">Base -261</text>
+  <text x="530" y="130" font-family="Arial" font-size="10">Stress -320</text>
+<text x="40" y="153" font-family="Arial" font-size="11">GLOBAL_ABS 1.0 STRADDLE 15:10</text>
+  <rect x="386.62" y="143" width="133.38" height="11" fill="#333"/>
+  <rect x="366.06039999999996" y="158" width="153.9396" height="11" fill="#999"/>
+  <text x="530" y="153" font-family="Arial" font-size="10">Base -371</text>
+  <text x="530" y="168" font-family="Arial" font-size="10">Stress -428</text>
+<text x="40" y="191" font-family="Arial" font-size="11">GLOBAL_ABS 1.0 STRANGLE 10:30</text>
+  <rect x="442.6" y="181" width="77.39999999999999" height="11" fill="#333"/>
+  <rect x="421.3816" y="196" width="98.6184" height="11" fill="#999"/>
+  <text x="530" y="191" font-family="Arial" font-size="10">Base -215</text>
+  <text x="530" y="206" font-family="Arial" font-size="10">Stress -274</text>
+<text x="40" y="229" font-family="Arial" font-size="11">GLOBAL_ABS 1.0 STRANGLE 15:10</text>
+  <rect x="455.6356" y="219" width="64.36439999999999" height="11" fill="#333"/>
+  <rect x="436.3936" y="234" width="83.6064" height="11" fill="#999"/>
+  <text x="530" y="229" font-family="Arial" font-size="10">Base -179</text>
+  <text x="530" y="244" font-family="Arial" font-size="10">Stress -232</text>
+<text x="40" y="267" font-family="Arial" font-size="11">GLOBAL_ABS 1.5 STRADDLE 10:30</text>
+  <rect x="435.0508" y="257" width="84.94919999999999" height="11" fill="#333"/>
+  <rect x="416.7664" y="272" width="103.2336" height="11" fill="#999"/>
+  <text x="530" y="267" font-family="Arial" font-size="10">Base -236</text>
+  <text x="530" y="282" font-family="Arial" font-size="10">Stress -287</text>
+<text x="40" y="305" font-family="Arial" font-size="11">GLOBAL_ABS 1.5 STRADDLE 15:10</text>
+  <rect x="448.0828" y="295" width="71.9172" height="11" fill="#333"/>
+  <rect x="430.2664" y="310" width="89.7336" height="11" fill="#999"/>
+  <text x="530" y="305" font-family="Arial" font-size="10">Base -200</text>
+  <text x="530" y="320" font-family="Arial" font-size="10">Stress -249</text>
+<text x="40" y="343" font-family="Arial" font-size="11">GLOBAL_ABS 1.5 STRANGLE 10:30</text>
+  <rect x="465.8992" y="333" width="54.1008" height="11" fill="#333"/>
+  <rect x="447.6184" y="348" width="72.38159999999999" height="11" fill="#999"/>
+  <text x="530" y="343" font-family="Arial" font-size="10">Base -150</text>
+  <text x="530" y="358" font-family="Arial" font-size="10">Stress -201</text>
+<text x="40" y="381" font-family="Arial" font-size="11">GLOBAL_ABS 1.5 STRANGLE 15:10</text>
+  <rect x="469.8628" y="371" width="50.1372" height="11" fill="#333"/>
+  <rect x="452.7052" y="386" width="67.2948" height="11" fill="#999"/>
+  <text x="530" y="381" font-family="Arial" font-size="10">Base -139</text>
+  <text x="530" y="396" font-family="Arial" font-size="10">Stress -187</text>
+<text x="40" y="419" font-family="Arial" font-size="11">US_ASIA 1.0 STRADDLE 10:30</text>
+  <rect x="361.7044" y="409" width="158.29559999999998" height="11" fill="#333"/>
+  <rect x="328.7968" y="424" width="191.20319999999998" height="11" fill="#999"/>
+  <text x="530" y="419" font-family="Arial" font-size="10">Base -440</text>
+  <text x="530" y="434" font-family="Arial" font-size="10">Stress -531</text>
+<text x="40" y="457" font-family="Arial" font-size="11">US_ASIA 1.0 STRADDLE 15:10</text>
+  <rect x="130" y="447" width="390" height="11" fill="#333"/>
+  <rect x="130" y="462" width="390" height="11" fill="#999"/>
+  <text x="530" y="457" font-family="Arial" font-size="10">Base -1131</text>
+  <text x="530" y="472" font-family="Arial" font-size="10">Stress -1220</text>
+<text x="40" y="495" font-family="Arial" font-size="11">US_ASIA 1.0 STRANGLE 10:30</text>
+  <rect x="365.28999999999996" y="485" width="154.71" height="11" fill="#333"/>
+  <rect x="332.404" y="500" width="187.596" height="11" fill="#999"/>
+  <text x="530" y="495" font-family="Arial" font-size="10">Base -430</text>
+  <text x="530" y="510" font-family="Arial" font-size="10">Stress -521</text>
+<text x="40" y="533" font-family="Arial" font-size="11">US_ASIA 1.0 STRANGLE 15:10</text>
+  <rect x="251.03320000000002" y="523" width="268.9668" height="11" fill="#333"/>
+  <rect x="221.3152" y="538" width="298.6848" height="11" fill="#999"/>
+  <text x="530" y="533" font-family="Arial" font-size="10">Base -747</text>
+  <text x="530" y="548" font-family="Arial" font-size="10">Stress -830</text>
+<text x="40" y="571" font-family="Arial" font-size="11">US_ASIA 1.5 STRADDLE 10:30</text>
+  <rect x="328.70320000000004" y="561" width="191.2968" height="11" fill="#333"/>
+  <rect x="304.65880000000004" y="576" width="215.3412" height="11" fill="#999"/>
+  <text x="530" y="571" font-family="Arial" font-size="10">Base -531</text>
+  <text x="530" y="586" font-family="Arial" font-size="10">Stress -598</text>
+<text x="40" y="609" font-family="Arial" font-size="11">US_ASIA 1.5 STRADDLE 15:10</text>
+  <rect x="186.6544" y="599" width="333.3456" height="11" fill="#333"/>
+  <rect x="163.42000000000002" y="614" width="356.58" height="11" fill="#999"/>
+  <text x="530" y="609" font-family="Arial" font-size="10">Base -926</text>
+  <text x="530" y="624" font-family="Arial" font-size="10">Stress -991</text>
+<text x="40" y="647" font-family="Arial" font-size="11">US_ASIA 1.5 STRANGLE 10:30</text>
+  <rect x="353.4928" y="637" width="166.50719999999998" height="11" fill="#333"/>
+  <rect x="329.4016" y="652" width="190.59840000000003" height="11" fill="#999"/>
+  <text x="530" y="647" font-family="Arial" font-size="10">Base -463</text>
+  <text x="530" y="662" font-family="Arial" font-size="10">Stress -529</text>
+<text x="40" y="685" font-family="Arial" font-size="11">US_ASIA 1.5 STRANGLE 15:10</text>
+  <rect x="302.3584" y="675" width="217.64159999999998" height="11" fill="#333"/>
+  <rect x="280.68280000000004" y="690" width="239.31719999999999" height="11" fill="#999"/>
+  <text x="530" y="685" font-family="Arial" font-size="10">Base -605</text>
+  <text x="530" y="700" font-family="Arial" font-size="10">Stress -665</text>
+  <text x="1040" y="742" font-family="Arial" font-size="12">₹/week (negative bars extend left from zero)</text>
+</svg>
