@@ -514,3 +514,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E035-IVRV-017 | 2026-09-28 | Phase 35 | Persisted report directories retained artifacts from earlier concurrent/failed runs, contaminating diagnostics | No P&L accepted | Workflow now deletes and recreates `reports/phase35` before every authoritative execution | CLOSED |
 
 | E035-IVRV-017 | 2026-09-28 | Phase 35 | Debug showed 09:31 entry quotes were found but 10:30/15:10 exits were not; coverage/debug DuckDB connection lacked the audited Asia/Kolkata timezone | No P&L accepted | Added timezone normalization to local IV and execution diagnostic connections; also hardened the reconciliation validator against truly empty ledgers | CLOSED |
+
+| E035-IVRV-018 | 2026-09-28 | Phase 35 | Final clean-room execution established HIGH_VOL_STATE 16/16 quote coverage but LOW_VOL_STATE 0/1 in both exits | Phase cannot satisfy preregistered >=95% coverage in every true cell | Closed Phase 35 as DATA-LIMITED; no P&L or promotion accepted | CLOSED |
