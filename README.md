@@ -794,3 +794,7 @@ Phase 34 is **CLOSED / DATA-LIMITED**. Authoritative run **36341535504** reconst
 
 [Phase 45 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-45-gap-failure-confirmation-v1/docs/phase45_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-45-gap-failure-confirmation-v1/docs/phase45_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-45-gap-failure-confirmation-v1/docs/phase45_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-45-gap-failure-confirmation-v1)
 
+
+
+## Phase 46 — active
+[Phase 46 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-46-close-location-gap-v1/docs/phase46_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-46-close-location-gap-v1/docs/phase46_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-46-close-location-gap-v1/docs/phase46_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-46-close-location-gap-v1)
