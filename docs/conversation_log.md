@@ -141,3 +141,12 @@ The authoritative Falcon run **36213335815** was found to be abnormally slow aft
 ## 2026-09-27 — User: "Ok proceed" / Phase 31.9 continuation
 
 Continuation action: inspected the Phase 31.9 plan, branch status, error log, conversation log and latest GitHub Actions run before proceeding. Run 36253716626 failed at official NSE VIX acquisition with HTTP 403 from the initial NSE homepage request; no VIX data or P&L was produced. E0413 was logged and the acquisition helper was corrected to bypass the homepage, use official NSE historical VIX endpoints only, preserve manifest/response hashes, and add a direct-acquisition regression test. Run 5 will use the corrected phase branch. This log contains operational research decisions only and not hidden chain-of-thought.
+
+
+## 2026-09-28 — Phase 35 final clean-room result
+- Feature gate passed: 1,164 global-feature-eligible sessions; 1,144 IV-RV-complete sessions; 98.28% coverage; 0 prior-date violations.
+- Frozen candidate population: 16 HIGH_VOL_STATE days and 1 LOW_VOL_STATE day.
+- HIGH_VOL_STATE execution quote coverage was 100% for both exits.
+- LOW_VOL_STATE execution quote coverage was 0% for both exits.
+- Per preregistered gate, Phase 35 is DATA-LIMITED and retired without accepted P&L, null inference, WFA/OOS or tuning.
+- Final result manuscript and status artifacts were updated.
