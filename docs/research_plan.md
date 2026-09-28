@@ -348,3 +348,36 @@ In both Base and Stress: mean weekly net ≥₹5,000, median weekly net ≥₹5,
 
 ### Stop rule
 No post-result changes to the ATM/chain widths, 60-valid-observation lookback, ±0.75 z thresholds, expiry rule, gap mapping, entry, exits, spread width, IV construction, cost model or lot sizing.
+
+
+## Phase 43 — NIFTY Weekday × Opening-Gap Direction
+
+### Research question
+Does the trading weekday condition whether the current NIFTY opening gap continues or reverses strongly enough to generate at least ₹5,000 net per completed trading week after realistic costs?
+
+### Literature basis
+Recent NIFTY research finds that day-of-week effects are time-varying rather than stable across all periods, supporting a bounded preregistered test rather than post-hoc weekday selection. Dhankhar et al. (2025) study Nifty 50 day-of-week effects using rolling windows and GARCH/EGARCH methods; Sahoo (2021) also documents that weekday effects changed between pre-COVID and COVID periods. These studies motivate testing the weekday interaction without assuming a particular weekday is profitable.
+
+### Frozen feature and execution
+- State is the trading weekday: Monday, Tuesday, Wednesday, Thursday, Friday.
+- Current opening gap = 09:15 NIFTY open / prior completed 15:10 close − 1; zero gap = no trade.
+- FOLLOW_GAP and FADE_GAP are both tested for every weekday.
+- Entry 09:31 option open; exits 10:30 and 15:10 option close.
+- One-lot 200-point ATM directional debit spread; nearest NIFTY expiry on/after trade date; historical lot sizes.
+- Existing Paytm Money/NSE/statutory transaction-cost model; Base/Stress slippage ₹0.20/₹0.40 per option-price unit/order.
+
+### Discovery matrix and controls
+5 weekdays × 2 gap mappings × 2 exits = 20 true cells. Five fixed full-panel permutation null seeds 101,202,303,404,505 permute weekday labels across eligible dates while leaving same-day gap and execution data unchanged.
+
+### Data gates
+- ≥95% session eligibility and opening-gap coverage;
+- deterministic expiry, ATM strike and lot mapping;
+- zero prior-information violations;
+- ≥95% execution quote coverage in every true cell;
+- accounting reconciliation.
+
+### Promotion gate
+In both Base and Stress, a promoted cell must have mean weekly net ≥₹5,000, median weekly net ≥₹5,000, positive-week rate ≥70%, execution coverage ≥95% and clean accounting. No WFA/OOS unless at least one frozen true cell clears all promotion criteria in both Base and Stress; if none does, the phase closes negative.
+
+### Stop rule
+No post-result weekday selection, threshold tuning, execution-time substitution, strike/expiry substitution, cost-model changes or gap-mapping changes.
