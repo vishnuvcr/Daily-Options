@@ -39,6 +39,9 @@ def global_panel(idx,gd):
 def opt(con,path,ts,strike,typ,field):
  p=str(path).replace(chr(39),chr(39)*2); q=f"SELECT CAST({field} AS DOUBLE) px FROM read_parquet('{p}') WHERE CAST(timestamp AS TIMESTAMP)=TIMESTAMP '{ts}' AND CAST(strike AS DOUBLE)={float(strike)} AND UPPER(CAST(option_type AS VARCHAR))='{typ}' AND {field}>0 LIMIT 1"; z=con.execute(q).df(); return None if z.empty else float(z.iloc[0].px)
 
+def opt_latest(con,path,cutoff,strike,typ,field):
+ p=str(path).replace(chr(39),chr(39)*2); q=f"SELECT CAST({field} AS DOUBLE) px,CAST(timestamp AS TIMESTAMP) ts FROM read_parquet('{p}') WHERE CAST(timestamp AS TIMESTAMP)<=TIMESTAMP '{cutoff}' AND CAST(strike AS DOUBLE)={float(strike)} AND UPPER(CAST(option_type AS VARCHAR))='{typ}' AND {field}>0 ORDER BY ts DESC LIMIT 1"; z=con.execute(q).df(); return None if z.empty else float(z.iloc[0].px)
+
 def bs(s,k,t,v):
  if t<=0:return max(s-k,0)
  d1=(math.log(s/k)+.5*v*v*t)/(v*math.sqrt(t)); d2=d1-v*math.sqrt(t); n=lambda x:.5*(1+math.erf(x/math.sqrt(2))); return s*n(d1)-k*n(d2)
@@ -59,7 +62,7 @@ def local_state(idx,root,files):
   if len(prev)<20:continue
   rv=float(prev.tail(20).close.pct_change().dropna().std(ddof=1)*math.sqrt(252)*100); pdx=prev.index[-1]; e=next((e for e in sorted(files) if e>=pdx.date()),None)
   if e is None:continue
-  spot=float(prev.loc[pdx,'close']); atm=round(spot/50)*50; path=files[e]; ts=f'{pdx.date()} 15:10:00'; ce=opt(con,path,ts,atm,'CE','close'); pe=opt(con,path,ts,atm,'PE','close')
+  spot=float(prev.loc[pdx,'close']); atm=round(spot/50)*50; path=files[e]; ts=f'{pdx.date()} 15:30:00'; ce=opt_latest(con,path,ts,atm,'CE','close'); pe=opt_latest(con,path,ts,atm,'PE','close')
   if ce is None or pe is None:continue
   t=max((pd.Timestamp(f'{e} 15:30:00')-pd.Timestamp(ts)).total_seconds()/31536000,1/31536000); ivv=iv(spot,atm,t,ce+pe)
   if ivv is not None:rows.append({'date':day,'prior_iv':ivv*100,'prior_rv':rv,'iv_rv_gap':ivv*100-rv})
