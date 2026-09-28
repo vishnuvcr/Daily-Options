@@ -69,6 +69,9 @@ def build_panel(root,out):
         d=idx.iloc[i].d; p=idx.iloc[i-1]; pp=idx.iloc[i-2]
         fut=[e for e in ed if e>p.d]
         if not fut: diag.append({"d":str(d),"status":"MISSING_EXPIRY"}); continue
+        if not np.isfinite(p.close) or not np.isfinite(pp.close) or not np.isfinite(idx.iloc[i].open):
+            diag.append({"d":str(d),"status":"MISSING_INDEX_PRICE","prior_day":str(p.d),"prior2_day":str(pp.d)})
+            continue
         exp=fut[0]; atm=math.floor(float(p.close)/50+.5)*50
         # Fixed expiry/strike selected using prior-session close; all three snapshots are historical.
         a=snap(con,exps[exp],pp.d,exp,atm,("15:10:00",))
