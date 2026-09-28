@@ -47,3 +47,4 @@ No Phase 41 P&L is accepted until unit tests, data gates, execution coverage, ac
 - Phase 43: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36471290988; 20 true cells; no cell met the ₹5,000/week promotion gate in both Base and Stress.
 - Phase 44: **CLOSED DATA-LIMITED** — authoritative run 36471949846; LARGE_GAP cells had 94.44% execution coverage, below the frozen 95% gate; no P&L promotion accepted.
 - Phase 45: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36472742169; no 12-cell confirmation state cleared the promotion gate.
+- Phase 46: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36473334899; no 12-cell close-location state cleared the promotion gate.
