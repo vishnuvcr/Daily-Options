@@ -492,3 +492,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0402 | 2026-09-28 | Phase 40 | RV20 included current signal-day close, violating the prior-day information barrier | No numerical evidence existed | Shifted RV20 one session | CLOSED |
 
 | E0403 | 2026-09-28 | Phase 40 | Source diagnostic used mixed Timestamp/date types for expiry comparison | No P&L accepted | Normalize diagnostic date types before rerun | CLOSED |
+
+| E0404 | 2026-09-28 | Phase 40 | Authoritative run 36466313849 passed all integrity gates but 0/8 Base and 0/8 Stress cells cleared the ₹5,000/week discovery gate | Phase retired; no WFA/OOS | Freeze as negative discovery; no tuning | CLOSED |
