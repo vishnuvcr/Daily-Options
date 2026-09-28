@@ -207,6 +207,7 @@ def query_0930_iv(root, requests):
         z = con.execute(q).df()
         if z.empty:
             continue
+        z["trade_date"] = pd.to_datetime(z["trade_date"]).dt.date
         for d, dg in g.groupby("trade_date"):
             spot = float(dg["spot"].iloc[0])
             atm = float(dg["atm_strike"].iloc[0])
