@@ -372,6 +372,10 @@ def execution_price_map(signals, root):
               )
         """
         z = con.execute(q).df()
+        if z.empty:
+            continue
+        z["trade_date"] = pd.to_datetime(z["trade_date"]).dt.date
+        z["expiry"] = pd.to_datetime(z["expiry"]).dt.date
         for rr in z.itertuples(index=False):
             key = (rr.trade_date, rr.expiry, rr.local_time, rr.option_type, float(rr.strike))
             prices[key] = float(rr.open_px if rr.local_time == "09:31:00" else rr.close_px)
