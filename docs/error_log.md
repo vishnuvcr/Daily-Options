@@ -496,3 +496,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 
 
 | E0417 | 2026-09-29 | Phase 42 first authoritative run 36468978862 | Data-gate computation raised ValueError converting a missing prior-session NIFTY close (NaN) to the deterministic ATM strike; no P&L or gate result produced | Run quarantined; no economic interpretation | Added explicit finite-price guard and regression coverage; rerun with the frozen hypothesis and data gates unchanged | FIXED — rerun required |
+
+| E0418 | 2026-09-29 | Phase 42 execution quote coverage | Authoritative run 36469315584 attempt 2 passed tests/source acquisition and feature eligibility (95.0777%) but the frozen execution panel requested 5,364 exact option quote keys and received 0, giving 0% coverage in all eight cells | No P&L, null economics, WFA or OOS accepted | Preserve the frozen execution timestamps/strikes/expiry and close Phase 42 DATA-LIMITED; use the diagnostic evidence to avoid coverage-threshold relaxation | CLOSED — data-limited |
