@@ -1,7 +1,5 @@
 # Phase 44 Status
 
-**State: PREREGISTERED / ENGINEERING BUILD**
+**State: CLOSED — DATA-LIMITED**
 
-Branch: phase-44-gap-magnitude-direction-v1
-
-Frozen 12-cell discovery: SMALL/MEDIUM/LARGE absolute gap × FOLLOW/FADE × 10:30/15:10, with five permutation null seeds per friction regime. Thresholds are fixed at 0.50% and 1.00% before numerical results.
+Authoritative run **36471949846** passed unit/data acquisition and produced Base/Stress calculations, but validation failed the frozen >=95% execution-coverage requirement. All four LARGE_GAP cells had 68/72 executed trades = **94.44%**; SMALL_GAP and MEDIUM_GAP cells exceeded 98.8%. No P&L, promotion or WFA/OOS is accepted. No bucket threshold or execution rule was changed.
