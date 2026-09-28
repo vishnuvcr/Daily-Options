@@ -939,3 +939,7 @@ Authoritative run **36378802491** passed the corrected global data gate and four
 ## 2026-09-28 — Phase 37 retired
 
 Authoritative run **36379200435** passed data and execution coverage. All four true cells failed the frozen weekly economic promotion gate in Base and Stress. No WFA/OOS or post-result retuning is authorized. See [Phase 37 final result](../reports/phase37/final_result.md).
+
+## 2026-09-28 — Phase 37 retired after discovery gate failure
+
+Authoritative run **36379200435** passed feature and execution gates. All four global-shock × NIFTY-opening-dislocation cells were negative in Base and Stress and failed the ₹5,000/week promotion criteria. No WFA/OOS or result-driven retuning is authorized. See [Phase 37 final result](../reports/phase37/final_result.md).
