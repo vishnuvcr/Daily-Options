@@ -202,3 +202,7 @@ Phase 44 authoritative run 36471949846 passed unit/data acquisition and produced
 
 ## 2026-09-29 — Phase 45 preregistration
 Phase 45 tests a fixed opening-gap confirmation mechanism: |gap|≥0.50%, then GAP_FAILURE versus GAP_CONTINUATION based on the 09:15→09:29 NIFTY return, plus a NO_CONFIRMATION control state. The frozen matrix is 12 true cells with five permutation nulls per cell, realistic friction and the same promotion gate.
+
+
+## 2026-09-29 — Phase 46 preregistration
+Phase 46 tests prior-session close location within its high-low range (<0.33, 0.33–0.67, >0.67) × next opening-gap direction, with FOLLOW/FADE and 10:30/15:10 exits. The matrix and promotion gate are frozen before results.
