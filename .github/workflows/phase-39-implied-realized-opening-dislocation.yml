@@ -1,0 +1,162 @@
+name: Phase 39 implied-realized opening dislocation
+
+on:
+  push:
+    paths:
+      - ".github/phase39-main-launch.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase39-implied-realized-opening-dislocation
+  cancel-in-progress: false
+
+jobs:
+  phase39:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-39-implied-realized-opening-dislocation-v1
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install pinned runtime
+        run: |
+          python -m pip install --disable-pip-version-check \
+            pandas==2.3.2 \
+            numpy==2.1.3 \
+            duckdb==1.3.2 \
+            pyarrow==19.0.1 \
+            pytest==8.4.2 \
+            huggingface_hub==0.35.3 \
+            requests==2.32.5
+
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_phase39_implied_realized_opening_dislocation.py
+
+      - name: Restore pinned NIFTY/options cache
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase39_trademarkk
+          key: phase39-trademarkk-51ca58c-v1
+          restore-keys: |
+            phase31-trademarkk-51ca58c-
+            phase38-trademarkk-51ca58c-
+            phase30-trademarkk-51ca58c-
+
+      - name: Acquire or reuse exact-expiry NIFTY source
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase39_trademarkk
+          if [ ! -s data/cache/phase39_trademarkk/index/NIFTY.parquet ] || \
+             [ "$(find data/cache/phase39_trademarkk/options/NIFTY -maxdepth 1 -name '*.parquet' 2>/dev/null | wc -l)" -lt 200 ]; then
+            for attempt in 1 2 3 4; do
+              python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="thetrademarkk/india-index-options-1m",repo_type="dataset",revision="51ca58c",local_dir="data/cache/phase39_trademarkk",allow_patterns=["index/NIFTY.parquet","options/NIFTY/*.parquet"])' && break
+              if [ "$attempt" -eq 4 ]; then exit 1; fi
+              sleep $((attempt*15))
+            done
+          fi
+          test -s data/cache/phase39_trademarkk/index/NIFTY.parquet
+          test "$(find data/cache/phase39_trademarkk/options/NIFTY -maxdepth 1 -name '*.parquet' | wc -l)" -ge 200
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("data/cache/phase39_trademarkk")
+          files=sorted(str(p.relative_to(root)) for p in (root/"options"/"NIFTY").glob("*.parquet"))
+          Path("reports/phase39").mkdir(parents=True,exist_ok=True)
+          Path("reports/phase39/source_manifest.json").write_text(json.dumps({
+              "dataset":"thetrademarkk/india-index-options-1m",
+              "revision":"51ca58c",
+              "index_file":"index/NIFTY.parquet",
+              "option_file_count":len(files),
+              "option_files_head":files[:10],
+              "option_files_tail":files[-10:]
+          },indent=2))
+          PY
+
+      - name: Run Phase 39 data gate
+        run: |
+          PYTHONPATH=. python research/phase39_implied_realized_opening_dislocation.py \
+            --data data/cache/phase39_trademarkk \
+            --out reports/phase39/gate \
+            --slippage 0.20 \
+            --gate-only
+
+      - name: Enforce data gate
+        run: |
+          python - <<'PY'
+          import json,sys
+          g=json.load(open("reports/phase39/gate/data_gate.json"))
+          print(json.dumps(g,indent=2))
+          sys.exit(0 if g["status"]=="PASS" else 1)
+          PY
+
+      - name: Run Base discovery
+        run: |
+          PYTHONPATH=. python research/phase39_implied_realized_opening_dislocation.py \
+            --data data/cache/phase39_trademarkk \
+            --out reports/phase39/base \
+            --slippage 0.20
+
+      - name: Run Stress discovery
+        run: |
+          PYTHONPATH=. python research/phase39_implied_realized_opening_dislocation.py \
+            --data data/cache/phase39_trademarkk \
+            --out reports/phase39/stress \
+            --slippage 0.40
+
+      - name: Validate Phase 39 artifacts
+        run: |
+          python - <<'PY'
+          import pandas as pd, json
+          g=json.load(open("reports/phase39/gate/data_gate.json"))
+          assert g["status"]=="PASS",g
+          assert g["prior_information_violations"]==0
+          assert g["post_warmup_eligibility_rate"]>=0.95
+          assert g["iv_input_coverage"]>=0.95
+          for friction in ("base","stress"):
+              s=pd.read_csv(f"reports/phase39/{friction}/true_cell_summary.csv")
+              assert len(s)==8,(friction,len(s))
+              assert s["accounting_ok"].all(),friction
+              cov=pd.read_csv(f"reports/phase39/{friction}/price_coverage.csv")
+              assert len(cov)==8,(friction,len(cov))
+              assert cov["execution_coverage"].min()>=0.95,(friction,cov["execution_coverage"].min())
+              assert cov["expected_signals"].sum()>0,(friction,"no true signals")
+              t=pd.read_csv(f"reports/phase39/{friction}/trades.csv")
+              assert len(t)>0,(friction,"zero executed true trades")
+              n=pd.read_csv(f"reports/phase39/{friction}/null_summary.csv")
+              assert len(n)==40,(friction,len(n))
+              assert n["null_seed"].nunique()==5
+          PY
+
+      - name: Persist Phase 39 reports
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir -p reports/phase39
+          git add -f reports/phase39
+          if ! git diff --cached --quiet; then
+            git commit -m "Phase 39: persist implied-realized opening research outputs"
+            for attempt in 1 2 3; do
+              if git push origin HEAD:phase-39-implied-realized-opening-dislocation-v1; then exit 0; fi
+              git fetch origin phase-39-implied-realized-opening-dislocation-v1
+              git rebase FETCH_HEAD
+            done
+            exit 1
+          fi
+
+      - name: Upload Phase 39 artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase39-implied-realized-opening-dislocation
+          path: reports/phase39
