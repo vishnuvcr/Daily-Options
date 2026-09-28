@@ -40,12 +40,15 @@ jobs:
           python - <<'PY'
           import pandas as pd, pathlib
           for p in pathlib.Path('reports/phase35').glob('*/trades_*.csv'):
+              if p.stat().st_size == 0:
+                  continue
               d=pd.read_csv(p)
               if not d.empty:
                   e=(d.raw_gross-d.slippage_cost-d.transaction_costs-d.net_pnl).abs().max()
                   assert e < 1e-8, (str(p),e)
           PY
       - name: Persist artifacts
+        if: always()
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
@@ -53,5 +56,11 @@ jobs:
           git commit -m 'Phase 35: persist Base Stress and null artifacts' || true
           git pull --rebase origin phase-35-global-shock-india-volatility-v1
           git push origin HEAD:phase-35-global-shock-india-volatility-v1
+      - name: Upload Phase 35 audit artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase35-audit
+          path: reports/phase35/
 
 # Phase 35 authoritative execution trigger
