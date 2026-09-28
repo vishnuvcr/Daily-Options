@@ -11,7 +11,7 @@ PREREGISTERED / READY FOR NUMERICAL EXECUTION.
 5. Separate branch created: `phase-38-opening-volatility-structure-v1`.
 
 ## Pending
-1. CI verification (PR #92; workflow registration pending).
+1. CI verification (PR #92; retriggered by this status-only commit because no run/check record was visible on the prior head).
 2. Pinned source acquisition/validation.
 3. Data gate.
 4. Base discovery.
