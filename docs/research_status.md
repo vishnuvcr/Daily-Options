@@ -927,3 +927,7 @@ Next research family must be materially distinct and preregistered.
 Phase 34 multi-expiry volatility term structure authoritative run **36341535504** is closed **DATA-LIMITED**: only 656/1,233 expected prior-session two-expiry surfaces were complete (53.20%) versus the frozen 95% requirement. No economic P&L was accepted.
 
 Next family: global overnight shock × India-local volatility/options state, with a new preregistered branch and independent gate.
+
+## 2026-09-28 — Phase 35 closed DATA-LIMITED
+
+Authoritative run **36378249952** completed the frozen Phase 35 pipeline. Feature construction passed with 1,144/1,164 full IV-RV eligible sessions (98.28%) and zero prior-information violations. The frozen candidate set was 17 days: 1 LOW_VOL_STATE and 16 HIGH_VOL_STATE. HIGH_VOL_STATE had 100% entry/exit quote coverage in both horizons; LOW_VOL_STATE had 0% in both horizons. Per the preregistered >=95% execution-coverage rule, Phase 35 is **CLOSED DATA-LIMITED**. No P&L, WFA/OOS, or result-driven retuning is authorized. See [Phase 35 final result](../reports/phase35/final_result.md).
