@@ -788,5 +788,7 @@ Phase 34 is **CLOSED / DATA-LIMITED**. Authoritative run **36341535504** reconst
 
 [Phase 43 manuscript](https://github.com/vishnuvcr/Daily-Options/blob/phase-43-weekday-gap-direction-v1/reports/phase43/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-43-weekday-gap-direction-v1/docs/phase43_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-43-weekday-gap-direction-v1/docs/phase43_status.md)
 
-**Phase 44 — NIFTY opening-gap magnitude × gap direction is now the active preregistered frontier.** It uses fixed small/medium/large absolute-gap buckets, both FOLLOW/FADE mappings and 10:30/15:10 exits, with the same friction, historical lots, five permutation-null controls and ₹5,000/week promotion gate.
+**Phase 44 — NIFTY opening-gap magnitude × gap direction is now the active preregistered frontier.** It uses fixed SMALL (<0.50%), MEDIUM (0.50%–<1.00%) and LARGE (≥1.00%) absolute-gap buckets, both FOLLOW/FADE mappings and 10:30/15:10 exits, with the same friction, historical lots, five permutation-null controls and ₹5,000/week promotion gate.
+
+[Phase 44 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-44-gap-magnitude-direction-v1/docs/phase44_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-44-gap-magnitude-direction-v1/docs/phase44_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-44-gap-magnitude-direction-v1/docs/phase44_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-44-gap-magnitude-direction-v1)
 
