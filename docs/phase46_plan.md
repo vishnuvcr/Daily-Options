@@ -1,0 +1,3 @@
+# Phase 46 — Prior-Day Close Location × Opening-Gap Direction
+
+Frozen state is prior completed session close location within its high-low range: LOW_CLOSE <0.33, MID_CLOSE 0.33–0.67, HIGH_CLOSE >0.67. Current opening gap is 09:15 open / prior 15:10 close − 1; zero gap is no-trade. Test FOLLOW/FADE at 10:30 and 15:10 with the validated one-lot 200-point debit spread, nearest expiry, historical lots, existing Paytm Money/NSE/statutory friction and Base/Stress slippage. Twelve true cells and five fixed state-permutation nulls per cell. Promotion requires mean and median weekly net ≥₹5,000, positive-week rate ≥70%, ≥95% execution coverage and clean accounting in both Base and Stress.
