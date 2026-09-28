@@ -783,3 +783,12 @@ Global shock × NIFTY opening dislocation completed authoritative run **36379200
 
 ## Phase 37 — CLOSED / RETIRED (2026-09-28)
 Global shock × NIFTY opening dislocation completed authoritative run **36379200435**. Data and quote-coverage gates passed, but all four cells were negative in Base and Stress. No WFA/OOS or result-driven retuning is authorized. [Final result](reports/phase37/final_result.md) · [Plan](docs/phase37_plan.md) · [Status](docs/research_status.md)
+
+
+## Phase 38 — NIFTY Opening Volatility / Price-Structure (2026-09-28)
+
+**Active frontier:** a preregistered NIFTY-only test of first-15-minute range volatility state plus early directional sign, translated into 200-point debit spreads. The frozen matrix has 8 true cells (HIGH/LOW volatility × CONTINUE/FADE × 10:30/15:10), five fixed null seeds, Base/Stress slippage, historical lot sizes, and the existing Paytm Money/NSE/statutory cost model.
+
+[Phase 38 plan](docs/phase38_plan.md) · [literature review](docs/phase38_literature_review.md) · [status](docs/phase38_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-38-opening-volatility-structure-v1) · [workflow](.github/workflows/phase-38-main-launcher.yml)
+
+No economic result is accepted until the authoritative workflow passes data, quote-coverage and accounting gates in both friction regimes.
