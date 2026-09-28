@@ -183,7 +183,7 @@ def query_0930_iv(root, requests):
         q = f"""
             WITH src AS (
                 SELECT
-                    CAST(trading_day AS DATE) AS trade_date,
+                    CAST(timestamp AS DATE) AS trade_date,
                     CAST(expiry AS DATE) AS expiry,
                     CAST(timestamp AS TIMESTAMP) AS ts,
                     strftime(CAST(timestamp AS TIMESTAMP), '%H:%M:%S') AS local_time,
@@ -191,11 +191,11 @@ def query_0930_iv(root, requests):
                     CAST(strike AS DOUBLE) AS strike,
                     CAST(close AS DOUBLE) AS close_px
                 FROM read_parquet('{ps}', union_by_name=true)
-                WHERE CAST(trading_day AS DATE) IN ({dates})
+                WHERE CAST(timestamp AS DATE) IN ({dates})
                   AND CAST(strike AS DOUBLE) IN ({strikes})
                   AND UPPER(CAST(option_type AS VARCHAR)) IN ('CE','PE')
                   AND close > 0
-                  AND CAST(timestamp AS TIMESTAMP) <= CAST(trading_day AS TIMESTAMP) + INTERVAL '9 hours 30 minutes'
+                  AND strftime(CAST(timestamp AS TIMESTAMP), '%H:%M:%S') <= '09:30:00'
             )
             SELECT trade_date, expiry, option_type, strike, close_px, ts
             FROM src
