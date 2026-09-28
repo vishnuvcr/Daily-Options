@@ -20,7 +20,7 @@ def charge(price,action,lot,d):
  return 20+.18*(20+ex+sebi)+ex+sebi+stt+stamp
 
 def index(root):
- con=duckdb.connect(); con.execute("SET TimeZone='Asia/Kolkata'") p=str(root/'index/NIFTY.parquet').replace(chr(39),chr(39)*2)
+ con=duckdb.connect(); con.execute("SET TimeZone='Asia/Kolkata'"); p=str(root/'index/NIFTY.parquet').replace(chr(39),chr(39)*2)
  q=f"SELECT CAST(timestamp AS TIMESTAMP) ts,CAST(open AS DOUBLE) open,CAST(high AS DOUBLE) high,CAST(low AS DOUBLE) low,CAST(close AS DOUBLE) close_px FROM read_parquet('{p}') WHERE CAST(timestamp AS DATE) BETWEEN DATE '{START}' AND DATE '{END}' ORDER BY ts"
  x=con.execute(q).df(); con.close(); x.rename(columns={'close_px':'close'},inplace=True); x.ts=pd.to_datetime(x.ts); x['date']=x.ts.dt.normalize(); x['time']=x.ts.dt.strftime('%H:%M:%S'); return x.drop_duplicates('ts')
 
