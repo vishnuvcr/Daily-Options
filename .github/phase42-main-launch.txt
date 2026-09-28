@@ -1,0 +1,3 @@
+phase=42
+branch=phase-42-option-day-night-asymmetry-v1
+purpose=authoritative preregistered launch
