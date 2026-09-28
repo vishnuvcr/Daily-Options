@@ -767,3 +767,7 @@ Phase 34 is **CLOSED / DATA-LIMITED**. Authoritative run **36341535504** reconst
 [Phase 34 manuscript](https://github.com/vishnuvcr/Daily-Options/blob/phase-34-multi-expiry-vol-term-structure-v1/reports/phase34/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-34-multi-expiry-vol-term-structure-v1/docs/phase34_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-34-multi-expiry-vol-term-structure-v1/docs/phase34_status.md)
 
 **Next planned family:** global overnight shock × India-local volatility/options state.
+
+
+## Phase 35 — CLOSED DATA-LIMITED (2026-09-28)
+The preregistered Global Overnight Shock × India-Local Volatility State family completed authoritative run **36378249952**. The global/IV-RV feature gate passed at **98.28% coverage with zero prior-information violations**. Execution coverage was **100% for both HIGH_VOL_STATE cells** but **0% for both LOW_VOL_STATE cells** (one candidate day), so the frozen >=95% per-cell execution gate failed. No P&L, WFA/OOS, or result-driven retuning is authorized. [Phase 35 final result](reports/phase35/final_result.md) · [Phase 35 plan](docs/phase35_plan.md) · [Research status](docs/research_status.md) · [Error log](docs/error_log.md)
