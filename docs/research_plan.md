@@ -226,3 +226,38 @@ Authoritative run **36340721257** passed corrected unit/data reconstruction but 
 ## Phase 34 — Multi-Expiry Volatility Term Structure — next planned family
 
 The next bounded family will use prior-session NIFTY option-implied volatility across two fixed expiries. The hypothesis is that unusually steep/inverted front-versus-back IV term structure may predict short-horizon mean reversion of a defined-risk calendar structure. A finite preregistered grid, Base/Stress friction, null controls, strict prior-information timing, and the same ₹5,000/week economic gate are mandatory before testing.
+
+
+## Phase 39 — NIFTY Option-Implied vs Realized Opening-Move Dislocation
+
+Phase 39 is the next distinct source-faithful family after the closures of Phases 34–38. It tests whether the size of the first 15-minute NIFTY move relative to the contemporaneous option-implied 15-minute move contains short-horizon directional information.
+
+### Frozen research question
+Does a NIFTY opening move that is unusually large or unusually small relative to the 09:30 ATM option-implied 15-minute move predict continuation or reversal strongly enough to generate at least ₹5,000 net per completed trading week after realistic costs?
+
+### Frozen signal construction
+- Session opening reference: NIFTY 09:15 bar open.
+- Realized opening return: (NIFTY close at 09:29 − 09:15 open) / 09:15 open.
+- ATM reference: nearest ₹50 strike to NIFTY 09:30 close.
+- Implied-volatility source: nearest NIFTY expiry strictly after the trade date; 09:30 CE/PE close-derived IV; average CE/PE IV.
+- Implied 15-minute move: spot × ATM IV × sqrt(15/390).
+- Realized-to-implied ratio: absolute realized opening return divided by implied 15-minute move percentage.
+- Standardization: strictly prior 60 completed sessions of the raw ratio.
+- State HIGH_DISLOCATION if z >= +0.75; LOW_DISLOCATION if z <= −0.75; otherwise no trade.
+- Direction: sign of the same-session 09:15→09:29 return.
+
+### Frozen execution
+- CONTINUE: option side follows opening direction.
+- FADE: option side is opposite opening direction.
+- One-lot 200-point debit spread.
+- Entry 09:31 IST using option open.
+- Exits 10:30 and 15:10 IST using option close.
+- Historical NIFTY lot sizes.
+- Existing Paytm Money/NSE/statutory cost model.
+- Base/Stress slippage ₹0.20/₹0.40 per option-price unit/order.
+
+### Frozen discovery matrix
+2 states × 2 mappings × 2 exits = 8 true cells, plus five fixed full-panel permutation null seeds. A true cell must meet mean weekly net ≥₹5,000, median weekly net ≥₹5,000 and positive-week rate ≥70% in both Base and Stress, with ≥95% execution coverage and clean accounting, before WFA/OOS.
+
+### Stop rule
+No post-result adjustment of the 60-session lookback, ±0.75 thresholds, 09:15–09:29 interval, IV horizon scaling, expiry rule, direction mapping, spread width, exits, or cost model.
