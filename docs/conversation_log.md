@@ -190,3 +190,7 @@ Phase 43 was then preregistered as a distinct weekday-conditioned opening-gap fa
 Phase 43 authoritative clean run 36471290988 passed all data and validation gates. 1,160/1,168 post-warm-up sessions were feature-eligible (99.3151%), execution coverage was above 97.8% in every true cell, and accounting reconciled. None of 20 weekday × gap-mapping × exit cells met the ₹5,000 mean/median weekly and 70% positive-week promotion gate in both Base and Stress. Best cell was Thursday/FADE/15:10 at ₹46.87/week Base and ₹5.85/week Stress with negative medians. Phase 43 is closed NEGATIVE DISCOVERY; no WFA/OOS or tuning was authorized.
 
 Phase 44 is now the next preregistered family: fixed opening-gap magnitude buckets × gap direction, motivated by published gap-size evidence that intraday gap behavior varies with magnitude. Operational research decisions only; hidden chain-of-thought is not stored.
+
+
+## 2026-09-29 — Phase 44 preregistration
+Phase 44 was preregistered after the negative Phase 43 closure. The frozen hypothesis tests absolute opening-gap magnitude buckets (<0.50%, 0.50%–<1.00%, ≥1.00%) × FOLLOW/FADE × 10:30/15:10, with realistic option execution friction and fixed permutation nulls. No threshold selection will be made after observing results.
