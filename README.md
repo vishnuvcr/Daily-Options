@@ -775,3 +775,7 @@ The preregistered Global Overnight Shock × India-Local Volatility State family 
 
 ## Phase 36 — CLOSED / RETIRED (2026-09-28)
 Global shock breadth / cross-market disagreement completed authoritative run **36378802491**. Data and quote-coverage gates passed, but all four true cells failed the frozen ₹5,000/week discovery gate in Base and Stress. No WFA/OOS or result-driven retuning is authorized. [Phase 36 final result](reports/phase36/final_result.md) · [plan](docs/phase36_plan.md) · [status](docs/research_status.md)
+
+
+## Phase 37 — CLOSED / RETIRED (2026-09-28)
+Global shock × NIFTY opening dislocation completed authoritative run **36379200435**. Data and execution gates passed; all four true cells failed the ₹5,000/week promotion gate in Base and Stress. [Final result](reports/phase37/final_result.md) · [plan](docs/phase37_plan.md) · [status](docs/research_status.md)
