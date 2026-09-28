@@ -23,6 +23,7 @@ def main():
         except: pass
     result=[]
     for d,g in idx.groupby("trade_date"):
+        d = pd.Timestamp(d).date()
         future=[e for e in exps if e>d]
         if not future: continue
         expiry=future[0]
