@@ -361,7 +361,7 @@ def execution_price_map(signals, root):
                 CAST(open AS DOUBLE) AS open_px,
                 CAST(close AS DOUBLE) AS close_px
             FROM read_parquet('{ps}', union_by_name=true)
-            WHERE CAST(trading_day AS DATE) IN ({dates})
+            WHERE CAST(timestamp AS DATE) IN ({dates})
               AND strftime(CAST(timestamp AS TIMESTAMP), '%H:%M:%S') IN ({times})
               AND CAST(strike AS DOUBLE) IN ({strikes})
               AND UPPER(CAST(option_type AS VARCHAR)) IN ({types})
