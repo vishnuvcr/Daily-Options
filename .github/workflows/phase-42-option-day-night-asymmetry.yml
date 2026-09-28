@@ -4,6 +4,8 @@ on:
   push:
     paths:
       - ".github/phase42-main-launch.txt"
+      - "research/phase42_option_day_night_asymmetry.py"
+      - "tests/test_phase42_option_day_night_asymmetry.py"
   workflow_dispatch:
 
 permissions:
