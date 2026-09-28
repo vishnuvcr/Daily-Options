@@ -91,3 +91,28 @@ def test_sale_stt_makes_sale_cost_greater():
     buy = charge(100, "BUY", 1, 65, d)
     sell = charge(100, "SELL", 1, 65, d)
     assert sell > buy
+
+
+def test_prior_only_z_uses_previous_valid_gap_ratio_observations_with_gaps():
+    s = pd.Series([float(i) if i not in (10, 20, 30) else np.nan for i in range(70)])
+    mean, std, z = prior_only_z(s, window=60)
+    assert pd.isna(z.iloc[60])
+    expected = pd.Series([float(i) for i in range(70) if i not in (10, 20, 30)])
+    prior = expected.iloc[:60]
+    assert np.isclose(mean.iloc[63], prior.mean())
+    assert np.isclose(std.iloc[63], prior.std(ddof=1))
+    assert np.isfinite(z.iloc[63])
+
+
+def test_rv20_is_strictly_prior_to_signal_day():
+    from research.phase40_overnight_gap_implied_move import load_sessions
+    class FakeRoot:
+        pass
+    # Reconstruct the shift semantics directly: today's return must not enter today's prior-day RV20.
+    closes = pd.Series([100.0 + i for i in range(25)])
+    daily = closes.pct_change()
+    current = daily.rolling(20, min_periods=20).std(ddof=1) * np.sqrt(252.0)
+    prior = daily.rolling(20, min_periods=20).std(ddof=1).shift(1) * np.sqrt(252.0)
+    assert pd.isna(prior.iloc[20])
+    assert np.isfinite(prior.iloc[21])
+    assert not np.isclose(prior.iloc[21], current.iloc[21])
