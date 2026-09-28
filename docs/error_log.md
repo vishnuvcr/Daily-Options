@@ -478,3 +478,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E035-IVRV-003 | 2026-09-28 | Phase 35 | Rerun 36375453931 acquired all 268 NIFTY files but global acquisition helper `research/phase31_8_acquire_global.py` was absent on the phase branch | No P&L; data gate skipped | Carried the audited Phase 31.8 helper into Phase 35 without modification | CLOSED |
 
 | E035-IVRV-004 | 2026-09-28 | Phase 35 | Rerun 36375565565 reached the global feature panel but `merge_asof` rejected `datetime64[us]` versus `datetime64[ns]` join keys | No P&L; data gate failed before signal evaluation | Explicitly normalized both join keys to `datetime64[ns]`; rerun required | CLOSED |
+
+| E035-IVRV-005 | 2026-09-28 | Phase 35 | Rerun 36375646269 reached local IV construction but produced no local rows because the implementation required an exact 15:10 prior-day quote | No P&L; gate failed before signal evaluation | Implemented the preregistered rule literally: use the latest positive ATM CE/PE observation on or before the prior-session close (15:30 cutoff) | CLOSED |
