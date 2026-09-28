@@ -493,3 +493,6 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 
 
 | E0416 | 2026-09-29 | Phase 41 data gate | Authoritative run 36467584676 passed unit tests and source acquisition but found only 354/1,154 post-warm-up sessions feature-eligible (30.68%); prior-chain coverage 79.50% and core-chain coverage 87.41%, below the frozen >=95% observability gate | No Phase 41 P&L, WFA or OOS accepted; Base/Stress correctly skipped | Closed Phase 41 DATA-LIMITED; retained diagnostic artifacts; no coverage relaxation or post-result feature redesign | CLOSED — data-limited |
+
+
+| E0417 | 2026-09-29 | Phase 42 first authoritative run 36468978862 | Data-gate computation raised ValueError converting a missing prior-session NIFTY close (NaN) to the deterministic ATM strike; no P&L or gate result produced | Run quarantined; no economic interpretation | Added explicit finite-price guard and regression coverage; rerun with the frozen hypothesis and data gates unchanged | FIXED — rerun required |
