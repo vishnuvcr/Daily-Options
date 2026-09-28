@@ -1,0 +1,30 @@
+[
+  {
+    "state": "BROAD_SHOCK",
+    "horizon": "H10_30",
+    "candidate_rows": 157,
+    "complete_quote_rows": 153,
+    "coverage": 0.9745222929936306
+  },
+  {
+    "state": "BROAD_SHOCK",
+    "horizon": "H15_10",
+    "candidate_rows": 157,
+    "complete_quote_rows": 153,
+    "coverage": 0.9745222929936306
+  },
+  {
+    "state": "SPLIT_SHOCK",
+    "horizon": "H10_30",
+    "candidate_rows": 4,
+    "complete_quote_rows": 4,
+    "coverage": 1.0
+  },
+  {
+    "state": "SPLIT_SHOCK",
+    "horizon": "H15_10",
+    "candidate_rows": 4,
+    "complete_quote_rows": 4,
+    "coverage": 1.0
+  }
+]

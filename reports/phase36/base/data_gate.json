@@ -1,9 +1,10 @@
 {
-  "status": "FAIL",
+  "status": "PASS",
   "raw_sessions": 1228,
   "global_feature_eligible_sessions": 1164,
-  "coverage": 0.9478827361563518,
+  "coverage": 1.0,
   "prior_violations": 0,
+  "warmup_or_global_unavailable_sessions": 64,
   "study_start": "2021-07-01",
   "study_end": "2026-08-31"
 }
