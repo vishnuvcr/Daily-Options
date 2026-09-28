@@ -494,3 +494,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0393 | 2026-09-28 | Phase 39 | Pre-cutoff option rows were ranked before applying the cutoff, yielding zero selected IV rows despite available earlier quotes | No P&L accepted | Apply timestamp cutoff before latest-row selection; rerun authoritative data gate | OPEN |
 
 | E0394 | 2026-09-28 | Phase 39 | Option signal-date filtering via dataset trading_day produced zero IV rows; source audit indicates timestamp-derived local trade dates are the reliable alignment mechanism | No P&L accepted | Removed trading_day from the signal snapshot join; rerun authoritative data gate | OPEN |
+
+| E0395 | 2026-09-28 | Phase 39 | Source diagnostic failed on pandas Timestamp vs datetime.date type comparison; no source rows were inspected | No P&L accepted | Correct diagnostic typing and rerun | OPEN |
