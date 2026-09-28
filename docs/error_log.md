@@ -472,3 +472,5 @@ E0435 (surface data-gate diagnosis) and E0437 (execution-coverage accounting) we
 E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not trading economics. No unresolved Phase 33 implementation error remains for accepted numerical work.
 
 | E035-IVRV-001 | 2026-09-28 | Phase 35 | First authoritative workflow 36375298668 passed unit tests but data-gate execution stopped because DuckDB parsed the unaliased `close` column as a reserved token | No P&L; Base/Stress skipped | Aliased the source column as `close_px` and restored the dataframe `close` field; rerun required | CLOSED |
+
+| E035-IVRV-002 | 2026-09-28 | Phase 35 | Rerun 36375394257 passed tests but NIFTY acquisition stopped because `huggingface_hub` was omitted from the workflow environment | No P&L; data gate skipped | Added pinned `huggingface_hub==0.34.4`; rerun required | CLOSED |
