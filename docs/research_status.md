@@ -962,3 +962,5 @@ Phase 37 remains CLOSED / RETIRED after a negative discovery result. **Phase 38 
 The preregistered design uses 09:15–09:29 NIFTY early-session range percentage, a strictly-prior 60-session RANGE_Z (threshold ±0.75), early directional return, CONTINUE/FADE mappings, 10:30/15:10 exits, 09:31 option entry, 09:30-close ATM, 200-point debit spread, historical lot sizes and established costs. Five fixed null seeds are included. No WFA/OOS or result-driven tuning is allowed unless the frozen Base+Stress weekly promotion gate clears.
 
 The main-branch launcher is installed so the workflow has a manual dispatch button while executing the frozen Phase 38 branch.
+
+**CI verification:** draft PR #92 is open for the frozen Phase 38 branch. No numerical result is accepted until the Phase 38 workflow completes its data, quote-coverage and accounting gates.
