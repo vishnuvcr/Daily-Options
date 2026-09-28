@@ -31,9 +31,9 @@ def globals_(root):
  return out
 
 def global_panel(idx,gd):
- s=idx[idx.time=='09:30:00'][['date']].drop_duplicates('date').sort_values('date').copy()
+ s=idx[idx.time=='09:30:00'][['date']].drop_duplicates('date').sort_values('date').copy(); s['date']=pd.to_datetime(s['date']).astype('datetime64[ns]')
  for m,d in gd.items():
-  z=d.dropna().rename(columns={'date':'gd','z':f'z_{m}'}); s=pd.merge_asof(s,z.sort_values('gd'),left_on='date',right_on='gd',direction='backward',allow_exact_matches=False); s[f'prior_{m}']=s.gd; s=s.drop(columns=['gd'])
+  z=d.dropna().rename(columns={'date':'gd','z':f'z_{m}'}); z['gd']=pd.to_datetime(z['gd']).astype('datetime64[ns]'); s=pd.merge_asof(s,z.sort_values('gd'),left_on='date',right_on='gd',direction='backward',allow_exact_matches=False); s[f'prior_{m}']=s.gd; s=s.drop(columns=['gd'])
  s['GLOBAL_LEAD']=s[[f'z_{m}' for m in MARKETS]].mean(axis=1); pc=[f'prior_{m}' for m in MARKETS]; s['all_prior']=s[pc].apply(lambda r:all(pd.notna(v) and v<s.loc[r.name,'date'] for v in r),axis=1); return s
 
 def opt(con,path,ts,strike,typ,field):
