@@ -1,0 +1,93 @@
+name: Phase 42 option day-night asymmetry launcher
+
+on:
+  push:
+    paths:
+      - ".github/phase42-main-launch.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase42-option-day-night-asymmetry
+  cancel-in-progress: false
+
+jobs:
+  phase42:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-42-option-day-night-asymmetry-v1
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install pinned runtime
+        run: python -m pip install --disable-pip-version-check pandas==2.3.2 numpy==2.1.3 duckdb==1.3.2 pyarrow==19.0.1 pytest==8.4.2 huggingface_hub==0.35.3
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_phase42_option_day_night_asymmetry.py
+      - name: Restore pinned NIFTY/options cache
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase42_trademarkk
+          key: phase42-trademarkk-51ca58c-v1
+          restore-keys: |
+            phase41-trademarkk-51ca58c-
+            phase40-trademarkk-51ca58c-
+      - name: Acquire or reuse pinned source
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase42_trademarkk
+          if [ ! -s data/cache/phase42_trademarkk/index/NIFTY.parquet ] || [ "$(find data/cache/phase42_trademarkk/options/NIFTY -maxdepth 1 -name '*.parquet' 2>/dev/null | wc -l)" -lt 200 ]; then
+            for attempt in 1 2 3 4; do
+              python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="thetrademarkk/india-index-options-1m",repo_type="dataset",revision="51ca58c",local_dir="data/cache/phase42_trademarkk",allow_patterns=["index/NIFTY.parquet","options/NIFTY/*.parquet"])' && break
+              if [ "$attempt" -eq 4 ]; then exit 1; fi
+              sleep $((attempt*15))
+            done
+          fi
+          test -s data/cache/phase42_trademarkk/index/NIFTY.parquet
+          test "$(find data/cache/phase42_trademarkk/options/NIFTY -maxdepth 1 -name '*.parquet' | wc -l)" -ge 200
+      - name: Run Phase 42 data gate
+        run: PYTHONPATH=. python research/phase42_option_day_night_asymmetry.py --data data/cache/phase42_trademarkk --out reports/phase42/gate --slippage .20 --gate-only
+      - name: Enforce data gate
+        run: |
+          python - <<'PY'
+          import json,sys
+          g=json.load(open("reports/phase42/gate/data_gate.json")); print(json.dumps(g,indent=2))
+          sys.exit(0 if g["status"]=="PASS" else 1)
+          PY
+      - name: Run Base discovery
+        run: PYTHONPATH=. python research/phase42_option_day_night_asymmetry.py --data data/cache/phase42_trademarkk --out reports/phase42/base --slippage .20
+      - name: Run Stress discovery
+        run: PYTHONPATH=. python research/phase42_option_day_night_asymmetry.py --data data/cache/phase42_trademarkk --out reports/phase42/stress --slippage .40
+      - name: Validate Phase 42 artifacts
+        run: |
+          python - <<'PY'
+          import json,pandas as pd
+          g=json.load(open("reports/phase42/gate/data_gate.json")); assert g["status"]=="PASS"
+          assert g["prior_information_violations"]==0
+          for f in ("base","stress"):
+            s=pd.read_csv(f"reports/phase42/{f}/true_cell_summary.csv"); assert len(s)==8 and s["accounting_ok"].all()
+            c=pd.read_csv(f"reports/phase42/{f}/price_coverage.csv"); assert len(c)==8 and c.execution_coverage.min()>=.95
+            n=pd.read_csv(f"reports/phase42/{f}/null_summary.csv"); assert len(n)==40 and n.null_seed.nunique()==5
+          PY
+      - name: Persist Phase 42 reports
+        if: always()
+        run: |
+          mkdir -p reports/phase42
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+vishnuvcr@users.noreply.github.com"
+          git add -f reports/phase42
+          if ! git diff --cached --quiet; then
+            git commit -m "Phase 42: persist option day-night asymmetry outputs"
+            git push origin HEAD:phase-42-option-day-night-asymmetry-v1
+          fi
+      - name: Upload Phase 42 artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase42-option-day-night-asymmetry
+          path: reports/phase42
