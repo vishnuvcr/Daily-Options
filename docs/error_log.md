@@ -498,3 +498,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0395 | 2026-09-28 | Phase 39 | Source diagnostic failed on pandas Timestamp vs datetime.date type comparison; no source rows were inspected | No P&L accepted | Correct diagnostic typing and rerun | OPEN |
 
 | E0396 | 2026-09-28 | Phase 39 | Valid 09:30 option rows were lost in a Python-date vs pandas-Timestamp join comparison | No P&L accepted | Normalize IV query dates to Python date; rerun authoritative gate | OPEN |
+
+| E0397 | 2026-09-28 | Phase 39 | Valid execution quotes were present but lost in Python date/Timestamp key comparison, causing 0% reported execution coverage | No P&L accepted | Normalize execution keys; retain frozen >=95% execution gate | OPEN |
