@@ -486,3 +486,7 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0385 | 2026-09-28 | Phase 38 | Expiry-mapping data gate briefly mapped booleans instead of eligible dates, caught before data acquisition | No P&L accepted | Corrected in branch and rerun | OPEN |
 
 | E0454 | 2026-09-27 | Phase 34 | Authoritative run 36341535504 found only 656/1,233 complete prior-session two-expiry surfaces (53.20%), below the preregistered 95% observability gate | No P&L, null economics, WFA or OOS accepted | Close Phase 34 DATA-LIMITED; do not relax expiry/strike coverage | CLOSED |
+
+
+| E0414 | 2026-09-28 | Phase 39/40 closure correction | Main records were temporarily stale after later clean authoritative runs superseded interim data-limited classifications | Current status could be misread | Update main README/status/conversation log to authoritative negative results | CLOSED |
+| E0415 | 2026-09-28 | Phase 41 preregistration | New gamma-concentration family must not silently reuse prior OI/volume or VIX/gap hypotheses | Risk of duplicate testing | Freeze distinct mechanism, signal timing, finite grid and no-retuning rule before numerical execution | CLOSED — preregistration |
