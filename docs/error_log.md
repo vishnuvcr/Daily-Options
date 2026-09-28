@@ -518,3 +518,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E035-IVRV-018 | 2026-09-28 | Phase 35 | Final clean-room execution established HIGH_VOL_STATE 16/16 quote coverage but LOW_VOL_STATE 0/1 in both exits | Phase cannot satisfy preregistered >=95% coverage in every true cell | Closed Phase 35 as DATA-LIMITED; no P&L or promotion accepted | CLOSED |
 
 | E036-001 | 2026-09-28 | Phase 36 | First run 36378635847 used raw NIFTY sessions in the global-feature coverage denominator, yielding 94.79% by incorrectly counting 64 unavoidable warm-up/unavailable sessions | No P&L accepted; Base/Stress were skipped by the data gate | Corrected the gate to apply coverage over globally feature-eligible sessions, consistent with Phase 35 and the preregistered warm-up rule | CLOSED |
+
+| E037-CLOSE | 2026-09-28 | Phase 37 | Authoritative run 36379200435 completed cleanly; no numerical implementation defect remained at closure | None | Phase 37 retired after all four cells failed the economic gate | CLOSED |
