@@ -37,8 +37,8 @@ def global_panel(idx,gd):
  s['GLOBAL_LEAD']=s[[f'z_{m}' for m in MARKETS]].mean(axis=1); pc=[f'prior_{m}' for m in MARKETS]; s['prior_violations']=s[pc].apply(lambda r:any(pd.notna(v) and v>=s.loc[r.name,'date'] for v in r),axis=1); s['all_prior']=~s['prior_violations']; return s
 
 def opt(con,path,ts,strike,typ,field):
- t=pd.Timestamp(ts); day=t.date(); tm=t.strftime('%H:%M:%S'); p=str(path).replace(chr(39),chr(39)*2)
- q=f"SELECT CAST({field} AS DOUBLE) px FROM read_parquet('{p}') WHERE CAST(CAST(timestamp AS TIMESTAMP) AS DATE)=DATE '{day}' AND strftime(CAST(timestamp AS TIMESTAMP),'%H:%M:%S')='{tm}' AND CAST(strike AS DOUBLE)={float(strike)} AND UPPER(CAST(option_type AS VARCHAR))='{typ}' AND {field}>0 LIMIT 1"
+ p=str(path).replace(chr(39),chr(39)*2); d=pd.Timestamp(ts); clock=d.strftime('%H:%M:%S'); day=d.date()
+ q=f"SELECT CAST({field} AS DOUBLE) px FROM read_parquet('{p}') WHERE CAST(CAST(timestamp AS TIMESTAMP) AS DATE)=DATE '{day}' AND strftime(CAST(timestamp AS TIMESTAMP),'%H:%M:%S')='{clock}' AND CAST(strike AS DOUBLE)={float(strike)} AND UPPER(CAST(option_type AS VARCHAR))='{typ}' AND {field}>0 ORDER BY CAST(timestamp AS TIMESTAMP) LIMIT 1"
  z=con.execute(q).df(); return None if z.empty else float(z.iloc[0].px)
 
 def opt_latest(con,path,cutoff,strike,typ,field):
