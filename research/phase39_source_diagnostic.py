@@ -26,7 +26,8 @@ def main():
     exps = [pd.Timestamp(p.stem).date() for p in option_files]
     rows = []
     for r in idx.itertuples(index=False):
-        future = [e for e in exps if e > r.trade_date]
+        d = pd.Timestamp(r.trade_date).date()
+        future = [e for e in exps if e > d]
         if not future:
             continue
         expiry = future[0]
@@ -36,7 +37,7 @@ def main():
         atm = round(float(r.close_px) / 50.0) * 50.0
         # Show both exact ATM and nearest surrounding strikes; timestamps are authoritative.
         ps = str(p).replace("'", "''")
-        d0 = str(r.trade_date)
+        d0 = str(d)
         sql = f"""
             WITH src AS (
                 SELECT
@@ -59,7 +60,7 @@ def main():
         """
         z = qdf(con, sql)
         rows.append({
-            "trade_date": str(r.trade_date),
+            "trade_date": str(d),
             "spot_0930": float(r.close_px),
             "atm_strike_python_round": float(atm),
             "expiry": str(expiry),
