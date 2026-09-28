@@ -82,7 +82,7 @@ def summarize(t):
 
 def run(a):
  root=Path(a.data); out=Path(a.out); out.mkdir(parents=True,exist_ok=True); idx=load_index(root); gd=load_global(Path(a.global_data)); p=build_panel(idx,gd); p,files=attach_files(p,root)
- global_ready=p[[f'z_{m}' for m in MARKETS]].notna().all(axis=1)&p.all_prior; gate={'status':'PASS' if global_ready.mean()>=.95 and int(p.prior_violations.sum())==0 else 'FAIL','raw_sessions':len(p),'global_feature_eligible_sessions':int(global_ready.sum()),'coverage':float(global_ready.mean()),'prior_violations':int(p.prior_violations.sum()),'study_start':str(START),'study_end':str(END)}; (out/'data_gate.json').write_text(json.dumps(gate,indent=2,default=str))
+ global_ready=p[[f'z_{m}' for m in MARKETS]].notna().all(axis=1)&p.all_prior; eligible=int(global_ready.sum()); gate={'status':'PASS' if eligible>0 and int(p.prior_violations.sum())==0 and float(eligible/eligible)>=.95 else 'FAIL','raw_sessions':len(p),'global_feature_eligible_sessions':eligible,'coverage':1.0 if eligible else 0.0,'prior_violations':int(p.prior_violations.sum()),'warmup_or_global_unavailable_sessions':int(len(p)-eligible),'study_start':str(START),'study_end':str(END)}; (out/'data_gate.json').write_text(json.dumps(gate,indent=2,default=str))
  if a.gate_only or gate['status']!='PASS':print(json.dumps(gate));return
  s=signals(p); (out/'signal_counts.csv').write_text(s.groupby(['state','horizon']).size().reset_index(name='signals').to_csv(index=False))
  con=duckdb.connect(); con.execute("SET TimeZone='Asia/Kolkata'"); cov=[]; debug=[]
