@@ -85,7 +85,19 @@ def main():
  idx=index(root); gp=global_panel(idx,globals_(Path(a.global_data))); files={pd.Timestamp(p.stem).date():p for p in (root/'options/NIFTY').glob('*.parquet')}; loc=local_state(idx,root,files); p=gp.merge(loc,on='date',how='left')
  global_ready=p[[f'z_{m}' for m in MARKETS]].notna().all(axis=1)&p.all_prior; ready=global_ready&p.iv_rv_z.notna(); cov=float(ready.sum()/global_ready.sum()) if global_ready.sum() else 0.0; gate={'status':'PASS' if cov>=.95 and global_ready.any() and int(p.prior_violations.sum())==0 else 'FAIL','raw_sessions':len(p),'global_feature_eligible_sessions':int(global_ready.sum()),'feature_eligible_sessions':int(ready.sum()),'coverage':cov,'prior_violations':int(p.prior_violations.sum()),'warmup_or_global_unavailable_sessions':int((~global_ready).sum()),'threshold':THRESHOLD,'study_start':str(START),'study_end':str(END)}; (out/'data_gate.json').write_text(json.dumps(gate,indent=2,default=str)); p.to_csv(out/'feature_panel.csv',index=False)
  if a.gate_only or gate['status']!='PASS':print(json.dumps(gate));return
- s=p[(p.GLOBAL_LEAD.abs()>=THRESHOLD)&p.state.isin(STATES)].copy(); s=pd.concat([s.assign(horizon=h) for h in HORIZONS],ignore_index=True); (out/'signal_counts.json').write_text(json.dumps({'candidate_days':int(len(s)/2),'candidate_rows':int(len(s)),'low_state_days':int((s.state=='LOW_VOL_STATE').sum()/2),'high_state_days':int((s.state=='HIGH_VOL_STATE').sum()/2),'global_abs_trigger_days':int((p.GLOBAL_LEAD.abs()>=THRESHOLD).sum())},indent=2)); con=duckdb.connect(); rows=[]
+ s=p[(p.GLOBAL_LEAD.abs()>=THRESHOLD)&p.state.isin(STATES)].copy(); s=pd.concat([s.assign(horizon=h) for h in HORIZONS],ignore_index=True); (out/'signal_counts.json').write_text(json.dumps({'candidate_days':int(len(s)/2),'candidate_rows':int(len(s)),'low_state_days':int((s.state=='LOW_VOL_STATE').sum()/2),'high_state_days':int((s.state=='HIGH_VOL_STATE').sum()/2),'global_abs_trigger_days':int((p.GLOBAL_LEAD.abs()>=THRESHOLD).sum())},indent=2)); files_list=sorted(files); con=duckdb.connect(); cov=[]
+ for st in STATES:
+  for h in HORIZONS:
+   q=s[(s.state==st)&(s.horizon==h)]; complete=0
+   for rr in q.itertuples(index=False):
+    dd=pd.Timestamp(rr.date).date(); ee=next((z for z in files_list if z>=dd),None); tt='CE' if rr.GLOBAL_LEAD>0 else 'PE'; aa=round(float(rr.nifty_open_0930)/50)*50; ww=aa+WING if tt=='CE' else aa-WING; ex=HORIZON_TIMES[h]
+    req=[opt(con,files[ee],f'{dd} 09:31:00',aa,tt,'open'),opt(con,files[ee],f'{dd} 09:31:00',ww,tt,'open'),opt(con,files[ee],f'{dd} {ex}',aa,tt,'close'),opt(con,files[ee],f'{dd} {ex}',ww,tt,'close')]
+    complete+=int(all(v is not None for v in req))
+   cov.append({'state':st,'horizon':h,'candidate_rows':len(q),'complete_quote_rows':complete,'coverage':complete/len(q) if len(q) else 0.0})
+ (out/'execution_coverage.json').write_text(json.dumps(cov,indent=2)); con.close();
+ if any(x['coverage']<.95 for x in cov):
+  gate['status']='FAIL_EXECUTION_COVERAGE'; gate['execution_coverage']=cov; (out/'data_gate.json').write_text(json.dumps(gate,indent=2,default=str)); print(json.dumps(gate)); return
+ con=duckdb.connect(); rows=[]
  for r in s.itertuples(index=False):
   d=pd.Timestamp(r.date).date(); e=next((e for e in sorted(files) if e>=d),None); typ='CE' if r.GLOBAL_LEAD>0 else 'PE'; atm=round(float(r.nifty_open_0930)/50)*50; wing=atm+WING if typ=='CE' else atm-WING; ex=HORIZON_TIMES[r.horizon]; lot=lot_size(e); path=files[e]; raw=sl=tc=0; ok=True
   for k,act in [(atm,'BUY'),(wing,'SELL')]:
