@@ -3,44 +3,42 @@
 Last updated: 2026-09-28
 
 ## Overall
-**Phase 38 — NIFTY opening volatility / price-structure research: PREREGISTERED / READY FOR AUTHORITATIVE EXECUTION, CURRENTLY BLOCKED AT THE GITHUB ACTIONS EXECUTION LAYER**
+**Phase 39 — NIFTY option-implied versus realized opening-move dislocation: PREREGISTERED / ENGINEERING BUILD**
 
 ## Current research objective
-The active Equity Income program targets **₹5,000 NET per completed trading week** at a fixed declared reference strategy position size, after Paytm Money brokerage, date-aware NSE/statutory charges, and Base/Stress slippage. Phase 38 tests a frozen NIFTY-specific early-session volatility regime conditioned on the first 15-minute directional move; no result is promoted without the preregistered discovery gate and later WFA/OOS validation.
+The active Equity Income program targets ₹5,000 NET per completed trading week at fixed declared reference sizing, after Paytm Money brokerage, date-aware NSE/statutory charges, Base/Stress slippage, weekly risk metrics and later WFA/OOS validation.
 
-## Phase 38 execution status — 2026-09-28
-- Branch: `phase-38-opening-volatility-structure-v1`
-- PR: #92, open and ready for review
-- Latest branch head observed: `f5a35f0117f5127280621794fc07781853062045`
-- E0381: **CLOSED** before authoritative execution; missing 09:30 NIFTY spot/ATM eligibility was corrected.
-- E0382: **OPEN**; the available GitHub execution interface does not expose a usable workflow-dispatch/list path for the required run, and no PR workflow run/check is visible.
-- **Numerical evidence:** none accepted for Phase 38.
-- **Next authoritative action:** execute the frozen workflow; then audit tests, cached exact-expiry data gate, Base, Stress, null controls, accounting reconciliation and promotion gate in that order. No parameter retuning is permitted.
+## Completed frontier closures
+- Phase 34: CLOSED DATA-LIMITED. Authoritative run 36341535504 found 656/1,233 complete prior-session two-expiry surface sessions = 53.20%, below the frozen 95% gate. No P&L accepted.
+- Phase 35: CLOSED across its global-shock option/IV-RV families; one branch was DATA-LIMITED and the option-structure branch was negative. No tuning.
+- Phase 36: CLOSED negative after global-shock breadth/disagreement cells failed the weekly economic gate.
+- Phase 37: CLOSED negative after global-shock opening-dislocation cells failed the weekly economic gate.
+- Phase 38: CLOSED negative. Authoritative run 36408210374 passed all integrity gates but 0/8 Base and 0/8 Stress cells cleared the ₹5,000/week discovery gate. No WFA/OOS.
 
-## Frozen Phase 38 discovery gate
-Both Base and Stress must satisfy: mean weekly net ≥ ₹5,000; median weekly net ≥ ₹5,000; positive-week rate ≥70%. Data gates require ≥95% session eligibility after warm-up, zero prior-information violations, ≥95% execution quote coverage per true cell, deterministic expiry/strike/lot mapping, and accounting reconciliation. WFA/OOS is only permitted if discovery clears.
+## Phase 39 current state
+Phase 39 is the next distinct preregistered family. It is designed to use a different information source from Phase 38: the relationship between the 09:15–09:29 realized opening move and the contemporaneous 09:30 ATM option-implied 15-minute move.
 
-## Latest completed numerical frontier
-Phase 37 global-shock opening-dislocation research is closed negative; Phase 38 is the next distinct preregistered family. Earlier completed phases remain frozen historical evidence and are not silently retuned.
+Frozen before computation:
+- raw opening move uses only 09:15 open and 09:29 NIFTY close;
+- ATM option-implied volatility is taken from the nearest NIFTY expiry strictly after the signal date and the 09:30 ATM CE/PE observations;
+- implied 15-minute move uses ATM IV × sqrt(15/390);
+- MOVE_RATIO = realized absolute opening return / implied 15-minute move;
+- strictly prior 60-session z-score of MOVE_RATIO;
+- high/low dislocation states at ±0.75 z;
+- CONTINUE and FADE directional mappings;
+- 09:31 entry, 10:30 and 15:10 exits, one-lot 200-point debit spread;
+- five fixed permutation null seeds;
+- Base/Stress ₹0.20/₹0.40 slippage and the established cost model;
+- no WFA/OOS unless the discovery gate clears.
 
-## Current blocker
-The remaining blocker is execution-layer access rather than a known Phase 38 strategy/code result. The repository workflow and trigger markers are present, and trigger commits have been issued. The available connector exposes workflow-run inspection only for PR-triggered runs and provides no workflow-dispatch operation; current checks therefore show no visible run. No fabricated or partial P&L is accepted.
+## Phase 39 next steps
+1. Freeze plan, literature review, unit tests, simulator, manual workflow and source manifest on branch phase-39-implied-realized-opening-dislocation-v1.
+2. Run authoritative data gates against the pinned exact-expiry NIFTY option cache.
+3. Run Base, Stress and null controls only if all source/execution coverage requirements pass.
+4. Close the family negative/data-limited if the preregistered gate fails; otherwise continue to WFA/OOS without retuning.
 
-## Step log
-### 2026-09-28 — Phase 38 pre-run audit
-- Frozen plan, literature review, tests, simulator and workflow were reviewed.
-- E0381 was found and corrected before numerical evidence.
-- Phase 38 remains unchanged at the strategy level.
-
-### 2026-09-28 — Phase 38 execution-layer checkpoint
-- Main launcher was hardened to use the main workflow definition while checking out the frozen Phase 38 branch.
-- Trigger marker commits were issued.
-- PR #92 was marked ready for review.
-- No usable workflow run/check became visible through the available GitHub interface.
-- E0382 remains open; research execution is waiting at the infrastructure boundary, not at a research conclusion.
-
-## Research integrity rule
-A Phase 38 result is accepted only from the authoritative frozen workflow with persisted artifacts and complete Base/Stress/null/accounting validation. Local estimates or unverified partial executions are not substitutes.
+## Integrity rule
+No local or partial P&L is accepted. Every accepted Phase 39 result must come from the authoritative GitHub Actions workflow and include data-gate, Base, Stress, null, accounting and artifact validation.
 
 ## Historical detailed step log
 The remainder of this file preserves the earlier phase-by-phase research ledger and is retained for auditability.
