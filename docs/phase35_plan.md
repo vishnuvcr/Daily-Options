@@ -1,7 +1,9 @@
 # Phase 35 — Global Overnight Shock × India-Local Volatility State
 
 ## Status
-PREREGISTERED — implementation/data gate.
+CLOSED DATA-LIMITED — authoritative run 36378249952.
+
+The frozen gate failed because both LOW_VOL_STATE true cells had 0% execution quote coverage (1 candidate day each). Per preregistration, no P&L is accepted and no retuning is permitted.
 
 ## Research question
 Does a large prior-session global equity shock become more or less monetizable in NIFTY depending on the prior-day India-local implied-volatility state, after realistic costs?
