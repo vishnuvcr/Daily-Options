@@ -502,3 +502,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E035-IVRV-013 | 2026-09-28 | Phase 35 | Cross-check against Phase 31.8 showed the ATM reference still used the 09:30 bar open; Phase 31.8 uses the 09:30 bar close (`open_px` field from its bar-close naming) | No P&L accepted | Restored the audited 09:30 bar-close reference for ATM selection | CLOSED |
 
 | E035-IVRV-014 | 2026-09-28 | Phase 35 | Run 36377405733 failed in Base because the execution-coverage diagnostic retained the previous field name `nifty_open_0930` after the audited 09:30 close rename | No P&L accepted | Replaced the stale field reference with `nifty_spot_0930` | CLOSED |
+
+| E035-IVRV-015 | 2026-09-28 | Phase 35 | Execution quote coverage was 0% because option rows were queried by exact timestamp equality; audited Phase 31.8 retrieves by local date plus `strftime` clock time | No P&L accepted | Reimplemented execution-row lookup using the Phase 31.8 local-date/clock-time method | CLOSED |
