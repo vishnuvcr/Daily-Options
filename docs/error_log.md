@@ -513,3 +513,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0394 | 2026-09-28 | Phase 39 | Option snapshot rows are keyed using timestamp-derived local dates rather than the dataset `trading_day` field, consistent with the audited timestamp-safe execution convention | No P&L accepted | Correct snapshot date filter and rerun | OPEN |
 
 | E0395 | 2026-09-28 | Phase 39 | Contiguous-row rolling z-score amplified 16 IV-missing sessions into 380 z-score gaps; this was a feature-window implementation problem, not an economic result | No P&L accepted | Use prior 60 valid MOVE_RATIO observations only, with no imputation | OPEN |
+
+| E0398 | 2026-09-28 | Phase 39 | Clean authoritative run 36465244174 passed all integrity stages but 0/8 Base and 0/8 Stress cells cleared the weekly discovery gate | Phase retired; no WFA/OOS | Freeze Phase 39 as negative discovery and move to Phase 40 | CLOSED |
