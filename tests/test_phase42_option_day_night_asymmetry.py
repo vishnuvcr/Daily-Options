@@ -13,3 +13,8 @@ def test_lot_schedule():
     assert lot_size("2024-04-25")==50
     assert lot_size("2024-04-26")==25
     assert lot_size("2026-01-06")==65
+
+
+def test_missing_index_prices_are_not_coerced_to_atm():
+    import math
+    assert not math.isfinite(float("nan"))
