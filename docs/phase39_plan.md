@@ -31,7 +31,7 @@ Full references: docs/phase39_literature_review.md
 2. Realized opening return = (NIFTY 09:29 close − NIFTY 09:15 open) / NIFTY 09:15 open.
 3. ATM reference = nearest ₹50 to the NIFTY 09:30 close.
 4. Signal option expiry = nearest NIFTY expiry strictly after the trade date. Same-day expiry is excluded from the signal IV calculation.
-5. ATM CE and PE option observations = latest available 09:30 bar close for that expiry/strike.
+5. ATM CE and PE option observations = latest valid positive-close observation at or before the 09:30 IST information cutoff for that expiry/strike. Exact 09:30 is used when available; earlier same-session observations are accepted only because the source may not contain an exact 09:30 bar.
 6. Black-Scholes IV uses r=0, q=0 and time to the expiry-day 15:30 IST close.
 7. ATM IV = simple average of valid CE and PE IV.
 8. Implied 15-minute move percentage = ATM IV × sqrt(15/390).
