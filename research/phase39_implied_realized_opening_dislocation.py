@@ -240,7 +240,7 @@ def build_feature_panel(root):
     iv_map = query_0930_iv(root, req)
     panel = sessions.copy()
     panel["front_expiry"] = panel["trade_date"].map(exp_map)
-    panel["atm_strike"] = panel["spot_0930"].map(round_strike)
+    panel["atm_strike"] = panel["spot_0930"].map(lambda x: round_strike(x) if np.isfinite(x) else np.nan)
     iv_rows = []
     for r in panel.itertuples(index=False):
         key = (r.trade_date, r.front_expiry)
