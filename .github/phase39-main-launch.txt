@@ -1,3 +1,24 @@
-Phase 39 launcher trigger — 2026-09-28
-2026-09-28 Phase 39 rerun after E0391 correction.
-2026-09-28 Phase 39 rerun after E0392 timing-alignment correction.
+# Phase 39 Status
+
+## Current state
+ENGINEERING CORRECTION IN PROGRESS — NO NUMERICAL EVIDENCE ACCEPTED.
+
+## Completed
+- Frozen Phase 39 plan, literature, simulator, tests, cost model and null-control design.
+- Authoritative run 36409062624 failed one unit test; E0391 was corrected.
+- Clean unit tests passed in run 36409163981.
+- Pinned exact-expiry source restored successfully with 267 option files.
+- Initial data gate run found 0/1,174 IV-eligible sessions because the source lacks an exact 09:30 option bar for the queried strikes.
+
+## Engineering finding
+E0392: the implementation used exact 09:30 option timestamps. The audited source-handling convention requires the latest valid positive observation at or before the fixed 09:30 information cutoff. This changes only timestamp matching, not the signal cutoff, expiry, threshold, execution or cost rules.
+
+## Pending
+1. Rerun unit tests.
+2. Re-run the corrected data gate.
+3. Run Base/Stress/nulls only if the gate passes.
+4. Final closure manuscript and main status synchronization.
+
+## Integrity rule
+No Phase 39 economic conclusion has been accepted. The exact-09:30 failed run is quarantined.
+2026-09-28 Phase 39 rerun after E0393 cutoff-order correction.
