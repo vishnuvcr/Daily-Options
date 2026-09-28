@@ -324,8 +324,8 @@ def data_gate(panel: pd.DataFrame, expiries: dict) -> dict:
     post_warmup = max(raw - LOOKBACK, 0)
     eligible = int(panel["feature_eligible"].sum())
     complete = int((panel["feature_eligible"] & panel["barrier_ok"]).sum())
-    violations = int((panel["feature_eligible"] & ~panel["barrier_ok"]).sum())
-    eligible_dates = panel.loc[panel["feature_eligible"], "date"]
+    violations = int((post["feature_eligible"] & ~post["barrier_ok"]).sum())
+    eligible_dates = post.loc[post["feature_eligible"], "date"]
     expiry_ok = int(sum(
         bisect.bisect_left(sorted(expiries), d) < len(expiries)
         for d in eligible_dates
