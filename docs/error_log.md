@@ -486,3 +486,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E035-IVRV-007 | 2026-09-28 | Phase 35 | Run 36375895699 completed gate/Base/Stress but reconciliation attempted to parse an empty CSV artifact and stopped before persistence | No P&L was accepted; numerical outputs remained unreviewed | Reconciliation now skips zero-byte artifacts, persists outputs with `if: always()`, and uploads the full audit directory | CLOSED |
 
 | E035-IVRV-008 | 2026-09-28 | Phase 35 | Corrected gate/Base/Stress run produced four valid summary rows but zero executable trades; the cause was not yet identifiable from the persisted summary alone | No P&L accepted | Added frozen candidate-day/state trigger diagnostics before further interpretation | CLOSED |
+
+| E035-IVRV-009 | 2026-09-28 | Phase 35 | Zero-trade diagnostic showed 17 frozen candidate days but execution used the first daily index bar for ATM instead of the frozen 09:30 reference | No P&L accepted | ATM strike now derives from the 09:30 NIFTY open, matching the Phase 31.8 frozen execution convention | CLOSED |
