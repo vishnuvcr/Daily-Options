@@ -490,3 +490,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E035-IVRV-009 | 2026-09-28 | Phase 35 | Zero-trade diagnostic showed 17 frozen candidate days but execution used the first daily index bar for ATM instead of the frozen 09:30 reference | No P&L accepted | ATM strike now derives from the 09:30 NIFTY open, matching the Phase 31.8 frozen execution convention | CLOSED |
 
 | E035-IVRV-010 | 2026-09-28 | Phase 35 | Four-cell summaries remained zero-trade after ATM correction; execution quote coverage had not yet been explicitly enforced in the data gate | No P&L accepted | Added the preregistered >=95% per-cell 09:31/exit quote-coverage gate before numerical acceptance | CLOSED |
+
+| E035-IVRV-011 | 2026-09-28 | Phase 35 | Audit against Phase 31.8 revealed the Phase 35 index loader omitted `SET TimeZone='Asia/Kolkata'`, shifting the interpreted 09:30 bar and ATM strike | No P&L accepted | Restored the exact Phase 31.8 timezone normalization in the index loader; rerun required | CLOSED |
