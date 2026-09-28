@@ -1,7 +1,9 @@
 # Phase 37 — Global Shock × NIFTY Opening Dislocation
 
 ## Status
-PREREGISTERED — implementation/data gate.
+CLOSED / RETIRED — discovery gate failed on authoritative run 36379200435.
+
+All four true cells were technically executable but failed the frozen economic promotion gate in both Base and Stress. No WFA/OOS or post-result retuning is authorized.
 
 ## Research question
 After a large prior-session global equity shock, does the relationship between the global direction and the NIFTY 09:30 opening gap identify a short-horizon directional options edge?
