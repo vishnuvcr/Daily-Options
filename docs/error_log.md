@@ -488,3 +488,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E035-IVRV-008 | 2026-09-28 | Phase 35 | Corrected gate/Base/Stress run produced four valid summary rows but zero executable trades; the cause was not yet identifiable from the persisted summary alone | No P&L accepted | Added frozen candidate-day/state trigger diagnostics before further interpretation | CLOSED |
 
 | E035-IVRV-009 | 2026-09-28 | Phase 35 | Zero-trade diagnostic showed 17 frozen candidate days but execution used the first daily index bar for ATM instead of the frozen 09:30 reference | No P&L accepted | ATM strike now derives from the 09:30 NIFTY open, matching the Phase 31.8 frozen execution convention | CLOSED |
+
+| E035-IVRV-010 | 2026-09-28 | Phase 35 | Four-cell summaries remained zero-trade after ATM correction; execution quote coverage had not yet been explicitly enforced in the data gate | No P&L accepted | Added the preregistered >=95% per-cell 09:31/exit quote-coverage gate before numerical acceptance | CLOSED |
