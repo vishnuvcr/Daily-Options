@@ -475,3 +475,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E035-PERSIST-RACE | 2026-09-28 | Phase 35 | Authoritative run 36342637912 completed Base/Stress but the first artifact push was rejected because the remote phase branch advanced concurrently | No numerical impact; computation remained valid | Surviving commit persisted the artifacts; no rerun or tuning performed | CLOSED |
 
 | E035-IVRV-018 | 2026-09-28 | Phase 35 | Final clean-room execution established HIGH_VOL_STATE 16/16 quote coverage but LOW_VOL_STATE 0/1 in both exits | Phase cannot satisfy preregistered >=95% coverage in every true cell | Closed Phase 35 as DATA-LIMITED; no P&L or promotion accepted | CLOSED |
+
+| E0381 | 2026-09-28 | Phase 38 pre-run static audit | Phase 38 feature eligibility initially did not require a valid 09:30 NIFTY close/ATM reference; a missing print could reach integer ATM conversion | No numerical evidence accepted; corrected before authoritative execution | Require valid 09:30 spot and derived ATM before signal eligibility | CLOSED — pre-run implementation defect |
