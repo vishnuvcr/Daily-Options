@@ -486,3 +486,7 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0385 | 2026-09-28 | Phase 38 | Expiry-mapping data gate briefly mapped booleans instead of eligible dates, caught before data acquisition | No P&L accepted | Corrected in branch and rerun | OPEN |
 
 | E0454 | 2026-09-27 | Phase 34 | Authoritative run 36341535504 found only 656/1,233 complete prior-session two-expiry surfaces (53.20%), below the preregistered 95% observability gate | No P&L, null economics, WFA or OOS accepted | Close Phase 34 DATA-LIMITED; do not relax expiry/strike coverage | CLOSED |
+
+| E0401 | 2026-09-28 | Phase 40 | Corrected prior-60 z-score to use valid observations only | No numerical evidence existed | Pre-run correction | CLOSED |
+
+| E0402 | 2026-09-28 | Phase 40 | RV20 included current signal-day close, violating the prior-day information barrier | No numerical evidence existed | Shifted RV20 one session | CLOSED |
