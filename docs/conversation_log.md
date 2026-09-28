@@ -198,3 +198,7 @@ Phase 44 was preregistered after the negative Phase 43 closure. The frozen hypot
 
 ## 2026-09-29 — Phase 44 closure / Phase 45 launch
 Phase 44 authoritative run 36471949846 passed unit/data acquisition and produced Base/Stress calculations, but all four LARGE_GAP cells had 68/72 executed trades (94.44%), below the frozen 95% execution-coverage gate. Phase 44 was closed DATA-LIMITED with no economic promotion. Phase 45 was preregistered as a distinct opening-gap failure/continuation confirmation family.
+
+
+## 2026-09-29 — Phase 45 preregistration
+Phase 45 tests a fixed opening-gap confirmation mechanism: |gap|≥0.50%, then GAP_FAILURE versus GAP_CONTINUATION based on the 09:15→09:29 NIFTY return, plus a NO_CONFIRMATION control state. The frozen matrix is 12 true cells with five permutation nulls per cell, realistic friction and the same promotion gate.
