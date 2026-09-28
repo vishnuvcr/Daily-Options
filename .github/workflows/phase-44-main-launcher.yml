@@ -60,7 +60,7 @@ jobs:
 
       - name: Run Phase 44 data gate
         run: |
-          PYTHONPATH=. python research/phase44_weekday_gap_direction.py             --data data/cache/phase44_trademarkk             --out reports/phase44/gate             --slippage 0.20             --gate-only
+          PYTHONPATH=. python research/phase44_gap_magnitude_direction.py             --data data/cache/phase44_trademarkk             --out reports/phase44/gate             --slippage 0.20             --gate-only
 
       - name: Run Base discovery
         run: |
@@ -70,7 +70,7 @@ jobs:
           if g["status"]!="PASS":
               raise SystemExit("DATA_GATE_FAIL: Base discovery intentionally skipped")
           PY
-          PYTHONPATH=. python research/phase44_weekday_gap_direction.py             --data data/cache/phase44_trademarkk             --out reports/phase44/base             --slippage 0.20
+          PYTHONPATH=. python research/phase44_gap_magnitude_direction.py             --data data/cache/phase44_trademarkk             --out reports/phase44/base             --slippage 0.20
 
       - name: Run Stress discovery
         run: |
@@ -80,7 +80,7 @@ jobs:
           if g["status"]!="PASS":
               raise SystemExit("DATA_GATE_FAIL: Stress discovery intentionally skipped")
           PY
-          PYTHONPATH=. python research/phase44_weekday_gap_direction.py             --data data/cache/phase44_trademarkk             --out reports/phase44/stress             --slippage 0.40
+          PYTHONPATH=. python research/phase44_gap_magnitude_direction.py             --data data/cache/phase44_trademarkk             --out reports/phase44/stress             --slippage 0.40
 
       - name: Validate Phase 44 artifacts
         run: |
