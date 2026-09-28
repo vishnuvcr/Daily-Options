@@ -1,0 +1,18 @@
+name: Phase 43 weekday gap launcher
+
+on:
+  push:
+    paths:
+      - ".github/phase43-main-launch.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  launch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Trigger branch workflow
+        run: echo "Phase 43 branch workflow is configured for manual dispatch and branch execution."
