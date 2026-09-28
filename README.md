@@ -782,13 +782,13 @@ Phase 34 is **CLOSED / DATA-LIMITED**. Authoritative run **36341535504** reconst
 
 
 
-## 2026-09-29 — Phase 43 closure / Phase 44 active
 
-**Phase 43 — NIFTY weekday × opening-gap direction is CLOSED NEGATIVE DISCOVERY.** Clean authoritative run **36471290988** passed all gates. No 20-cell true result met the ₹5,000/week mean/median and 70% positive-week promotion gate in both Base and Stress. Best cell: Thursday/FADE/15:10, ₹46.87/week Base and ₹5.85/week Stress, with negative medians.
 
-[Phase 43 manuscript](https://github.com/vishnuvcr/Daily-Options/blob/phase-43-weekday-gap-direction-v1/reports/phase43/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-43-weekday-gap-direction-v1/docs/phase43_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-43-weekday-gap-direction-v1/docs/phase43_status.md)
+## 2026-09-29 — Phase 44 closure / Phase 45 active
 
-**Phase 44 — NIFTY opening-gap magnitude × gap direction is now the active preregistered frontier.** It uses fixed SMALL (<0.50%), MEDIUM (0.50%–<1.00%) and LARGE (≥1.00%) absolute-gap buckets, both FOLLOW/FADE mappings and 10:30/15:10 exits, with the same friction, historical lots, five permutation-null controls and ₹5,000/week promotion gate.
+**Phase 44 — NIFTY opening-gap magnitude × gap direction is CLOSED DATA-LIMITED.** Authoritative run **36471949846** passed acquisition and produced Base/Stress outputs, but every LARGE_GAP cell had 94.44% execution coverage versus the frozen 95% gate. No P&L promotion or WFA/OOS was accepted.
 
-[Phase 44 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-44-gap-magnitude-direction-v1/docs/phase44_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-44-gap-magnitude-direction-v1/docs/phase44_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-44-gap-magnitude-direction-v1/docs/phase44_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-44-gap-magnitude-direction-v1)
+[Phase 44 manuscript](https://github.com/vishnuvcr/Daily-Options/blob/phase-44-gap-magnitude-direction-v1/reports/phase44/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-44-gap-magnitude-direction-v1/docs/phase44_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-44-gap-magnitude-direction-v1/docs/phase44_status.md)
+
+**Phase 45 — NIFTY opening-gap failure/continuation confirmation is now active.** Frozen state uses a 0.50% minimum gap and compares the first 15-minute NIFTY return with the opening-gap direction: GAP_FAILURE, GAP_CONTINUATION, or NO_CONFIRMATION. Both directional mappings and 10:30/15:10 exits are tested with the validated option execution engine and fixed friction model.
 
