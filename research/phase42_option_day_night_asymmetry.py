@@ -110,7 +110,7 @@ def signals(panel):
             for ex in EXITS: rows.append({**r._asdict(),"state":st,"mapping":mp,"side":side,"exit_time":ex})
     return pd.DataFrame(rows)
 
-def price_map(root,sigs,exps):
+def price_map(root,sigs,exps,diag_path=None):
     con=duckdb.connect(); con.execute("SET TimeZone='Asia/Kolkata'"); out={}
     req=[]
     for r in sigs.itertuples(index=False):
@@ -120,6 +120,7 @@ def price_map(root,sigs,exps):
         typ="CE" if r.side=="BULL" else "PE"; wing=atm+200 if r.side=="BULL" else atm-200
         for tm in ("09:31:00",r.exit_time): req += [(d,exp,typ,atm,tm),(d,exp,typ,wing,tm)]
     qreq=pd.DataFrame(req,columns=["d","exp","typ","strike","tm"]).drop_duplicates()
+    diagnostics=[]
     for exp,g in qreq.groupby("exp"):
         p=str(exps[exp]).replace("'","''"); ds=",".join("date '"+str(x)+"'" for x in g.d)
         ss=",".join(str(float(x)) for x in g.strike); ts=",".join("'"+x+"'" for x in g.tm)
@@ -131,10 +132,19 @@ def price_map(root,sigs,exps):
         from read_parquet('{p}',union_by_name=true)
         where cast(timestamp as date) in ({ds}) and cast(strike as double) in ({ss})
         and upper(cast(option_type as varchar)) in ({ty}) and strftime(cast(timestamp as timestamp),'%H:%M:%S') in ({ts})"""
-        for r in con.execute(q).df().itertuples(index=False):
+        got=con.execute(q).df()
+        for r in got.itertuples(index=False):
             px=r.op if r.tm=="09:31:00" else r.cl
             if pd.notna(px) and px>0: out[(r.d,exp,r.typ,float(r.strike),r.tm)]=float(px)
-    con.close(); return out
+        got_keys={(r.d,exp,r.typ,float(r.strike),r.tm) for r in got.itertuples(index=False) if pd.notna(r.op if r.tm=="09:31:00" else r.cl) and (r.op if r.tm=="09:31:00" else r.cl)>0}
+        for rr in g.itertuples(index=False):
+            key=(rr.d,exp,rr.typ,float(rr.strike),rr.tm)
+            diagnostics.append({"d":str(rr.d),"expiry":str(exp),"type":rr.typ,"strike":float(rr.strike),
+                                "time":rr.tm,"quote_available":key in got_keys})
+    con.close()
+    if diag_path is not None:
+        pd.DataFrame(diagnostics).to_csv(diag_path,index=False)
+    return out
 
 def trades(sigs,prices,exps,slip):
     rows=[]
@@ -189,7 +199,7 @@ def main():
     panel,exps=build_panel(root,out); sig=signals(panel)
     post=panel.iloc[LOOKBACK:] if len(panel)>LOOKBACK else panel.iloc[0:0]
     eligible=int(post.feature_eligible.sum()); expected=len(post)
-    prices=price_map(root,sig,exps); tr=trades(sig,prices,exps,a.slippage); cov=coverage(sig,tr)
+    prices=price_map(root,sig,exps,out/"quote_diagnostics.csv"); tr=trades(sig,prices,exps,a.slippage); cov=coverage(sig,tr)
     gate={"status":"PASS" if expected and eligible/expected>=COVER and len(sig)>0 and len(cov)==8 and cov.execution_coverage.min()>=COVER and panel.prior_information_violation.sum()==0 else "FAIL",
           "raw_sessions":len(panel)+2,"post_warmup_sessions":expected,"feature_eligible_sessions":eligible,
           "post_warmup_eligibility_rate":eligible/expected if expected else 0,"prior_information_violations":int(panel.prior_information_violation.sum()),
