@@ -185,19 +185,24 @@ def query_0930_iv(root, requests):
                 SELECT
                     CAST(trading_day AS DATE) AS trade_date,
                     CAST(expiry AS DATE) AS expiry,
+                    CAST(timestamp AS TIMESTAMP) AS ts,
                     strftime(CAST(timestamp AS TIMESTAMP), '%H:%M:%S') AS local_time,
                     UPPER(CAST(option_type AS VARCHAR)) AS option_type,
                     CAST(strike AS DOUBLE) AS strike,
                     CAST(close AS DOUBLE) AS close_px
                 FROM read_parquet('{ps}', union_by_name=true)
                 WHERE CAST(trading_day AS DATE) IN ({dates})
-                  AND strftime(CAST(timestamp AS TIMESTAMP), '%H:%M:%S')='09:30:00'
                   AND CAST(strike AS DOUBLE) IN ({strikes})
                   AND UPPER(CAST(option_type AS VARCHAR)) IN ('CE','PE')
                   AND close > 0
             )
-            SELECT trade_date, expiry, option_type, strike, close_px
+            SELECT trade_date, expiry, option_type, strike, close_px, ts
             FROM src
+            QUALIFY ROW_NUMBER() OVER (
+                PARTITION BY trade_date, option_type, strike
+                ORDER BY ts DESC
+            ) = 1
+               AND ts <= CAST(trade_date AS TIMESTAMP) + INTERVAL '9 hours 30 minutes'
         """
         z = con.execute(q).df()
         if z.empty:
