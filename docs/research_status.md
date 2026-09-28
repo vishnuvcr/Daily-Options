@@ -44,4 +44,4 @@ No Phase 41 P&L is accepted until unit tests, data gates, execution coverage, ac
 
 ## 2026-09-29 frontier update
 - Phase 42: **CLOSED DATA-LIMITED** — authoritative run 36469315584 attempt 2; feature eligibility 95.0777%, zero prior-information violations, but 0/5,364 required execution quote keys available and 0% execution coverage in every true cell. No P&L accepted.
-- Phase 43: **PREREGISTERED / ENGINEERING BUILD** — weekday-conditioned opening-gap direction, selected as the next distinct bounded family after Phase 42's execution-data limitation.
+- Phase 43: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36471290988; 20 true cells; no cell met the ₹5,000/week promotion gate in both Base and Stress.
