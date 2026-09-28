@@ -85,6 +85,10 @@ jobs:
         run: |
           PYTHONPATH=. python research/phase39_source_diagnostic.py
 
+      - name: Diagnose representative execution quotes
+        run: |
+          PYTHONPATH=. python research/phase39_execution_diagnostic.py
+
       - name: Run Phase 39 data gate
         run: |
           PYTHONPATH=. python research/phase39_implied_realized_opening_dislocation.py \
