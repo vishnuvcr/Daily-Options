@@ -520,3 +520,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E036-001 | 2026-09-28 | Phase 36 | First run 36378635847 used raw NIFTY sessions in the global-feature coverage denominator, yielding 94.79% by incorrectly counting 64 unavoidable warm-up/unavailable sessions | No P&L accepted; Base/Stress were skipped by the data gate | Corrected the gate to apply coverage over globally feature-eligible sessions, consistent with Phase 35 and the preregistered warm-up rule | CLOSED |
 
 | E037-CLOSE | 2026-09-28 | Phase 37 | Authoritative run 36379200435 completed cleanly; no numerical implementation defect remained at closure | None | Phase 37 retired after all four cells failed the economic gate | CLOSED |
+
+| E0381 | 2026-09-28 | Phase 38 pre-run static audit | Phase 38 feature eligibility initially did not require a valid 09:30 NIFTY close/ATM reference; a missing print could reach integer ATM conversion | No numerical evidence accepted; corrected before authoritative execution | Require valid 09:30 spot and derived ATM before signal eligibility | CLOSED — pre-run implementation defect |
