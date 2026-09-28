@@ -477,3 +477,8 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E035-IVRV-018 | 2026-09-28 | Phase 35 | Final clean-room execution established HIGH_VOL_STATE 16/16 quote coverage but LOW_VOL_STATE 0/1 in both exits | Phase cannot satisfy preregistered >=95% coverage in every true cell | Closed Phase 35 as DATA-LIMITED; no P&L or promotion accepted | CLOSED |
 
 | E0381 | 2026-09-28 | Phase 38 pre-run static audit | Phase 38 feature eligibility initially did not require a valid 09:30 NIFTY close/ATM reference; a missing print could reach integer ATM conversion | No numerical evidence accepted; corrected before authoritative execution | Require valid 09:30 spot and derived ATM before signal eligibility | CLOSED — pre-run implementation defect |
+
+
+| E0382 | 2026-09-28 | Phase 38 | Initial Actions wrapper obscured push-triggered runs; direct Actions run collection confirmed actual execution | No P&L accepted | Monitor Actions through direct run collection | CLOSED |
+| E0383 | 2026-09-28 | Phase 38 | Unit-test fixture forced zero prior-range variance and failed two pre-run tests in authoritative run 36382979851 | No P&L accepted; run quarantined | Correct deterministic fixture; rerun before data acquisition | OPEN |
+| E0384 | 2026-09-28 | Phase 38 | Data gate lacked explicit >=95% post-warm-up eligibility check | No P&L accepted; corrected before numerical evidence | Enforce explicit eligibility-rate gate | OPEN |
