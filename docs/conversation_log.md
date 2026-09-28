@@ -184,3 +184,9 @@ Phase 41 authoritative run **36467584676** was checked directly through GitHub A
 Phase 42 authoritative workflow 36469315584 attempt 2 passed unit tests and source acquisition and achieved 1,101/1,158 (95.0777%) feature eligibility with zero prior-information violations. Its frozen execution panel requested 5,364 exact option quote keys and returned 0, so all eight true cells had 0% execution coverage. Phase 42 was closed DATA-LIMITED with no P&L, null economics or WFA/OOS accepted. The failure was preserved without changing execution times, strikes, expiry rules or coverage thresholds.
 
 Phase 43 was then preregistered as a distinct weekday-conditioned opening-gap family: Monday–Friday × FOLLOW/FADE × 10:30/15:10, 20 true cells, five fixed permutation nulls, historical lots and the existing friction model. The validated Phase 38 execution engine was reused to avoid repeating Phase 42's systematic quote-key implementation path. This log records operational research decisions only, not hidden chain-of-thought.
+
+
+## 2026-09-29 — Phase 43 clean closure / Phase 44 launch
+Phase 43 authoritative clean run 36471290988 passed all data and validation gates. 1,160/1,168 post-warm-up sessions were feature-eligible (99.3151%), execution coverage was above 97.8% in every true cell, and accounting reconciled. None of 20 weekday × gap-mapping × exit cells met the ₹5,000 mean/median weekly and 70% positive-week promotion gate in both Base and Stress. Best cell was Thursday/FADE/15:10 at ₹46.87/week Base and ₹5.85/week Stress with negative medians. Phase 43 is closed NEGATIVE DISCOVERY; no WFA/OOS or tuning was authorized.
+
+Phase 44 is now the next preregistered family: fixed opening-gap magnitude buckets × gap direction, motivated by published gap-size evidence that intraday gap behavior varies with magnitude. Operational research decisions only; hidden chain-of-thought is not stored.
