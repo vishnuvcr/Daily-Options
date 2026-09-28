@@ -529,3 +529,8 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 - Trigger commits were issued on main and the Phase 38 branch.
 - The available GitHub connector does not expose a usable workflow-dispatch/list path for the branch-push run, and no PR workflow run/check is visible.
 - No numerical Phase 38 result is accepted. E0382 is logged on the Phase 38 branch.
+
+
+| E0382 | 2026-09-28 | Phase 38 | The connected workflow-run wrapper initially hid push-triggered runs; direct Actions run collection later confirmed authoritative executions existed | No P&L accepted | Use direct Actions run collection for execution monitoring | CLOSED |
+| E0383 | 2026-09-28 | Phase 38 | Unit-test fixture used constant early-session ranges, forcing rolling prior standard deviation to zero and failing two look-ahead/warm-up tests | No P&L accepted; run 36382979851 quarantined | Replace with deterministic variable-range fixture and rerun CI | OPEN — pending clean rerun |
+| E0384 | 2026-09-28 | Phase 38 | Data gate omitted explicit >=95% eligibility after the 60-session warm-up | No P&L accepted; corrected before numerical evidence | Enforce and report post-warm-up eligibility rate | OPEN — pending clean rerun |
