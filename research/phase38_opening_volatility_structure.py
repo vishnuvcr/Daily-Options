@@ -373,19 +373,30 @@ def summarize(trades: pd.DataFrame, expected: pd.DataFrame) -> pd.DataFrame:
 
 def data_gate(panel: pd.DataFrame, expiries: dict) -> dict:
     raw = len(panel)
+    post_warmup = max(raw - LOOKBACK, 0)
     eligible = int(panel["feature_eligible"].sum())
     complete = int((panel["feature_eligible"] & panel["barrier_ok"]).sum())
     violations = int((panel["feature_eligible"] & ~panel["barrier_ok"]).sum())
     expiry_ok = int(panel["feature_eligible"].map(
         lambda d: bisect.bisect_left(sorted(expiries), d) < len(expiries)
     ).sum())
+    eligibility_rate = eligible / post_warmup if post_warmup else 0.0
     cov = complete / eligible if eligible else 0.0
     exp_cov = expiry_ok / eligible if eligible else 0.0
-    status = "PASS" if cov >= COVERAGE_TARGET and exp_cov >= COVERAGE_TARGET and violations == 0 else "FAIL"
+    status = (
+        "PASS"
+        if eligibility_rate >= COVERAGE_TARGET
+        and cov >= COVERAGE_TARGET
+        and exp_cov >= COVERAGE_TARGET
+        and violations == 0
+        else "FAIL"
+    )
     return {
         "status": status,
         "raw_sessions": raw,
+        "post_warmup_sessions": post_warmup,
         "feature_eligible_sessions": eligible,
+        "post_warmup_eligibility_rate": eligibility_rate,
         "complete_feature_sessions": complete,
         "feature_coverage": cov,
         "expiry_mapping_coverage": exp_cov,
