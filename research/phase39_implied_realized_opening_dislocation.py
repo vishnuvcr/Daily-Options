@@ -195,6 +195,7 @@ def query_0930_iv(root, requests):
                   AND CAST(strike AS DOUBLE) IN ({strikes})
                   AND UPPER(CAST(option_type AS VARCHAR)) IN ('CE','PE')
                   AND close > 0
+                  AND CAST(timestamp AS TIMESTAMP) <= CAST(trading_day AS TIMESTAMP) + INTERVAL '9 hours 30 minutes'
             )
             SELECT trade_date, expiry, option_type, strike, close_px, ts
             FROM src
@@ -202,7 +203,6 @@ def query_0930_iv(root, requests):
                 PARTITION BY trade_date, option_type, strike
                 ORDER BY ts DESC
             ) = 1
-               AND ts <= CAST(trade_date AS TIMESTAMP) + INTERVAL '9 hours 30 minutes'
         """
         z = con.execute(q).df()
         if z.empty:
