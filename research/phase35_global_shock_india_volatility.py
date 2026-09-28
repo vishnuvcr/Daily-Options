@@ -98,7 +98,13 @@ def main():
     req=[opt(con,files[ee],f'{dd} 09:31:00',aa,tt,'open'),opt(con,files[ee],f'{dd} 09:31:00',ww,tt,'open'),opt(con,files[ee],f'{dd} {ex}',aa,tt,'close'),opt(con,files[ee],f'{dd} {ex}',ww,tt,'close')]
     complete+=int(all(v is not None for v in req))
    cov.append({'state':st,'horizon':h,'candidate_rows':len(q),'complete_quote_rows':complete,'coverage':complete/len(q) if len(q) else 0.0})
- (out/'execution_coverage.json').write_text(json.dumps(cov,indent=2)); con.close();
+ (out/'execution_coverage.json').write_text(json.dumps(cov,indent=2));
+ debug=[]
+ for rr in s.itertuples(index=False):
+  dd=pd.Timestamp(rr.date).date(); ee=next((z for z in files_list if z>=dd),None); tt='CE' if rr.GLOBAL_LEAD>0 else 'PE'; aa=round(float(rr.nifty_open_0930)/50)*50; ww=aa+WING if tt=='CE' else aa-WING; ex=HORIZON_TIMES[rr.horizon]
+  vals={'entry_atm':opt(con,files[ee],f'{dd} 09:31:00',aa,tt,'open'),'entry_wing':opt(con,files[ee],f'{dd} 09:31:00',ww,tt,'open'),'exit_atm':opt(con,files[ee],f'{dd} {ex}',aa,tt,'close'),'exit_wing':opt(con,files[ee],f'{dd} {ex}',ww,tt,'close')}
+  debug.append({'date':str(dd),'state':rr.state,'horizon':rr.horizon,'expiry':str(ee),'type':tt,'atm':aa,'wing':ww,**vals})
+ (out/'execution_debug.json').write_text(json.dumps(debug,indent=2,default=str)); con.close();
  if any(x['coverage']<.95 for x in cov):
   gate['status']='FAIL_EXECUTION_COVERAGE'; gate['execution_coverage']=cov; (out/'data_gate.json').write_text(json.dumps(gate,indent=2,default=str)); print(json.dumps(gate)); return
  con=duckdb.connect(); con.execute("SET TimeZone='Asia/Kolkata'"); rows=[]
