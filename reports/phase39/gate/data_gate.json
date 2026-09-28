@@ -1,0 +1,19 @@
+{
+  "status": "FAIL",
+  "raw_sessions": 1234,
+  "post_warmup_sessions": 1174,
+  "feature_eligible_sessions": 0,
+  "post_warmup_eligibility_rate": 0.0,
+  "iv_input_coverage": 0.0,
+  "expiry_mapping_coverage": 0.0,
+  "prior_information_violations": 0,
+  "signal_rows": 0,
+  "execution_coverage_min": 1.0,
+  "coverage_cells": 8,
+  "required_coverage": 0.95,
+  "lookback_sessions": 60,
+  "move_ratio_z_threshold": 0.75,
+  "implied_move_scaling": "sqrt(15/390)",
+  "study_start": "2021-07-01",
+  "study_end": "2026-08-31"
+}

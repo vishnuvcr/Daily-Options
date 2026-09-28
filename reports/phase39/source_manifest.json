@@ -1,0 +1,30 @@
+{
+  "dataset": "thetrademarkk/india-index-options-1m",
+  "revision": "51ca58c",
+  "index_file": "index/NIFTY.parquet",
+  "option_file_count": 267,
+  "option_files_head": [
+    "options/NIFTY/2021-05-27.parquet",
+    "options/NIFTY/2021-06-03.parquet",
+    "options/NIFTY/2021-06-10.parquet",
+    "options/NIFTY/2021-06-17.parquet",
+    "options/NIFTY/2021-06-24.parquet",
+    "options/NIFTY/2021-07-01.parquet",
+    "options/NIFTY/2021-07-08.parquet",
+    "options/NIFTY/2021-07-15.parquet",
+    "options/NIFTY/2021-07-22.parquet",
+    "options/NIFTY/2021-07-29.parquet"
+  ],
+  "option_files_tail": [
+    "options/NIFTY/2026-05-12.parquet",
+    "options/NIFTY/2026-05-19.parquet",
+    "options/NIFTY/2026-05-26.parquet",
+    "options/NIFTY/2026-06-02.parquet",
+    "options/NIFTY/2026-06-09.parquet",
+    "options/NIFTY/2026-07-07.parquet",
+    "options/NIFTY/2026-07-14.parquet",
+    "options/NIFTY/2026-07-21.parquet",
+    "options/NIFTY/2026-07-28.parquet",
+    "options/NIFTY/2026-08-04.parquet"
+  ]
+}
