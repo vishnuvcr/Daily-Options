@@ -80,7 +80,7 @@ jobs:
           if g["status"]!="PASS":
               raise SystemExit("DATA_GATE_FAIL: Stress discovery intentionally skipped")
           PY
-          PYTHONPATH=. python research/phase43_opening_volatility_structure.py             --data data/cache/phase43_trademarkk             --out reports/phase43/stress             --slippage 0.40
+          PYTHONPATH=. python research/phase43_weekday_gap_direction.py             --data data/cache/phase43_trademarkk             --out reports/phase43/stress             --slippage 0.40
 
       - name: Validate Phase 43 artifacts
         run: |
@@ -90,10 +90,10 @@ jobs:
           assert g["status"]=="PASS", g
           for f in ["base","stress"]:
               s=pd.read_csv(f"reports/phase43/{f}/true_cell_summary_{f}.csv")
-              assert len(s)==8,(f,len(s))
+              assert len(s)==20,(f,len(s))
               assert s["accounting_ok"].all(),f
               cov=pd.read_csv(f"reports/phase43/{f}/price_coverage.csv")
-              assert len(cov)==8,(f,len(cov))
+              assert len(cov)==20,(f,len(cov))
               assert cov["execution_coverage"].min() >= 0.95,(f,cov["execution_coverage"].min())
               t=pd.read_csv(f"reports/phase43/{f}/trades.csv")
               assert len(t)>0,(f,"zero true trades")
@@ -123,5 +123,5 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: phase43-opening-volatility-structure
+          name: phase43-weekday-gap-direction
           path: reports/phase43
