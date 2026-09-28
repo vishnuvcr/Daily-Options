@@ -1,9 +1,9 @@
 # Research Status
 
-Last updated: 2026-09-28
+Last updated: 2026-09-29
 
 ## Overall
-**Phase 41 — NIFTY option-gamma concentration × opening-gap direction: PREREGISTERED / ENGINEERING BUILD**
+**Phase 43 — NIFTY weekday effect × opening-gap direction: PREREGISTERED / ENGINEERING BUILD**
 
 ## Completed frontier closures
 - Phase 34: DATA-LIMITED at 53.20% two-expiry prior-session surface coverage.
@@ -40,3 +40,8 @@ No Phase 41 P&L is accepted until unit tests, data gates, execution coverage, ac
 ## 2026-09-29 frontier update
 - Phase 41: **CLOSED DATA-LIMITED** — authoritative run 36467584676; 30.68% feature eligibility, 79.50% prior-chain coverage, 87.41% core-chain coverage, zero prior-information violations; no P&L accepted.
 - Phase 42: **ACTIVE / PREREGISTERED** — option day-night return asymmetry × opening-gap direction. Authoritative workflow run **36468978862** is executing.
+
+
+## 2026-09-29 frontier update
+- Phase 42: **CLOSED DATA-LIMITED** — authoritative run 36469315584 attempt 2; feature eligibility 95.0777%, zero prior-information violations, but 0/5,364 required execution quote keys available and 0% execution coverage in every true cell. No P&L accepted.
+- Phase 43: **PREREGISTERED / ENGINEERING BUILD** — weekday-conditioned opening-gap direction, selected as the next distinct bounded family after Phase 42's execution-data limitation.
