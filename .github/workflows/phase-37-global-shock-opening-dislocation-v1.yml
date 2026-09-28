@@ -62,3 +62,5 @@ jobs:
         with:
           name: phase37-audit
           path: reports/phase37/
+
+# Phase 37 authoritative execution trigger
