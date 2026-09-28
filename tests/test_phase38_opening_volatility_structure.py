@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 from research.phase38_opening_volatility_structure import (
-    Z_THRESHOLD, build_feature_panel, build_signals, round_strike
+    Z_THRESHOLD, build_feature_panel, build_signals, data_gate, round_strike
 )
 
 
@@ -69,3 +69,21 @@ def test_atm_rounding():
     assert round_strike(22499) == 22500
     assert round_strike(22524) == 22500
     assert round_strike(22525) == 22550
+
+def test_post_warmup_eligibility_gate():
+    dates = pd.date_range("2026-01-01", periods=65, freq="B").date
+    panel = pd.DataFrame({
+        "date": dates,
+        "feature_eligible": [False] * 60 + [True] * 5,
+        "barrier_ok": [False] * 60 + [True] * 5,
+    })
+    expiries = {d: None for d in dates[-5:]}
+    g = data_gate(panel, expiries)
+    assert g["post_warmup_sessions"] == 5
+    assert np.isclose(g["post_warmup_eligibility_rate"], 1.0)
+    assert g["status"] == "PASS"
+
+    panel.loc[64, "feature_eligible"] = False
+    g2 = data_gate(panel, expiries)
+    assert np.isclose(g2["post_warmup_eligibility_rate"], 0.8)
+    assert g2["status"] == "FAIL"
