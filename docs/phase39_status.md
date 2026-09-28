@@ -4,19 +4,20 @@
 ENGINEERING CORRECTION IN PROGRESS — NO NUMERICAL EVIDENCE ACCEPTED.
 
 ## Completed
-- Phase 39 research question, literature review, timing, cost model, null controls and 8-cell discovery matrix frozen.
-- Dedicated branch created: phase-39-implied-realized-opening-dislocation-v1.
-- Authoritative workflow run 36409062624 reached the runner.
-- 7/8 unit tests passed before the rounding defect was isolated.
+- Frozen Phase 39 plan, literature, simulator, tests, cost model and null-control design.
+- Authoritative run 36409062624 failed one unit test; E0391 was corrected.
+- Clean unit tests passed in run 36409163981.
+- Pinned exact-expiry source restored successfully with 267 option files.
+- Initial data gate run found 0/1,174 IV-eligible sessions because the source lacks an exact 09:30 option bar for the queried strikes.
 
 ## Engineering finding
-E0391: the ATM strike helper used Python banker’s rounding at exact half-steps. The error was detected before cache restoration/data acquisition. No market evidence was accepted.
+E0392: the implementation used exact 09:30 option timestamps. The audited source-handling convention requires the latest valid positive observation at or before the fixed 09:30 information cutoff. This changes only timestamp matching, not the signal cutoff, expiry, threshold, execution or cost rules.
 
 ## Pending
-1. Clean unit-test rerun.
-2. Pinned source acquisition and feature data gate.
-3. Base/Stress and null controls only if the gate passes.
-4. Final manuscript and main status update.
+1. Rerun unit tests.
+2. Re-run the corrected data gate.
+3. Run Base/Stress/nulls only if the gate passes.
+4. Final closure manuscript and main status synchronization.
 
 ## Integrity rule
-No P&L from a defective run is accepted. No parameter tuning occurs from this failure.
+No Phase 39 economic conclusion has been accepted. The exact-09:30 failed run is quarantined.
