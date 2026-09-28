@@ -511,3 +511,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0398 | 2026-09-28 | Phase 39 | Final feature eligibility 71.38% < 95% because 16 missing MOVE_RATIO sessions contaminate strict prior-60-session z-score windows | Phase retired DATA-LIMITED; no P&L/WFA/OOS | Close family; do not change frozen feature definition post-result | CLOSED |
 
 | E0394 | 2026-09-28 | Phase 39 | Option snapshot rows are keyed using timestamp-derived local dates rather than the dataset `trading_day` field, consistent with the audited timestamp-safe execution convention | No P&L accepted | Correct snapshot date filter and rerun | OPEN |
+
+| E0395 | 2026-09-28 | Phase 39 | Contiguous-row rolling z-score amplified 16 IV-missing sessions into 380 z-score gaps; this was a feature-window implementation problem, not an economic result | No P&L accepted | Use prior 60 valid MOVE_RATIO observations only, with no imputation | OPEN |
