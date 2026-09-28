@@ -510,3 +510,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E035-IVRV-016 | 2026-09-28 | Phase 35 | Diagnostic edits temporarily mixed 09:30 close and open field names in the ATM calculation | No accepted P&L; latest run was pre-reconciliation | Restored one consistent 09:30 open field across panel, coverage, diagnostics and execution | CLOSED |
 
 | E035-IVRV-016 | 2026-09-28 | Phase 35 | Run 36377793729 showed three residual references to the retired `nifty_open_0930` field, including the main simulator | No P&L accepted | Replaced every residual reference and corrected the panel source column to the audited 09:30 close | CLOSED |
+
+| E035-IVRV-017 | 2026-09-28 | Phase 35 | Persisted report directories retained artifacts from earlier concurrent/failed runs, contaminating diagnostics | No P&L accepted | Workflow now deletes and recreates `reports/phase35` before every authoritative execution | CLOSED |
