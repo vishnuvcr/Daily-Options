@@ -509,3 +509,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0396 | 2026-09-28 | Phase 39 | IV-map date key mismatch | No P&L accepted | Normalized query dates | CLOSED |
 | E0397 | 2026-09-28 | Phase 39 | Execution-map date key mismatch falsely reported 0% coverage | No P&L accepted | Normalized execution date/expiry keys; rerun showed 96.99% minimum coverage | CLOSED |
 | E0398 | 2026-09-28 | Phase 39 | Final feature eligibility 71.38% < 95% because 16 missing MOVE_RATIO sessions contaminate strict prior-60-session z-score windows | Phase retired DATA-LIMITED; no P&L/WFA/OOS | Close family; do not change frozen feature definition post-result | CLOSED |
+
+| E0394 | 2026-09-28 | Phase 39 | Option snapshot rows are keyed using timestamp-derived local dates rather than the dataset `trading_day` field, consistent with the audited timestamp-safe execution convention | No P&L accepted | Correct snapshot date filter and rerun | OPEN |
