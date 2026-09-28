@@ -1,3 +1,5 @@
+> **2026-09-28 latest update:** Phase 35 global-shock options-structure is RETIRED after authoritative run 36342637912. Data gate: 1,164/1,164 complete sessions, 0 prior-date violations. All 16 frozen cells failed the economic gate; best Base mean weekly net -₹139.27 and Stress -₹186.93. [Final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-35-global-shock-options-structure-v1/reports/phase35/final_result.md)
+
 > **2026-09-28 latest update:** Phase 35 global-shock options-structure is RETIRED after authoritative run 36342637912. Data gate: 1,164/1,164 complete sessions, 0 prior-date violations. All 16 frozen cells failed the economic gate; best Base mean weekly net -₹139.27 and Stress -₹186.93. [Final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-35-global-shock-options-structure-v1/reports/phase35/final_result.md)\n\n# Daily-Options Research Lab
 
 Research program for discovering and validating reproducible NSE options strategies, with the current Equity Income YouTube program focused on a **weekly** objective rather than the retired daily-profit target.
