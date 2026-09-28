@@ -22,3 +22,4 @@ E0392: the implementation used exact 09:30 option timestamps. The audited source
 ## Integrity rule
 No Phase 39 economic conclusion has been accepted. The exact-09:30 failed run is quarantined.
 2026-09-28 Phase 39 rerun after E0393 cutoff-order correction.
+2026-09-28 Phase 39 rerun after E0394 timestamp-derived signal-date correction.
