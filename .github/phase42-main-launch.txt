@@ -1,3 +1,6 @@
 phase=42
 branch=phase-42-option-day-night-asymmetry-v1
 run=1
+
+main_trigger=3
+fixed_error=E0417
