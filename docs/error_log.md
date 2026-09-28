@@ -515,3 +515,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0395 | 2026-09-28 | Phase 39 | Contiguous-row rolling z-score amplified 16 IV-missing sessions into 380 z-score gaps; this was a feature-window implementation problem, not an economic result | No P&L accepted | Use prior 60 valid MOVE_RATIO observations only, with no imputation | OPEN |
 
 | E0398 | 2026-09-28 | Phase 39 | Clean authoritative run 36465244174 passed all integrity stages but 0/8 Base and 0/8 Stress cells cleared the weekly discovery gate | Phase retired; no WFA/OOS | Freeze Phase 39 as negative discovery and move to Phase 40 | CLOSED |
+
+| E0395 | 2026-09-28 | Phase 39 | Authoritative run 36465244174 passed integrity gates but 0/8 Base and 0/8 Stress cells met the ₹5,000 mean-weekly + ₹5,000 median-weekly + 70% positive-week gate | No WFA/OOS or promotion | Retire Phase 39 negative and advance to the next preregistered family | CLOSED |
