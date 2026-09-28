@@ -7,3 +7,5 @@
 | E0402 | 2026-09-28 | Pre-run information barrier | RV20 calculation included the current signal-day close instead of ending on the prior completed session | Would create look-ahead | Shift RV20 by one session so prior-day RV only uses prior data | CLOSED — pre-run |
 
 | E0403 | 2026-09-28 | Phase 40 source diagnostic / run 36466038985 | Diagnostic compared a pandas Timestamp trade date with datetime.date expiry values | No strategy/data evidence; data gate did not run | Normalize diagnostic trade date to Python date before expiry comparison | CLOSED — pre-run |
+
+| E0404 | 2026-09-28 | Phase 40 authoritative run 36466313849 | Clean data-gated Base/Stress evaluation completed and all 8 cells failed the weekly promotion gate | Phase retired; no WFA/OOS | Freeze Phase 40 as negative discovery and move to next preregistered distinct family | CLOSED |
