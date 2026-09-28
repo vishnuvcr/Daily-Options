@@ -1,7 +1,5 @@
 # Phase 43 Status
 
-**State: PREREGISTERED / ENGINEERING BUILD**
+**State: CLOSED — NEGATIVE DISCOVERY**
 
-Branch: phase-43-weekday-gap-direction-v1
-
-Frozen 20-cell discovery: 5 weekdays × 2 gap mappings × 2 exits, with five fixed permutation null seeds. No post-result weekday selection or tuning.
+Authoritative clean run **36471290988**. Data gate, Base, Stress and validation passed. 20 true cells and 100 null cells per friction regime were evaluated. No true cell cleared the ₹5,000 mean/median weekly and 70% positive-week promotion gate in both Base and Stress. Best cell was Thursday/FADE/15:10: ₹46.87/week Base and ₹5.85/week Stress, with negative medians and ~40% positive weeks. No WFA/OOS or tuning authorized.
