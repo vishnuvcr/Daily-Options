@@ -13,6 +13,8 @@
 7. E0381 closed before execution; E0382 closed after direct Actions-run visibility was established.
 
 ## Engineering findings
+- **E0384:** the post-warm-up eligibility gate was corrected to match the frozen >=95% criterion.
+- **E0385:** run `36408107390` caught a bug in the new expiry-coverage check; no data stage ran. The eligible-date filter is corrected.
 - **E0383:** run `36382979851` failed two unit tests because the fixture had zero prior-range variance. No data acquisition or P&L occurred.
 - **E0384:** pre-run audit found the data gate did not explicitly enforce the frozen >=95% post-warm-up eligibility requirement. The simulator was corrected before accepting numerical evidence.
 
