@@ -955,3 +955,10 @@ Best frozen cell: GLOBAL_ABS >=1.5, 200-point long strangle, 09:31→15:10; Base
 
 ## 2026-09-28 — Phase 35 closure
 Phase 35 global overnight shock × India-local IV–RV state is **RETIRED — DATA-LIMITED**. Authoritative successful workflow 36378249952 passed the feature gate (1,164 global-eligible; 1,144 IV-RV-complete; 98.28%; 0 prior-date violations). The frozen candidate population was 16 HIGH_VOL_STATE and 1 LOW_VOL_STATE days. HIGH_VOL_STATE quote coverage was 100% for both exits; LOW_VOL_STATE coverage was 0% in both exits. The preregistered requirement is >=95% coverage in every true cell, so no P&L, null inference, WFA/OOS, or promotion is accepted. [Phase 35 final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-35-global-shock-india-volatility-v1/reports/phase35/final_result.md)
+
+## 2026-09-28 — Phase 38 active frontier
+Phase 37 remains CLOSED / RETIRED after a negative discovery result. **Phase 38 — NIFTY Opening Volatility / Price-Structure** is now the active bounded family on `phase-38-opening-volatility-structure-v1`.
+
+The preregistered design uses 09:15–09:29 NIFTY early-session range percentage, a strictly-prior 60-session RANGE_Z (threshold ±0.75), early directional return, CONTINUE/FADE mappings, 10:30/15:10 exits, 09:31 option entry, 09:30-close ATM, 200-point debit spread, historical lot sizes and established costs. Five fixed null seeds are included. No WFA/OOS or result-driven tuning is allowed unless the frozen Base+Stress weekly promotion gate clears.
+
+The main-branch launcher is installed so the workflow has a manual dispatch button while executing the frozen Phase 38 branch.
