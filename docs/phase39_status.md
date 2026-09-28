@@ -4,20 +4,15 @@
 ENGINEERING CORRECTION IN PROGRESS — NO NUMERICAL EVIDENCE ACCEPTED.
 
 ## Completed
-- Frozen Phase 39 plan, literature, simulator, tests, cost model and null-control design.
-- Authoritative run 36409062624 failed one unit test; E0391 was corrected.
-- Clean unit tests passed in run 36409163981.
-- Pinned exact-expiry source restored successfully with 267 option files.
-- Initial data gate run found 0/1,174 IV-eligible sessions because the source lacks an exact 09:30 option bar for the queried strikes.
+- Phase 39 frozen plan, literature review, simulator, unit tests and workflow created.
+- E0391 corrected; clean unit tests passed.
+- E0392 corrected the signal timestamp convention to latest valid quote at or before 09:30.
+- Pinned source restored with 267 exact-expiry option files.
 
 ## Engineering finding
-E0392: the implementation used exact 09:30 option timestamps. The audited source-handling convention requires the latest valid positive observation at or before the fixed 09:30 information cutoff. This changes only timestamp matching, not the signal cutoff, expiry, threshold, execution or cost rules.
+E0393: the pre-cutoff SQL applied ROW_NUMBER before the timestamp cutoff, so the latest row could be after 09:30 and then be discarded. No economic stage ran. The cutoff is now applied in the source filter before ROW_NUMBER.
 
 ## Pending
-1. Rerun unit tests.
-2. Re-run the corrected data gate.
-3. Run Base/Stress/nulls only if the gate passes.
-4. Final closure manuscript and main status synchronization.
-
-## Integrity rule
-No Phase 39 economic conclusion has been accepted. The exact-09:30 failed run is quarantined.
+1. Rerun tests and authoritative source/data gate.
+2. Run Base/Stress/nulls only if all data gates pass.
+3. Final phase closure and manuscript.
