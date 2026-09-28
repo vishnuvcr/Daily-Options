@@ -3,42 +3,43 @@
 Last updated: 2026-09-28
 
 ## Overall
-**Phase 39 — NIFTY option-implied versus realized opening-move dislocation: PREREGISTERED / ENGINEERING BUILD**
+**Phase 40 — prior-day NIFTY ATM IV / realized-volatility state × next-session overnight-gap dislocation: PREREGISTERED / ENGINEERING BUILD**
 
-## Current research objective
-The active Equity Income program targets ₹5,000 NET per completed trading week at fixed declared reference sizing, after Paytm Money brokerage, date-aware NSE/statutory charges, Base/Stress slippage, weekly risk metrics and later WFA/OOS validation.
+## Current program objective
+The active Equity Income program targets ₹5,000 NET per completed trading week at fixed declared reference sizing after Paytm Money brokerage, NSE/statutory costs, Base/Stress slippage, and later WFA/OOS validation.
 
-## Completed frontier closures
-- Phase 34: CLOSED DATA-LIMITED. Authoritative run 36341535504 found 656/1,233 complete prior-session two-expiry surface sessions = 53.20%, below the frozen 95% gate. No P&L accepted.
-- Phase 35: CLOSED across its global-shock option/IV-RV families; one branch was DATA-LIMITED and the option-structure branch was negative. No tuning.
-- Phase 36: CLOSED negative after global-shock breadth/disagreement cells failed the weekly economic gate.
-- Phase 37: CLOSED negative after global-shock opening-dislocation cells failed the weekly economic gate.
-- Phase 38: CLOSED negative. Authoritative run 36408210374 passed all integrity gates but 0/8 Base and 0/8 Stress cells cleared the ₹5,000/week discovery gate. No WFA/OOS.
+## Recent closures
+- Phase 34: DATA-LIMITED at 53.20% two-expiry prior-session surface coverage.
+- Phase 35: CLOSED across global-shock option/volatility families.
+- Phase 36: CLOSED negative.
+- Phase 37: CLOSED negative.
+- Phase 38: CLOSED negative; 0/8 Base and 0/8 Stress passed the weekly gate.
+- Phase 39: CLOSED DATA-LIMITED; 71.38% feature eligibility versus the 95% gate, despite 98.64% direct IV input coverage and 96.99% corrected execution coverage. No P&L accepted.
 
-## Phase 39 current state
-Phase 39 is the next distinct preregistered family. It is designed to use a different information source from Phase 38: the relationship between the 09:15–09:29 realized opening move and the contemporaneous 09:30 ATM option-implied 15-minute move.
+## Phase 40 current state
+Phase 40 is the next distinct preregistered family. It removes the same-day first-15-minute MOVE_RATIO dependency that caused Phase 39's feature-history limitation. The signal uses prior-day local ATM implied volatility relative to prior realized volatility, then measures the next session's overnight gap relative to the prior-day one-session implied move.
 
-Frozen before computation:
-- raw opening move uses only 09:15 open and 09:29 NIFTY close;
-- ATM option-implied volatility is taken from the nearest NIFTY expiry strictly after the signal date and the 09:30 ATM CE/PE observations;
-- implied 15-minute move uses ATM IV × sqrt(15/390);
-- MOVE_RATIO = realized absolute opening return / implied 15-minute move;
-- strictly prior 60-session z-score of MOVE_RATIO;
-- high/low dislocation states at ±0.75 z;
-- CONTINUE and FADE directional mappings;
-- 09:31 entry, 10:30 and 15:10 exits, one-lot 200-point debit spread;
-- five fixed permutation null seeds;
-- Base/Stress ₹0.20/₹0.40 slippage and the established cost model;
-- no WFA/OOS unless the discovery gate clears.
+Frozen at preregistration:
+- prior-day 15:10 NIFTY close and next-expiry ATM CE/PE IV;
+- prior 20-session annualized close-to-close realized volatility;
+- IV/RV state context retained as a descriptive diagnostic, not a post-result selection;
+- next-session overnight gap = 09:15 open / prior session 15:10 close − 1;
+- gap ratio = absolute overnight gap / [prior-day ATM IV × sqrt(1/252)];
+- strictly prior 60-session z-score of the gap ratio;
+- HIGH_GAP_DISLOCATION z >= +0.75; LOW_GAP_DISLOCATION z <= −0.75;
+- CONTINUE/FADE direction mappings;
+- 09:31 entry, 10:30/15:10 exits, one-lot 200-point debit spread;
+- historical lot sizes, fixed Paytm Money/NSE/statutory costs, Base/Stress slippage;
+- five fixed permutation null seeds; no WFA/OOS before discovery gate.
 
-## Phase 39 next steps
-1. Freeze plan, literature review, unit tests, simulator, manual workflow and source manifest on branch phase-39-implied-realized-opening-dislocation-v1.
-2. Run authoritative data gates against the pinned exact-expiry NIFTY option cache.
-3. Run Base, Stress and null controls only if all source/execution coverage requirements pass.
-4. Close the family negative/data-limited if the preregistered gate fails; otherwise continue to WFA/OOS without retuning.
+## Phase 40 next steps
+1. Freeze plan, literature review, engine, tests, source diagnostics and manual workflow.
+2. Run source/data gates against the pinned exact-expiry cache.
+3. Run Base/Stress/nulls only when all gates pass.
+4. Close DATA-LIMITED/negative if the frozen gate fails; otherwise continue to WFA/OOS without retuning.
 
 ## Integrity rule
-No local or partial P&L is accepted. Every accepted Phase 39 result must come from the authoritative GitHub Actions workflow and include data-gate, Base, Stress, null, accounting and artifact validation.
+No local or partial P&L is accepted. Every accepted result requires the authoritative workflow, complete gates, Base/Stress accounting, null controls and persisted artifacts.
 
 ## Historical detailed step log
 The remainder of this file preserves the earlier phase-by-phase research ledger and is retained for auditability.
