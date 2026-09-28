@@ -482,3 +482,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0382 | 2026-09-28 | Phase 38 | Initial Actions wrapper obscured push-triggered runs; direct Actions run collection confirmed actual execution | No P&L accepted | Monitor Actions through direct run collection | CLOSED |
 | E0383 | 2026-09-28 | Phase 38 | Unit-test fixture forced zero prior-range variance and failed two pre-run tests in authoritative run 36382979851 | No P&L accepted; run quarantined | Correct deterministic fixture; rerun before data acquisition | OPEN |
 | E0384 | 2026-09-28 | Phase 38 | Data gate lacked explicit >=95% post-warm-up eligibility check | No P&L accepted; corrected before numerical evidence | Enforce explicit eligibility-rate gate | OPEN |
+
+| E0385 | 2026-09-28 | Phase 38 | Expiry-mapping data gate briefly mapped booleans instead of eligible dates, caught before data acquisition | No P&L accepted | Corrected in branch and rerun | OPEN |
