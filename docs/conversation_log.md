@@ -166,3 +166,11 @@ Phase 35 global overnight shock × India-local IV–RV state is **RETIRED — DA
 - Sixteen missing raw MOVE_RATIO sessions propagated to 320 invalid prior-60-session z-score windows under the frozen method; no imputation or lookback change authorized.
 - Phase 40 created as the next distinct hypothesis: prior-day ATM IV versus realized-volatility state and next-session overnight gap normalized by the prior-day one-session implied move.
 - Operational research status is logged here; hidden chain-of-thought is not written to repository files.
+
+
+## 2026-09-28 — Phase 39/40 final closures and Phase 41 launch
+- Phase 39 final clean run 36465244174 is CLOSED — NEGATIVE DISCOVERY: 98.64% feature eligibility, 0/8 Base and 0/8 Stress promotion cells.
+- Phase 40 final clean run 36466313849 is CLOSED — NEGATIVE DISCOVERY: 97.79% feature eligibility, 0/8 Base and 0/8 Stress promotion cells.
+- Phase 41 is preregistered as the next distinct family: OI-weighted option-gamma concentration around ATM × opening-gap direction.
+- The Phase 41 design intentionally avoids the already-tested raw OI/volume pressure, India VIX/RV gap, implied/realized opening-move and prior-day IV/overnight-gap families.
+- This repository log records operational research decisions only, not hidden chain-of-thought.
