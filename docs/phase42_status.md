@@ -1,23 +1,18 @@
 # Phase 42 Status
 
-**State: PREREGISTERED / ENGINEERING**
+**State: CLOSED — DATA-LIMITED**
 
-Branch: `phase-42-option-day-night-asymmetry-v1`
+Authoritative workflow **36469315584**, attempt 2, job **109088926479**.
 
-Phase 41 is closed DATA-LIMITED. Phase 42 is a distinct family based on prior-session option day–night return asymmetry.
+- Unit tests: PASS
+- Source acquisition: PASS
+- Post-warm-up feature eligibility: 1,101/1,158 = **95.0777% PASS**
+- Prior-information violations: **0 PASS**
+- Signal rows: 1,788
+- Required execution quote keys: **5,364**
+- Available required quote keys: **0**
+- Minimum execution coverage: **0.00% FAIL**
+- Base/Stress/null economics: **not run / not accepted**
+- WFA/OOS: **not authorized**
 
-### Required phases
-1. Unit tests
-2. Pinned source acquisition/reuse
-3. Feature data gate
-4. Base discovery
-5. Stress discovery
-6. Five-seed null controls
-7. Accounting and artifact validation
-8. Final manuscript/closure
-
-No result is accepted until the complete sequence passes.
-
-
-## Rerun checkpoint — E0417
-Run 36468978862 was quarantined before any P&L because the gate code attempted ATM construction from a missing prior-session NIFTY close. E0417 is fixed by an explicit finite-price guard; the hypothesis, gates, dates, thresholds, execution and friction model remain unchanged. Fresh authoritative rerun required.
+E0417 was corrected before the authoritative run. The remaining gate failure is systematic execution-data coverage, not an economic result. No execution timestamp, strike, expiry or coverage rule was changed after observation.
