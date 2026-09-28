@@ -1,4 +1,4 @@
-# Daily-Options Research Lab
+> **2026-09-28 latest research status:** Phase 35 global overnight shock × NIFTY option volatility structure is closed as negative. Authoritative run 36342637912 passed the data gate (1,164/1,164 sessions; 0 look-ahead violations), but 0/16 Base and 0/16 Stress cells met the ₹5,000/week discovery gate. [Phase 35 final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-35-global-shock-options-structure-v1/reports/phase35/final_result.md).\n\n# Daily-Options Research Lab
 
 Research program for discovering and validating reproducible NSE options strategies, with the current Equity Income YouTube program focused on a **weekly** objective rather than the retired daily-profit target.
 
