@@ -91,3 +91,14 @@ def test_signal_building_uses_next_trading_day_and_frozen_cells():
     assert set(sig["exit_time"]) == {"10:30:00", "15:10:00"}
     assert len(sig) == 16
     assert (sig["trade_date"] > sig["signal_date"]).all()
+
+    
+def test_prior_only_z_uses_sixty_previous_valid_observations_when_gaps_exist():
+    s = pd.Series([float(i) if i not in (10, 20, 30) else np.nan for i in range(70)])
+    mean, std, z = prior_only_z(s, window=60)
+    assert pd.isna(z.iloc[60])
+    expected = pd.Series([float(i) for i in range(70) if i not in (10, 20, 30)])
+    prior = expected.iloc[:60]
+    assert np.isclose(mean.iloc[63], prior.mean())
+    assert np.isclose(std.iloc[63], prior.std(ddof=1))
+    assert np.isfinite(z.iloc[63])
