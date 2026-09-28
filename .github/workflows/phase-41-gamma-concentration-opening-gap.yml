@@ -1,0 +1,138 @@
+name: Phase 41 gamma concentration opening gap
+
+on:
+  push:
+    paths:
+      - ".github/phase41-main-launch.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase41-gamma-concentration-opening-gap
+  cancel-in-progress: false
+
+jobs:
+  phase41:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-41-gamma-concentration-opening-gap-v1
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install pinned runtime
+        run: |
+          python -m pip install --disable-pip-version-check \
+            pandas==2.3.2 numpy==2.1.3 duckdb==1.3.2 pyarrow==19.0.1 \
+            pytest==8.4.2 huggingface_hub==0.35.3 requests==2.32.5
+
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_phase41_gamma_concentration_opening_gap.py
+
+      - name: Restore pinned NIFTY/options cache
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase41_trademarkk
+          key: phase41-trademarkk-51ca58c-v1
+          restore-keys: |
+            phase41-trademarkk-51ca58c-
+            phase40-trademarkk-51ca58c-
+
+      - name: Acquire or reuse exact-expiry NIFTY source
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase41_trademarkk
+          if [ ! -s data/cache/phase41_trademarkk/index/NIFTY.parquet ] || \
+             [ "$(find data/cache/phase41_trademarkk/options/NIFTY -maxdepth 1 -name '*.parquet' 2>/dev/null | wc -l)" -lt 200 ]; then
+            for attempt in 1 2 3 4; do
+              python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="thetrademarkk/india-index-options-1m",repo_type="dataset",revision="51ca58c",local_dir="data/cache/phase41_trademarkk",allow_patterns=["index/NIFTY.parquet","options/NIFTY/*.parquet"])' && break
+              if [ "$attempt" -eq 4 ]; then exit 1; fi
+              sleep $((attempt*15))
+            done
+          fi
+          test -s data/cache/phase41_trademarkk/index/NIFTY.parquet
+          test "$(find data/cache/phase41_trademarkk/options/NIFTY -maxdepth 1 -name '*.parquet' | wc -l)" -ge 200
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("data/cache/phase41_trademarkk")
+          files=sorted(str(p.relative_to(root)) for p in (root/"options"/"NIFTY").glob("*.parquet"))
+          Path("reports/phase41").mkdir(parents=True,exist_ok=True)
+          Path("reports/phase41/source_manifest.json").write_text(json.dumps({
+            "dataset":"thetrademarkk/india-index-options-1m",
+            "revision":"51ca58c",
+            "index_file":"index/NIFTY.parquet",
+            "option_file_count":len(files),
+            "option_files_head":files[:10],
+            "option_files_tail":files[-10:]
+          },indent=2))
+          PY
+
+      - name: Run Phase 41 data gate
+        run: |
+          PYTHONPATH=. python research/phase41_gamma_concentration_opening_gap.py \
+            --data data/cache/phase41_trademarkk --out reports/phase41/gate \
+            --slippage 0.20 --gate-only
+
+      - name: Enforce data gate
+        run: |
+          python - <<'PY'
+          import json,sys
+          g=json.load(open("reports/phase41/gate/data_gate.json"))
+          print(json.dumps(g,indent=2))
+          sys.exit(0 if g["status"]=="PASS" else 1)
+          PY
+
+      - name: Run Base discovery
+        run: |
+          PYTHONPATH=. python research/phase41_gamma_concentration_opening_gap.py \
+            --data data/cache/phase41_trademarkk --out reports/phase41/base --slippage 0.20
+
+      - name: Run Stress discovery
+        run: |
+          PYTHONPATH=. python research/phase41_gamma_concentration_opening_gap.py \
+            --data data/cache/phase41_trademarkk --out reports/phase41/stress --slippage 0.40
+
+      - name: Validate Phase 41 artifacts
+        run: |
+          python - <<'PY'
+          import json,pandas as pd
+          g=json.load(open("reports/phase41/gate/data_gate.json"))
+          assert g["status"]=="PASS",g
+          assert g["prior_information_violations"]==0
+          assert g["post_warmup_eligibility_rate"]>=0.95
+          for f in ("base","stress"):
+            s=pd.read_csv(f"reports/phase41/{f}/true_cell_summary.csv")
+            assert len(s)==8 and s["accounting_ok"].all()
+            c=pd.read_csv(f"reports/phase41/{f}/price_coverage.csv")
+            assert len(c)==8 and c["execution_coverage"].min()>=0.95
+            t=pd.read_csv(f"reports/phase41/{f}/trades.csv")
+            assert len(t)>0
+            n=pd.read_csv(f"reports/phase41/{f}/null_summary.csv")
+            assert len(n)==40 and n["null_seed"].nunique()==5
+          PY
+
+      - name: Persist Phase 41 reports
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f reports/phase41
+          if ! git diff --cached --quiet; then
+            git commit -m "Phase 41: persist gamma concentration opening-gap outputs"
+            git push origin HEAD:phase-41-gamma-concentration-opening-gap-v1
+          fi
+
+      - name: Upload Phase 41 artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase41-gamma-concentration-opening-gap
+          path: reports/phase41
