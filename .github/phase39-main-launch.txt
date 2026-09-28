@@ -27,3 +27,4 @@ No Phase 39 economic conclusion has been accepted. The exact-09:30 failed run is
 2026-09-28 Phase 39 source diagnostic rerun after E0395 correction.
 2026-09-28 Phase 39 rerun after E0396 IV date-join correction.
 2026-09-28 Phase 39 execution-source diagnostic.
+2026-09-28 Phase 39 rerun after E0397 execution-key correction.
