@@ -34,7 +34,7 @@ def global_panel(idx,gd):
  s=idx[idx.time=='09:30:00'][['date']].drop_duplicates('date').sort_values('date').copy(); s['date']=pd.to_datetime(s['date']).astype('datetime64[ns]')
  for m,d in gd.items():
   z=d.dropna().rename(columns={'date':'gd','z':f'z_{m}'}); z['gd']=pd.to_datetime(z['gd']).astype('datetime64[ns]'); s=pd.merge_asof(s,z.sort_values('gd'),left_on='date',right_on='gd',direction='backward',allow_exact_matches=False); s[f'prior_{m}']=s.gd; s=s.drop(columns=['gd'])
- s['GLOBAL_LEAD']=s[[f'z_{m}' for m in MARKETS]].mean(axis=1); pc=[f'prior_{m}' for m in MARKETS]; s['all_prior']=s[pc].apply(lambda r:all(pd.notna(v) and v<s.loc[r.name,'date'] for v in r),axis=1); return s
+ s['GLOBAL_LEAD']=s[[f'z_{m}' for m in MARKETS]].mean(axis=1); pc=[f'prior_{m}' for m in MARKETS]; s['prior_violations']=s[pc].apply(lambda r:any(pd.notna(v) and v>=s.loc[r.name,'date'] for v in r),axis=1); s['all_prior']=~s['prior_violations']; return s
 
 def opt(con,path,ts,strike,typ,field):
  p=str(path).replace(chr(39),chr(39)*2); q=f"SELECT CAST({field} AS DOUBLE) px FROM read_parquet('{p}') WHERE CAST(timestamp AS TIMESTAMP)=TIMESTAMP '{ts}' AND CAST(strike AS DOUBLE)={float(strike)} AND UPPER(CAST(option_type AS VARCHAR))='{typ}' AND {field}>0 LIMIT 1"; z=con.execute(q).df(); return None if z.empty else float(z.iloc[0].px)
@@ -83,7 +83,7 @@ def summarize(t):
 def main():
  ap=argparse.ArgumentParser(); ap.add_argument('--data',default='data/cache/phase31_trademarkk'); ap.add_argument('--global-data',default='data/cache/phase31_8_global'); ap.add_argument('--out',default='reports/phase35'); ap.add_argument('--slippage',type=float,default=.20); ap.add_argument('--gate-only',action='store_true'); a=ap.parse_args(); root=Path(a.data); out=Path(a.out); out.mkdir(parents=True,exist_ok=True)
  idx=index(root); gp=global_panel(idx,globals_(Path(a.global_data))); files={pd.Timestamp(p.stem).date():p for p in (root/'options/NIFTY').glob('*.parquet')}; loc=local_state(idx,root,files); p=gp.merge(loc,on='date',how='left')
- ready=p[[f'z_{m}' for m in MARKETS]+['iv_rv_z']].notna().all(axis=1)&p.all_prior; gate={'status':'PASS' if ready.mean()>=.95 and ready.any() else 'FAIL','raw_sessions':len(p),'feature_eligible_sessions':int(ready.sum()),'coverage':float(ready.mean()),'prior_violations':int((~p.all_prior).sum()),'threshold':THRESHOLD,'study_start':str(START),'study_end':str(END)}; (out/'data_gate.json').write_text(json.dumps(gate,indent=2,default=str)); p.to_csv(out/'feature_panel.csv',index=False)
+ global_ready=p[[f'z_{m}' for m in MARKETS]].notna().all(axis=1)&p.all_prior; ready=global_ready&p.iv_rv_z.notna(); cov=float(ready.sum()/global_ready.sum()) if global_ready.sum() else 0.0; gate={'status':'PASS' if cov>=.95 and global_ready.any() and int(p.prior_violations.sum())==0 else 'FAIL','raw_sessions':len(p),'global_feature_eligible_sessions':int(global_ready.sum()),'feature_eligible_sessions':int(ready.sum()),'coverage':cov,'prior_violations':int(p.prior_violations.sum()),'warmup_or_global_unavailable_sessions':int((~global_ready).sum()),'threshold':THRESHOLD,'study_start':str(START),'study_end':str(END)}; (out/'data_gate.json').write_text(json.dumps(gate,indent=2,default=str)); p.to_csv(out/'feature_panel.csv',index=False)
  if a.gate_only or gate['status']!='PASS':print(json.dumps(gate));return
  s=p[(p.GLOBAL_LEAD.abs()>=THRESHOLD)&p.state.isin(STATES)].copy(); s=pd.concat([s.assign(horizon=h) for h in HORIZONS],ignore_index=True); con=duckdb.connect(); rows=[]
  for r in s.itertuples(index=False):
