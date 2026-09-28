@@ -1,0 +1,17 @@
+{
+  "status": "FAIL",
+  "raw_sessions": 1215,
+  "post_warmup_sessions": 1154,
+  "feature_eligible_sessions": 354,
+  "post_warmup_eligibility_rate": 0.30675909878682844,
+  "prior_chain_coverage": 0.7949781299001403,
+  "core_chain_coverage": 0.8740901213171578,
+  "prior_information_violations": 0,
+  "signal_rows": 628,
+  "execution_coverage_min": 0.9666666666666667,
+  "coverage_cells": 8,
+  "required_coverage": 0.95,
+  "lookback_valid_observations": 60,
+  "study_start": "2021-07-01",
+  "study_end": "2026-08-31"
+}
