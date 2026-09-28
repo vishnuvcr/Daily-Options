@@ -35,3 +35,7 @@ This is deliberately distinct from:
 
 ## Current integrity rule
 No Phase 41 P&L is accepted until unit tests, data gates, execution coverage, accounting and artifact persistence all pass.
+
+
+## Phase 41 closure — 2026-09-29
+**CLOSED — DATA-LIMITED.** Authoritative run **36467584676** failed the frozen data gate before any P&L: 354/1,154 post-warm-up sessions were feature-eligible (30.68%), prior-chain coverage was 79.50%, and core-chain coverage was 87.41%, versus the preregistered >=95% requirements. Prior-information violations were 0. Base/Stress and null economics were correctly skipped. No parameter or data-gate relaxation is permitted.
