@@ -62,3 +62,5 @@ jobs:
         with:
           name: phase36-audit
           path: reports/phase36/
+
+# Phase 36 authoritative execution trigger
