@@ -7,10 +7,10 @@
     "type": "CE",
     "atm": 17350,
     "wing": 17550,
-    "entry_atm": 82.0,
-    "entry_wing": 30.4,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 140.0,
+    "entry_wing": 58.55,
+    "exit_atm": 131.55,
+    "exit_wing": 54.95
   },
   {
     "date": "2022-06-17",
@@ -20,10 +20,10 @@
     "type": "PE",
     "atm": 15200,
     "wing": 15000,
-    "entry_atm": 133.65,
-    "entry_wing": 82.15,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 195.1,
+    "entry_wing": 123.5,
+    "exit_atm": 163.15,
+    "exit_wing": 102.4
   },
   {
     "date": "2022-12-16",
@@ -33,10 +33,10 @@
     "type": "PE",
     "atm": 18400,
     "wing": 18200,
-    "entry_atm": 142.05,
-    "entry_wing": 53.9,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 98.75,
+    "entry_wing": 38.65,
+    "exit_atm": 136.2,
+    "exit_wing": 54.15
   },
   {
     "date": "2023-05-19",
@@ -46,10 +46,10 @@
     "type": "CE",
     "atm": 18150,
     "wing": 18350,
-    "entry_atm": 111.55,
-    "entry_wing": 27.25,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 103.2,
+    "entry_wing": 27.75,
+    "exit_atm": 75.7,
+    "exit_wing": 18.95
   },
   {
     "date": "2023-07-14",
@@ -59,10 +59,10 @@
     "type": "CE",
     "atm": 19500,
     "wing": 19700,
-    "entry_atm": 108.7,
-    "entry_wing": 24.35,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 90.6,
+    "entry_wing": 21.8,
+    "exit_atm": 80.65,
+    "exit_wing": 18.15
   },
   {
     "date": "2023-10-20",
@@ -72,10 +72,10 @@
     "type": "PE",
     "atm": 19550,
     "wing": 19350,
-    "entry_atm": 110.0,
-    "entry_wing": 36.3,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 98.0,
+    "entry_wing": 33.35,
+    "exit_atm": 98.65,
+    "exit_wing": 32.9
   },
   {
     "date": "2024-02-23",
@@ -85,10 +85,10 @@
     "type": "CE",
     "atm": 22250,
     "wing": 22450,
-    "entry_atm": 150.1,
-    "entry_wing": 64.7,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 169.6,
+    "entry_wing": 81.4,
+    "exit_atm": 168.9,
+    "exit_wing": 79.35
   },
   {
     "date": "2024-03-22",
@@ -98,10 +98,10 @@
     "type": "CE",
     "atm": 21900,
     "wing": 22100,
-    "entry_atm": 331.6,
-    "entry_wing": 177.3,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 176.55,
+    "entry_wing": 79.15,
+    "exit_atm": 286.3,
+    "exit_wing": 150.9
   },
   {
     "date": "2024-04-26",
@@ -111,10 +111,10 @@
     "type": "PE",
     "atm": 22600,
     "wing": 22400,
-    "entry_atm": 187.1,
-    "entry_wing": 92.2,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 124.15,
+    "entry_wing": 60.55,
+    "exit_atm": 166.5,
+    "exit_wing": 84.75
   },
   {
     "date": "2024-08-16",
@@ -124,10 +124,10 @@
     "type": "CE",
     "atm": 24400,
     "wing": 24600,
-    "entry_atm": 226.05,
-    "entry_wing": 106.95,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 151.9,
+    "entry_wing": 65.1,
+    "exit_atm": 81.95,
+    "exit_wing": 31.0
   },
   {
     "date": "2024-09-13",
@@ -137,10 +137,10 @@
     "type": "CE",
     "atm": 25300,
     "wing": 25500,
-    "entry_atm": 147.9,
-    "entry_wing": 61.95,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 143.1,
+    "entry_wing": 61.25,
+    "exit_atm": 162.9,
+    "exit_wing": 71.55
   },
   {
     "date": "2024-09-20",
@@ -150,10 +150,10 @@
     "type": "CE",
     "atm": 25500,
     "wing": 25700,
-    "entry_atm": 297.6,
-    "entry_wing": 154.6,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 147.05,
+    "entry_wing": 61.7,
+    "exit_atm": 190.5,
+    "exit_wing": 85.5
   },
   {
     "date": "2024-09-27",
@@ -163,10 +163,10 @@
     "type": "CE",
     "atm": 26200,
     "wing": 26400,
-    "entry_atm": 142.8,
-    "entry_wing": 55.65,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 164.5,
+    "entry_wing": 74.7,
+    "exit_atm": 196.8,
+    "exit_wing": 92.0
   },
   {
     "date": "2025-02-14",
@@ -176,10 +176,10 @@
     "type": "CE",
     "atm": 23050,
     "wing": 23250,
-    "entry_atm": 142.5,
-    "entry_wing": 67.6,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 194.0,
+    "entry_wing": 102.25,
+    "exit_atm": 184.95,
+    "exit_wing": 94.25
   },
   {
     "date": "2025-10-15",
@@ -202,10 +202,10 @@
     "type": "PE",
     "atm": 25250,
     "wing": 25050,
-    "entry_atm": 193.35,
-    "entry_wing": 107.3,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 131.55,
+    "entry_wing": 70.95,
+    "exit_atm": 209.6,
+    "exit_wing": 114.6
   },
   {
     "date": "2026-03-11",
@@ -215,10 +215,10 @@
     "type": "CE",
     "atm": 24250,
     "wing": 24450,
-    "entry_atm": 151.8,
-    "entry_wing": 91.65,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 248.2,
+    "entry_wing": 152.7,
+    "exit_atm": 225.8,
+    "exit_wing": 138.9
   },
   {
     "date": "2022-04-29",
@@ -228,10 +228,10 @@
     "type": "CE",
     "atm": 17350,
     "wing": 17550,
-    "entry_atm": 82.0,
-    "entry_wing": 30.4,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 140.0,
+    "entry_wing": 58.55,
+    "exit_atm": 60.1,
+    "exit_wing": 24.5
   },
   {
     "date": "2022-06-17",
@@ -241,10 +241,10 @@
     "type": "PE",
     "atm": 15200,
     "wing": 15000,
-    "entry_atm": 133.65,
-    "entry_wing": 82.15,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 195.1,
+    "entry_wing": 123.5,
+    "exit_atm": 152.2,
+    "exit_wing": 93.75
   },
   {
     "date": "2022-12-16",
@@ -254,10 +254,10 @@
     "type": "PE",
     "atm": 18400,
     "wing": 18200,
-    "entry_atm": 142.05,
-    "entry_wing": 53.9,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 98.75,
+    "entry_wing": 38.65,
+    "exit_atm": 169.7,
+    "exit_wing": 68.0
   },
   {
     "date": "2023-05-19",
@@ -267,10 +267,10 @@
     "type": "CE",
     "atm": 18150,
     "wing": 18350,
-    "entry_atm": 111.55,
-    "entry_wing": 27.25,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 103.2,
+    "entry_wing": 27.75,
+    "exit_atm": 130.95,
+    "exit_wing": 33.1
   },
   {
     "date": "2023-07-14",
@@ -280,10 +280,10 @@
     "type": "CE",
     "atm": 19500,
     "wing": 19700,
-    "entry_atm": 108.7,
-    "entry_wing": 24.35,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 90.6,
+    "entry_wing": 21.8,
+    "exit_atm": 113.8,
+    "exit_wing": 24.7
   },
   {
     "date": "2023-10-20",
@@ -293,10 +293,10 @@
     "type": "PE",
     "atm": 19550,
     "wing": 19350,
-    "entry_atm": 110.0,
-    "entry_wing": 36.3,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 98.0,
+    "entry_wing": 33.35,
+    "exit_atm": 104.95,
+    "exit_wing": 34.05
   },
   {
     "date": "2024-02-23",
@@ -306,10 +306,10 @@
     "type": "CE",
     "atm": 22250,
     "wing": 22450,
-    "entry_atm": 150.1,
-    "entry_wing": 64.7,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 169.6,
+    "entry_wing": 81.4,
+    "exit_atm": 140.7,
+    "exit_wing": 58.9
   },
   {
     "date": "2024-03-22",
@@ -319,10 +319,10 @@
     "type": "CE",
     "atm": 21900,
     "wing": 22100,
-    "entry_atm": 331.6,
-    "entry_wing": 177.3,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 176.55,
+    "entry_wing": 79.15,
+    "exit_atm": 316.5,
+    "exit_wing": 164.4
   },
   {
     "date": "2024-04-26",
@@ -332,10 +332,10 @@
     "type": "PE",
     "atm": 22600,
     "wing": 22400,
-    "entry_atm": 187.1,
-    "entry_wing": 92.2,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 124.15,
+    "entry_wing": 60.55,
+    "exit_atm": 190.85,
+    "exit_wing": 93.25
   },
   {
     "date": "2024-08-16",
@@ -345,10 +345,10 @@
     "type": "CE",
     "atm": 24400,
     "wing": 24600,
-    "entry_atm": 226.05,
-    "entry_wing": 106.95,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 151.9,
+    "entry_wing": 65.1,
+    "exit_atm": 237.9,
+    "exit_wing": 112.6
   },
   {
     "date": "2024-09-13",
@@ -358,10 +358,10 @@
     "type": "CE",
     "atm": 25300,
     "wing": 25500,
-    "entry_atm": 147.9,
-    "entry_wing": 61.95,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 143.1,
+    "entry_wing": 61.25,
+    "exit_atm": 150.55,
+    "exit_wing": 61.95
   },
   {
     "date": "2024-09-20",
@@ -371,10 +371,10 @@
     "type": "CE",
     "atm": 25500,
     "wing": 25700,
-    "entry_atm": 297.6,
-    "entry_wing": 154.6,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 147.05,
+    "entry_wing": 61.7,
+    "exit_atm": 332.8,
+    "exit_wing": 181.95
   },
   {
     "date": "2024-09-27",
@@ -384,10 +384,10 @@
     "type": "CE",
     "atm": 26200,
     "wing": 26400,
-    "entry_atm": 142.8,
-    "entry_wing": 55.65,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 164.5,
+    "entry_wing": 74.7,
+    "exit_atm": 146.25,
+    "exit_wing": 56.4
   },
   {
     "date": "2025-02-14",
@@ -397,10 +397,10 @@
     "type": "CE",
     "atm": 23050,
     "wing": 23250,
-    "entry_atm": 142.5,
-    "entry_wing": 67.6,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 194.0,
+    "entry_wing": 102.25,
+    "exit_atm": 129.3,
+    "exit_wing": 60.95
   },
   {
     "date": "2025-10-15",
@@ -423,10 +423,10 @@
     "type": "PE",
     "atm": 25250,
     "wing": 25050,
-    "entry_atm": 193.35,
-    "entry_wing": 107.3,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 131.55,
+    "entry_wing": 70.95,
+    "exit_atm": 192.4,
+    "exit_wing": 106.6
   },
   {
     "date": "2026-03-11",
@@ -436,9 +436,9 @@
     "type": "CE",
     "atm": 24250,
     "wing": 24450,
-    "entry_atm": 151.8,
-    "entry_wing": 91.65,
-    "exit_atm": null,
-    "exit_wing": null
+    "entry_atm": 248.2,
+    "entry_wing": 152.7,
+    "exit_atm": 137.35,
+    "exit_wing": 82.4
   }
 ]

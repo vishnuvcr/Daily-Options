@@ -1,5 +1,0 @@
-state,horizon,trades,weeks,total_net,mean_weekly_net,median_weekly_net,positive_week_rate
-LOW_VOL_STATE,H10_30,0,0,0.0,0.0,0.0,0.0
-LOW_VOL_STATE,H15_10,0,0,0.0,0.0,0.0,0.0
-HIGH_VOL_STATE,H10_30,0,0,0.0,0.0,0.0,0.0
-HIGH_VOL_STATE,H15_10,0,0,0.0,0.0,0.0,0.0

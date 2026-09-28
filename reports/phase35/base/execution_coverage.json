@@ -17,14 +17,14 @@
     "state": "HIGH_VOL_STATE",
     "horizon": "H10_30",
     "candidate_rows": 16,
-    "complete_quote_rows": 0,
-    "coverage": 0.0
+    "complete_quote_rows": 16,
+    "coverage": 1.0
   },
   {
     "state": "HIGH_VOL_STATE",
     "horizon": "H15_10",
     "candidate_rows": 16,
-    "complete_quote_rows": 0,
-    "coverage": 0.0
+    "complete_quote_rows": 16,
+    "coverage": 1.0
   }
 ]
