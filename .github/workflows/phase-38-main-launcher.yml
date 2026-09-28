@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - ".github/phase38-main-launch.txt"
-  pull_request:
+  pull_request_target:
     branches:
       - main
   workflow_dispatch:
