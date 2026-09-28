@@ -94,7 +94,7 @@ def main():
   for h in HORIZONS:
    q=s[(s.state==st)&(s.horizon==h)]; complete=0
    for rr in q.itertuples(index=False):
-    dd=pd.Timestamp(rr.date).date(); ee=next((z for z in files_list if z>=dd),None); tt='CE' if rr.GLOBAL_LEAD>0 else 'PE'; aa=round(float(rr.nifty_open_0930)/50)*50; ww=aa+WING if tt=='CE' else aa-WING; ex=HORIZON_TIMES[h]
+    dd=pd.Timestamp(rr.date).date(); ee=next((z for z in files_list if z>=dd),None); tt='CE' if rr.GLOBAL_LEAD>0 else 'PE'; aa=round(float(rr.nifty_spot_0930)/50)*50; ww=aa+WING if tt=='CE' else aa-WING; ex=HORIZON_TIMES[h]
     req=[opt(con,files[ee],f'{dd} 09:31:00',aa,tt,'open'),opt(con,files[ee],f'{dd} 09:31:00',ww,tt,'open'),opt(con,files[ee],f'{dd} {ex}',aa,tt,'close'),opt(con,files[ee],f'{dd} {ex}',ww,tt,'close')]
     complete+=int(all(v is not None for v in req))
    cov.append({'state':st,'horizon':h,'candidate_rows':len(q),'complete_quote_rows':complete,'coverage':complete/len(q) if len(q) else 0.0})
