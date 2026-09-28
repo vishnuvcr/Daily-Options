@@ -1,4 +1,4 @@
-> **2026-09-28 latest research status — Phase 40:** Phase 39 is CLOSED DATA-LIMITED: 838/1,174 post-warm-up feature-eligible sessions (71.38%) versus the required 95%; corrected execution coverage was 96.99%, but no Base/Stress economics were authorized. **Current frontier: Phase 40 — prior-day NIFTY ATM IV / realized-volatility state × next-session overnight-gap dislocation.**
+> **2026-09-28 latest research status — Phase 41:** Phase 34 is closed DATA-LIMITED; Phase 35 is closed across its tested global-shock families; Phase 36 and Phase 37 are retired negative; Phase 38 is retired negative; Phase 39 is **retired negative** after a clean 98.64% feature gate and 0/8 Base + 0/8 Stress promotion cells; Phase 40 is **retired negative** after a clean 97.79% feature gate and 0/8 Base + 0/8 Stress promotion cells. **Current frontier: Phase 41 — OI-weighted option-gamma concentration × opening-gap direction.**
 
 # Daily-Options Research Lab
 
