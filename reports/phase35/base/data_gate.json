@@ -1,5 +1,5 @@
 {
-  "status": "PASS",
+  "status": "FAIL_EXECUTION_COVERAGE",
   "raw_sessions": 1225,
   "global_feature_eligible_sessions": 1161,
   "feature_eligible_sessions": 1141,
@@ -8,5 +8,35 @@
   "warmup_or_global_unavailable_sessions": 64,
   "threshold": 1.0,
   "study_start": "2021-07-01",
-  "study_end": "2026-08-31"
+  "study_end": "2026-08-31",
+  "execution_coverage": [
+    {
+      "state": "LOW_VOL_STATE",
+      "horizon": "H10_30",
+      "candidate_rows": 1,
+      "complete_quote_rows": 0,
+      "coverage": 0.0
+    },
+    {
+      "state": "LOW_VOL_STATE",
+      "horizon": "H15_10",
+      "candidate_rows": 1,
+      "complete_quote_rows": 0,
+      "coverage": 0.0
+    },
+    {
+      "state": "HIGH_VOL_STATE",
+      "horizon": "H10_30",
+      "candidate_rows": 16,
+      "complete_quote_rows": 0,
+      "coverage": 0.0
+    },
+    {
+      "state": "HIGH_VOL_STATE",
+      "horizon": "H15_10",
+      "candidate_rows": 16,
+      "complete_quote_rows": 0,
+      "coverage": 0.0
+    }
+  ]
 }
