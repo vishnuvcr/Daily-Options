@@ -935,3 +935,7 @@ Authoritative run **36378249952** completed the frozen Phase 35 pipeline. Featur
 ## 2026-09-28 — Phase 36 retired after discovery gate failure
 
 Authoritative run **36378802491** passed the corrected global data gate and four-cell execution-coverage gate. Base/Stress results failed the frozen ₹5,000/week mean+median and >=70% positive-week promotion gate in every cell. BROAD_SHOCK cells were negative; SPLIT_SHOCK × 10:30 was positive but only 4 trades/4 weeks and 50% positive weeks. No WFA/OOS or post-result retuning is authorized. See [Phase 36 final result](../reports/phase36/final_result.md).
+
+## 2026-09-28 — Phase 37 retired
+
+Authoritative run **36379200435** passed data and execution coverage. All four true cells failed the frozen weekly economic promotion gate in Base and Stress. No WFA/OOS or post-result retuning is authorized. See [Phase 37 final result](../reports/phase37/final_result.md).
