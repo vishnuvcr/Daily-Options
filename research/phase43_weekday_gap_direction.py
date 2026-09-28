@@ -114,7 +114,7 @@ def build_feature_panel(nifty: pd.DataFrame) -> pd.DataFrame:
     panel["weekday"]=pd.to_datetime(panel["date"]).dt.day_name().str.upper()
     panel["feature_eligible"]=panel[["open_0915","close_1510","opening_gap","prior_date"]].notna().all(axis=1)
     panel["barrier_ok"]=panel["feature_eligible"] & (pd.to_datetime(panel["prior_date"]) < pd.to_datetime(panel["date"]))
-    panel["direction"]=np.sign(panel["opening_gap"]).astype(int)
+    panel["direction"]=np.sign(panel["opening_gap"]).fillna(0).astype(int)
     panel["state"]=panel["weekday"].where(panel["feature_eligible"],"NO_TRADE")
     panel["feature_date"]=panel["date"].astype(str)
     return panel
