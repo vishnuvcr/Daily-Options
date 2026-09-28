@@ -35,3 +35,8 @@ This is deliberately distinct from:
 
 ## Current integrity rule
 No Phase 41 P&L is accepted until unit tests, data gates, execution coverage, accounting and artifact persistence all pass.
+
+
+## 2026-09-29 frontier update
+- Phase 41: **CLOSED DATA-LIMITED** — authoritative run 36467584676; 30.68% feature eligibility, 79.50% prior-chain coverage, 87.41% core-chain coverage, zero prior-information violations; no P&L accepted.
+- Phase 42: **ACTIVE / PREREGISTERED** — option day-night return asymmetry × opening-gap direction. Authoritative workflow run **36468978862** is executing.
