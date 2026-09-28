@@ -484,3 +484,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0384 | 2026-09-28 | Phase 38 | Data gate lacked explicit >=95% post-warm-up eligibility check | No P&L accepted; corrected before numerical evidence | Enforce explicit eligibility-rate gate | OPEN |
 
 | E0385 | 2026-09-28 | Phase 38 | Expiry-mapping data gate briefly mapped booleans instead of eligible dates, caught before data acquisition | No P&L accepted | Corrected in branch and rerun | OPEN |
+
+| E0454 | 2026-09-27 | Phase 34 | Authoritative run 36341535504 found only 656/1,233 complete prior-session two-expiry surfaces (53.20%), below the preregistered 95% observability gate | No P&L, null economics, WFA or OOS accepted | Close Phase 34 DATA-LIMITED; do not relax expiry/strike coverage | CLOSED |
