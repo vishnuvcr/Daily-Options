@@ -490,3 +490,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0401 | 2026-09-28 | Phase 40 | Corrected prior-60 z-score to use valid observations only | No numerical evidence existed | Pre-run correction | CLOSED |
 
 | E0402 | 2026-09-28 | Phase 40 | RV20 included current signal-day close, violating the prior-day information barrier | No numerical evidence existed | Shifted RV20 one session | CLOSED |
+
+| E0403 | 2026-09-28 | Phase 40 | Source diagnostic used mixed Timestamp/date types for expiry comparison | No P&L accepted | Normalize diagnostic date types before rerun | CLOSED |
