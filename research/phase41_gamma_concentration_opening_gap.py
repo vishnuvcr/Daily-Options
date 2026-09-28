@@ -397,18 +397,37 @@ def coverage(signals,trades):
     return pd.DataFrame(rows)
 
 
-def nulls(panel, exp_map, friction):
+def null_summary(root, panel, exp_map, current_spot, friction):
     basez=panel["gamma_concentration_z"].to_numpy(dtype=float)
-    idx=np.where(panel["feature_eligible"].to_numpy(dtype=bool))[0]
-    vals=basez[idx].copy()
+    eligible_idx=np.where(panel["feature_eligible"].to_numpy(dtype=bool))[0]
+    vals=basez[eligible_idx].copy()
     rows=[]
     for seed in NULL_SEEDS:
-        rng=np.random.default_rng(seed); sh=vals.copy(); rng.shuffle(sh)
-        z=basez.copy(); z[idx]=sh
-        sig=build_signals(panel,z)
-        tr=run_trades(sig,{},exp_map,friction) if False else None
-        rows.append((seed,sig))
-    return rows
+        rng=np.random.default_rng(seed)
+        sh=vals.copy()
+        rng.shuffle(sh)
+        z=basez.copy()
+        z[eligible_idx]=sh
+        sig=build_signals(panel,z).merge(current_spot,on="trade_date",how="left")
+        prices=execution_prices(root,sig)
+        tr=run_trades(sig,prices,exp_map,friction)
+        sm=summarize_trades(tr)
+        sm["null_seed"]=seed
+        rows.append(sm)
+    return pd.concat(rows,ignore_index=True) if rows else pd.DataFrame()
+
+
+def run_friction(root, panel, signals, exp_map, current_spot, friction, out):
+    out=Path(out)
+    out.mkdir(parents=True,exist_ok=True)
+    prices=execution_prices(root,signals)
+    trades=run_trades(signals,prices,exp_map,friction)
+    cov=coverage(signals,trades)
+    trades.to_csv(out/"trades.csv",index=False)
+    cov.to_csv(out/"price_coverage.csv",index=False)
+    summarize_trades(trades).to_csv(out/"true_cell_summary.csv",index=False)
+    null_summary(root,panel,exp_map,current_spot,friction).to_csv(out/"null_summary.csv",index=False)
+    return trades,cov
 
 
 def main():
@@ -419,31 +438,32 @@ def main():
     ap.add_argument("--gate-only",action="store_true")
     args=ap.parse_args()
     root=Path(args.data); out=Path(args.out); out.mkdir(parents=True,exist_ok=True)
+
     panel,diag=build_feature_panel(root)
-    panel.to_csv(out/"feature_panel.csv",index=False); diag.to_csv(out/"feature_diagnostics.csv",index=False)
+    panel.to_csv(out/"feature_panel.csv",index=False)
+    diag.to_csv(out/"feature_diagnostics.csv",index=False)
+
     signals=build_signals(panel)
-    # Add current-session spot for execution ATM selection.
-    idx=load_index(root)[["trade_date","open_0915"]].rename(columns={"open_0915":"current_spot"})
-    signals=signals.merge(idx,on="trade_date",how="left")
+    current_spot=load_index(root)[["trade_date","open_0915"]].rename(columns={"open_0915":"current_spot"})
+    signals=signals.merge(current_spot,on="trade_date",how="left")
     exp_map=current_expiry_map(sorted(expiry_files(root)),signals["trade_date"].tolist())
     prices=execution_prices(root,signals)
-    empty=pd.DataFrame(columns=["state","mapping","exit_time","trade_date"])
-    tmp=run_trades(signals,prices,exp_map,args.slippage)
-    cov=coverage(signals,tmp)
+    gate_trades=run_trades(signals,prices,exp_map,args.slippage)
+    cov=coverage(signals,gate_trades)
     g=gate(panel,signals,cov,diag)
     (out/"data_gate.json").write_text(json.dumps(g,indent=2),encoding="utf-8")
     cov.to_csv(out/"price_coverage.csv",index=False)
+
     if args.gate_only:
-        print(json.dumps(g,indent=2)); return
-    tmp.to_csv(out/"trades.csv",index=False)
-    summarize_trades(tmp).to_csv(out/"true_cell_summary.csv",index=False)
-    # null summaries are generated here by rerunning only the signal label state; the workflow runs this once per friction.
-    null_rows=[]
-    basez=panel["gamma_concentration_z"].to_numpy(dtype=float); idx=np.where(panel["feature_eligible"].to_numpy(dtype=bool))[0]; vals=basez[idx].copy()
-    for seed in NULL_SEEDS:
-        rng=np.random.default_rng(seed); sh=vals.copy(); rng.shuffle(sh); z=basez.copy(); z[idx]=sh
-        ns=build_signals(panel,z).merge(idx if False else pd.DataFrame(),how="cross") if False else build_signals(panel,z).merge(idx_df if False else idx.to_frame() if False else pd.DataFrame(),how="cross")
+        print(json.dumps(g,indent=2))
+        return
+
+    trades_dir=out
+    gate_trades.to_csv(trades_dir/"trades.csv",index=False)
+    summarize_trades(gate_trades).to_csv(trades_dir/"true_cell_summary.csv",index=False)
+    null_summary(root,panel,exp_map,current_spot,args.slippage).to_csv(trades_dir/"null_summary.csv",index=False)
     print(json.dumps(g,indent=2))
+
 
 if __name__=="__main__":
     main()
