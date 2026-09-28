@@ -300,3 +300,51 @@ Does the next NIFTY session's overnight opening gap become directionally informa
 
 ### Stop rule
 No post-result adjustment of RV window, 60-session z window, ±0.75 thresholds, IV/RV construction, one-session scaling, expiry rule, gap direction mapping, spread width, entry, exit or cost model.
+
+## Phase 41 — NIFTY Option-Gamma Concentration × Opening-Gap Direction
+
+### Frozen research question
+Does prior-session OI-weighted option-gamma concentration around the NIFTY ATM strike condition whether the next session's opening gap continues or reverses strongly enough to generate at least ₹5,000 net per completed trading week after realistic costs?
+
+### Frozen construction
+- Prior signal session: previous completed NIFTY session's 15:10 close.
+- Reference spot: prior-session 15:10 NIFTY close.
+- Reference strike: deterministic nearest ₹50 ATM, half-up rounding.
+- Reference expiry: nearest NIFTY expiry strictly after the prior signal date.
+- Chain window: strikes within ±₹500 of ATM.
+- Core window: strikes within ±₹100 of ATM.
+- For each CE/PE strike, use the latest valid positive option close at or before 15:10, the option OI at that observation, and Black-Scholes implied volatility solved from that price.
+- Gamma per option is the standard European gamma using the prior spot, strike, IV and time to expiry.
+- Gamma mass at a strike = OI × gamma × historical lot size.
+- GAMMA_CONCENTRATION = gamma mass in the ±₹100 core window / gamma mass in the ±₹500 chain window.
+- Standardization uses the strictly prior 60 valid GAMMA_CONCENTRATION observations; missing observations are not imputed or forward-filled.
+- HIGH_GAMMA_CONCENTRATION if z ≥ +0.75; LOW_GAMMA_CONCENTRATION if z ≤ −0.75; otherwise no trade.
+
+### Frozen execution signal
+- Current-session opening gap = 09:15 NIFTY open / prior-session 15:10 close − 1.
+- Zero gap = no trade.
+- FOLLOW_GAP: follow the opening-gap direction.
+- FADE_GAP: take the opposite direction.
+- Entry 09:31 option open; exits 10:30 and 15:10 option close.
+- One-lot 200-point ATM directional debit spread.
+- Nearest expiry on/after the current trading date.
+- Historical NIFTY lot sizes.
+
+### Frozen matrix and controls
+2 gamma states × 2 gap mappings × 2 exits = 8 true cells plus five fixed permutation-null seeds 101, 202, 303, 404, 505.
+Nulls permute only the prior-only gamma-concentration z values across feature-eligible dates; same-day gap direction and all execution prices remain unchanged.
+
+### Data gates
+- ≥95% post-warm-up feature eligibility;
+- ≥95% prior-session gamma-chain coverage;
+- ≥95% core/total gamma observation completeness;
+- zero prior-information violations;
+- deterministic expiry, strike and lot mapping;
+- ≥95% execution quote coverage in every true cell;
+- accounting reconciliation.
+
+### Promotion gate
+In both Base and Stress: mean weekly net ≥₹5,000, median weekly net ≥₹5,000, positive-week rate ≥70%, execution coverage ≥95%, and clean accounting. No WFA/OOS otherwise.
+
+### Stop rule
+No post-result changes to the ATM/chain widths, 60-valid-observation lookback, ±0.75 z thresholds, expiry rule, gap mapping, entry, exits, spread width, IV construction, cost model or lot sizing.
