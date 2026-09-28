@@ -492,3 +492,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E035-IVRV-010 | 2026-09-28 | Phase 35 | Four-cell summaries remained zero-trade after ATM correction; execution quote coverage had not yet been explicitly enforced in the data gate | No P&L accepted | Added the preregistered >=95% per-cell 09:31/exit quote-coverage gate before numerical acceptance | CLOSED |
 
 | E035-IVRV-011 | 2026-09-28 | Phase 35 | Audit against Phase 31.8 revealed the Phase 35 index loader omitted `SET TimeZone='Asia/Kolkata'`, shifting the interpreted 09:30 bar and ATM strike | No P&L accepted | Restored the exact Phase 31.8 timezone normalization in the index loader; rerun required | CLOSED |
+
+| E035-IVRV-012 | 2026-09-28 | Phase 35 | Timezone-normalization patch omitted a statement separator, causing test-collection SyntaxError in run 36376826812 | No P&L; execution skipped | Added the missing separator; no logic change | CLOSED |
