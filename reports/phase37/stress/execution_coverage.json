@@ -1,0 +1,30 @@
+[
+  {
+    "state": "CONVERGENT",
+    "horizon": "H10_30",
+    "candidate_rows": 80,
+    "complete_quote_rows": 79,
+    "coverage": 0.9875
+  },
+  {
+    "state": "CONVERGENT",
+    "horizon": "H15_10",
+    "candidate_rows": 80,
+    "complete_quote_rows": 79,
+    "coverage": 0.9875
+  },
+  {
+    "state": "DIVERGENT",
+    "horizon": "H10_30",
+    "candidate_rows": 27,
+    "complete_quote_rows": 26,
+    "coverage": 0.9629629629629629
+  },
+  {
+    "state": "DIVERGENT",
+    "horizon": "H15_10",
+    "candidate_rows": 27,
+    "complete_quote_rows": 26,
+    "coverage": 0.9629629629629629
+  }
+]

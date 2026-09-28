@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "raw_sessions": 1228,
+  "global_feature_eligible_sessions": 1164,
+  "full_feature_eligible_sessions": 1164,
+  "coverage": 1.0,
+  "prior_violations": 0,
+  "warmup_or_global_unavailable_sessions": 64,
+  "gap_warmup_sessions": 0,
+  "study_start": "2021-07-01",
+  "study_end": "2026-08-31"
+}
