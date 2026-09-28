@@ -160,3 +160,9 @@ Phase 35 global overnight shock × India-local IV–RV state is **RETIRED — DA
 - Phase 34 was confirmed DATA-LIMITED at 53.20% complete prior-session two-expiry surface coverage; no P&L accepted.
 - Phase 39 was selected as the next materially distinct preregistered family: option-implied versus realized opening-move dislocation.
 - This log records operational research status only; hidden chain-of-thought is not written to repository files.
+
+## 2026-09-28 — Phase 39 closure and Phase 40 launch
+- Phase 39 closed DATA-LIMITED after the final clean gate: 838/1,174 post-warm-up feature-eligible sessions (71.38%) versus the fixed 95% gate; corrected minimum execution coverage was 96.99%; no P&L accepted.
+- Sixteen missing raw MOVE_RATIO sessions propagated to 320 invalid prior-60-session z-score windows under the frozen method; no imputation or lookback change authorized.
+- Phase 40 created as the next distinct hypothesis: prior-day ATM IV versus realized-volatility state and next-session overnight gap normalized by the prior-day one-session implied move.
+- Operational research status is logged here; hidden chain-of-thought is not written to repository files.
