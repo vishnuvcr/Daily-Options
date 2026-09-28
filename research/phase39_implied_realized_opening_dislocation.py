@@ -94,7 +94,8 @@ def implied_vol(price, spot, strike, t, call):
 
 
 def round_strike(spot):
-    return round(float(spot) / STRIKE_STEP) * STRIKE_STEP
+    x = float(spot) / STRIKE_STEP
+    return math.floor(x + 0.5) * STRIKE_STEP
 
 
 def implied_15m_move_pct(atm_iv):
