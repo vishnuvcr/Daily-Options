@@ -4,15 +4,16 @@
 ENGINEERING CORRECTION IN PROGRESS — NO NUMERICAL EVIDENCE ACCEPTED.
 
 ## Completed
-- Frozen Phase 39 plan, literature review, simulator, tests and workflow.
-- E0391 midpoint ATM rounding corrected and clean unit tests passed.
-- E0392/E0393 timestamp-cutoff defects identified and corrected.
-- Authoritative runs reached the pinned source and data gate; no Base/Stress P&L has been accepted.
+- Frozen plan, literature review, simulator, unit tests and workflow.
+- E0391 through E0394 were isolated before accepting market evidence.
+- Run 36409908831 restored 268 pinned option files successfully.
+- Diagnostic run failed only on its own date-type comparison before reading option rows.
 
-## Current finding
-E0394: the option dataset's trading_day field is not being used as the signal-date join key. The signal snapshot now derives local trade date from option timestamps and applies the 09:30 cutoff before latest-row selection, matching the audited source-handling pattern from the existing research code.
+## Current engineering finding
+E0395: bounded source diagnostic had a Timestamp/date comparison defect. The actual option source has not yet been inspected by the diagnostic.
 
 ## Pending
-1. Rerun clean tests and authoritative data gate.
-2. Run Base/Stress/null controls only if all gates pass.
-3. Close the family with a reproducible manuscript and update main branch status.
+1. Rerun source diagnostic.
+2. Use the diagnostic output to resolve the IV snapshot join deterministically.
+3. Rerun the Phase 39 data gate.
+4. Run Base/Stress/null controls only after a clean gate.
