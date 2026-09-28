@@ -213,3 +213,12 @@ Run 36252922418 completed the full frozen 12-cell Base/Stress discovery with 60 
 - Final decision: Phase 35 global-shock options-structure family is RETIRED after 0/16 Base and 0/16 Stress discovery-gate passes. No WFA/OOS or post-result tuning authorized.
 - Key conclusion: best frozen cell was GLOBAL_ABS >=1.5, 200-point strangle, 09:31→15:10, at -₹139.27/week Base and -₹186.93/week Stress.
 - The phase report, status, and error log were updated.
+
+## 2026-09-28 — Resume Phase 35 research
+- User requested resumption from authoritative Phase 35 run 36342637912.
+- Repository audit confirmed the data gate passed: 1,164/1,164 feature-eligible sessions, 100% global feature coverage, 0 prior-date violations.
+- Base and Stress computations had both completed; the apparent workflow failure was only the artifact-persistence push race.
+- Persisted artifacts were independently reviewed.
+- Final decision: Phase 35 global-shock options-structure family is RETIRED after 0/16 Base and 0/16 Stress discovery-gate passes. No WFA/OOS or post-result tuning authorized.
+- Key conclusion: best frozen cell was GLOBAL_ABS >=1.5, 200-point strangle, 09:31→15:10, at -₹139.27/week Base and -₹186.93/week Stress.
+- The phase report, status, and error log were updated.
