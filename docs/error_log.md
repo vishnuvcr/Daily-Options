@@ -490,3 +490,6 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 
 | E0414 | 2026-09-28 | Phase 39/40 closure correction | Main records were temporarily stale after later clean authoritative runs superseded interim data-limited classifications | Current status could be misread | Update main README/status/conversation log to authoritative negative results | CLOSED |
 | E0415 | 2026-09-28 | Phase 41 preregistration | New gamma-concentration family must not silently reuse prior OI/volume or VIX/gap hypotheses | Risk of duplicate testing | Freeze distinct mechanism, signal timing, finite grid and no-retuning rule before numerical execution | CLOSED — preregistration |
+
+
+| E0416 | 2026-09-29 | Phase 41 data gate | Authoritative run 36467584676 passed unit tests and source acquisition but found only 354/1,154 post-warm-up sessions feature-eligible (30.68%); prior-chain coverage 79.50% and core-chain coverage 87.41%, below the frozen >=95% observability gate | No Phase 41 P&L, WFA or OOS accepted; Base/Stress correctly skipped | Closed Phase 41 DATA-LIMITED; retained diagnostic artifacts; no coverage relaxation or post-result feature redesign | CLOSED — data-limited |
