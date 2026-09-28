@@ -100,10 +100,26 @@ def round_strike(spot):
 
 def prior_only_z(values, window=LOOKBACK):
     s = pd.Series(values, dtype="float64")
-    prior_mean = s.rolling(window, min_periods=window).mean().shift(1)
-    prior_std = s.rolling(window, min_periods=window).std(ddof=1).shift(1)
-    z = (s - prior_mean) / prior_std.replace(0.0, np.nan)
-    return prior_mean, prior_std, z
+    mean_out = np.full(len(s), np.nan)
+    std_out = np.full(len(s), np.nan)
+    z_out = np.full(len(s), np.nan)
+    history = []
+    for i, value in enumerate(s.to_numpy(dtype=float)):
+        if len(history) >= window and np.isfinite(value):
+            prior = np.asarray(history[-window:], dtype=float)
+            mean = float(prior.mean())
+            std = float(prior.std(ddof=1))
+            mean_out[i] = mean
+            std_out[i] = std
+            if std > 0:
+                z_out[i] = (float(value) - mean) / std
+        if np.isfinite(value):
+            history.append(float(value))
+    return (
+        pd.Series(mean_out, index=s.index),
+        pd.Series(std_out, index=s.index),
+        pd.Series(z_out, index=s.index),
+    )
 
 
 def discovery_cells():
@@ -151,7 +167,10 @@ def load_sessions(root):
     x["prior_close_1510"] = x["close_1510"].shift(1)
     x["overnight_gap"] = x["open_0915"] / x["prior_close_1510"] - 1.0
     daily_ret = x["close_1510"].pct_change()
-    x["rv20"] = daily_ret.rolling(RV_WINDOW, min_periods=RV_WINDOW).std(ddof=1) * math.sqrt(252.0)
+    x["rv20"] = (
+        daily_ret.rolling(RV_WINDOW, min_periods=RV_WINDOW).std(ddof=1).shift(1)
+        * math.sqrt(252.0)
+    )
     return x
 
 
