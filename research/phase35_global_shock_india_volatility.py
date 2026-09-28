@@ -31,7 +31,7 @@ def globals_(root):
  return out
 
 def global_panel(idx,gd):
- s=idx[idx.time=='09:30:00'][['date']].drop_duplicates('date').sort_values('date').copy(); s['date']=pd.to_datetime(s['date']).astype('datetime64[ns]')
+ s=idx[idx.time=='09:30:00'][['date','open']].drop_duplicates('date').sort_values('date').copy(); s.rename(columns={'open':'nifty_open_0930'},inplace=True); s['date']=pd.to_datetime(s['date']).astype('datetime64[ns]')
  for m,d in gd.items():
   z=d.dropna().rename(columns={'date':'gd','z':f'z_{m}'}); z['gd']=pd.to_datetime(z['gd']).astype('datetime64[ns]'); s=pd.merge_asof(s,z.sort_values('gd'),left_on='date',right_on='gd',direction='backward',allow_exact_matches=False); s[f'prior_{m}']=s.gd; s=s.drop(columns=['gd'])
  s['GLOBAL_LEAD']=s[[f'z_{m}' for m in MARKETS]].mean(axis=1); pc=[f'prior_{m}' for m in MARKETS]; s['prior_violations']=s[pc].apply(lambda r:any(pd.notna(v) and v>=s.loc[r.name,'date'] for v in r),axis=1); s['all_prior']=~s['prior_violations']; return s
@@ -87,7 +87,7 @@ def main():
  if a.gate_only or gate['status']!='PASS':print(json.dumps(gate));return
  s=p[(p.GLOBAL_LEAD.abs()>=THRESHOLD)&p.state.isin(STATES)].copy(); s=pd.concat([s.assign(horizon=h) for h in HORIZONS],ignore_index=True); (out/'signal_counts.json').write_text(json.dumps({'candidate_days':int(len(s)/2),'candidate_rows':int(len(s)),'low_state_days':int((s.state=='LOW_VOL_STATE').sum()/2),'high_state_days':int((s.state=='HIGH_VOL_STATE').sum()/2),'global_abs_trigger_days':int((p.GLOBAL_LEAD.abs()>=THRESHOLD).sum())},indent=2)); con=duckdb.connect(); rows=[]
  for r in s.itertuples(index=False):
-  d=pd.Timestamp(r.date).date(); e=next((e for e in sorted(files) if e>=d),None); typ='CE' if r.GLOBAL_LEAD>0 else 'PE'; atm=round(float(idx[idx.date==r.date].iloc[0].open)/50)*50; wing=atm+WING if typ=='CE' else atm-WING; ex=HORIZON_TIMES[r.horizon]; lot=lot_size(e); path=files[e]; raw=sl=tc=0; ok=True
+  d=pd.Timestamp(r.date).date(); e=next((e for e in sorted(files) if e>=d),None); typ='CE' if r.GLOBAL_LEAD>0 else 'PE'; atm=round(float(r.nifty_open_0930)/50)*50; wing=atm+WING if typ=='CE' else atm-WING; ex=HORIZON_TIMES[r.horizon]; lot=lot_size(e); path=files[e]; raw=sl=tc=0; ok=True
   for k,act in [(atm,'BUY'),(wing,'SELL')]:
    ep=opt(con,path,f'{d} 09:31:00',k,typ,'open'); xp=opt(con,path,f'{d} {ex}',k,typ,'close');
    if ep is None or xp is None:ok=False;break
