@@ -498,3 +498,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E035-IVRV-013 | 2026-09-28 | Phase 35 | After restoring the 09:30 index timezone, execution coverage remained 0%; option-query DuckDB connections also lacked explicit Asia/Kolkata timezone normalization | No P&L accepted | Added Asia/Kolkata timezone setting to local-IV and option-execution connections | CLOSED |
 
 | E035-IVRV-014 | 2026-09-28 | Phase 35 | Audit against Phase 31.8 showed its option loader selects by local date/time string, while Phase 35 required exact timestamp equality; this produced zero quote coverage despite known source coverage | No P&L accepted | Replaced exact-timestamp option lookup with the audited local-date/local-time selection convention; signal timing remains 09:31 entry and fixed exits | CLOSED |
+
+| E035-IVRV-013 | 2026-09-28 | Phase 35 | Cross-check against Phase 31.8 showed the ATM reference still used the 09:30 bar open; Phase 31.8 uses the 09:30 bar close (`open_px` field from its bar-close naming) | No P&L accepted | Restored the audited 09:30 bar-close reference for ATM selection | CLOSED |
