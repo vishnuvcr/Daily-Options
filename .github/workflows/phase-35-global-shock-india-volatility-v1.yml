@@ -5,6 +5,9 @@ on:
     branches: [phase-35-global-shock-india-volatility-v1]
 permissions:
   contents: write
+concurrency:
+  group: phase35-global-shock-india-volatility-v1
+  cancel-in-progress: true
 jobs:
   phase35:
     runs-on: ubuntu-latest
