@@ -3,7 +3,7 @@ import pandas as pd
 
 from research.phase41_gamma_concentration_opening_gap import (
     CORE_WIDTH, TOTAL_WIDTH, gamma, implied_vol, lot_size, prior_only_z,
-    round_strike, bs_price, build_signals, required_legs if False else round_strike
+    round_strike, bs_price, build_signals
 )
 
 
