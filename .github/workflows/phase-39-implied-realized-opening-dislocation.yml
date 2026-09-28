@@ -81,6 +81,10 @@ jobs:
           },indent=2))
           PY
 
+      - name: Diagnose pinned option signal source
+        run: |
+          PYTHONPATH=. python research/phase39_source_diagnostic.py
+
       - name: Run Phase 39 data gate
         run: |
           PYTHONPATH=. python research/phase39_implied_realized_opening_dislocation.py \
