@@ -790,5 +790,7 @@ Phase 34 is **CLOSED / DATA-LIMITED**. Authoritative run **36341535504** reconst
 
 [Phase 44 manuscript](https://github.com/vishnuvcr/Daily-Options/blob/phase-44-gap-magnitude-direction-v1/reports/phase44/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-44-gap-magnitude-direction-v1/docs/phase44_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-44-gap-magnitude-direction-v1/docs/phase44_status.md)
 
-**Phase 45 — NIFTY opening-gap failure/continuation confirmation is now active.** Frozen state uses a 0.50% minimum gap and compares the first 15-minute NIFTY return with the opening-gap direction: GAP_FAILURE, GAP_CONTINUATION, or NO_CONFIRMATION. Both directional mappings and 10:30/15:10 exits are tested with the validated option execution engine and fixed friction model.
+**Phase 45 — NIFTY opening-gap failure/continuation confirmation is now the active preregistered frontier.** It uses a fixed 0.50% minimum gap and classifies the first 15-minute move as GAP_FAILURE, GAP_CONTINUATION or NO_CONFIRMATION. All three states are tested with FOLLOW/FADE and 10:30/15:10 exits under the validated execution engine and realistic friction.
+
+[Phase 45 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-45-gap-failure-confirmation-v1/docs/phase45_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-45-gap-failure-confirmation-v1/docs/phase45_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-45-gap-failure-confirmation-v1/docs/phase45_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-45-gap-failure-confirmation-v1)
 
