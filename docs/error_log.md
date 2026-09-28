@@ -536,3 +536,8 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0384 | 2026-09-28 | Phase 38 | Data gate omitted explicit >=95% eligibility after the 60-session warm-up | No P&L accepted; corrected before numerical evidence | Enforce and report post-warm-up eligibility rate | OPEN — pending clean rerun |
 
 | E0385 | 2026-09-28 | Phase 38 | Newly added expiry gate compared expiry dates against boolean eligibility flags instead of eligible dates, caught by authoritative unit test | No P&L accepted | Corrected eligibility-date filtering; rerun before numerical stage | OPEN |
+
+| E0383 | 2026-09-28 | Phase 38 | Constant-range unit-test fixture caused zero rolling prior standard deviation and failed two pre-run tests; authoritative clean rerun passed | No P&L accepted from failed run | Correct fixture; clean run 36408210374 passed | CLOSED |
+| E0384 | 2026-09-28 | Phase 38 | Frozen >=95% post-warm-up eligibility requirement was not explicitly enforced by the first gate implementation | No P&L accepted before correction | Added explicit eligibility-rate metric and gate | CLOSED |
+| E0385 | 2026-09-28 | Phase 38 | Expiry coverage gate initially mapped boolean eligibility flags rather than eligible dates | No data/P&L reached; run failed in unit test | Corrected eligible-date filtering; clean run 36408210374 passed | CLOSED |
+| E0386 | 2026-09-28 | Phase 38 | Clean authoritative run completed all tests, data gates, Base, Stress, validation and artifact persistence; all 8 cells failed promotion | Phase retired; no WFA/OOS authorized | Freeze Phase 38 as negative discovery and move to next preregistered distinct family | CLOSED |
