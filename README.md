@@ -778,14 +778,14 @@ Phase 34 is **CLOSED / DATA-LIMITED**. Authoritative run **36341535504** reconst
 **CI verification:** draft PR [#92](https://github.com/vishnuvcr/Daily-Options/pull/92) opened for the frozen Phase 38 branch; it is not being merged as part of the phase separation.
 
 
-## 2026-09-29 — Phase 41 closure / Phase 42 active
 
-**Phase 41 — NIFTY option-gamma concentration × opening-gap direction is CLOSED DATA-LIMITED.** Authoritative run **36467584676** passed unit tests and source acquisition but failed the frozen observability gate: 354/1,154 post-warm-up sessions feature-eligible (30.68%), 79.50% prior-chain coverage and 87.41% core-chain coverage. Zero prior-information violations were observed. Base/Stress and null economics were correctly skipped; no P&L was accepted.
 
-[Phase 41 manuscript](https://github.com/vishnuvcr/Daily-Options/blob/phase-41-gamma-concentration-opening-gap-v1/reports/phase41/final_result.md) · [Phase 41 status](https://github.com/vishnuvcr/Daily-Options/blob/phase-41-gamma-concentration-opening-gap-v1/docs/research_status.md) · [Phase 41 error log](https://github.com/vishnuvcr/Daily-Options/blob/phase-41-gamma-concentration-opening-gap-v1/docs/error_log.md)
+## 2026-09-29 — Phase 42 closure / Phase 43 active
 
-**Phase 42 — NIFTY option day–night return asymmetry × opening-gap direction is now the active preregistered frontier.** The frozen feature is prior-session ATM-straddle overnight return versus intraday return asymmetry, standardized on a strictly prior 60-observation history. The discovery grid remains 2 states × 2 gap mappings × 2 exits, with five fixed permutation nulls, historical lots, realistic costs and Base/Stress slippage.
+**Phase 42 — NIFTY option day–night return asymmetry × opening-gap direction is CLOSED DATA-LIMITED.** Authoritative workflow **36469315584**, attempt 2. Feature eligibility was 95.0777% and prior-information violations were zero, but the frozen execution panel returned **0/5,364 required option quote keys**, producing 0% execution coverage in all eight cells. No P&L, null economics or WFA/OOS was accepted.
 
-[Phase 42 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-42-option-day-night-asymmetry-v1/docs/phase42_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-42-option-day-night-asymmetry-v1/docs/phase42_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-42-option-day-night-asymmetry-v1/docs/phase42_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-42-option-day-night-asymmetry-v1)
+[Phase 42 manuscript](https://github.com/vishnuvcr/Daily-Options/blob/phase-42-option-day-night-asymmetry-v1/reports/phase42/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-42-option-day-night-asymmetry-v1/docs/phase42_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-42-option-day-night-asymmetry-v1/docs/phase42_status.md)
 
-Authoritative Phase 42 workflow run: **36468978862** (currently running).
+**Phase 43 — NIFTY weekday × opening-gap direction is now the active preregistered frontier.** It tests all five weekdays with FOLLOW/FADE gap mappings and 10:30/15:10 exits in 20 frozen true cells, plus five fixed permutation-null seeds. It reuses the previously validated option execution engine and retains the Paytm Money/NSE/statutory friction model and Base/Stress slippage.
+
+[Phase 43 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-43-weekday-gap-direction-v1/docs/phase43_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-43-weekday-gap-direction-v1/docs/phase43_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-43-weekday-gap-direction-v1/docs/phase43_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-43-weekday-gap-direction-v1)
