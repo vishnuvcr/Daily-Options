@@ -500,3 +500,12 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0396 | 2026-09-28 | Phase 39 | Valid 09:30 option rows were lost in a Python-date vs pandas-Timestamp join comparison | No P&L accepted | Normalize IV query dates to Python date; rerun authoritative gate | OPEN |
 
 | E0397 | 2026-09-28 | Phase 39 | Valid execution quotes were present but lost in Python date/Timestamp key comparison, causing 0% reported execution coverage | No P&L accepted | Normalize execution keys; retain frozen >=95% execution gate | OPEN |
+
+| E0391 | 2026-09-28 | Phase 39 | ATM midpoint rounding defect caught before data | No P&L accepted | Corrected half-up rounding | CLOSED |
+| E0392 | 2026-09-28 | Phase 39 | Exact timestamp lookup was too strict for source quote availability | No P&L accepted | Corrected to information-cutoff lookup | CLOSED |
+| E0393 | 2026-09-28 | Phase 39 | Cutoff applied after latest-row ranking | No P&L accepted | Applied cutoff before ranking | CLOSED |
+| E0394 | 2026-09-28 | Phase 39 | Source trading_day was not the authoritative signal timestamp join key | No P&L accepted | Derived signal date from timestamp | CLOSED |
+| E0395 | 2026-09-28 | Phase 39 | Diagnostic Timestamp/date type mismatch | No P&L accepted | Corrected typing | CLOSED |
+| E0396 | 2026-09-28 | Phase 39 | IV-map date key mismatch | No P&L accepted | Normalized query dates | CLOSED |
+| E0397 | 2026-09-28 | Phase 39 | Execution-map date key mismatch falsely reported 0% coverage | No P&L accepted | Normalized execution date/expiry keys; rerun showed 96.99% minimum coverage | CLOSED |
+| E0398 | 2026-09-28 | Phase 39 | Final feature eligibility 71.38% < 95% because 16 missing MOVE_RATIO sessions contaminate strict prior-60-session z-score windows | Phase retired DATA-LIMITED; no P&L/WFA/OOS | Close family; do not change frozen feature definition post-result | CLOSED |
