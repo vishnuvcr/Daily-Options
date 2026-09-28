@@ -1,7 +1,9 @@
 # Phase 36 — Global Shock Breadth / Cross-Market Disagreement
 
 ## Status
-PREREGISTERED — implementation/data gate.
+CLOSED / RETIRED — discovery gate failed on authoritative run 36378802491.
+
+All four true cells were executable, but none met the frozen economic promotion gate in both Base and Stress. No WFA/OOS or post-result retuning is authorized.
 
 ## Research question
 When a large prior-session global equity shock reaches the NIFTY pre-open information set, does the shock behave differently when the six source markets broadly agree with the shock direction versus when the global move is internally split?
