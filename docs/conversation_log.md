@@ -174,3 +174,7 @@ Phase 35 global overnight shock × India-local IV–RV state is **RETIRED — DA
 - Phase 41 is preregistered as the next distinct family: OI-weighted option-gamma concentration around ATM × opening-gap direction.
 - The Phase 41 design intentionally avoids the already-tested raw OI/volume pressure, India VIX/RV gap, implied/realized opening-move and prior-day IV/overnight-gap families.
 - This repository log records operational research decisions only, not hidden chain-of-thought.
+
+
+## 2026-09-29 — Phase 41 closure
+Authoritative run **36467584676** completed unit tests and pinned-source acquisition, then failed the preregistered gamma-chain observability gate: 30.68% feature eligibility, 79.50% prior-chain coverage and 87.41% core-chain coverage. There were zero prior-information violations. Base/Stress and null calculations were not run, so no P&L conclusion is drawn. Phase 41 is closed DATA-LIMITED and the frozen rules are not retuned.
