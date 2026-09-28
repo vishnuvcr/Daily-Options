@@ -42,3 +42,5 @@ jobs:
           git commit -m 'Phase 35: persist Base Stress and null artifacts' || true
           git pull --rebase origin phase-35-global-shock-india-volatility-v1
           git push origin HEAD:phase-35-global-shock-india-volatility-v1
+
+# Phase 35 authoritative execution trigger
