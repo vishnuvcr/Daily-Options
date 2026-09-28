@@ -21,3 +21,10 @@ PREREGISTERED / READY FOR NUMERICAL EXECUTION.
 
 ## Integrity rule
 No economic conclusion is accepted until the authoritative workflow completes all gates and both friction regimes are reviewed.
+
+
+## 2026-09-28 execution-layer checkpoint
+- Branch push trigger commit `d38f5c774f50969a6f6b0f026574a4e60dadf564` was created after PR readiness was corrected.
+- GitHub commit metadata confirms the trigger commit exists.
+- The connected Actions read interface exposes PR-triggered runs only and returned no run for the Phase 38 PR head; direct workflow-list/dispatch access is unavailable through the connected interface.
+- No numerical execution has therefore been accepted. This is an infrastructure/interface blocker, not a Phase 38 research result.
