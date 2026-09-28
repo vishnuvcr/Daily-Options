@@ -522,3 +522,10 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E037-CLOSE | 2026-09-28 | Phase 37 | Authoritative run 36379200435 completed cleanly; no numerical implementation defect remained at closure | None | Phase 37 retired after all four cells failed the economic gate | CLOSED |
 
 | E0381 | 2026-09-28 | Phase 38 pre-run static audit | Phase 38 feature eligibility initially did not require a valid 09:30 NIFTY close/ATM reference; a missing print could reach integer ATM conversion | No numerical evidence accepted; corrected before authoritative execution | Require valid 09:30 spot and derived ATM before signal eligibility | CLOSED — pre-run implementation defect |
+
+
+### 2026-09-28 — Phase 38 CI execution blocker
+- Phase 38 branch and workflow are present; PR #92 is ready for review.
+- Trigger commits were issued on main and the Phase 38 branch.
+- The available GitHub connector does not expose a usable workflow-dispatch/list path for the branch-push run, and no PR workflow run/check is visible.
+- No numerical Phase 38 result is accepted. E0382 is logged on the Phase 38 branch.
