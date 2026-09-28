@@ -1,4 +1,4 @@
-> **2026-09-28 latest research status — Phase 39:** Phase 34 is closed DATA-LIMITED (53.20% complete two-expiry prior-session surface coverage versus the required 95%). Phase 35 is closed across its tested global-shock families, Phase 36 is retired negative, Phase 37 is retired negative, and Phase 38 is now **CLOSED — NEGATIVE DISCOVERY**. Phase 38 authoritative run 36408210374 had 1,168/1,168 post-warm-up feature-eligible sessions, 100% expiry mapping, 0 prior-information violations, ≥95% execution coverage in all 8 cells, but 0/8 Base and 0/8 Stress cells cleared the ₹5,000/week discovery gate. **Current frontier: Phase 39 — option-implied versus realized opening-move dislocation.**
+> **2026-09-28 latest research status — Phase 40:** Phase 39 is CLOSED DATA-LIMITED: 838/1,174 post-warm-up feature-eligible sessions (71.38%) versus the required 95%; corrected execution coverage was 96.99%, but no Base/Stress economics were authorized. **Current frontier: Phase 40 — prior-day NIFTY ATM IV / realized-volatility state × next-session overnight-gap dislocation.**
 
 # Daily-Options Research Lab
 
