@@ -189,3 +189,19 @@ Earlier Phase 30.2 runs were cancelled/invalidated before numerical execution du
 
 Run 36213335815 is quarantined for runtime only. No Falcon P&L has been accepted.
 
+
+
+## 2026-09-28 — Phase 35 closure
+Phase 35 global overnight shock × NIFTY option volatility structure is **RETIRED — ECONOMIC GATE FAILED**.
+
+Authoritative run **36342637912** completed its full data gate, Base and Stress numerical evaluation. The data gate had 1,164/1,164 complete feature-eligible sessions (100%) and 0 prior-date violations. All 16 frozen cells were negative in both Base and Stress; no cell met the ₹5,000 mean/median weekly and 70% positive-week gate.
+
+Best frozen cell:
+- GLOBAL_ABS >=1.5
+- 200-point long strangle
+- entry 09:31 IST
+- exit 15:10 IST
+- Base mean weekly net **-₹139.27**
+- Stress mean weekly net **-₹186.93**
+
+No WFA/OOS or result-driven tuning is authorized. See the [Phase 35 final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-35-global-shock-options-structure-v1/reports/phase35/final_result.md).
