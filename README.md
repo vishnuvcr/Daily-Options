@@ -776,3 +776,16 @@ Phase 34 is **CLOSED / DATA-LIMITED**. Authoritative run **36341535504** reconst
 **ACTIVE:** preregistered 8-cell NIFTY early-session volatility/price-structure family. Branch: `phase-38-opening-volatility-structure-v1`. Frozen design: first 15-minute range z-score (60 prior sessions, threshold ±0.75) × CONTINUE/FADE × 10:30/15:10; 09:30 ATM, 09:31 entry, one-lot 200-point debit spread, nearest on-or-after expiry, historical lot sizes, existing Paytm Money/NSE/statutory costs, Base/Stress ₹0.20/₹0.40 slippage, five fixed null permutations. [Plan](docs/phase38_plan.md) · [Literature](docs/phase38_literature_review.md) · [Status](docs/phase38_status.md) · [Workflow](.github/workflows/phase-38-main-launcher.yml)
 
 **CI verification:** draft PR [#92](https://github.com/vishnuvcr/Daily-Options/pull/92) opened for the frozen Phase 38 branch; it is not being merged as part of the phase separation.
+
+
+## 2026-09-29 — Phase 41 closure / Phase 42 active
+
+**Phase 41 — NIFTY option-gamma concentration × opening-gap direction is CLOSED DATA-LIMITED.** Authoritative run **36467584676** passed unit tests and source acquisition but failed the frozen observability gate: 354/1,154 post-warm-up sessions feature-eligible (30.68%), 79.50% prior-chain coverage and 87.41% core-chain coverage. Zero prior-information violations were observed. Base/Stress and null economics were correctly skipped; no P&L was accepted.
+
+[Phase 41 manuscript](https://github.com/vishnuvcr/Daily-Options/blob/phase-41-gamma-concentration-opening-gap-v1/reports/phase41/final_result.md) · [Phase 41 status](https://github.com/vishnuvcr/Daily-Options/blob/phase-41-gamma-concentration-opening-gap-v1/docs/research_status.md) · [Phase 41 error log](https://github.com/vishnuvcr/Daily-Options/blob/phase-41-gamma-concentration-opening-gap-v1/docs/error_log.md)
+
+**Phase 42 — NIFTY option day–night return asymmetry × opening-gap direction is now the active preregistered frontier.** The frozen feature is prior-session ATM-straddle overnight return versus intraday return asymmetry, standardized on a strictly prior 60-observation history. The discovery grid remains 2 states × 2 gap mappings × 2 exits, with five fixed permutation nulls, historical lots, realistic costs and Base/Stress slippage.
+
+[Phase 42 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-42-option-day-night-asymmetry-v1/docs/phase42_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-42-option-day-night-asymmetry-v1/docs/phase42_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-42-option-day-night-asymmetry-v1/docs/phase42_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-42-option-day-night-asymmetry-v1)
+
+Authoritative Phase 42 workflow run: **36468978862** (currently running).
