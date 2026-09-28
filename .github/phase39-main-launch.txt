@@ -1,2 +1,3 @@
 Phase 39 launcher trigger — 2026-09-28
 2026-09-28 Phase 39 rerun after E0391 correction.
+2026-09-28 Phase 39 rerun after E0392 timing-alignment correction.
