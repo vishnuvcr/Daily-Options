@@ -135,7 +135,7 @@ def attach_expiry(panel: pd.DataFrame, expiries: dict) -> pd.DataFrame:
     keys = sorted(expiries)
     x = panel.copy()
     x["expiry"] = [keys[bisect.bisect_left(keys, d)] if bisect.bisect_left(keys, d) < len(keys) else None for d in x["date"]]
-    x["atm"] = x["close_0929"].map(round_strike)
+    x["atm"] = np.nan
     # The option structure uses 09:30 NIFTY close as the established ATM reference.
     x["atm_0930"] = np.nan
     # Merge authoritative 09:30 close from the underlying.
