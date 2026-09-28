@@ -512,3 +512,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0424 | 2026-09-29 | Phase 44 first workflow run 36471625777 | Unit-test command referenced the copied Phase-43 filename `test_phase44_weekday_gap_direction.py`; the actual preregistered test is `test_phase44_gap_magnitude_direction.py` | No data or P&L ran | Correct workflow path; research design unchanged | FIXED — rerun required |
 
 | E0425 | 2026-09-29 | Phase 44 gate run 36471786039 | Copied workflow referenced `research/phase44_weekday_gap_direction.py` instead of the actual `phase44_gap_magnitude_direction.py`, so no data gate executed | No P&L or data result accepted | Correct all workflow engine-path references; frozen thresholds and design unchanged | FIXED — rerun required |
+
+| E0426 | 2026-09-29 | Phase 44 clean run 36471949846 | Validation found all four LARGE_GAP true cells at 68/72 executed trades = 94.44%, below the frozen >=95% execution-coverage gate; SMALL/MEDIUM cells exceeded 98.8% | No P&L/promotion/WFA accepted | Close Phase 44 DATA-LIMITED; do not lower coverage threshold or alter gap buckets | CLOSED — data-limited |
