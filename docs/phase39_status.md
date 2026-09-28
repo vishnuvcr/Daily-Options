@@ -4,15 +4,15 @@
 ENGINEERING CORRECTION IN PROGRESS — NO NUMERICAL EVIDENCE ACCEPTED.
 
 ## Completed
-- Phase 39 frozen plan, literature review, simulator, unit tests and workflow created.
-- E0391 corrected; clean unit tests passed.
-- E0392 corrected the signal timestamp convention to latest valid quote at or before 09:30.
-- Pinned source restored with 267 exact-expiry option files.
+- Frozen Phase 39 plan, literature review, simulator, tests and workflow.
+- E0391 midpoint ATM rounding corrected and clean unit tests passed.
+- E0392/E0393 timestamp-cutoff defects identified and corrected.
+- Authoritative runs reached the pinned source and data gate; no Base/Stress P&L has been accepted.
 
-## Engineering finding
-E0393: the pre-cutoff SQL applied ROW_NUMBER before the timestamp cutoff, so the latest row could be after 09:30 and then be discarded. No economic stage ran. The cutoff is now applied in the source filter before ROW_NUMBER.
+## Current finding
+E0394: the option dataset's trading_day field is not being used as the signal-date join key. The signal snapshot now derives local trade date from option timestamps and applies the 09:30 cutoff before latest-row selection, matching the audited source-handling pattern from the existing research code.
 
 ## Pending
-1. Rerun tests and authoritative source/data gate.
-2. Run Base/Stress/nulls only if all data gates pass.
-3. Final phase closure and manuscript.
+1. Rerun clean tests and authoritative data gate.
+2. Run Base/Stress/null controls only if all gates pass.
+3. Close the family with a reproducible manuscript and update main branch status.
