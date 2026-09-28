@@ -381,3 +381,8 @@ In both Base and Stress, a promoted cell must have mean weekly net ≥₹5,000, 
 
 ### Stop rule
 No post-result weekday selection, threshold tuning, execution-time substitution, strike/expiry substitution, cost-model changes or gap-mapping changes.
+
+
+## Phase 44 — NIFTY Opening-Gap Magnitude × Gap Direction
+
+Frozen states: SMALL_GAP (<0.50%), MEDIUM_GAP (0.50%–<1.00%), LARGE_GAP (≥1.00%). Test FOLLOW_GAP and FADE_GAP at 10:30 and 15:10 using the validated one-lot 200-point debit-spread execution engine, historical lots, existing Paytm Money/NSE/statutory costs and Base/Stress slippage. Twelve true cells plus five fixed label-permutation nulls per cell. Promotion requires mean and median weekly net ≥₹5,000 and positive-week rate ≥70% in both Base and Stress, with ≥95% execution coverage and clean accounting. No threshold changes after results.
