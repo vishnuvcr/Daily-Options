@@ -1,27 +1,49 @@
 # Research Status
 
-Last updated: 2026-09-25
+Last updated: 2026-09-28
 
 ## Overall
-**Phase 30.2 — Equity Income / Falcon Spread weekly independent replication**
+**Phase 38 — NIFTY opening volatility / price-structure research: PREREGISTERED / READY FOR AUTHORITATIVE EXECUTION, CURRENTLY BLOCKED AT THE GITHUB ACTIONS EXECUTION LAYER**
 
-## Current research objective — 2026-09-25
-The active YouTube/Equity Income program has replaced the former ₹1,000/active-lot/day intraday stopping rule with a **₹5,000 NET per completed trading week** objective at a fixed declared reference strategy position size.
+## Current research objective
+The active Equity Income program targets **₹5,000 NET per completed trading week** at a fixed declared reference strategy position size, after Paytm Money brokerage, date-aware NSE/statutory charges, and Base/Stress slippage. Phase 38 tests a frozen NIFTY-specific early-session volatility regime conditioned on the first 15-minute directional move; no result is promoted without the preregistered discovery gate and later WFA/OOS validation.
 
-The active consistency gate is:
-- mean weekly net ≥ ₹5,000 on untouched OOS weeks;
-- median weekly net ≥ ₹5,000;
-- ≥70% of eligible OOS weeks net-positive;
-- ≥80% of eligible OOS weeks executed unless a source-frozen no-trade rule applies;
-- Base and doubled-slippage Stress both disclosed;
-- weekly drawdown/worst week/expected shortfall/CVaR/profit factor and concentration reported.
+## Phase 38 execution status — 2026-09-28
+- Branch: `phase-38-opening-volatility-structure-v1`
+- PR: #92, open and ready for review
+- Latest branch head observed: `f5a35f0117f5127280621794fc07781853062045`
+- E0381: **CLOSED** before authoritative execution; missing 09:30 NIFTY spot/ATM eligibility was corrected.
+- E0382: **OPEN**; the available GitHub execution interface does not expose a usable workflow-dispatch/list path for the required run, and no PR workflow run/check is visible.
+- **Numerical evidence:** none accepted for Phase 38.
+- **Next authoritative action:** execute the frozen workflow; then audit tests, cached exact-expiry data gate, Base, Stress, null controls, accounting reconciliation and promotion gate in that order. No parameter retuning is permitted.
 
-The old ₹1,000/day threshold remains historical for Phases 0–25 and must not be used for Phase 29.5/30 decisions.
+## Frozen Phase 38 discovery gate
+Both Base and Stress must satisfy: mean weekly net ≥ ₹5,000; median weekly net ≥ ₹5,000; positive-week rate ≥70%. Data gates require ≥95% session eligibility after warm-up, zero prior-information violations, ≥95% execution quote coverage per true cell, deterministic expiry/strike/lot mapping, and accounting reconciliation. WFA/OOS is only permitted if discovery clears.
+
+## Latest completed numerical frontier
+Phase 37 global-shock opening-dislocation research is closed negative; Phase 38 is the next distinct preregistered family. Earlier completed phases remain frozen historical evidence and are not silently retuned.
 
 ## Current blocker
-Phase 29.4/29.5 source-fidelity and contract readiness must finish before any weekly P&L is accepted. The Iron Dome formalization branch already contains the bounded 12-cell matrix; Phase 30 remains blocked until its contract/lot and execution-cost gates pass.
+The remaining blocker is execution-layer access rather than a known Phase 38 strategy/code result. The repository workflow and trigger markers are present, and trigger commits have been issued. The available connector exposes workflow-run inspection only for PR-triggered runs and provides no workflow-dispatch operation; current checks therefore show no visible run. No fabricated or partial P&L is accepted.
 
 ## Step log
+### 2026-09-28 — Phase 38 pre-run audit
+- Frozen plan, literature review, tests, simulator and workflow were reviewed.
+- E0381 was found and corrected before numerical evidence.
+- Phase 38 remains unchanged at the strategy level.
+
+### 2026-09-28 — Phase 38 execution-layer checkpoint
+- Main launcher was hardened to use the main workflow definition while checking out the frozen Phase 38 branch.
+- Trigger marker commits were issued.
+- PR #92 was marked ready for review.
+- No usable workflow run/check became visible through the available GitHub interface.
+- E0382 remains open; research execution is waiting at the infrastructure boundary, not at a research conclusion.
+
+## Research integrity rule
+A Phase 38 result is accepted only from the authoritative frozen workflow with persisted artifacts and complete Base/Stress/null/accounting validation. Local estimates or unverified partial executions are not substitutes.
+
+## Historical detailed step log
+The remainder of this file preserves the earlier phase-by-phase research ledger and is retained for auditability.
 
 ### 2026-09-23 — Step 0.1 Repository audit
 - Target: vishnuvcr/Daily-Options
