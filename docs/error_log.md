@@ -492,3 +492,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0392 | 2026-09-28 | Phase 39 | Exact 09:30 option quote lookup yielded zero IV inputs on the pinned source, so the data gate failed before economic computation | No P&L accepted | Align option signal lookup to latest valid observation at or before 09:30, consistent with the repository's audited timestamp-cutoff convention | OPEN |
 
 | E0393 | 2026-09-28 | Phase 39 | Pre-cutoff option rows were ranked before applying the cutoff, yielding zero selected IV rows despite available earlier quotes | No P&L accepted | Apply timestamp cutoff before latest-row selection; rerun authoritative data gate | OPEN |
+
+| E0394 | 2026-09-28 | Phase 39 | Option signal-date filtering via dataset trading_day produced zero IV rows; source audit indicates timestamp-derived local trade dates are the reliable alignment mechanism | No P&L accepted | Removed trading_day from the signal snapshot join; rerun authoritative data gate | OPEN |
