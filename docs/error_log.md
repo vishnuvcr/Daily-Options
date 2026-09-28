@@ -490,3 +490,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0391 | 2026-09-28 | Phase 39 | Python banker’s rounding failed the frozen half-step ATM strike convention in unit test run 36409062624 | No data/P&L accepted | Replace with deterministic half-up ₹50 rounding and rerun | OPEN |
 
 | E0392 | 2026-09-28 | Phase 39 | Exact 09:30 option quote lookup yielded zero IV inputs on the pinned source, so the data gate failed before economic computation | No P&L accepted | Align option signal lookup to latest valid observation at or before 09:30, consistent with the repository's audited timestamp-cutoff convention | OPEN |
+
+| E0393 | 2026-09-28 | Phase 39 | Pre-cutoff option rows were ranked before applying the cutoff, yielding zero selected IV rows despite available earlier quotes | No P&L accepted | Apply timestamp cutoff before latest-row selection; rerun authoritative data gate | OPEN |
