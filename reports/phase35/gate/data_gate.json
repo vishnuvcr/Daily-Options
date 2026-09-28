@@ -1,9 +1,9 @@
 {
   "status": "PASS",
-  "raw_sessions": 1225,
-  "global_feature_eligible_sessions": 1161,
-  "feature_eligible_sessions": 1141,
-  "coverage": 0.9827734711455641,
+  "raw_sessions": 1228,
+  "global_feature_eligible_sessions": 1164,
+  "feature_eligible_sessions": 1144,
+  "coverage": 0.9828178694158075,
   "prior_violations": 0,
   "warmup_or_global_unavailable_sessions": 64,
   "threshold": 1.0,
