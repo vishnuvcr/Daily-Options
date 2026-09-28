@@ -56,7 +56,7 @@ def iv(s,k,t,target):
  return (lo+hi)/2
 
 def local_state(idx,root,files):
- daily=idx.groupby('date').agg(open=('open','first'),high=('high','max'),low=('low','min'),close=('close','last')).sort_index(); con=duckdb.connect(); rows=[]
+ daily=idx.groupby('date').agg(open=('open','first'),high=('high','max'),low=('low','min'),close=('close','last')).sort_index(); con=duckdb.connect(); con.execute("SET TimeZone='Asia/Kolkata'"); rows=[]
  for day in daily.index:
   prev=daily.loc[daily.index<day]
   if len(prev)<20:continue
@@ -97,7 +97,7 @@ def main():
  (out/'execution_coverage.json').write_text(json.dumps(cov,indent=2)); con.close();
  if any(x['coverage']<.95 for x in cov):
   gate['status']='FAIL_EXECUTION_COVERAGE'; gate['execution_coverage']=cov; (out/'data_gate.json').write_text(json.dumps(gate,indent=2,default=str)); print(json.dumps(gate)); return
- con=duckdb.connect(); rows=[]
+ con=duckdb.connect(); con.execute("SET TimeZone='Asia/Kolkata'"); rows=[]
  for r in s.itertuples(index=False):
   d=pd.Timestamp(r.date).date(); e=next((e for e in sorted(files) if e>=d),None); typ='CE' if r.GLOBAL_LEAD>0 else 'PE'; atm=round(float(r.nifty_open_0930)/50)*50; wing=atm+WING if typ=='CE' else atm-WING; ex=HORIZON_TIMES[r.horizon]; lot=lot_size(e); path=files[e]; raw=sl=tc=0; ok=True
   for k,act in [(atm,'BUY'),(wing,'SELL')]:
