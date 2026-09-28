@@ -178,3 +178,9 @@ Phase 35 global overnight shock × India-local IV–RV state is **RETIRED — DA
 
 ## 2026-09-29 — Resume research / Phase 41 closure / Phase 42 launch
 Phase 41 authoritative run **36467584676** was checked directly through GitHub Actions. Unit tests and source acquisition passed, but the frozen data gate failed at 30.68% post-warm-up feature eligibility, 79.50% prior-chain coverage and 87.41% core-chain coverage. Prior-information violations were zero; Base/Stress and null calculations were correctly skipped. Phase 41 was therefore closed DATA-LIMITED without P&L interpretation. A literature-backed, materially distinct Phase 42 family was preregistered: prior-session NIFTY ATM-straddle day–night return asymmetry × next-session opening-gap direction. The authoritative Phase 42 workflow is run **36468978862**. This operational log records research actions and decisions, not hidden chain-of-thought.
+
+
+## 2026-09-29 — Phase 42 closure / Phase 43 launch
+Phase 42 authoritative workflow 36469315584 attempt 2 passed unit tests and source acquisition and achieved 1,101/1,158 (95.0777%) feature eligibility with zero prior-information violations. Its frozen execution panel requested 5,364 exact option quote keys and returned 0, so all eight true cells had 0% execution coverage. Phase 42 was closed DATA-LIMITED with no P&L, null economics or WFA/OOS accepted. The failure was preserved without changing execution times, strikes, expiry rules or coverage thresholds.
+
+Phase 43 was then preregistered as a distinct weekday-conditioned opening-gap family: Monday–Friday × FOLLOW/FADE × 10:30/15:10, 20 true cells, five fixed permutation nulls, historical lots and the existing friction model. The validated Phase 38 execution engine was reused to avoid repeating Phase 42's systematic quote-key implementation path. This log records operational research decisions only, not hidden chain-of-thought.
