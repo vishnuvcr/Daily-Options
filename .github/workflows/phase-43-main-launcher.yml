@@ -98,7 +98,7 @@ jobs:
               t=pd.read_csv(f"reports/phase43/{f}/trades.csv")
               assert len(t)>0,(f,"zero true trades")
               n=pd.read_csv(f"reports/phase43/{f}/null_summary.csv")
-              assert len(n)==40,(f,len(n))
+              assert len(n)==100,(f,len(n))
           PY
 
       - name: Persist Phase 43 reports and cache manifest
