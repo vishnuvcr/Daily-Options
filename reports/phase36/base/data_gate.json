@@ -1,0 +1,9 @@
+{
+  "status": "FAIL",
+  "raw_sessions": 1228,
+  "global_feature_eligible_sessions": 1164,
+  "coverage": 0.9478827361563518,
+  "prior_violations": 0,
+  "study_start": "2021-07-01",
+  "study_end": "2026-08-31"
+}
