@@ -804,3 +804,19 @@ Authoritative run **36252922418 (run 9)** completed unit tests, six-market acqui
 Final discovery outcome: **0/12 cells passed the ₹5,000/week promotion gate in Base and 0/12 in Stress**. The strongest cell was ASIA_LEAD, z=1.00, 09:31→10:30: ₹107.37/week Base and ₹37.13/week Stress, 45.45% positive weeks, negative medians in both regimes. The same cell beat all five registered null-control mean weekly results in both frictions, but its absolute economics were far below the promotion target.
  
 Phase 31.8 is therefore **closed without WFA/OOS promotion**. Final report: `reports/phase31_8/final_result.md`.
+
+
+## 2026-09-28 — Phase 35 closure
+Phase 35 global overnight shock × NIFTY option volatility structure is **RETIRED — ECONOMIC GATE FAILED**.
+
+Authoritative run **36342637912** completed its full data gate, Base and Stress numerical evaluation. The data gate had 1,164/1,164 complete feature-eligible sessions (100%) and 0 prior-date violations. All 16 frozen cells were negative in both Base and Stress; no cell met the ₹5,000 mean/median weekly and 70% positive-week gate.
+
+Best frozen cell:
+- GLOBAL_ABS >=1.5
+- 200-point long strangle
+- entry 09:31 IST
+- exit 15:10 IST
+- Base mean weekly net **-₹139.27**
+- Stress mean weekly net **-₹186.93**
+
+No WFA/OOS or result-driven tuning is authorized. See the [Phase 35 final result](https://github.com/vishnuvcr/Daily-Options/blob/phase-35-global-shock-options-structure-v1/reports/phase35/final_result.md).
