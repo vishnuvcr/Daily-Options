@@ -518,3 +518,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0427 | 2026-09-29 | Phase 45 first workflow run 36472371592 | Unit-test command referenced the copied Phase-44 filename `test_phase45_gap_magnitude_direction.py`; actual test is `test_phase45_gap_failure_confirmation.py` | No data or P&L ran | Correct workflow path; design unchanged | FIXED — rerun required |
 
 | E0428 | 2026-09-29 | Phase 45 gate run 36472551188 | Copied workflow referenced `phase45_gap_magnitude_direction.py` instead of `phase45_gap_failure_confirmation.py` | No data or P&L ran | Correct engine path; frozen confirmation definition unchanged | FIXED — rerun required |
+
+| E0429 | 2026-09-29 | Phase 46 first workflow run 36473005218 | Copied workflow referenced `test_phase46_gap_failure_confirmation.py` instead of `test_phase46_close_location_gap.py` | No data/P&L ran | Correct workflow path and record reusable filename rule | FIXED — rerun required |
