@@ -11,3 +11,5 @@
 | E0396 | 2026-09-28 | IV mapping | Query trade_date became pandas Timestamp while request keys were Python dates | No P&L | Normalize query dates before key matching | CLOSED |
 | E0397 | 2026-09-28 | Execution mapping | Execution request dates/expiry values had Python-date vs Timestamp mismatches | No P&L | Normalize execution keys; minimum true-cell coverage 97.45% on clean run | CLOSED |
 | E0398 | 2026-09-28 | Final discovery | Clean run failed the frozen weekly economic gate in all 8 Base and all 8 Stress cells | No WFA/OOS | Retire Phase 39 as negative discovery; no tuning | CLOSED |
+
+| E0395 | 2026-09-28 | Phase 39 authoritative run 36465244174 | All tests, source/cache checks, data gate, Base, Stress, validation, persistence and artifact upload completed successfully; all 8 true cells failed the frozen promotion gate | No WFA/OOS authorized | Close Phase 39 negative; move to next preregistered distinct family without retuning | CLOSED |
