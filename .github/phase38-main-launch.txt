@@ -1,2 +1,2 @@
 Phase 38 main launcher
-revision=E0381-closed
+revision=E0381-closed-CI-reprobe-20260928T0537Z
