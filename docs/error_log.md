@@ -470,3 +470,6 @@ E0435 (surface data-gate diagnosis) and E0437 (execution-coverage accounting) we
 
 ### Phase 33 closure
 E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not trading economics. No unresolved Phase 33 implementation error remains for accepted numerical work.
+
+
+| E035-PERSIST-RACE | 2026-09-28 | Phase 35 | Authoritative run 36342637912 completed Base/Stress but the first artifact push was rejected because the remote phase branch advanced concurrently | No numerical impact; computation remained valid | Surviving commit persisted the artifacts; no rerun or tuning performed | CLOSED |
