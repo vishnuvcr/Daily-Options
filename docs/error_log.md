@@ -496,3 +496,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0394 | 2026-09-28 | Phase 39 | Option signal-date filtering via dataset trading_day produced zero IV rows; source audit indicates timestamp-derived local trade dates are the reliable alignment mechanism | No P&L accepted | Removed trading_day from the signal snapshot join; rerun authoritative data gate | OPEN |
 
 | E0395 | 2026-09-28 | Phase 39 | Source diagnostic failed on pandas Timestamp vs datetime.date type comparison; no source rows were inspected | No P&L accepted | Correct diagnostic typing and rerun | OPEN |
+
+| E0396 | 2026-09-28 | Phase 39 | Valid 09:30 option rows were lost in a Python-date vs pandas-Timestamp join comparison | No P&L accepted | Normalize IV query dates to Python date; rerun authoritative gate | OPEN |
