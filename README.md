@@ -771,3 +771,7 @@ Phase 34 is **CLOSED / DATA-LIMITED**. Authoritative run **36341535504** reconst
 [Phase 34 manuscript](https://github.com/vishnuvcr/Daily-Options/blob/phase-34-multi-expiry-vol-term-structure-v1/reports/phase34/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-34-multi-expiry-vol-term-structure-v1/docs/phase34_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-34-multi-expiry-vol-term-structure-v1/docs/phase34_status.md)
 
 **Next planned family:** global overnight shock × India-local volatility/options state.
+
+
+## Phase 38 — NIFTY Opening Volatility / Price-Structure (2026-09-28)
+**ACTIVE:** preregistered 8-cell NIFTY early-session volatility/price-structure family. Branch: `phase-38-opening-volatility-structure-v1`. Frozen design: first 15-minute range z-score (60 prior sessions, threshold ±0.75) × CONTINUE/FADE × 10:30/15:10; 09:30 ATM, 09:31 entry, one-lot 200-point debit spread, nearest on-or-after expiry, historical lot sizes, existing Paytm Money/NSE/statutory costs, Base/Stress ₹0.20/₹0.40 slippage, five fixed null permutations. [Plan](docs/phase38_plan.md) · [Literature](docs/phase38_literature_review.md) · [Status](docs/phase38_status.md) · [Workflow](.github/workflows/phase-38-main-launcher.yml)
