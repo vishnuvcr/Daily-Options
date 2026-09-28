@@ -943,3 +943,13 @@ Authoritative run **36379200435** passed data and execution coverage. All four t
 ## 2026-09-28 — Phase 37 retired after discovery gate failure
 
 Authoritative run **36379200435** passed feature and execution gates. All four global-shock × NIFTY-opening-dislocation cells were negative in Base and Stress and failed the ₹5,000/week promotion criteria. No WFA/OOS or result-driven retuning is authorized. See [Phase 37 final result](../reports/phase37/final_result.md).
+
+
+## 2026-09-28 — Phase 38 preregistration
+Phase 37 is closed/retired. The next frozen family is **Phase 38 — NIFTY Opening Volatility / Price-Structure** on branch `phase-38-opening-volatility-structure-v1`.
+
+The study uses the first 15 minutes (09:15–09:29) to measure early range percentage and directional return, standardizes range using a strictly-prior 60-session z-score, and tests HIGH/LOW volatility × CONTINUE/FADE × 10:30/15:10. Execution remains 09:31 entry, 09:30 NIFTY-close ATM, nearest on-or-after expiry, one-lot 200-point debit spread, historical lot sizes, established Paytm Money/NSE/statutory costs, and ₹0.20/₹0.40 Base/Stress slippage. Five fixed permutation null seeds are included. No result-driven tuning is permitted.
+
+[Phase 38 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-38-opening-volatility-structure-v1/docs/phase38_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-38-opening-volatility-structure-v1/docs/phase38_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-38-opening-volatility-structure-v1/docs/phase38_status.md)
+
+**Workflow status:** launched from the branch marker after preregistration; numerical evidence remains pending authoritative completion.
