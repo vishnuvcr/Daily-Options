@@ -320,45 +320,25 @@ def summarize(trades: pd.DataFrame, expected: pd.DataFrame) -> pd.DataFrame:
 
 
 def data_gate(panel: pd.DataFrame, expiries: dict) -> dict:
-    raw = len(panel)
-    post_warmup = max(raw - LOOKBACK, 0)
-    eligible = int(panel["feature_eligible"].sum())
-    complete = int((panel["feature_eligible"] & panel["barrier_ok"]).sum())
-    violations = int((post["feature_eligible"] & ~post["barrier_ok"]).sum())
-    eligible_dates = post.loc[post["feature_eligible"], "date"]
-    expiry_ok = int(sum(
-        bisect.bisect_left(sorted(expiries), d) < len(expiries)
-        for d in eligible_dates
-    ))
-    eligibility_rate = eligible / post_warmup if post_warmup else 0.0
-    cov = complete / eligible if eligible else 0.0
-    exp_cov = expiry_ok / eligible if eligible else 0.0
-    status = (
-        "PASS"
-        if eligibility_rate >= COVERAGE_TARGET
-        and cov >= COVERAGE_TARGET
-        and exp_cov >= COVERAGE_TARGET
-        and violations == 0
-        else "FAIL"
-    )
-    return {
-        "status": status,
-        "raw_sessions": raw,
-        "post_warmup_sessions": post_warmup,
-        "feature_eligible_sessions": eligible,
-        "post_warmup_eligibility_rate": eligibility_rate,
-        "complete_feature_sessions": complete,
-        "feature_coverage": cov,
-        "expiry_mapping_coverage": exp_cov,
-        "prior_information_violations": violations,
-        "lookback_sessions": LOOKBACK,
-        "study_start": str(START),
-        "study_end": str(END),
-        "required_coverage": COVERAGE_TARGET,
-        "weekday_states": list(STATES),
-        "expiry_file_count": len(expiries),
-    }
-
+    raw=len(panel)
+    post=panel.iloc[LOOKBACK:] if len(panel)>LOOKBACK else panel.iloc[0:0]
+    post_warmup=len(post)
+    eligible=int(post["feature_eligible"].sum())
+    complete=int((post["feature_eligible"] & post["barrier_ok"]).sum())
+    violations=int((post["feature_eligible"] & ~post["barrier_ok"]).sum())
+    eligible_dates=post.loc[post["feature_eligible"],"date"]
+    expiry_ok=int(sum(bisect.bisect_left(sorted(expiries),d)<len(expiries) for d in eligible_dates))
+    eligibility_rate=eligible/post_warmup if post_warmup else 0.0
+    cov=complete/eligible if eligible else 0.0
+    exp_cov=expiry_ok/eligible if eligible else 0.0
+    status="PASS" if eligibility_rate>=COVERAGE_TARGET and cov>=COVERAGE_TARGET and exp_cov>=COVERAGE_TARGET and violations==0 else "FAIL"
+    return {"status":status,"raw_sessions":raw,"post_warmup_sessions":post_warmup,
+            "feature_eligible_sessions":eligible,"post_warmup_eligibility_rate":eligibility_rate,
+            "complete_feature_sessions":complete,"feature_coverage":cov,
+            "expiry_mapping_coverage":exp_cov,"prior_information_violations":violations,
+            "lookback_sessions":LOOKBACK,"study_start":str(START),"study_end":str(END),
+            "required_coverage":COVERAGE_TARGET,"weekday_states":list(STATES),
+            "expiry_file_count":len(expiries)}
 
 def run(data: Path, out: Path, slippage: float, gate_only: bool = False):
     out.mkdir(parents=True, exist_ok=True)
