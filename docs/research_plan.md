@@ -261,3 +261,42 @@ Does a NIFTY opening move that is unusually large or unusually small relative to
 
 ### Stop rule
 No post-result adjustment of the 60-session lookback, ±0.75 thresholds, 09:15–09:29 interval, IV horizon scaling, expiry rule, direction mapping, spread width, exits, or cost model.
+## Phase 40 — Prior-Day ATM IV / RV State × Overnight-Gap Implied-Move Dislocation
+
+### Frozen research question
+Does the next NIFTY session's overnight opening gap become directionally informative when its magnitude is unusually large or small relative to the prior session's ATM option-implied one-session move, conditioned on the prior-day implied-volatility versus realized-volatility state?
+
+### Information timing
+- Signal date t is known by 09:15 on date t.
+- Prior-day option signal uses the previous completed NIFTY session's 15:10 close and its nearest NIFTY expiry strictly after that prior session date.
+- ATM strike is nearest ₹50 to prior-session 15:10 NIFTY close using deterministic half-up rounding.
+- ATM IV is the simple average of valid CE and PE IV from the prior session's 15:10 option closes.
+- Prior realized volatility is annualized close-to-close standard deviation of the previous 20 completed NIFTY returns ending on the prior session.
+- Overnight gap = current 09:15 NIFTY open divided by prior session 15:10 NIFTY close minus one.
+- One-session implied move = prior ATM IV × sqrt(1/252).
+- GAP_RATIO = absolute overnight gap / one-session implied move.
+- GAP_RATIO_Z uses only the previous 60 completed signal-day GAP_RATIO observations.
+
+### Frozen states and execution
+- HIGH_GAP_DISLOCATION if GAP_RATIO_Z >= +0.75.
+- LOW_GAP_DISLOCATION if GAP_RATIO_Z <= −0.75.
+- Zero-gap direction is NO_TRADE.
+- CONTINUE follows the overnight gap direction.
+- FADE takes the opposite direction.
+- 09:31 option-open entry; 10:30 and 15:10 option-close exits.
+- One-lot 200-point debit spread, historical lot sizes.
+
+### Discovery matrix
+2 states × 2 mappings × 2 exits = 8 true cells, plus five fixed permutation-null seeds. Promotion requires in both Base and Stress: mean weekly net ≥₹5,000, median weekly net ≥₹5,000, positive-week rate ≥70%, ≥95% execution coverage and clean accounting.
+
+### Data gates
+- ≥95% post-warm-up feature eligibility;
+- ≥95% prior-day ATM IV input coverage;
+- ≥95% overnight-gap data coverage;
+- zero prior-information violations;
+- deterministic expiry/strike/lot mapping;
+- ≥95% execution quote coverage for every true cell;
+- accounting reconciliation.
+
+### Stop rule
+No post-result adjustment of RV window, 60-session z window, ±0.75 thresholds, IV/RV construction, one-session scaling, expiry rule, gap direction mapping, spread width, entry, exit or cost model.
