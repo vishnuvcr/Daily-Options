@@ -506,3 +506,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E035-IVRV-015 | 2026-09-28 | Phase 35 | Execution quote coverage was 0% because option rows were queried by exact timestamp equality; audited Phase 31.8 retrieves by local date plus `strftime` clock time | No P&L accepted | Reimplemented execution-row lookup using the Phase 31.8 local-date/clock-time method | CLOSED |
 
 | E035-IVRV-015 | 2026-09-28 | Phase 35 | Multiple push-triggered runs were executing concurrently and writing the same report paths, producing mixed artifact state | No accepted P&L | Added workflow concurrency with cancel-in-progress so only the latest authoritative run owns Phase 35 artifacts | CLOSED |
+
+| E035-IVRV-016 | 2026-09-28 | Phase 35 | Diagnostic edits temporarily mixed 09:30 close and open field names in the ATM calculation | No accepted P&L; latest run was pre-reconciliation | Restored one consistent 09:30 open field across panel, coverage, diagnostics and execution | CLOSED |
