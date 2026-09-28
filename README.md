@@ -775,3 +775,5 @@ Phase 34 is **CLOSED / DATA-LIMITED**. Authoritative run **36341535504** reconst
 
 ## Phase 38 — NIFTY Opening Volatility / Price-Structure (2026-09-28)
 **ACTIVE:** preregistered 8-cell NIFTY early-session volatility/price-structure family. Branch: `phase-38-opening-volatility-structure-v1`. Frozen design: first 15-minute range z-score (60 prior sessions, threshold ±0.75) × CONTINUE/FADE × 10:30/15:10; 09:30 ATM, 09:31 entry, one-lot 200-point debit spread, nearest on-or-after expiry, historical lot sizes, existing Paytm Money/NSE/statutory costs, Base/Stress ₹0.20/₹0.40 slippage, five fixed null permutations. [Plan](docs/phase38_plan.md) · [Literature](docs/phase38_literature_review.md) · [Status](docs/phase38_status.md) · [Workflow](.github/workflows/phase-38-main-launcher.yml)
+
+**CI verification:** draft PR [#92](https://github.com/vishnuvcr/Daily-Options/pull/92) opened for the frozen Phase 38 branch; it is not being merged as part of the phase separation.
