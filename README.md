@@ -780,12 +780,13 @@ Phase 34 is **CLOSED / DATA-LIMITED**. Authoritative run **36341535504** reconst
 
 
 
-## 2026-09-29 — Phase 42 closure / Phase 43 active
 
-**Phase 42 — NIFTY option day–night return asymmetry × opening-gap direction is CLOSED DATA-LIMITED.** Authoritative workflow **36469315584**, attempt 2. Feature eligibility was 95.0777% and prior-information violations were zero, but the frozen execution panel returned **0/5,364 required option quote keys**, producing 0% execution coverage in all eight cells. No P&L, null economics or WFA/OOS was accepted.
 
-[Phase 42 manuscript](https://github.com/vishnuvcr/Daily-Options/blob/phase-42-option-day-night-asymmetry-v1/reports/phase42/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-42-option-day-night-asymmetry-v1/docs/phase42_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-42-option-day-night-asymmetry-v1/docs/phase42_status.md)
+## 2026-09-29 — Phase 43 closure / Phase 44 active
 
-**Phase 43 — NIFTY weekday × opening-gap direction is now the active preregistered frontier.** It tests all five weekdays with FOLLOW/FADE gap mappings and 10:30/15:10 exits in 20 frozen true cells, plus five fixed permutation-null seeds. It reuses the previously validated option execution engine and retains the Paytm Money/NSE/statutory friction model and Base/Stress slippage.
+**Phase 43 — NIFTY weekday × opening-gap direction is CLOSED NEGATIVE DISCOVERY.** Clean authoritative run **36471290988** passed all gates. No 20-cell true result met the ₹5,000/week mean/median and 70% positive-week promotion gate in both Base and Stress. Best cell: Thursday/FADE/15:10, ₹46.87/week Base and ₹5.85/week Stress, with negative medians.
 
-[Phase 43 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-43-weekday-gap-direction-v1/docs/phase43_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-43-weekday-gap-direction-v1/docs/phase43_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-43-weekday-gap-direction-v1/docs/phase43_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-43-weekday-gap-direction-v1)
+[Phase 43 manuscript](https://github.com/vishnuvcr/Daily-Options/blob/phase-43-weekday-gap-direction-v1/reports/phase43/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-43-weekday-gap-direction-v1/docs/phase43_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-43-weekday-gap-direction-v1/docs/phase43_status.md)
+
+**Phase 44 — NIFTY opening-gap magnitude × gap direction is now the active preregistered frontier.** It uses fixed small/medium/large absolute-gap buckets, both FOLLOW/FADE mappings and 10:30/15:10 exits, with the same friction, historical lots, five permutation-null controls and ₹5,000/week promotion gate.
+
