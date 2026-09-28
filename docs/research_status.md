@@ -67,8 +67,8 @@ Candidate sources:
 
 Status: candidate sources only; independent validation pending Phase 1.
 
-## Current blocker / next action
-The sole active numerical frontier is Falcon Spread. Run 36160873596 has passed tests and exact Rissin acquisition and is executing Base/Stress friction. No P&L is accepted until both jobs finish and their persisted artifacts are independently audited. If 0/270 cells pass the frozen weekly gate, retire Falcon and move to the next distinct source-faithful Equity Income candidate; no result-driven tuning.
+## Superseded historical blocker — 2026-09-24
+The Falcon Spread execution note below is retained for audit history only. It is no longer the current frontier. **Phase 38 is the current preregistered frontier**, as documented at the top of this file.
 
 
 ## Continuation checkpoint — 2026-09-24
