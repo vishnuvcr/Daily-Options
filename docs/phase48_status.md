@@ -1,20 +1,21 @@
 # Phase 48 Status
 
-**State: PREREGISTERED / ENGINEERING BUILD**
+**State: CLOSED — NEGATIVE DISCOVERY**
 
-Branch: phase-48-prior-return-gap-direction-v1
+Authoritative workflow: **36538835468**  
+Artifact: **11019348113**
 
-Frozen states:
-- PRIOR_UP
-- PRIOR_DOWN
+Data integrity:
+- 98.86% feature eligibility
+- 100% prior-return coverage
+- 100% expiry mapping
+- 0 prior-information violations
+- 98.58–99.23% execution coverage
 
-Frozen execution:
-- 09:31 entry
-- 10:30 / 15:10 exits
-- one-lot 200-point ATM debit spread
-- nearest expiry on/after trade date
-- historical lots
-- Base/Stress ₹0.20/₹0.40 slippage
-- existing Paytm Money/NSE/statutory charges
+Best true cell: PRIOR_DOWN / FADE / 10:30.
+- Base mean weekly net: **-₹336**
+- Stress mean weekly net: **-₹441**
+- Base positive-week rate: **37.7%**
+- Stress positive-week rate: **37.2%**
 
-No numerical result is accepted until unit tests, data gates, execution coverage, null controls and accounting all pass.
+All 8 true cells were negative in both Base and Stress. No WFA/OOS authorized.
