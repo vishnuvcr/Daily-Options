@@ -57,30 +57,15 @@ No Phase 41 P&L is accepted until unit tests, data gates, execution coverage, ac
 
 
 
+
 ## 2026-09-29 latest frontier update
 - Phase 46: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36473334899.
-- Phase 47: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36538234322; best cell ₹714/week Base / ₹666 Stress; no WFA/OOS.
-- Phase 48: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36538835468; all 8 true cells negative under Base and Stress; no WFA/OOS.
-- Phase 49: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36539451804; best cell ₹88/week Base / ₹9 Stress; no WFA/OOS.
-- Phase 50: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36539948879; best cell ₹163/week Base / ₹116 Stress; no WFA/OOS.
+- Phase 47: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36538234322; best cell ₹714/week Base / ₹666 Stress.
+- Phase 48: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36538835468; all 8 cells negative in Base and Stress.
+- Phase 49: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36539451804; best cell ₹88/week Base / ₹9 Stress.
+- Phase 50: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36539948879; best cell ₹163/week Base / ₹116 Stress.
 - Phase 51: **CLOSED DATA-LIMITED** — authoritative run 36540501382; no P&L accepted.
-- Phase 52: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36548301179; 98.12% feature eligibility, 98.80% same-session ATM-IV coverage, best cell -₹101/week Base / -₹183 Stress; all 12 cells failed.
-- Phase 53: **CLOSED NEGATIVE DISCOVERY** — authoritative run **36548934744**; 98.12% feature eligibility, 98.80% same-session ATM-adjacent skew coverage, best cell -₹198/week Base / -₹293 Stress; all 12 cells failed.
-- Next frontier: **Phase 54 — same-session 09:30 matched ATM IV call-put spread × opening direction**.
-
-
-## 2026-09-29 latest frontier update
-- Phase 52: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36548301179; best MID_IV/FADE/15:10 = -₹100.61/week Base / -₹182.60 Stress.
-- Phase 53: **CLOSED NEGATIVE DISCOVERY** — authoritative run **36548991737**; 97.95% final feature eligibility, 98.63% same-session skew coverage, 0 prior-information violations, 99.26–100% execution coverage. Best MID_SKEW/FADE/15:10 = -₹177.32/week Base / -₹252.72 Stress; no WFA/OOS.
-- Current frontier: **Phase 54 — same-session 09:30 ATM put–call IV spread × opening direction**.
-
-
-## 2026-09-29 Phase 53 closure
-- Phase 53: **CLOSED NEGATIVE DISCOVERY** — authoritative run **36549121608**, artifact **11023737870**. Feature eligibility 98.29%, same-session near-ATM skew coverage 98.97%, expiry mapping 100%, prior-information violations 0, execution coverage 98.79–100%. Best cell LOW_SKEW/FADE/10:30 was -₹138/week Base and -₹235/week Stress; 0/12 true cells passed the dual-friction promotion gate. No WFA/OOS.
-- Phase 53 skew thresholds/strike offsets/lookback/exits are frozen and will not be retuned.
-- Next bounded family: **Phase 54 — same-session 09:30 front-vs-next-expiry ATM IV term structure × opening direction**, using current-session quotes and a frozen two-state steep/inverted slope definition with the same Base/Stress weekly promotion gate.
-
-
-## 2026-09-29 Phase 54 closure
-- Phase 54: **CLOSED NEGATIVE DISCOVERY** — authoritative workflow **36549550020**, artifact **11024192628**. Feature eligibility 98.12%, matched ATM CE/PE IV coverage 98.80%, feature-expiry mapping 100%, zero information violations, execution coverage 99.04–100%. Best cell LOW_SPREAD/FADE/15:10 = -₹49/week Base / -₹143 Stress; 0/12 cells passed the dual-friction gate. No WFA/OOS and no parameter retuning.
-- Next frontier: **Phase 55 — same-session 09:30 front-vs-next-expiry ATM IV term structure × opening direction**, using the already-planned two-expiry concept with a fresh current-session information barrier.
+- Phase 52: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36548301179; best cell -₹101/week Base / -₹183 Stress.
+- Phase 53: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36548934744; best cell -₹198/week Base / -₹293 Stress.
+- Phase 54: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36549550020; 98.12% feature eligibility, 98.80% matched-ATM CE/PE IV coverage, 0 prior-information violations, 99.04–100% execution coverage. Best cell LOW_SPREAD/FADE/15:10 was -₹49/week Base / -₹143 Stress; all 12 cells failed promotion.
+- Next frontier: **Phase 55 — same-session 09:30 ATM volatility-surface curvature × opening direction**.
