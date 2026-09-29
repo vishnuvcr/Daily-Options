@@ -19,3 +19,7 @@ Frozen interpretation:
 - only pre-entry features may support prospective loss-avoidance inference.
 
 This log records externally relevant research decisions and status, not hidden chain-of-thought.
+
+
+## Baseline closure
+Clean workflow 36532252218 passed both Base and Stress after the trade_date join and quantile-reporting fixes. Baseline result is now evidentiary and Phase C loser analysis has started. Preliminary discovery evidence points to high prior-day range plus near-expiry entry as a repeatable loser regime; this requires untouched holdout validation.
