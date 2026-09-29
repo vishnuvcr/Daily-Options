@@ -544,3 +544,6 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0442 | 2026-09-29 | Phase 52 authoritative run 36548301179 | None | None | Data gate, Base, Stress, validation and accounting all passed; phase closed negative | CLOSED |
 
 | E0442 | 2026-09-29 | Phase 53 authoritative run 36548934744 | None | None | Data gate, Base, Stress, execution coverage, null controls, artifact validation and accounting all passed; phase closed negative | CLOSED |
+
+| E0443 | 2026-09-29 | Phase 53 first workflow 36548960662 | Checkout/persistence inherited stale Phase-52 branch reference; no numerical work ran | No P&L accepted | Corrected checkout, push and rebase targets to phase-53-near-atm-iv-skew-opening-v1; frozen skew definition unchanged | CLOSED |
+| E0444 | 2026-09-29 | Phase 53 authoritative run 36548991737 | None | None | Data gate, Base, Stress, validation and accounting passed; phase closed negative | CLOSED |
