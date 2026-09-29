@@ -1,20 +1,21 @@
 # Phase 53 Status
 
-**State: PREREGISTERED / ENGINEERING BUILD**
+**State: CLOSED — NEGATIVE DISCOVERY**
 
-Branch: phase-53-near-atm-iv-skew-gap-v1
+Authoritative workflow: **36549121608**  
+Artifact: **11023737870**
 
-Frozen feature:
-- 09:30 one-strike near-ATM put IV minus one-strike near-ATM call IV
-- LOW/MID/HIGH by the last 60 valid same-session skew observations
+Data integrity:
+- 98.29% feature eligibility
+- 98.97% same-session near-ATM skew coverage
+- 100% expiry mapping
+- 0 prior-information violations
+- 98.79–100% execution coverage
+- Base/Stress accounting reconciled
 
-Frozen execution:
-- 09:31 entry
-- 10:30 / 15:10 exits
-- one-lot 200-point ATM debit spread
-- nearest expiry on/after trade date
-- historical lots
-- Base/Stress ₹0.20/₹0.40 slippage
-- existing Paytm Money/NSE/statutory charges
+Best true cell: **LOW_SKEW / FADE / 10:30**
+- Base: **-₹138/week mean**, -₹196 median, 44.9% positive weeks
+- Stress: **-₹235/week mean**, -₹258 median, 42.7% positive weeks
 
-No numerical result is accepted until tests, data gate, execution coverage, null controls and accounting all pass.
+**0/12** cells met the promotion gate. No WFA/OOS authorized.
+No Phase-53 parameter retuning is permitted.
