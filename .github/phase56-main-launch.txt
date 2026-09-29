@@ -1,1 +1,1 @@
-Phase 56 manual launcher sentinel — execute frozen current-session ATM term-slope grid
+Phase 56 manual launcher sentinel — corrected workflow; execute frozen current-session term-slope grid
