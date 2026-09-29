@@ -811,3 +811,10 @@ The independently scoped Master Candle 09:35 strategy side-analysis has complete
 - **Status:** MC1 closed / negative discovery; MC2 execution-rule robustness is active. No trading strategy has been promoted from this side-analysis.
 
 [MC1 results](https://github.com/vishnuvcr/MC-OPTIONS-INDEPENDENT-BACKTEST-MC1/blob/side-analysis/master-candle-935/BASELINE_RESULTS.md) · [MC2 results](https://github.com/vishnuvcr/MC-OPTIONS-INDEPENDENT-BACKTEST-MC1/blob/side-analysis/master-candle-935-mc2/MC2_RESULTS.md) · [MC2 plan](https://github.com/vishnuvcr/MC-OPTIONS-INDEPENDENT-BACKTEST-MC1/blob/side-analysis/master-candle-935-mc2/research/side_analyses/master_candle_935/PLAN.md)
+
+
+## 2026-09-29 — OTM1 / 2xOTM2 Four-Leg Intraday Ratio Backspread side-analysis
+
+Separate preregistered side-analysis, now **CLOSED / NEGATIVE after costs**. Clean authoritative baseline workflow **36532252218**: 1,227 eligible sessions, 1,209 executed trades, 98.53% coverage. Base net P&L **-₹717,921.87**; Stress net P&L **-₹874,857.87**. Phase C found no robust pre-entry loser classifier (Base loss-tree CV AUC ≈ 0.506). Phase D tested only frozen exclusions for expiry-day and extreme prior-day range; the combined rule improved loss magnitude but remained negative on the untouched 2025+ holdout under both friction models. The reproducible profit mechanism was large one-sided expansion in the 2x farther OTM long wing.
+
+[Strategy branch](https://github.com/vishnuvcr/Daily-Options/tree/strategy/otm1-2x-otm2-ratio-backspread-v1) · [final manuscript](https://github.com/vishnuvcr/Daily-Options/blob/research/otm12-phase-e-manuscript/docs/strategy_otm12_ratio_backspread_manuscript.md) · [Phase D](https://github.com/vishnuvcr/Daily-Options/tree/research/otm12-phase-d-holdout-filter)
