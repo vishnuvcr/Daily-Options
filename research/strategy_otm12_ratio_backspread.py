@@ -93,7 +93,7 @@ def query_quotes(con,path,days):
     CAST(o.strike AS DOUBLE) strike, UPPER(CAST(o.option_type AS VARCHAR)) option_type,
     CAST(o.open AS DOUBLE) open_px FROM read_parquet('{path}',union_by_name=true) o
     JOIN d ON CAST(o.trading_day AS DATE)=d.trade_date
-    WHERE CAST(o.timestamp AS TIME) IN (TIME '{ENTRY_FILL}',TIME '{EXIT_TIME}') AND o.open>0"""
+    WHERE CAST(CAST(o.timestamp AS TIMESTAMP) AS TIME) IN (TIME '{ENTRY_FILL}',TIME '{EXIT_TIME}') AND o.open>0"""
     return con.execute(q).df()
 
 def pick_otm(chain,spot):
