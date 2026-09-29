@@ -1,1 +1,1 @@
-Phase 57 manual launcher sentinel — corrected prior-range persistence; rerun frozen opening-range grid
+Phase 57 manual launcher sentinel — CURRENT HEAD VERIFIED WITH prior_range persistence; authoritative rerun
