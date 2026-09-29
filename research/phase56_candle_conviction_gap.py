@@ -127,9 +127,7 @@ def build_feature_panel(nifty: pd.DataFrame) -> pd.DataFrame:
     panel["prior_body_direction"]=np.sign(prior_close-prior_open).fillna(0).astype(int)
     panel["opening_gap"]=(panel["open_0915"]/prior_close)-1.0
     panel["feature_eligible"]=panel[[
-        "open_0915","close_1510","opening_gap","prior_date",
-        "prior_open","prior_high","prior_low","prior_close",
-        "prior_body_ratio"
+        "open_0915","close_1510","opening_gap","prior_date","prior_body_ratio"
     ]].notna().all(axis=1) & (prior_range>0)
     panel["barrier_ok"]=panel["feature_eligible"] & (
         pd.to_datetime(panel["prior_date"]) < pd.to_datetime(panel["date"])
