@@ -1,22 +1,21 @@
 # Phase 54 Status
 
-**State: PREREGISTERED / ENGINEERING BUILD**
+**State: CLOSED — NEGATIVE DISCOVERY**
 
-Branch: phase-54-same-session-atm-iv-spread-opening-v1
+Authoritative workflow: **36549550020**  
+Artifact: **11024192628**
 
-Frozen feature:
-- 09:30 matched ATM CE IV minus ATM PE IV
-- nearest expiry strictly after current date for feature construction
-- last 60 valid same-session spread observations
-- LOW/MID/HIGH empirical terciles
+Data integrity:
+- 98.12% feature eligibility
+- 98.80% same-session matched ATM CE/PE IV coverage
+- 100% feature-expiry mapping
+- 0 prior-information violations
+- 99.04–100% execution coverage
+- Base/Stress accounting reconciled
 
-Frozen execution:
-- 09:31 entry
-- 10:30 / 15:10 exits
-- one-lot 200-point ATM debit spread
-- nearest expiry on/after trade date for execution
-- historical lots
-- Base/Stress ₹0.20/₹0.40 slippage
-- existing Paytm Money/NSE/statutory charges
+Best true cell: **LOW_SPREAD / FADE / 15:10**
+- Base: **-₹49/week mean**, -₹507 median, 44.3% positive weeks
+- Stress: **-₹143/week mean**, -₹547 median, 43.7% positive weeks
 
-No numerical result is accepted until unit tests, feature gates, null controls, execution coverage and accounting all pass.
+**0/12** cells met the promotion gate. No WFA/OOS authorized.
+No Phase-54 parameter retuning is permitted.
