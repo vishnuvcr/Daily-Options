@@ -518,3 +518,8 @@ FOLLOW_OPEN / FADE_OPEN; 09:31 entry; 10:30 and 15:10 exits; one-lot 200-point A
 
 ### Stop rule
 No post-result change to expiry pair definition, sign boundary, IV inversion, execution expiry, entry/exit, gap mapping, spread width, or cost model.
+
+
+## Phase 54 — Same-Session 09:30 Matched-ATM IV Call-Put Spread × Opening Direction
+
+Frozen feature: same-strike 09:30 ATM CE IV minus ATM PE IV at the nearest strict-next expiry; terciles from the preceding 60 valid same-session observations. Cross with FOLLOW/FADE and 10:30/15:10 one-lot 200-point ATM debit-spread execution. Twelve true cells plus five permutation nulls. Phase 54 closed negative after authoritative run 36549550020: all 12 cells negative under Base and Stress; best LOW_SPREAD/FADE/15:10 was -₹49/week Base and -₹143 Stress. No WFA/OOS or tuning.
