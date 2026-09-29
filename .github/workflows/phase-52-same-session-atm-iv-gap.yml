@@ -61,7 +61,7 @@ jobs:
 
       - name: Run Phase 52 data gate
         run: |
-          PYTHONPATH=. python research/phase52_prior_atm_iv_regime_gap.py             --data data/cache/phase52_trademarkk             --out reports/phase52/gate             --slippage 0.20             --gate-only
+          PYTHONPATH=. python research/phase52_same_session_atm_iv_regime_gap.py             --data data/cache/phase52_trademarkk             --out reports/phase52/gate             --slippage 0.20             --gate-only
 
       - name: Run Base discovery
         run: |
@@ -71,7 +71,7 @@ jobs:
           if g["status"]!="PASS":
               raise SystemExit("DATA_GATE_FAIL: Base discovery intentionally skipped")
           PY
-          PYTHONPATH=. python research/phase52_prior_atm_iv_regime_gap.py             --data data/cache/phase52_trademarkk             --out reports/phase52/base             --slippage 0.20
+          PYTHONPATH=. python research/phase52_same_session_atm_iv_regime_gap.py             --data data/cache/phase52_trademarkk             --out reports/phase52/base             --slippage 0.20
 
       - name: Run Stress discovery
         run: |
@@ -81,7 +81,7 @@ jobs:
           if g["status"]!="PASS":
               raise SystemExit("DATA_GATE_FAIL: Stress discovery intentionally skipped")
           PY
-          PYTHONPATH=. python research/phase52_prior_atm_iv_regime_gap.py             --data data/cache/phase52_trademarkk             --out reports/phase52/stress             --slippage 0.40
+          PYTHONPATH=. python research/phase52_same_session_atm_iv_regime_gap.py             --data data/cache/phase52_trademarkk             --out reports/phase52/stress             --slippage 0.40
 
       - name: Validate Phase 52 artifacts
         run: |
@@ -113,8 +113,8 @@ jobs:
           if ! git diff --cached --quiet; then
             git commit -m "Phase 52: persist prior ATM IV regime research outputs"
             for attempt in 1 2 3; do
-              if git push origin HEAD:phase-51-same-session-atm-iv-gap-v1; then exit 0; fi
-              git fetch origin phase-51-same-session-atm-iv-gap-v1
+              if git push origin HEAD:phase-52-same-session-atm-iv-gap-v1; then exit 0; fi
+              git fetch origin phase-52-same-session-atm-iv-gap-v1
               git rebase FETCH_HEAD
             done
             exit 1
