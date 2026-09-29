@@ -4,18 +4,18 @@ As of: 2026-09-29
 
 | Phase | Status | Result |
 |---|---|---|
-| A implementation/data gate | ACTIVE | Unit tests passed on prior correction; source coverage passed (1,234 sessions / 267 expiry files). Latest failed baseline exposed the need for stage-level quote-selection diagnostics. |
-| B baseline Base/Stress | BLOCKED | Run 36529669783 failed in both frictions with 0 complete four-leg trades; diagnostic rerun 36530427013 is active. |
+| A implementation/data gate | ACTIVE | Timestamp probe passed: option bars at 09:31 and 15:15 exist. Root cause EOTM12-006 fixed: option/session trade_date type mismatch. Regression test added. |
+| B baseline Base/Stress | RUNNING | New baseline automatically triggered by commit 352ca6684443ebb97f72421809ee1147c1139bc9. |
 | C losing-trade/common-circumstance analysis | PENDING | Requires valid baseline trades. |
 | D frozen holdout filter probe | PENDING | Only after C. |
 | E conclusion/manuscript | PENDING | Bounded endpoint. |
 
 ## Latest authoritative activity
-- Diagnostic commit: `ebefee1e4a586d8ae428a2877218d0d776ef8343`
-- Workflow: `36530427013`
-- Branch: `strategy/otm1-2x-otm2-ratio-backspread-v1`
-- Base and Stress are rerunning the frozen strategy with per-session stage diagnostics.
-- The prior zero-trade result is explicitly **not** a trading result.
+- Root-cause probe workflow: 36531281661 — successful.
+- Probe finding: raw option parquet timestamps are IST-aware and selected option bars include 09:31 and 15:15. The zero-trade defect was the trade_date equality join, not timestamp availability.
+- Fix commit: 352ca6684443ebb97f72421809ee1147c1139bc9.
+- Strategy branch: strategy/otm1-2x-otm2-ratio-backspread-v1.
+- No P&L has been accepted from any earlier failed run.
 
 ## Integrity rules
 - No P&L is accepted until source coverage, unit tests, leg completeness and cost accounting pass.
