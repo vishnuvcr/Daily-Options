@@ -69,3 +69,9 @@ No Phase 41 P&L is accepted until unit tests, data gates, execution coverage, ac
 - Phase 53: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36548934744; best cell -₹198/week Base / -₹293 Stress.
 - Phase 54: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36549550020; 98.12% feature eligibility, 98.80% matched-ATM CE/PE IV coverage, 0 prior-information violations, 99.04–100% execution coverage. Best cell LOW_SPREAD/FADE/15:10 was -₹49/week Base / -₹143 Stress; all 12 cells failed promotion.
 - Next frontier: **Phase 55 — same-session 09:30 ATM volatility-surface curvature × opening direction**.
+
+
+## 2026-09-29 latest frontier update
+- Phase 53: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36548991737; best MID_SKEW/FADE/15:10 = -₹177.32/week Base / -₹252.72 Stress.
+- Phase 54: **CLOSED NEGATIVE DISCOVERY** — authoritative run **36549663605**; 98.12% final feature eligibility, 98.80% ATM IV-spread coverage, 0 prior-information violations, 99.04–100% execution coverage. Best HIGH_SPREAD/FADE/15:10 = -₹49.18/week Base / -₹142.70 Stress despite positive gross P&L. No WFA/OOS.
+- Current frontier: **Phase 55 — same-session 09:30 IV-smile curvature / wing richness × opening direction**.
