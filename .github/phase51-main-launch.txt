@@ -1,0 +1,1 @@
+Phase 51 manual launcher sentinel — corrected strict-next-expiry IV gate; execute frozen grid
