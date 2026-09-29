@@ -1,0 +1,48 @@
+name: Strategy — OTM12 Phase E Manuscript Validation
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - research/otm12-phase-e-manuscript-v1
+    paths:
+      - docs/manuscript_otm12_ratio_backspread.md
+      - docs/manuscript_otm12_supplement.md
+      - docs/tables/**
+      - docs/figures/**
+      - .github/workflows/strategy-otm12-phase-e-manuscript.yml
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/otm12-phase-e-manuscript-v1
+      - name: Validate manuscript structure
+        run: |
+          set -euo pipefail
+          test -s docs/manuscript_otm12_ratio_backspread.md
+          test -s docs/manuscript_otm12_supplement.md
+          test -s docs/tables/otm12_baseline_summary.csv
+          test -s docs/tables/otm12_feature_stats.csv
+          test -s docs/tables/otm12_holdout_filter.csv
+          test -s docs/figures/otm12_annual_pnl.svg
+          test -s docs/figures/otm12_holdout_filter.svg
+          test -s docs/figures/otm12_leg_contributions.svg
+          grep -q "36532252218" docs/manuscript_otm12_ratio_backspread.md
+          grep -q "36533719671" docs/manuscript_otm12_ratio_backspread.md
+          grep -q "prior-day range > 1.314516%" docs/manuscript_otm12_ratio_backspread.md
+      - name: Package manuscript
+        uses: actions/upload-artifact@v4
+        with:
+          name: strategy-otm12-final-manuscript
+          path: |
+            docs/manuscript_otm12_ratio_backspread.md
+            docs/manuscript_otm12_supplement.md
+            docs/tables
+            docs/figures
