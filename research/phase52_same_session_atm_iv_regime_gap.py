@@ -504,8 +504,11 @@ def run(data: Path, out: Path, slippage: float, gate_only: bool = False):
     panel = build_feature_panel(nifty)
     expiries = expiry_map(root)
     panel = attach_same_session_atm_iv(panel, root, expiries)
-    panel = attach_expiry(panel, expiries)
-    panel = add_0930_spot(panel, nifty)
+    keys = sorted(expiries)
+    panel["expiry"] = [
+        keys[bisect.bisect_left(keys, d)] if bisect.bisect_left(keys, d) < len(keys) else None
+        for d in panel["date"]
+    ]
 
     gate = data_gate(panel, expiries)
     panel.to_csv(out / "feature_panel.csv", index=False)
