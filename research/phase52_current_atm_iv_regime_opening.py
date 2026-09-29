@@ -472,7 +472,7 @@ def data_gate(panel: pd.DataFrame, expiries: dict) -> dict:
     iv_valid=int(post["iv_valid"].sum())
     eligible=int(post["feature_eligible"].sum())
     complete=int((post["feature_eligible"] & post["barrier_ok"]).sum())
-    violations=int((panel["feature_eligible"] & ~panel["barrier_ok"]).sum())
+    violations=int((post["feature_eligible"] & ~post["barrier_ok"]).sum())
     iv_cov=iv_valid/post_warmup if post_warmup else 0.0
     feature_cov=eligible/post_warmup if post_warmup else 0.0
     keys=sorted(expiries)
