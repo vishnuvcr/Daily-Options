@@ -1,1 +1,1 @@
-Phase 54 manual launcher sentinel — final branch-reference correction verified; execute frozen grid
+Phase 54 manual launcher sentinel — final engine path corrected; rerun frozen grid
