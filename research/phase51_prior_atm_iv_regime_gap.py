@@ -569,7 +569,7 @@ def run(data: Path, out: Path, slippage: float, gate_only: bool = False):
     cov.to_csv(out / "price_coverage.csv", index=False)
 
     if not summary.empty:
-        assert len(summary) == 8
+        assert len(summary) == 12
         assert (summary["execution_coverage"] >= 0).all() and (summary["execution_coverage"] <= 1).all()
         assert summary["accounting_ok"].all()
 
