@@ -67,3 +67,9 @@ No Phase 41 P&L is accepted until unit tests, data gates, execution coverage, ac
 - Phase 52: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36548301179; 98.12% feature eligibility, 98.80% same-session ATM-IV coverage, best cell -₹101/week Base / -₹183 Stress; all 12 cells failed.
 - Phase 53: **CLOSED NEGATIVE DISCOVERY** — authoritative run **36548934744**; 98.12% feature eligibility, 98.80% same-session ATM-adjacent skew coverage, best cell -₹198/week Base / -₹293 Stress; all 12 cells failed.
 - Next frontier: **Phase 54 — same-session 09:30 matched ATM IV call-put spread × opening direction**.
+
+
+## 2026-09-29 latest frontier update
+- Phase 52: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36548301179; best MID_IV/FADE/15:10 = -₹100.61/week Base / -₹182.60 Stress.
+- Phase 53: **CLOSED NEGATIVE DISCOVERY** — authoritative run **36548991737**; 97.95% final feature eligibility, 98.63% same-session skew coverage, 0 prior-information violations, 99.26–100% execution coverage. Best MID_SKEW/FADE/15:10 = -₹177.32/week Base / -₹252.72 Stress; no WFA/OOS.
+- Current frontier: **Phase 54 — same-session 09:30 ATM put–call IV spread × opening direction**.
