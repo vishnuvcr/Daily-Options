@@ -53,10 +53,12 @@ No Phase 41 P&L is accepted until unit tests, data gates, execution coverage, ac
 
 
 
+
 ## 2026-09-29 latest frontier update
 - Phase 46: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36473334899.
 - Phase 47: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36538234322; best cell ₹714/week Base / ₹666 Stress; no WFA/OOS.
 - Phase 48: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36538835468; all 8 true cells negative under Base and Stress; no WFA/OOS.
 - Phase 49: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36539451804; best cell ₹88/week Base / ₹9 Stress with negative medians; no WFA/OOS.
-- Phase 50: **CLOSED NEGATIVE DISCOVERY** — authoritative run **36539948879**; 1,219/1,228 eligible (99.267%), 0 prior-information violations, 98.6–100% execution coverage. Best cell INSIDE_RANGE/FADE/15:10 yielded ₹163/week Base and ₹116 Stress, but median/positive-week gates failed; 0/12 promotion passes; no WFA/OOS.
-- Next research family: **Phase 51 — prior-session ATM implied-volatility level regime × opening-gap direction**.
+- Phase 50: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36539948879; best cell INSIDE_RANGE/FADE/15:10 yielded ₹163/week Base and ₹116 Stress, but median/positive-week gates failed; no WFA/OOS.
+- Phase 51: **CLOSED DATA-LIMITED** — authoritative run **36540501382**; prior-session ATM IV coverage 94.01% and final feature eligibility 93.58%, below the frozen 95% gate. No P&L accepted and no WFA/OOS.
+- Next research family: **Phase 52 — same-session 09:30 ATM IV level regime × opening direction**.
