@@ -1,1 +1,1 @@
-Phase 51 manual launcher sentinel — corrected strict-next-expiry IV gate; execute frozen grid
+Phase 51 manual launcher sentinel — 12-cell assertion corrected; launch frozen IV-regime grid
