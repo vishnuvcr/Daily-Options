@@ -483,3 +483,8 @@ FOLLOW/FADE opening gap; 09:31 option-open entry; 10:30 and 15:10 exits; one-lot
 
 ### Stop rule
 No sign-boundary, expiry selection, IV construction, exit, gap mapping, spread width, lookback or cost retuning after results.
+
+
+## Phase 53 — Same-Session 09:30 Near-ATM IV Skew × Opening Direction
+
+Frozen feature: 09:30 OTM-put IV at ATM-₹100 minus OTM-call IV at ATM+₹100 for the nearest expiry strictly after the current date, classified LOW/MID/HIGH using the prior 60 valid same-session skew observations. Cross with FOLLOW/FADE at 10:30/15:10. Twelve true cells plus five permutation nulls. Phase 53 closed negative: authoritative run 36548991737; best MID_SKEW/FADE/15:10 was -₹177.32/week Base and -₹252.72 Stress; no WFA/OOS.
