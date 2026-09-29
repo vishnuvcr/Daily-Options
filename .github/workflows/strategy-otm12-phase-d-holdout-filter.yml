@@ -1,0 +1,55 @@
+name: Strategy — OTM12 Phase D Frozen Holdout Filter
+
+on:
+  workflow_dispatch:
+    inputs:
+      baseline_run_id:
+        description: "Clean Phase-B workflow run ID"
+        required: true
+        default: "36532252218"
+  push:
+    branches:
+      - research/otm12-phase-d-holdout-filter-v1
+    paths:
+      - research/strategy_otm12_holdout_filter.py
+      - .github/workflows/strategy-otm12-phase-d-holdout-filter.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/otm12-phase-d-holdout-filter-v1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pandas numpy tabulate
+      - name: Download clean Base artifact
+        run: |
+          rm -rf data/phase-d
+          mkdir -p data/phase-d/base data/phase-d/stress
+          gh run download ${{ github.event.inputs.baseline_run_id || '36532252218' }} --name strategy-otm12-base --dir data/phase-d/base
+      - name: Download clean Stress artifact
+        run: |
+          gh run download ${{ github.event.inputs.baseline_run_id || '36532252218' }} --name strategy-otm12-stress --dir data/phase-d/stress
+      - name: Run frozen holdout probe
+        run: |
+          PYTHONPATH=. python research/strategy_otm12_holdout_filter.py \
+            --base data/phase-d/base \
+            --stress data/phase-d/stress \
+            --out reports/otm12-phase-d
+      - name: Upload Phase D report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: strategy-otm12-phase-d-holdout-filter
+          path: reports/otm12-phase-d
