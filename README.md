@@ -836,3 +836,17 @@ The separate alternating BUY-1-OTM1 / SELL-2-OTM2 four-leg side-analysis has com
 - The 2025+ holdout is now considered consumed for this experiment; the adjacent 40th-percentile rule cannot be selected retrospectively from the same holdout.
 
 [Alternating strategy Phase C result](https://github.com/vishnuvcr/Daily-Options/blob/research/alternating-otm-phase-c-tail-filter-v1/reports/alternating_otm_phase_c_result.md) · [Phase C plan](https://github.com/vishnuvcr/Daily-Options/blob/research/alternating-otm-phase-c-tail-filter-v1/docs/alternating_otm_phase_c_plan.md) · [Phase C status](https://github.com/vishnuvcr/Daily-Options/blob/research/alternating-otm-phase-c-tail-filter-v1/docs/alternating_otm_phase_c_status.md) · [Phase C branch](https://github.com/vishnuvcr/Daily-Options/tree/research/alternating-otm-phase-c-tail-filter-v1)
+
+
+## 2026-09-29 — Alternating OTM Phase D closed
+
+Phase D completed a chronological walk-forward test of the frozen Phase C first15_abs_ret >= 0.126795% rule.
+
+- Authoritative workflow: **36537486155**
+- Base net-P&L improvement versus unfiltered alternating strategy: **4/4 test years**; aggregate -₹114,260 → +₹3,585.
+- Stress net-P&L improvement: **4/4 test years**; aggregate -₹226,796 → -₹59,319.
+- The mechanism is therefore a consistent loss-reduction mechanism across 2023–2026 test periods, but it is **not yet a consistently profitable strategy**.
+- Win rate did not increase in every year, reinforcing that expectancy and drawdown matter more than win rate alone.
+- The Phase D workflow has been restored to manual-dispatch-only after the controlled execution.
+
+[Alternating Phase D result](https://github.com/vishnuvcr/Daily-Options/blob/research/alternating-otm-phase-d-walkforward-v1/reports/alternating_otm_phase_d_result.md) · [Phase D status](https://github.com/vishnuvcr/Daily-Options/blob/research/alternating-otm-phase-d-walkforward-v1/docs/alternating_otm_phase_d_status.md) · [Phase D plan](https://github.com/vishnuvcr/Daily-Options/blob/research/alternating-otm-phase-d-walkforward-v1/docs/alternating_otm_phase_d_plan.md)
