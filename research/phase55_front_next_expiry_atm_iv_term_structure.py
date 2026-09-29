@@ -15,7 +15,7 @@ import pandas as pd
 
 START = date(2021, 7, 1)
 END = date(2026, 8, 31)
-LOOKBACK = 60
+LOOKBACK = 0
 WING = 200
 STRIKE_STEP = 50
 HORIZONS = {"H10_30": "10:30:00", "H15_10": "15:10:00"}
