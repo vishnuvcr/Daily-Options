@@ -1,21 +1,21 @@
 # Phase 52 Status
 
-**State: PREREGISTERED / ENGINEERING BUILD**
+**State: CLOSED — NEGATIVE DISCOVERY**
 
-Branch: phase-52-same-session-atm-iv-gap-v1
+Authoritative workflow: **36548607459**  
+Artifact: **11023327699**
 
-Frozen state:
-- LOW_IV / MID_IV / HIGH_IV
-- same-session 09:30 ATM IV
-- rolling 60 valid historical same-session IV observations
+Data integrity:
+- 98.29% feature eligibility
+- 98.97% same-session ATM-IV coverage
+- 100% expiry mapping
+- 0 prior-information violations
+- 98.74–100% execution coverage
+- Base/Stress accounting reconciled
 
-Frozen execution:
-- 09:31 entry
-- 10:30 / 15:10 exits
-- one-lot 200-point ATM debit spread
-- nearest expiry on/after trade date
-- historical lots
-- Base/Stress ₹0.20/₹0.40 slippage
-- existing Paytm Money/NSE/statutory charges
+Best cell: **MID_IV / FADE / 15:10**
+- Base: **₹47/week mean**, -₹387 median, 44.0% positive weeks
+- Stress: **-₹32/week mean**, -₹432 median, 42.9% positive weeks
 
-No numerical result is accepted until tests, data gate, execution coverage, null controls and accounting all pass.
+**0/12** cells met the promotion gate. No WFA/OOS authorized.
+No Phase-52 parameter retuning is permitted.
