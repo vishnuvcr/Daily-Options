@@ -488,3 +488,33 @@ No sign-boundary, expiry selection, IV construction, exit, gap mapping, spread w
 ## Phase 53 — Same-Session 09:30 Near-ATM IV Skew × Opening Direction
 
 Frozen feature: 09:30 OTM-put IV at ATM-₹100 minus OTM-call IV at ATM+₹100 for the nearest expiry strictly after the current date, classified LOW/MID/HIGH using the prior 60 valid same-session skew observations. Cross with FOLLOW/FADE at 10:30/15:10. Twelve true cells plus five permutation nulls. Phase 53 closed negative: authoritative run 36548991737; best MID_SKEW/FADE/15:10 was -₹177.32/week Base and -₹252.72 Stress; no WFA/OOS.
+
+
+## Phase 54 — Same-Session 09:30 Matched ATM IV Call-Put Spread × Opening Direction — CLOSED
+
+Matched same-strike ATM IV spread (PE IV minus CE IV) at 09:30, crossed with opening-gap FOLLOW/FADE and 10:30/15:10 exits. Authoritative run 36549550020 passed all integrity gates but all 12 cells failed the dual-friction economic promotion gate. Best cell LOW_SPREAD/FADE/15:10 was -₹49/week Base and -₹143 Stress. No WFA/OOS and no retuning.
+
+## Phase 55 — Same-Session 09:30 Front-vs-Next-Expiry ATM IV Term Structure × Opening Direction
+
+### Frozen research question
+Does the current-session 09:30 ATM IV term slope between the nearest and next later NIFTY expiries condition opening-gap continuation/reversal strongly enough to produce at least ₹5,000 net per completed trading week after realistic costs?
+
+### Frozen feature
+- Reference spot: 09:30 NIFTY close; ATM = nearest ₹50.
+- Front expiry: nearest NIFTY expiry on or after the trade date.
+- Back expiry: next listed NIFTY expiry strictly after the front expiry.
+- At 09:30, invert ATM CE/PE IV for both expiries using the common spot/strike.
+- ATM IV for each expiry = mean of valid CE and PE IV.
+- TERM_SLOPE = BACK_IV − FRONT_IV in volatility percentage points.
+- STEEP_TERM when TERM_SLOPE >= 0; INVERTED_TERM when TERM_SLOPE < 0.
+- State is known by 09:30; entry is 09:31.
+- Zero opening gap = no trade.
+
+### Frozen execution
+FOLLOW_OPEN / FADE_OPEN; 09:31 entry; 10:30 and 15:10 exits; one-lot 200-point ATM debit spread; execution expiry nearest on/after date; historical lots; existing Paytm Money/NSE/statutory costs; Base/Stress ₹0.20/₹0.40 slippage.
+
+### Controls/gates
+2 term states × 2 mappings × 2 exits = 8 true cells; five state-permutation nulls. Require ≥95% feature and execution coverage, 0 prior-information violations, and clean accounting. Promotion requires mean and median weekly net ≥₹5,000 and ≥70% positive weeks in both Base and Stress. No WFA/OOS otherwise.
+
+### Stop rule
+No post-result change to expiry pair definition, sign boundary, IV inversion, execution expiry, entry/exit, gap mapping, spread width, or cost model.
