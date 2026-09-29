@@ -71,17 +71,17 @@ jobs:
           if eligible<1000 or len(expiries)<100:
               raise SystemExit("cache coverage gate failed")
           PY
-      - name: Run friction \${{ matrix.friction }}
+      - name: Run friction ${{ matrix.friction }}
         env:
-          SLIP: \${{ matrix.friction == 'base' && '0.20' || '0.40' }}
+          SLIP: ${{ matrix.friction == 'base' && '0.20' || '0.40' }}
         run: |
           PYTHONPATH=. python research/strategy_otm12_ratio_backspread.py \
             --data "$DATA_ROOT" \
-            --out "reports/otm12-\${{ matrix.friction }}" \
+            --out "reports/otm12-${{ matrix.friction }}" \
             --slippage "$SLIP"
       - name: Upload strategy artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: strategy-otm12-\${{ matrix.friction }}
-          path: reports/otm12-\${{ matrix.friction }}
+          name: strategy-otm12-${{ matrix.friction }}
+          path: reports/otm12-${{ matrix.friction }}
