@@ -535,3 +535,6 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0438 | 2026-09-29 | Phase 50 authoritative run 36539948879 | None | None | Data gate, Base, Stress, validation and accounting passed; phase closed negative | CLOSED |
 
 | E0439 | 2026-09-29 | Phase 51 authoritative gate 36540501382 | Prior-session ATM IV coverage 94.01% and final feature eligibility 93.58% missed the frozen 95% threshold | No Base/Stress P&L accepted | Closed Phase 51 DATA-LIMITED; gate unchanged | CLOSED |
+
+| E0440 | 2026-09-29 | Phase 52 authoritative run 36548301179 | Initial implementation defects were found and corrected before the accepted run: post-warm-up violation accounting, non-null ATM/expiry signal gating, and ATM overwrite in execution-expiry attachment | No invalid P&L accepted | Corrected and rerun unchanged frozen design; authoritative run passed all validation | CLOSED |
+| E0441 | 2026-09-29 | Phase 52 authoritative run 36548301179 | None | None | Data gate, Base, Stress, execution coverage, null controls, artifact validation and accounting all passed; phase closed negative | CLOSED |
