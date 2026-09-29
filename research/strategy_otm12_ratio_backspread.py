@@ -88,6 +88,7 @@ def assign_expiry(s, files):
 
 def query_quotes(con,path,days):
     if not days: return pd.DataFrame()
+    con.execute("SET TimeZone='Asia/Kolkata'")
     vals=",".join(f"(DATE '{d}')" for d in days)
     q=f"""WITH d(trade_date) AS (VALUES {vals})
     SELECT CAST(o.trading_day AS DATE) trade_date, CAST(o.timestamp AS TIMESTAMP) ts,
@@ -95,7 +96,11 @@ def query_quotes(con,path,days):
     CAST(o.open AS DOUBLE) open_px, CAST(o.close AS DOUBLE) close_px FROM read_parquet('{path}',union_by_name=true) o
     JOIN d ON CAST(o.trading_day AS DATE)=d.trade_date
     WHERE CAST(CAST(o.timestamp AS TIMESTAMP) AS TIME) IN (TIME '{ENTRY_FILL}',TIME '{EXIT_TIME}',TIME '{EXIT_FALLBACK_TIME}') AND (o.open>0 OR o.close>0)"""
-    return con.execute(q).df()
+    x=con.execute(q).df()
+    if x.empty: return x
+    x["ts"]=pd.to_datetime(x["ts"])
+    x["hhmm"]=x["ts"].dt.strftime("%H:%M:%S")
+    return x[x["hhmm"].isin([ENTRY_FILL, EXIT_TIME, EXIT_FALLBACK_TIME])].copy()
 
 def pick_otm(chain,spot):
     ce=np.sort(chain.loc[chain.option_type=="CE","strike"].unique())
