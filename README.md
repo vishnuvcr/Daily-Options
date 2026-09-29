@@ -1040,3 +1040,19 @@ Phase D tested the **frozen** Phase-C first15_abs_ret >= 0.126795% mechanism acr
 - **0/12** cells cleared the promotion gate; WFA/OOS is not authorized.
 
 [Phase 54 result](https://github.com/vishnuvcr/Daily-Options/blob/phase-54-atm-iv-spread-opening-v1/reports/phase54/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-54-atm-iv-spread-opening-v1/docs/phase54_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-54-atm-iv-spread-opening-v1/docs/phase54_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-54-atm-iv-spread-opening-v1)
+
+
+## 2026-09-29 — Phase 55 closed / data-limited
+
+**Phase 55 — Same-Session 09:30 Front-vs-Next-Expiry ATM IV Term Structure × Opening Direction** is closed data-limited.
+
+- Authoritative gate workflow: **36550269685**; artifact **11024009523**.
+- Complete front/back 09:30 ATM CE/PE IV coverage: **72.77%** of post-warm-up sessions, below the frozen **95%** gate.
+- Feature eligibility: **72.52%**; expiry mapping **100%**; prior-information violations **0**.
+- **No P&L was accepted** and no coverage relaxation is authorized.
+
+[Phase 55 result](https://github.com/vishnuvcr/Daily-Options/blob/phase-55-current-atm-iv-term-structure-gap-v1/reports/phase55/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-55-current-atm-iv-term-structure-gap-v1/docs/phase55_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-55-current-atm-iv-term-structure-gap-v1/docs/phase55_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-55-current-atm-iv-term-structure-gap-v1)
+
+## Current frontier — Phase 56
+
+**Prior-Session Candle Conviction Regime × Opening-Gap Direction**. The next test returns to high-coverage underlying price structure without requiring simultaneous multi-expiry option quotes.
