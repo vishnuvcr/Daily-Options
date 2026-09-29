@@ -526,3 +526,6 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0431 | 2026-09-29 | Phase 47 first workflow 36538081710 | Checkout inherited stale branch reference phase-46-gap-range-normalization-v1; no numerical work ran | No P&L | Corrected checkout/push target to phase-47-gap-range-normalization-v1 and logged in Phase 47 error file | CLOSED |
 | E0432 | 2026-09-29 | Phase 47 gate run 36538113555 | Stale workflow revision retained phase47_close_location_gap.py; data gate failed before calculation | No P&L | Repointed workflow to phase47_gap_range_normalization.py and test_phase47_gap_range_normalization.py | CLOSED |
 | E0433 | 2026-09-29 | Phase 47 authoritative run 36538234322 | None | None | Data gate, Base, Stress, artifact validation and accounting all passed | CLOSED |
+
+| E0434 | 2026-09-29 | Phase 49 gate run 36539272016 | 60-row rolling quantile implementation treated missing range observations as warm-up failures, giving 83.13% eligibility | No Base/Stress P&L accepted | Corrected to use the last 60 valid completed range observations; coverage threshold unchanged; authoritative run 36539451804 passed | CLOSED |
+| E0435 | 2026-09-29 | Phase 49 authoritative run 36539451804 | None | None | Data gate, Base, Stress, validation and accounting passed; phase closed negative | CLOSED |
