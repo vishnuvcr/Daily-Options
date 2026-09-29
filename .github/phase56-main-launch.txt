@@ -1,1 +1,1 @@
-Phase 56 manual launcher sentinel — corrected prior-OHLC schema gate; rerun frozen candle-conviction grid
+Phase 56 manual launcher sentinel — verified branch head fb0d0249; execute frozen candle-conviction grid
