@@ -1,21 +1,22 @@
 # Phase 49 Status
 
-**State: PREREGISTERED / ENGINEERING BUILD**
+**State: CLOSED — NEGATIVE DISCOVERY**
 
-Branch: phase-49-prior-range-regime-gap-v1
+Authoritative workflow: **36539451804**  
+Artifact: **11019912559**
 
-Frozen feature:
-- prior-session range percentage
-- rolling distribution from 60 observations strictly before the prior session
-- LOW/MID/HIGH via the 33.333rd and 66.667th empirical percentiles
+Data integrity:
+- 99.229% post-warm-up eligibility
+- 100% prior-range/regime coverage among eligible dates
+- 100% expiry mapping
+- 0 prior-information violations
+- 97.65–99.73% execution coverage
 
-Frozen execution:
-- 09:31 entry
-- 10:30 / 15:10 exits
-- one-lot 200-point ATM debit spread
-- nearest expiry on/after trade date
-- historical lots
-- Base/Stress ₹0.20/₹0.40 slippage
-- existing Paytm Money/NSE/statutory charges
+Best true cell: MID_RANGE / FADE / 15:10.
+- Base mean weekly net: **₹88**
+- Stress mean weekly net: **₹9**
+- Base median weekly net: **-₹618**
+- Stress median weekly net: **-₹714**
+- Positive-week rate: **42.9% Base / 41.0% Stress**
 
-No numerical result is accepted until unit tests, data gates, execution coverage, null controls and accounting all pass.
+All 12 true cells failed the complete promotion gate. No WFA/OOS authorized.
