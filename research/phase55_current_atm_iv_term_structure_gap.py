@@ -522,7 +522,9 @@ def run(data: Path, out: Path, slippage: float, gate_only: bool = False):
     nifty = load_nifty(root)
     panel = build_feature_panel(nifty)
     expiries = expiry_map(root)
-    panel = add_0930_spot(panel, nifty)
+    panel["atm"] = panel["spot_0930"].map(lambda v: round_strike(v) if pd.notna(v) else np.nan)
+    panel["feature_eligible"] = panel["feature_eligible"] & panel["spot_0930"].notna() & panel["atm"].notna()
+    panel["barrier_ok"] = panel["barrier_ok"] & panel["feature_eligible"]
     panel = attach_current_term_structure(panel, root, expiries)
     panel = attach_expiry(panel, expiries)
 
