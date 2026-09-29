@@ -75,14 +75,20 @@ def main():
 
     if merged.trade_date.duplicated().any():
         raise RuntimeError("Duplicate trade dates detected")
-    for c in FEATURES:
-        if merged[c].isna().any():
-            raise RuntimeError(f"Feature has missing values: {c}")
 
     discovery = merged.loc[merged.trade_date <= DISCOVERY_END].copy()
     holdout = merged.loc[merged.trade_date >= HOLDOUT_START].copy()
     if len(discovery) < 500 or len(holdout) < 100:
         raise RuntimeError(f"Unexpected split sizes: discovery={len(discovery)}, holdout={len(holdout)}")
+
+    missing_report = {
+        f: {
+            "discovery_missing": int(discovery[f].isna().sum()),
+            "holdout_missing": int(holdout[f].isna().sum()),
+        }
+        for f in FEATURES
+    }
+    (out / "feature_missingness.json").write_text(json.dumps(missing_report, indent=2))
 
     rows = []
     baselines = {
@@ -97,12 +103,19 @@ def main():
     for feature, op in FEATURES.items():
         for q in QUANTILES:
             threshold = float(discovery[feature].quantile(q))
+            available_d = discovery[feature].notna()
+            available_h = holdout[feature].notna()
+
             if op == ">=":
-                keep_d = discovery[feature] >= threshold
-                keep_h = holdout[feature] >= threshold
+                cond_d = discovery[feature] >= threshold
+                cond_h = holdout[feature] >= threshold
             else:
-                keep_d = discovery[feature] <= threshold
-                keep_h = holdout[feature] <= threshold
+                cond_d = discovery[feature] <= threshold
+                cond_h = holdout[feature] <= threshold
+
+            # Missing values are retained rather than treated as an economic signal.
+            keep_d = (~available_d) | cond_d
+            keep_h = (~available_h) | cond_h
 
             d_b = discovery.loc[keep_d]
             d_s = discovery.loc[keep_d]
@@ -133,6 +146,7 @@ def main():
                 "mean_improvement": (base_improvement + stress_improvement) / 2.0,
                 "min_improvement": min(base_improvement, stress_improvement),
                 "eligible": eligible,
+                "holdout_trade_count_under_rule": int(holdout.loc[keep_h].shape[0]),
             })
 
     candidates = pd.DataFrame(rows)
@@ -153,10 +167,12 @@ def main():
     selected_feature = selected["feature"]
     selected_op = selected["operator"]
     selected_threshold = float(selected["threshold"])
+
     if selected_op == ">=":
-        hold_keep = holdout[selected_feature] >= selected_threshold
+        hold_cond = holdout[selected_feature] >= selected_threshold
     else:
-        hold_keep = holdout[selected_feature] <= selected_threshold
+        hold_cond = holdout[selected_feature] <= selected_threshold
+    hold_keep = (~holdout[selected_feature].notna()) | hold_cond
     hold = holdout.loc[hold_keep].copy()
 
     selected_hold_rows = []
@@ -177,7 +193,6 @@ def main():
     hold_summary = pd.DataFrame(selected_hold_rows)
     hold_summary.to_csv(out / "selected_holdout_summary.csv", index=False)
 
-    # Annual holdout behavior for both frictions.
     annual_rows = []
     for friction, net_col in [("base", "net_pnl_base"), ("stress", "net_pnl_stress")]:
         tmp = hold.copy()
@@ -193,11 +208,11 @@ def main():
             })
     pd.DataFrame(annual_rows).to_csv(out / "selected_holdout_annual.csv", index=False)
 
-    # Pre-specified adjacent-threshold sensitivity, not used for selection.
     sens_rows = []
     for q in [0.40, 0.45, 0.50]:
         thr = float(discovery[selected_feature].quantile(q))
         k = holdout[selected_feature] >= thr if selected_op == ">=" else holdout[selected_feature] <= thr
+        k = (~holdout[selected_feature].notna()) | k
         for friction, net_col in [("base", "net_pnl_base"), ("stress", "net_pnl_stress")]:
             g = holdout.loc[k]
             sens_rows.append({
