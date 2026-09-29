@@ -1013,3 +1013,16 @@ Phase D tested the **frozen** Phase-C first15_abs_ret >= 0.126795% mechanism acr
 ## Current frontier — Phase 55
 
 **Same-Session 09:30 Front-vs-Next-Expiry ATM IV Term Structure × Opening Direction**. This is the next distinct current-session volatility-surface test; it is not a retuning of Phase 54's matched ATM spread.
+
+
+## 2026-09-29 — Phase 54 closed / negative discovery
+
+**Phase 54 — Same-Session 09:30 Matched-ATM IV Call-Put Spread × Opening Direction** is closed negative.
+
+- Authoritative workflow: **36549550020**; artifact **11024192628**.
+- Data gate: **98.12%** feature eligibility, **98.80%** matched-ATM CE/PE IV coverage, **100%** feature-expiry mapping, **0** prior-information violations.
+- Execution coverage: **99.04%–100%** across all 12 cells; Base and Stress accounting reconciled.
+- Best cell: **LOW_SPREAD / FADE / 15:10** — **-₹49/week Base**, **-₹143/week Stress**, with 44.3% / 43.7% positive weeks.
+- **0/12** cells cleared the full dual-friction gate; no WFA/OOS authorized.
+
+[Phase 54 result](https://github.com/vishnuvcr/Daily-Options/blob/phase-54-same-session-atm-iv-spread-opening-v1/reports/phase54/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-54-same-session-atm-iv-spread-opening-v1/docs/phase54_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-54-same-session-atm-iv-spread-opening-v1/docs/phase54_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-54-same-session-atm-iv-spread-opening-v1/docs/phase54_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-54-same-session-atm-iv-spread-opening-v1)
