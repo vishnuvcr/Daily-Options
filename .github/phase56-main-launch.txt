@@ -1,1 +1,1 @@
-Phase 56 manual launcher sentinel — verified authoritative candle-conviction workflow refs; execute frozen grid
+Phase 56 manual launcher sentinel — prior OHLC alias fixed; rerun frozen candle-conviction grid
