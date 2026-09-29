@@ -82,3 +82,8 @@ No Phase 41 P&L is accepted until unit tests, data gates, execution coverage, ac
 ## 2026-09-29 Phase 56 closure
 - Phase 56: **CLOSED NEGATIVE DISCOVERY** — authoritative workflow **36551083186**, artifact **11025430232**; 99.315% post-warm-up feature eligibility, 100% body-ratio validity, 0 prior-information violations, 97.65–99.10% execution coverage. Best LOW_CONVICTION/FADE/15:10 = -₹125.86/week Base / -₹201.79 Stress. All 12 cells failed promotion. No WFA/OOS.
 - Current frontier: **Phase 57 — 09:15–09:30 opening-range volatility regime × opening-gap direction**.
+
+
+## 2026-09-29 Phase 57 closure
+- Phase 57: **CLOSED NEGATIVE DISCOVERY** — authoritative workflow **36551911099**, artifact **11025372329**; 99.229% post-warm-up feature eligibility, 100% opening-range/prior-range coverage, 0 prior-information violations, 97.82–99.72% execution coverage. Best LOW_OPEN_RANGE/FADE/15:10 = -₹88.46/week Base / -₹172.36 Stress. All 12 cells failed promotion. No WFA/OOS.
+- Current frontier: **Phase 58 — 09:15–09:29 ATM option volume imbalance × opening direction**.
