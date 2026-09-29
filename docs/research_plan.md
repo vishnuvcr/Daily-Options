@@ -391,3 +391,26 @@ Frozen states: SMALL_GAP (<0.50%), MEDIUM_GAP (0.50%–<1.00%), LARGE_GAP (≥1.
 ## Phase 45 — NIFTY Opening-Gap Failure/Continuation Confirmation
 
 Research question: does a meaningful opening gap that fails or continues during the first 15 minutes contain a stronger directional signal than the raw gap alone? Frozen minimum gap magnitude is 0.50%. GAP_FAILURE means the first 15-minute return is opposite the gap direction; GAP_CONTINUATION means it is in the same direction; NO_CONFIRMATION is otherwise. Test all three states × FOLLOW/FADE × 10:30/15:10 (12 true cells) with five fixed state-label permutation nulls, historical lots, existing Paytm Money/NSE/statutory costs and Base/Stress slippage. Promotion requires mean and median weekly net ≥₹5,000, positive-week rate ≥70%, ≥95% execution coverage and clean accounting in both Base and Stress. No post-result state selection or threshold changes.
+
+
+## Phase 47 — Opening-Gap Magnitude Normalized by Prior-Day Range × Gap Direction
+
+### Research question
+Does the NIFTY opening gap, measured relative to the immediately preceding session's high-low range, condition continuation versus reversal strongly enough to produce at least ₹5,000 net per completed trading week after realistic costs?
+
+### Frozen states
+- SMALL_REL_GAP: absolute gap / prior-day range < 0.20
+- MEDIUM_REL_GAP: 0.20–<0.40
+- LARGE_REL_GAP: >=0.40
+
+### Frozen execution
+FOLLOW_GAP and FADE_GAP; 09:31 entry; 10:30 and 15:10 exits; one-lot 200-point ATM debit spread; nearest expiry on/after trade date; historical lots; existing Paytm Money/NSE/statutory friction; Base/Stress ₹0.20/₹0.40 slippage.
+
+### Controls and gates
+12 true cells plus five fixed state-permutation null seeds. Require >=95% feature and execution coverage, zero prior-information violations and clean accounting. Promotion requires mean weekly net >=₹5,000, median weekly net >=₹5,000 and >=70% positive weeks in both Base and Stress.
+
+### External rationale
+Range-normalized gap sizing is supported as a volatility-normalization idea in prior gap research, while recent NIFTY analyses also distinguish gap behavior by magnitude. These sources motivate the hypothesis only; no external profitability result is imported.
+
+### Phase boundary
+No post-result threshold, state, exit or mapping tuning is permitted. Phase 47 is now closed negative after authoritative run 36538234322.
