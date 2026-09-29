@@ -11,3 +11,5 @@
 | E056-002 | 2026-09-29 | Gate run 36550927372 | Derived prior_open/high/low/close variables were not persisted as panel columns before feature_eligible selection; KeyError stopped the gate | No P&L accepted | Persisted prior OHLC aliases in the feature panel; frozen body-ratio definition unchanged | CLOSED |
 
 | E056-001 | 2026-09-29 | Data-gate run 36550927372 | build_feature_panel checked phantom prior_open/prior_high/prior_low/prior_close columns although those were Series inputs | No P&L accepted | Gate now checks actual panel fields plus prior_body_ratio; body-ratio formula and all frozen thresholds unchanged | CLOSED |
+
+| E056-003 | 2026-09-29 | Gate run 36550974352 | Run was created from pre-fix commit cd5689ff and repeated the prior-OHLC KeyError despite the branch subsequently containing the fix | No P&L accepted | Verified branch head now contains persisted prior OHLC aliases; next launcher commit will start from current branch head | CLOSED |
