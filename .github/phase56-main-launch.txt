@@ -1,1 +1,1 @@
-Phase 56 manual launcher sentinel
+Phase 56 manual launcher sentinel — corrected workflow refs; execute frozen candle-conviction grid
