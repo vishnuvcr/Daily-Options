@@ -1,1 +1,1 @@
-Phase 52 manual launcher sentinel — corrected post-warm-up gate; run frozen current 09:30 ATM IV grid
+Phase 52 manual launcher sentinel — corrected ATM/expiry signal null handling; rerun frozen discovery
