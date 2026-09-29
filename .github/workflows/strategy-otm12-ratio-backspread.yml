@@ -8,7 +8,7 @@ on:
     paths:
       - research/strategy_otm12_ratio_backspread.py
       - tests/test_strategy_otm12_ratio_backspread.py
-      - docs/strategy_otm12_ratio_backspread_plan.md
+      - docs/strategy_otm12_reversed_ratio_plan.md
       - .github/workflows/strategy-otm12-ratio-backspread.yml
 
 permissions:
