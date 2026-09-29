@@ -7,8 +7,8 @@ As of: 2026-09-29
 | A implementation/data gate | CLOSED | Timestamp probe passed; option/session trade-date join fixed; regression coverage added. |
 | B baseline Base/Stress | CLOSED | Clean workflow 36532252218 PASS. 1,209 trades, 98.53% execution coverage. Base net P&L -₹717,921.87; Stress net P&L -₹874,857.87. |
 | C losing-trade/common-circumstance analysis | ACTIVE | Dedicated branch will quantify winner/loser feature differences and stable loser regimes. |
-| D frozen holdout filter probe | PENDING | Only after C. |
-| E conclusion/manuscript | PENDING | Bounded endpoint. |
+| D frozen holdout filter probe | CLOSED | Phase D workflow 36533292973 SUCCESS. No tested frozen filter produced positive holdout expectancy in Base or Stress. |
+| E conclusion/manuscript | CLOSED | Final manuscript completed on `research/otm12-phase-e-manuscript`. |
 
 ## Clean baseline
 - Workflow: 36532252218
@@ -31,3 +31,10 @@ As of: 2026-09-29
 - No parameter is tuned on the holdout.
 - No earlier failed run is used as trading evidence.
 - Base and Stress both must agree before a result is treated as robust.
+
+
+## Final conclusion
+The exact fixed one-lot structure is not validated as a profitable strategy after costs. Clean Base net P&L was -₹717,921.87 and Stress net P&L was -₹874,857.87 across 1,209 trades. Profits occur when one wing receives a sufficiently large positive expansion in the 2x farther OTM longs; the pre-entry feature family did not predict that expansion robustly. The frozen holdout probe improved the loss magnitude but remained negative in both friction models. No further parameter optimization is authorized under this bounded research plan.
+
+## Final manuscript
+See branch: `research/otm12-phase-e-manuscript`.
