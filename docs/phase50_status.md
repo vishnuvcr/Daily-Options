@@ -1,21 +1,22 @@
 # Phase 50 Status
 
-**State: PREREGISTERED / ENGINEERING BUILD**
+**State: CLOSED — NEGATIVE DISCOVERY**
 
-Branch: phase-50-opening-location-range-gap-v1
+Authoritative workflow: **36539948879**  
+Artifact: **11019976395**
 
-Frozen states:
-- INSIDE_RANGE
-- ABOVE_RANGE
-- BELOW_RANGE
+Data integrity:
+- 99.267% feature eligibility
+- 100% prior-range validity among eligible sessions
+- 100% expiry mapping
+- 0 prior-information violations
+- 98.6–100% execution coverage
 
-Frozen execution:
-- 09:31 entry
-- 10:30 / 15:10 exits
-- one-lot 200-point ATM debit spread
-- nearest expiry on/after trade date
-- historical lots
-- Base/Stress ₹0.20/₹0.40 slippage
-- existing Paytm Money/NSE/statutory charges
+Best true cell: INSIDE_RANGE / FADE / 15:10.
+- Base mean weekly net: **+₹163**
+- Stress mean weekly net: **+₹116**
+- Base median weekly net: **-₹0**
+- Stress median weekly net: **-₹30**
+- Positive-week rate: **50% Base / 50% Stress**
 
-No numerical result is accepted until tests, data gates, execution coverage, null controls and accounting pass.
+All 12 true cells failed the complete promotion gate. No WFA/OOS authorized.
