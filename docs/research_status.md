@@ -50,7 +50,9 @@ No Phase 41 P&L is accepted until unit tests, data gates, execution coverage, ac
 - Phase 46: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36473334899; no 12-cell close-location state cleared the promotion gate.
 
 
+
 ## 2026-09-29 latest frontier update
-- Phase 46: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36473334899; 0/12 true cells cleared the dual-friction promotion gate.
-- Phase 47: **CLOSED NEGATIVE DISCOVERY** — authoritative run **36538234322**; 1,219/1,228 feature-eligible sessions (99.267%), 0 prior-information violations, 98.56–100% execution coverage. Best cell MEDIUM_REL_GAP / FADE / 15:10 produced ₹714/week Base and ₹666/week Stress, below the ₹5,000/week gate. No WFA/OOS authorized.
-- The next family must be materially distinct; no Phase 47 threshold or state retuning is authorized.
+- Phase 46: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36473334899; no 12-cell true result cleared the dual-friction promotion gate.
+- Phase 47: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36538234322; 1,219/1,228 feature-eligible sessions, 0 prior-information violations, 98.56–100% execution coverage; best cell ₹714/week Base / ₹666 Stress; no WFA/OOS.
+- Phase 48: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36538835468; 1,214/1,228 feature-eligible sessions, 0 prior-information violations, 98.58–99.23% execution coverage; all 8 true cells negative in both Base and Stress; best cell PRIOR_DOWN/FADE/10:30 at -₹336/week Base / -₹441 Stress; no WFA/OOS.
+- Next research family: **Phase 49 — prior-day range expansion/contraction regime × opening-gap direction**.
