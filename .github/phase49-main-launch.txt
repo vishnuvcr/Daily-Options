@@ -1,1 +1,1 @@
-Phase 49 manual launcher sentinel — corrected workflow refs; execute frozen range-regime grid
+Phase 49 manual launcher sentinel — 60-valid-observation correction; rerun frozen range-regime grid
