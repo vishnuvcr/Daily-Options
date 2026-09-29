@@ -79,3 +79,8 @@ No Phase 41 P&L is accepted until unit tests, data gates, execution coverage, ac
 - Phase 53: **CLOSED NEGATIVE DISCOVERY** — authoritative run **36549121608**, artifact **11023737870**. Feature eligibility 98.29%, same-session near-ATM skew coverage 98.97%, expiry mapping 100%, prior-information violations 0, execution coverage 98.79–100%. Best cell LOW_SKEW/FADE/10:30 was -₹138/week Base and -₹235/week Stress; 0/12 true cells passed the dual-friction promotion gate. No WFA/OOS.
 - Phase 53 skew thresholds/strike offsets/lookback/exits are frozen and will not be retuned.
 - Next bounded family: **Phase 54 — same-session 09:30 front-vs-next-expiry ATM IV term structure × opening direction**, using current-session quotes and a frozen two-state steep/inverted slope definition with the same Base/Stress weekly promotion gate.
+
+
+## 2026-09-29 Phase 54 closure
+- Phase 54: **CLOSED NEGATIVE DISCOVERY** — authoritative workflow **36549550020**, artifact **11024192628**. Feature eligibility 98.12%, matched ATM CE/PE IV coverage 98.80%, feature-expiry mapping 100%, zero information violations, execution coverage 99.04–100%. Best cell LOW_SPREAD/FADE/15:10 = -₹49/week Base / -₹143 Stress; 0/12 cells passed the dual-friction gate. No WFA/OOS and no parameter retuning.
+- Next frontier: **Phase 55 — same-session 09:30 front-vs-next-expiry ATM IV term structure × opening direction**, using the already-planned two-expiry concept with a fresh current-session information barrier.
