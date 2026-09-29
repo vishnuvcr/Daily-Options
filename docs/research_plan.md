@@ -528,3 +528,29 @@ Frozen feature: same-strike 09:30 ATM CE IV minus ATM PE IV at the nearest stric
 ## Phase 54 — Same-Session 09:30 ATM Put–Call IV Spread × Opening Direction
 
 Frozen feature: 09:30 ATM PE IV minus ATM CE IV for the nearest expiry strictly after the current date, classified LOW/MID/HIGH with the prior 60 valid same-session observations. Cross with FOLLOW/FADE at 10:30/15:10. Twelve true cells plus five permutation nulls. Phase 54 closed negative: authoritative run 36549663605; best HIGH_SPREAD/FADE/15:10 had -₹49.18/week Base and -₹142.70 Stress, despite positive gross P&L; no WFA/OOS.
+
+
+## Phase 55 — Same-Session Front-vs-Next-Expiry ATM IV Term Structure × Opening Direction — CLOSED DATA-LIMITED
+
+Frozen term state = BACK_ATM_IV − FRONT_ATM_IV, with front expiry nearest on/after date and back expiry the next listed expiry. Current-session 09:30 CE/PE observations were required for both maturities. Gate run 36550269685 found only 72.77% complete post-warm-up coverage versus the frozen 95% threshold, so no P&L was accepted and no coverage relaxation is authorized.
+
+## Phase 56 — Prior-Session Candle Conviction Regime × Opening-Gap Direction
+
+### Frozen research question
+Does the directional conviction of the immediately preceding NIFTY session, measured by its candle body relative to its high-low range, condition whether the next session's opening gap continues or reverses strongly enough to produce at least ₹5,000 net per completed trading week after realistic costs?
+
+### Frozen feature
+- Prior session body ratio = abs(prior 15:10 close − prior 09:15 open) / (prior high − prior low).
+- Prior session body direction = sign(prior 15:10 close − prior 09:15 open).
+- Conviction ratio is classified by a strictly prior 60-session empirical distribution into LOW/MID/HIGH terciles.
+- Current opening direction = sign(current 09:15 open / prior 15:10 close − 1); zero gap = no trade.
+- The state uses no option quotes, so the feature gate must rely on price-data completeness and the established 09:15/15:10 index timestamp barrier.
+
+### Frozen execution
+FOLLOW_OPEN / FADE_OPEN; 09:31 option-open entry; 10:30/15:10 exits; one-lot 200-point ATM debit spread; nearest expiry on/after date; historical lots; existing Paytm Money/NSE/statutory charges; Base/Stress ₹0.20/₹0.40 slippage.
+
+### Discovery matrix and controls
+3 conviction states × 2 mappings × 2 exits = 12 true cells; five state-permutation nulls. Promotion requires mean/median weekly net ≥₹5,000, ≥70% positive weeks, ≥95% execution coverage and clean accounting in both Base and Stress. No WFA/OOS otherwise.
+
+### Stop rule
+No post-result body-ratio threshold, state boundary, mapping, exit, expiry, spread width or cost retuning.
