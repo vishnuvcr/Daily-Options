@@ -6,7 +6,7 @@ import duckdb, numpy as np, pandas as pd
 
 START_DATE = "2021-07-01"
 END_DATE = "2026-08-04"
-ENTRY_REF, ENTRY_FILL, EXIT_TIME = "09:30:00", "09:31:00", "15:15:00"
+ENTRY_REF, ENTRY_FILL, EXIT_TIME, EXIT_FALLBACK_TIME = "09:30:00", "09:31:00", "15:15:00", "15:14:00"
 
 def lot_size(expiry):
     d = pd.Timestamp(expiry).date()
@@ -92,9 +92,9 @@ def query_quotes(con,path,days):
     q=f"""WITH d(trade_date) AS (VALUES {vals})
     SELECT CAST(o.trading_day AS DATE) trade_date, CAST(o.timestamp AS TIMESTAMP) ts,
     CAST(o.strike AS DOUBLE) strike, UPPER(CAST(o.option_type AS VARCHAR)) option_type,
-    CAST(o.open AS DOUBLE) open_px FROM read_parquet('{path}',union_by_name=true) o
+    CAST(o.open AS DOUBLE) open_px, CAST(o.close AS DOUBLE) close_px FROM read_parquet('{path}',union_by_name=true) o
     JOIN d ON CAST(o.trading_day AS DATE)=d.trade_date
-    WHERE CAST(CAST(o.timestamp AS TIMESTAMP) AS TIME) IN (TIME '{ENTRY_FILL}',TIME '{EXIT_TIME}') AND o.open>0"""
+    WHERE CAST(CAST(o.timestamp AS TIMESTAMP) AS TIME) IN (TIME '{ENTRY_FILL}',TIME '{EXIT_TIME}',TIME '{EXIT_FALLBACK_TIME}') AND (o.open>0 OR o.close>0)"""
     return con.execute(q).df()
 
 def pick_otm(chain,spot):
