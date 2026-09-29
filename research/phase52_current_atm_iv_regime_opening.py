@@ -307,7 +307,9 @@ def build_signals(panel: pd.DataFrame, null_seed: int | None = None) -> pd.DataF
         perm=vals[idx].copy(); rng.shuffle(perm); vals[idx]=perm; x["state"]=vals
     rows=[]
     for row in x.itertuples(index=False):
-        if not row.feature_eligible or not row.barrier_ok or row.state not in STATES or row.direction==0: continue
+        if (not row.feature_eligible or not row.barrier_ok or row.state not in STATES
+            or row.direction==0 or pd.isna(row.atm) or pd.isna(row.expiry)):
+            continue
         for mapping in DIRECTIONS:
             side="CALL" if ((mapping=="CONTINUE" and row.direction>0) or (mapping=="FADE" and row.direction<0)) else "PUT"
             for horizon in HORIZONS:
