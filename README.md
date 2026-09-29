@@ -1026,3 +1026,17 @@ Phase D tested the **frozen** Phase-C first15_abs_ret >= 0.126795% mechanism acr
 - **0/12** cells cleared the full dual-friction gate; no WFA/OOS authorized.
 
 [Phase 54 result](https://github.com/vishnuvcr/Daily-Options/blob/phase-54-same-session-atm-iv-spread-opening-v1/reports/phase54/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-54-same-session-atm-iv-spread-opening-v1/docs/phase54_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-54-same-session-atm-iv-spread-opening-v1/docs/phase54_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-54-same-session-atm-iv-spread-opening-v1/docs/phase54_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-54-same-session-atm-iv-spread-opening-v1)
+
+
+## 2026-09-29 — Phase 54 closed / negative discovery
+
+**Phase 54 — Same-Session 09:30 ATM Put–Call IV Spread × Opening Direction** is closed negative.
+
+- Authoritative workflow: **36549663605**; artifact **11024142461**.
+- Data gate: **98.12%** final feature eligibility, **98.80%** same-session ATM IV-spread coverage, **100%** feature-expiry mapping, **0** prior-information violations.
+- Execution coverage: **99.04%–100%** across all 12 cells; Base/Stress accounting reconciled.
+- Best cell: **HIGH_SPREAD / FADE / 15:10** — **-₹49.18/week Base**, **-₹142.70/week Stress**, with negative medians and <45% positive weeks.
+- Its raw gross P&L was **+₹49,890**, but transaction costs and slippage produced a net loss.
+- **0/12** cells cleared the promotion gate; WFA/OOS is not authorized.
+
+[Phase 54 result](https://github.com/vishnuvcr/Daily-Options/blob/phase-54-atm-iv-spread-opening-v1/reports/phase54/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-54-atm-iv-spread-opening-v1/docs/phase54_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-54-atm-iv-spread-opening-v1/docs/phase54_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-54-atm-iv-spread-opening-v1)
