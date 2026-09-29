@@ -1,0 +1,28 @@
+{
+  "status": "PASS",
+  "raw_sessions": 1228,
+  "post_warmup_sessions": 1168,
+  "feature_eligible_sessions": 1160,
+  "post_warmup_eligibility_rate": 0.9931506849315068,
+  "complete_feature_sessions": 1160,
+  "feature_coverage": 1.0,
+  "prior_body_ratio_valid_sessions": 1160,
+  "prior_body_ratio_valid_coverage": 1.0,
+  "expiry_mapping_coverage": 1.0,
+  "prior_information_violations": 0,
+  "lookback_sessions": 60,
+  "study_start": "2021-07-01",
+  "study_end": "2026-08-31",
+  "required_coverage": 0.95,
+  "conviction_states": [
+    "LOW_CONVICTION",
+    "MID_CONVICTION",
+    "HIGH_CONVICTION"
+  ],
+  "body_ratio_definition": "abs(prior 15:10 close - prior 09:15 open) / (prior high - prior low)",
+  "expiry_file_count": 267,
+  "friction": "stress",
+  "true_signal_count": 4876,
+  "executed_trade_count": 4815,
+  "promotion_pass_count": 0
+}
