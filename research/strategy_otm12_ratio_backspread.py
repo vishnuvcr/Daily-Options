@@ -114,16 +114,27 @@ def make_trades(sess,q):
     for r in sess.itertuples(index=False):
         z=q[q.trade_date==r.trade_date]
         en=z[z.ts.dt.strftime("%H:%M:%S")==ENTRY_FILL]
-        ex=z[z.ts.dt.strftime("%H:%M:%S")==EXIT_TIME]
-        if en.empty or ex.empty: continue
+        if en.empty: continue
         k=pick_otm(en,r.entry_spot)
         if not k: continue
         specs=[("short_ce","CE",k["short_ce"],-1,1),("long_ce","CE",k["long_ce"],1,2),
                ("short_pe","PE",k["short_pe"],-1,1),("long_pe","PE",k["long_pe"],1,2)]
-        legs=[]; ok=True
+        exact=z[z.ts.dt.strftime("%H:%M:%S")==EXIT_TIME]
+        fallback=z[z.ts.dt.strftime("%H:%M:%S")==EXIT_FALLBACK_TIME]
+        legs=[]; ok=True; exit_mark_time=None
         for name,side,strike,sign,qty in specs:
-            a=px(en,side,strike); b=px(ex,side,strike)
-            if not np.isfinite(a) or not np.isfinite(b): ok=False; break
+            a=px(en,side,strike)
+            if not np.isfinite(a): ok=False; break
+            x=exact[(exact.option_type==side)&np.isclose(exact.strike,strike)]
+            if not x.empty and pd.notna(x.open_px.iloc[0]) and x.open_px.iloc[0]>0:
+                b=float(x.open_px.iloc[0]); bt=EXIT_TIME
+            else:
+                x=fallback[(fallback.option_type==side)&np.isclose(fallback.strike,strike)]
+                if x.empty or pd.isna(x.close_px.iloc[0]) or x.close_px.iloc[0]<=0:
+                    ok=False; break
+                b=float(x.close_px.iloc[0]); bt=EXIT_FALLBACK_TIME
+            if exit_mark_time is None: exit_mark_time=bt
+            elif bt != exit_mark_time: ok=False; break
             legs.append((name,strike,sign,qty,a,b))
         if not ok: continue
         lot=lot_size(pd.Timestamp(r.expiry).date())
@@ -132,7 +143,8 @@ def make_trades(sess,q):
         long_sum=sum(a*qty for _,_,sgn,qty,a,_ in legs if sgn>0)
         row={f:getattr(r,f) for f in r._fields}
         row.update({"lot":lot,"gross_pnl":gross,"short_premium_sum":short_sum,
-                    "long_premium_sum":long_sum,"net_entry_credit_points":short_sum-long_sum,
+                    "long_premium_sum":long_sum,"exit_mark_time":exit_mark_time,
+                    "net_entry_credit_points":short_sum-long_sum,
                     "entry_debit_points":long_sum-short_sum,
                     "long_short_premium_ratio":long_sum/short_sum if short_sum>0 else np.nan,
                     "expiry_day":r.trade_date==pd.Timestamp(r.expiry).date(),
