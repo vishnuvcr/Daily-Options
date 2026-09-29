@@ -1,1 +1,1 @@
-Phase 53 manual launcher sentinel — verified near-ATM skew workflow; run frozen grid
+Phase 53 manual launcher sentinel — corrected branch refs; rerun frozen skew discovery
