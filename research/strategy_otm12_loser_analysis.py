@@ -90,6 +90,7 @@ def leg_diagnostics(df: pd.DataFrame) -> pd.DataFrame:
 
 def trees(df: pd.DataFrame, out: Path) -> dict:
     d=df[df.trade_date<=DISCOVERY_END].copy()
+    (out).mkdir(parents=True,exist_ok=True)
     z=d.dropna(subset=FEATURES+["net_pnl"]).copy()
     X=z[FEATURES]
     y=(z.net_pnl<0).astype(int)
