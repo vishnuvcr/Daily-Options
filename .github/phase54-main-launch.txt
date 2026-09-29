@@ -1,1 +1,1 @@
-Phase 54 manual launcher sentinel
+Phase 54 manual launcher sentinel — corrected branch/engine refs; run frozen spread grid
