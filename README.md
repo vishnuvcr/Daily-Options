@@ -891,3 +891,16 @@ Phase D tested the **frozen** Phase-C first15_abs_ret >= 0.126795% mechanism acr
 - **0/8** cells cleared the promotion gate; WFA/OOS is not authorized.
 
 [Phase 48 result](https://github.com/vishnuvcr/Daily-Options/blob/phase-48-prior-return-gap-direction-v1/reports/phase48/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-48-prior-return-gap-direction-v1/docs/phase48_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-48-prior-return-gap-direction-v1/docs/phase48_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-48-prior-return-gap-direction-v1)
+
+
+## 2026-09-29 — Phase 49 closed / negative discovery
+
+**Phase 49 — Prior-Session Range Regime × Opening-Gap Direction** is closed negative.
+
+- Authoritative workflow: **36539451804**; artifact **11019912559**.
+- Data gate after the valid-observation correction: **99.229%** feature eligibility after the 60-session warm-up; **100%** regime/expiry coverage; **0** prior-information violations.
+- Execution coverage: **97.65%–99.73%** across all 12 cells.
+- Best cell: **MID_RANGE / FADE / 15:10** — **₹88/week Base**, **₹9/week Stress**; medians remained negative.
+- **0/12** cells cleared the promotion gate; WFA/OOS is not authorized.
+
+[Phase 49 result](https://github.com/vishnuvcr/Daily-Options/blob/phase-49-prior-range-regime-gap-v1/reports/phase49/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-49-prior-range-regime-gap-v1/docs/phase49_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-49-prior-range-regime-gap-v1/docs/phase49_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-49-prior-range-regime-gap-v1)
