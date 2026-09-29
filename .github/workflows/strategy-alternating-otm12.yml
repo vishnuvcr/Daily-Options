@@ -9,7 +9,7 @@ on:
       - research/strategy_otm12_ratio_backspread.py
       - tests/test_strategy_otm12_ratio_backspread.py
       - docs/strategy_otm12_ratio_backspread_plan.md
-      - .github/workflows/strategy-alternating-otm12-ratio-backspread.yml
+      - .github/workflows/strategy-alternating-otm12.yml
 
 permissions:
   contents: read
