@@ -161,6 +161,136 @@ def build_feature_panel(nifty: pd.DataFrame) -> pd.DataFrame:
     panel["state"]="INVERTED_TERM"
     return panel
 
+def expiry_map(root: Path):
+    out = {}
+    for p in sorted((root / "options" / "NIFTY").glob("*.parquet")):
+        try:
+            out[pd.Timestamp(p.stem).date()] = p
+        except Exception:
+            continue
+    if not out:
+        raise FileNotFoundError("No exact-expiry NIFTY option files were found")
+    return out
+
+
+def attach_current_atm_term_structure(panel: pd.DataFrame, root: Path, expiries: dict) -> pd.DataFrame:
+    x=panel.copy()
+    keys=sorted(expiries)
+    con=duckdb.connect()
+    con.execute("SET TimeZone='Asia/Kolkata'")
+    work=x[x["date"].notna() & x["spot_0930"].notna() & x["atm"].notna()].copy()
+
+    pairs=[]
+    for d in work["date"].tolist():
+        pos=bisect.bisect_left(keys,d)
+        if pos < len(keys)-1:
+            pairs.append((pd.Timestamp(d).date(), keys[pos], keys[pos+1]))
+
+    quote_frames=[]
+    if pairs:
+        for front in sorted(set(p[1] for p in pairs)):
+            group=[p for p in pairs if p[1]==front]
+            dates=sorted(set(p[0] for p in group))
+            back=group[0][2]
+            strikes=sorted(set(float(v) for v in work.loc[work["date"].isin(dates),"atm"].dropna().tolist()))
+            if not dates or not strikes:
+                continue
+            date_sql=",".join(f"DATE '{d}'" for d in dates)
+            strike_sql=",".join(str(v) for v in strikes)
+            for expiry in (front, back):
+                p=str(expiries[expiry]).replace("'","''")
+                q=f"""
+                  SELECT CAST(timestamp AS TIMESTAMP) ts,
+                         CAST(CAST(timestamp AS TIMESTAMP) AS DATE) date,
+                         UPPER(CAST(option_type AS VARCHAR)) option_type,
+                         CAST(strike AS DOUBLE) strike,
+                         CAST(close AS DOUBLE) close_px
+                  FROM read_parquet('{p}')
+                  WHERE CAST(timestamp AS DATE) IN ({date_sql})
+                    AND strftime(CAST(timestamp AS TIMESTAMP),'%H:%M:%S')='09:30:00'
+                    AND strike IN ({strike_sql})
+                    AND UPPER(CAST(option_type AS VARCHAR)) IN ('CE','PE')
+                """
+                z=con.execute(q).df()
+                if not z.empty:
+                    z["expiry"]=expiry
+                    quote_frames.append(z)
+    con.close()
+
+    quotes=pd.concat(quote_frames,ignore_index=True) if quote_frames else pd.DataFrame()
+    qmap={}
+    if not quotes.empty:
+        for r in quotes.itertuples(index=False):
+            qmap[(pd.Timestamp(r.date).date(),pd.Timestamp(r.expiry).date(),
+                  str(r.option_type).upper(),float(r.strike))] = float(r.close_px) if pd.notna(r.close_px) else np.nan
+
+    x["term_slope"]=np.nan
+    x["front_iv"]=np.nan
+    x["back_iv"]=np.nan
+    x["term_valid"]=False
+    x["term_fail_reason"]=""
+
+    for i,r in x.iterrows():
+        if pd.isna(r["date"]) or pd.isna(r["spot_0930"]) or pd.isna(r["atm"]):
+            x.at[i,"term_fail_reason"]="MISSING_0930_SPOT_OR_ATM"
+            continue
+        d=pd.Timestamp(r["date"]).date()
+        pos=bisect.bisect_left(keys,d)
+        if pos >= len(keys)-1:
+            x.at[i,"term_fail_reason"]="NO_FRONT_OR_BACK_EXPIRY"
+            continue
+        front=keys[pos]
+        back=keys[pos+1]
+        spot=float(r["spot_0930"])
+        strike=float(r["atm"])
+        t_front=max((pd.Timestamp(f"{front} 15:30:00")-pd.Timestamp(f"{d} 09:30:00")).total_seconds()/31536000.0,1e-8)
+        t_back=max((pd.Timestamp(f"{back} 15:30:00")-pd.Timestamp(f"{d} 09:30:00")).total_seconds()/31536000.0,1e-8)
+
+        avg_ivs=[]
+        for expiry,t in ((front,t_front),(back,t_back)):
+            ce=qmap.get((d,pd.Timestamp(expiry).date(),"CE",strike),np.nan)
+            pe=qmap.get((d,pd.Timestamp(expiry).date(),"PE",strike),np.nan)
+            if not np.isfinite(ce) or ce<=0 or not np.isfinite(pe) or pe<=0:
+                avg_ivs.append(None)
+                continue
+            ivce=implied_vol(spot,strike,t,float(ce),True)
+            ivpe=implied_vol(spot,strike,t,float(pe),False)
+            if ivce is None or ivpe is None:
+                avg_ivs.append(None)
+                continue
+            avg_ivs.append((ivce+ivpe)*50.0)
+
+        if avg_ivs[0] is None or avg_ivs[1] is None:
+            x.at[i,"term_fail_reason"]="MISSING_FRONT_OR_BACK_ATM_IV"
+            continue
+
+        x.at[i,"front_iv"]=avg_ivs[0]
+        x.at[i,"back_iv"]=avg_ivs[1]
+        x.at[i,"term_slope"]=avg_ivs[1]-avg_ivs[0]
+        x.at[i,"term_valid"]=True
+        x.at[i,"term_fail_reason"]="OK"
+        x.at[i,"state"]="STEEP_TERM" if x.at[i,"term_slope"] >= 0 else "INVERTED_TERM"
+
+    x["feature_eligible"]=x["feature_eligible"] & x["term_valid"]
+    x["barrier_ok"]=x["barrier_ok"] & x["feature_eligible"]
+    x["feature_date"]=x["date"].astype(str)
+    return x
+
+def attach_expiry(panel: pd.DataFrame, expiries: dict) -> pd.DataFrame:
+    keys = sorted(expiries)
+    x = panel.copy()
+    x["expiry"] = [
+        keys[bisect.bisect_left(keys, d)] if bisect.bisect_left(keys, d) < len(keys) else None
+        for d in x["date"]
+    ]
+    # Preserve the already-computed 09:30 ATM strike; do not overwrite it.
+    if "atm" not in x.columns:
+        x["atm"] = np.nan
+    if "atm_0930" not in x.columns:
+        x["atm_0930"] = x["atm"]
+    return x
+
+
 def add_0930_spot(panel: pd.DataFrame, nifty: pd.DataFrame) -> pd.DataFrame:
     s = (nifty[nifty["time"] == "09:30:00"][["date", "close_px"]]
          .drop_duplicates("date").rename(columns={"close_px": "spot_0930"}))
@@ -467,96 +597,4 @@ if __name__ == "__main__":
     ap.add_argument("--slippage", type=float, required=True)
     ap.add_argument("--gate-only", action="store_true")
     args = ap.parse_args()
-    print(json.dumps(run(args.data, args.out, args.slippage, args.gate_only), indent=2, default=str))def attach_current_atm_term_structure(panel: pd.DataFrame, root: Path, expiries: dict) -> pd.DataFrame:
-    x=panel.copy()
-    keys=sorted(expiries)
-    con=duckdb.connect()
-    con.execute("SET TimeZone='Asia/Kolkata'")
-    work=x[x["date"].notna() & x["spot_0930"].notna() & x["atm"].notna()].copy()
-    rows=[]
-    for d in work["date"].tolist():
-        pos=bisect.bisect_left(keys,d)
-        if pos>=len(keys)-1:
-            continue
-        front=keys[pos]
-        back=keys[pos+1]
-        rows.append((pd.Timestamp(d).date(),front,back))
-    if rows:
-        for front in sorted(set(r[1] for r in rows)):
-            back_dates=sorted(set(r[2] for r in rows if r[1]==front))
-            if not back_dates: continue
-            dates=[r[0] for r in rows if r[1]==front]
-            strikes=sorted(set(float(v) for v in work.loc[work["date"].isin(dates),"atm"].dropna().tolist()))
-            if not dates or not strikes: continue
-            date_sql=",".join(f"DATE '{d}'" for d in sorted(set(dates)))
-            strike_sql=",".join(str(v) for v in strikes)
-            for expiry in [front,back_dates[0]]:
-                p=str(expiries[expiry]).replace("'","''")
-                q=f"""
-                  SELECT CAST(timestamp AS TIMESTAMP) ts,
-                         CAST(CAST(timestamp AS TIMESTAMP) AS DATE) date,
-                         UPPER(CAST(option_type AS VARCHAR)) option_type,
-                         CAST(strike AS DOUBLE) strike,
-                         CAST(close AS DOUBLE) close_px
-                  FROM read_parquet('{p}')
-                  WHERE CAST(timestamp AS DATE) IN ({date_sql})
-                    AND strftime(CAST(timestamp AS TIMESTAMP),'%H:%M:%S')='09:30:00'
-                    AND strike IN ({strike_sql})
-                    AND UPPER(CAST(option_type AS VARCHAR)) IN ('CE','PE')
-                """
-                z=con.execute(q).df()
-                if not z.empty:
-                    z["expiry"]=expiry
-                    rows_quotes=z if 'rows_quotes' in locals() else z
-                    if 'quotes' not in locals():
-                        quotes=z.copy()
-                    else:
-                        quotes=pd.concat([quotes,z],ignore_index=True)
-    con.close()
-    if 'quotes' not in locals():
-        quotes=pd.DataFrame()
-    qmap={}
-    if not quotes.empty:
-        for r in quotes.itertuples(index=False):
-            qmap[(pd.Timestamp(r.date).date(),pd.Timestamp(r.expiry).date(),str(r.option_type).upper(),float(r.strike))]=float(r.close_px) if pd.notna(r.close_px) else np.nan
-
-    x["term_slope"]=np.nan
-    x["front_iv"]=np.nan
-    x["back_iv"]=np.nan
-    x["term_valid"]=False
-    x["term_fail_reason"]=""
-    for i,r in x.iterrows():
-        if pd.isna(r["date"]) or pd.isna(r["spot_0930"]) or pd.isna(r["atm"]):
-            x.at[i,"term_fail_reason"]="MISSING_0930_SPOT_OR_ATM"; continue
-        d=pd.Timestamp(r["date"]).date()
-        pos=bisect.bisect_left(keys,d)
-        if pos>=len(keys)-1:
-            x.at[i,"term_fail_reason"]="NO_FRONT_OR_BACK_EXPIRY"; continue
-        front=keys[pos]; back=keys[pos+1]
-        spot=float(r["spot_0930"]); strike=float(r["atm"])
-        t_front=max((pd.Timestamp(f"{front} 15:30:00")-pd.Timestamp(f"{d} 09:30:00")).total_seconds()/31536000.0,1e-8)
-        t_back=max((pd.Timestamp(f"{back} 15:30:00")-pd.Timestamp(f"{d} 09:30:00")).total_seconds()/31536000.0,1e-8)
-        vals=[]
-        for exp,t in [(front,t_front),(back,t_back)]:
-            ce=qmap.get((d,pd.Timestamp(exp).date(),"CE",strike),np.nan)
-            pe=qmap.get((d,pd.Timestamp(exp).date(),"PE",strike),np.nan)
-            if not np.isfinite(ce) or ce<=0 or not np.isfinite(pe) or pe<=0:
-                vals.append(None); continue
-            ivce=implied_vol(spot,strike,t,float(ce),True)
-            ivpe=implied_vol(spot,strike,t,float(pe),False)
-            if ivce is None or ivpe is None:
-                vals.append(None); continue
-            vals.append((ivce+ivpe)*50.0)
-        if vals[0] is None or vals[1] is None:
-            x.at[i,"term_fail_reason"]="MISSING_FRONT_OR_BACK_ATM_IV"; continue
-        x.at[i,"front_iv"]=vals[0]
-        x.at[i,"back_iv"]=vals[1]
-        x.at[i,"term_slope"]=vals[1]-vals[0]
-        x.at[i,"term_valid"]=True
-        x.at[i,"term_fail_reason"]="OK"
-        x.at[i,"state"]="STEEP_TERM" if x.at[i,"term_slope"]>=0 else "INVERTED_TERM"
-    x["feature_eligible"]=x["feature_eligible"] & x["term_valid"]
-    x["barrier_ok"]=x["barrier_ok"] & x["feature_eligible"]
-    x["feature_date"]=x["date"].astype(str)
-    return x
-
+    print(json.dumps(run(args.data, args.out, args.slippage, args.gate_only), indent=2, default=str))
