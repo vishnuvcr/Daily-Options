@@ -1,0 +1,6 @@
+def test_iv_regime_boundaries():
+    def b(x,q33,q67):
+        return "LOW_IV" if x<q33 else ("MID_IV" if x<q67 else "HIGH_IV")
+    assert b(10,12,14)=="LOW_IV"
+    assert b(12,12,14)=="MID_IV"
+    assert b(14,12,14)=="HIGH_IV"
