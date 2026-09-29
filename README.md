@@ -798,3 +798,16 @@ Phase 34 is **CLOSED / DATA-LIMITED**. Authoritative run **36341535504** reconst
 
 ## Phase 46 — active
 [Phase 46 plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-46-close-location-gap-v1/docs/phase46_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-46-close-location-gap-v1/docs/phase46_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-46-close-location-gap-v1/docs/phase46_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-46-close-location-gap-v1)
+
+
+## 2026-09-29 — Master Candle 09:35 YouTube side-analysis
+
+The independently scoped Master Candle 09:35 strategy side-analysis has completed its 1-lot baseline and first cost-robustness block in the separate repository [MC-OPTIONS-INDEPENDENT-BACKTEST-MC1](https://github.com/vishnuvcr/MC-OPTIONS-INDEPENDENT-BACKTEST-MC1).
+
+- **MC1 baseline:** 671 executed one-lot trades; baseline net P&L **-₹138,608.27**.
+- **Weekly consistency:** 258 non-empty weeks; **34.50%** positive; **12.79%** reached ≥₹5,000 before the fuller cost sensitivity.
+- **MC2 full-cost sensitivity:** **-₹146,774.55**, profit factor 0.820, 33.72% positive weeks, 12.02% weeks ≥₹5,000.
+- **2026 coverage:** partial; the selected source currently reaches 2026-07-01.
+- **Status:** MC1 closed / negative discovery; MC2 execution-rule robustness is active. No trading strategy has been promoted from this side-analysis.
+
+[MC1 results](https://github.com/vishnuvcr/MC-OPTIONS-INDEPENDENT-BACKTEST-MC1/blob/side-analysis/master-candle-935/BASELINE_RESULTS.md) · [MC2 results](https://github.com/vishnuvcr/MC-OPTIONS-INDEPENDENT-BACKTEST-MC1/blob/side-analysis/master-candle-935-mc2/MC2_RESULTS.md) · [MC2 plan](https://github.com/vishnuvcr/MC-OPTIONS-INDEPENDENT-BACKTEST-MC1/blob/side-analysis/master-candle-935-mc2/research/side_analyses/master_candle_935/PLAN.md)
