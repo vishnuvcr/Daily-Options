@@ -970,3 +970,16 @@ Phase D tested the **frozen** Phase-C first15_abs_ret >= 0.126795% mechanism acr
 - **0/12** cells cleared the full promotion gate; WFA/OOS is not authorized.
 
 [Phase 52 result](https://github.com/vishnuvcr/Daily-Options/blob/phase-52-current-atm-iv-regime-opening-v1/reports/phase52/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-52-current-atm-iv-regime-opening-v1/docs/phase52_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-52-current-atm-iv-regime-opening-v1/docs/phase52_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-52-current-atm-iv-regime-opening-v1)
+
+
+## 2026-09-29 — Phase 53 closed / negative discovery
+
+**Phase 53 — Same-Session 09:30 ATM-Adjacent IV Skew × Opening Direction** is closed negative.
+
+- Authoritative workflow: **36548934744**; artifact **11023921928**.
+- Data gate: **98.12%** feature eligibility, **98.80%** 09:30 skew coverage, **100%** expiry mapping, **0** prior-information violations.
+- Execution coverage: **98.79%–100%** across all 12 cells; Base and Stress accounting reconciled.
+- Best cell: **LOW_SKEW / FADE / 10:30** — **-₹198/week Base**, **-₹293/week Stress**, with 43.9% / 39.7% positive weeks.
+- **0/12** cells cleared the full dual-friction gate; no WFA/OOS authorized.
+
+[Phase 53 result](https://github.com/vishnuvcr/Daily-Options/blob/phase-53-same-session-atm-skew-opening-v1/reports/phase53/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-53-same-session-atm-skew-opening-v1/docs/phase53_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-53-same-session-atm-skew-opening-v1/docs/phase53_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-53-same-session-atm-skew-opening-v1/docs/phase53_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-53-same-session-atm-skew-opening-v1)
