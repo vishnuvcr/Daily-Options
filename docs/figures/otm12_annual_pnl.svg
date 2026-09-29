@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="520" viewBox="0 0 1000 520">
+<rect width="100%" height="100%" fill="white"/>
+<text x="500" y="28" text-anchor="middle" font-family="Arial" font-size="18">Annual Net P&L — Base vs Stress</text>
+<line x1="90" x2="970" y1="55" y2="55" stroke="#dddddd"/>
+<text x="82" y="59" text-anchor="end" font-family="Arial" font-size="11">0</text>
+<line x1="90" x2="970" y1="148.75" y2="148.75" stroke="#dddddd"/>
+<text x="82" y="152.75" text-anchor="end" font-family="Arial" font-size="11">-73</text>
+<line x1="90" x2="970" y1="242.5" y2="242.5" stroke="#dddddd"/>
+<text x="82" y="246.5" text-anchor="end" font-family="Arial" font-size="11">-146</text>
+<line x1="90" x2="970" y1="336.25" y2="336.25" stroke="#dddddd"/>
+<text x="82" y="340.25" text-anchor="end" font-family="Arial" font-size="11">-220</text>
+<line x1="90" x2="970" y1="430" y2="430" stroke="#dddddd"/>
+<text x="82" y="434" text-anchor="end" font-family="Arial" font-size="11">-293</text>
+<rect x="115.83333333333331" y="55" width="40" height="105.1280956447481" fill="#4c78a8"/>
+<text x="135.83333333333331" y="49" text-anchor="middle" font-family="Arial" font-size="10">-82</text>
+<rect x="170.83333333333331" y="55" width="40" height="124.03501280956448" fill="#e45756"/>
+<text x="190.83333333333331" y="49" text-anchor="middle" font-family="Arial" font-size="10">-97</text>
+<text x="163.33333333333331" y="468" text-anchor="middle" font-family="Arial" font-size="11">2021</text>
+<rect x="262.5" y="55" width="40" height="151.53714773697695" fill="#4c78a8"/>
+<text x="282.5" y="49" text-anchor="middle" font-family="Arial" font-size="10">-118</text>
+<rect x="317.5" y="55" width="40" height="189.50469684030742" fill="#e45756"/>
+<text x="337.5" y="49" text-anchor="middle" font-family="Arial" font-size="10">-148</text>
+<text x="310" y="468" text-anchor="middle" font-family="Arial" font-size="11">2022</text>
+<rect x="409.16666666666663" y="55" width="40" height="163.59094790777112" fill="#4c78a8"/>
+<text x="429.16666666666663" y="49" text-anchor="middle" font-family="Arial" font-size="10">-128</text>
+<rect x="464.16666666666663" y="55" width="40" height="201.25106746370625" fill="#e45756"/>
+<text x="484.16666666666663" y="49" text-anchor="middle" font-family="Arial" font-size="10">-157</text>
+<text x="456.66666666666663" y="468" text-anchor="middle" font-family="Arial" font-size="11">2023</text>
+<rect x="555.8333333333333" y="55" width="40" height="136.87019641332193" fill="#4c78a8"/>
+<text x="575.8333333333333" y="49" text-anchor="middle" font-family="Arial" font-size="10">-107</text>
+<rect x="610.8333333333333" y="55" width="40" height="166.38343296327923" fill="#e45756"/>
+<text x="630.8333333333333" y="49" text-anchor="middle" font-family="Arial" font-size="10">-130</text>
+<text x="603.3333333333333" y="468" text-anchor="middle" font-family="Arial" font-size="11">2024</text>
+<rect x="702.5" y="55" width="40" height="318.99658411614007" fill="#4c78a8"/>
+<text x="722.5" y="49" text-anchor="middle" font-family="Arial" font-size="10">-249</text>
+<rect x="757.5" y="55" width="40" height="375" fill="#e45756"/>
+<text x="777.5" y="49" text-anchor="middle" font-family="Arial" font-size="10">-293</text>
+<text x="750" y="468" text-anchor="middle" font-family="Arial" font-size="11">2025</text>
+<rect x="849.1666666666666" y="55" width="40" height="43.488471391972666" fill="#4c78a8"/>
+<text x="869.1666666666666" y="49" text-anchor="middle" font-family="Arial" font-size="10">-34</text>
+<rect x="904.1666666666666" y="55" width="40" height="64.47053800170794" fill="#e45756"/>
+<text x="924.1666666666666" y="49" text-anchor="middle" font-family="Arial" font-size="10">-50</text>
+<text x="896.6666666666666" y="468" text-anchor="middle" font-family="Arial" font-size="11">2026</text>
+<rect x="780" y="488" width="12" height="12" fill="#4c78a8"/><text x="798" y="499" font-family="Arial" font-size="11">Base</text>
+<rect x="860" y="488" width="12" height="12" fill="#e45756"/><text x="878" y="499" font-family="Arial" font-size="11">Stress</text>
+<text x="20" y="65" font-family="Arial" font-size="11">₹000s</text></svg>
