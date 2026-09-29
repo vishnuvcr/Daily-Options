@@ -449,3 +449,8 @@ Frozen feature: 09:30 ATM CE/PE IV average using the nearest strict-next expiry,
 ## Phase 52 — Same-Session 09:30 ATM IV Level Regime × Opening Direction
 
 Frozen feature: same-session 09:30 ATM CE/PE IV average for the nearest expiry strictly after the current date, classified LOW/MID/HIGH using the prior 60 valid same-session observations. Cross with opening-direction FOLLOW/FADE at 10:30 and 15:10 using the validated one-lot 200-point ATM debit spread, historical lots, Paytm Money/NSE/statutory friction and Base/Stress slippage. Twelve true cells plus five state-permutation nulls. Phase 52 closed negative: authoritative run 36548301179; best MID_IV/FADE/15:10 was -₹100.61/week Base and -₹182.60 Stress; no WFA/OOS.
+
+
+## Phase 53 — Same-Session 09:30 ATM-Adjacent IV Skew × Opening Direction
+
+Frozen feature: 09:30 OTM put IV at ATM−₹50 minus 09:30 OTM call IV at ATM+₹50, nearest strict-next expiry, with LOW/MID/HIGH terciles from the preceding 60 valid same-session observations. Cross with FOLLOW/FADE at 10:30/15:10. Twelve cells plus five permutation nulls. Phase 53 closed negative after authoritative run 36548934744: all 12 cells negative under Base and Stress; best LOW_SKEW/FADE/10:30 was -₹198/week Base and -₹293 Stress. No WFA/OOS.
