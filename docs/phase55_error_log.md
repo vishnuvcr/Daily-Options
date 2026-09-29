@@ -9,3 +9,5 @@
 | E055-002 | 2026-09-29 | Workflow construction | Initial workflow file was accidentally populated with Python source instead of YAML | No numerical run accepted | Replaced it with the validated Phase-54 YAML template, repointed to Phase-55 engine/test/cache/output paths and preserved 8-cell/40-null validation | CLOSED |
 
 | E055-003 | 2026-09-29 | Workflow preflight | YAML still referenced Phase-54 branch and engine/test filenames after the first correction | No valid launch accepted | Repointed checkout, engine, tests and persistence push target to the Phase-55 branch/names | CLOSED |
+
+| E055-004 | 2026-09-29 | Authoritative run 36550327814 | First Phase-55 engine splice concatenated attach_current_atm_term_structure after __main__, causing SyntaxError before data gate | No P&L accepted | Rebuilt engine cleanly from validated Phase-54 source, preserving attach_expiry/run/main structure; term-structure feature only changed | CLOSED |
