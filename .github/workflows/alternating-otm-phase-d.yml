@@ -1,0 +1,40 @@
+name: Strategy — Alternating OTM Phase D Walk Forward
+on:
+  workflow_dispatch:
+  push:
+    branches: [research/alternating-otm-phase-d-walkforward-v1]
+    paths:
+      - research/alternating_otm_phase_d_walkforward.py
+      - docs/alternating_otm_phase_d_plan.md
+      - .github/workflows/alternating-otm-phase-d.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  phase-d:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: research/alternating-otm-phase-d-walkforward-v1}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install pandas numpy
+      - name: Download immutable baseline artifacts
+        env: {GH_TOKEN: ${{ github.token }}}
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/base artifacts/stress
+          gh run download 36535251511 -n strategy-alternating-otm12-base -D artifacts/base
+          gh run download 36535251511 -n strategy-alternating-otm12-stress -D artifacts/stress
+          test -s artifacts/base/trades.csv
+          test -s artifacts/stress/trades.csv
+      - name: Run frozen walk-forward
+        run: |
+          python research/alternating_otm_phase_d_walkforward.py             --base-artifact artifacts/base --stress-artifact artifacts/stress             --out reports/alternating-otm-phase-d
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: alternating-otm-phase-d-results
+          path: reports/alternating-otm-phase-d
