@@ -1,1 +1,1 @@
-Phase 50 manual launcher sentinel — corrected workflow refs; execute opening-location frozen grid
+Phase 50 manual launcher sentinel — corrected engine paths; execute frozen opening-location grid
