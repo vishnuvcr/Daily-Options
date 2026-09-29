@@ -1,1 +1,1 @@
-Phase 52 manual launcher sentinel
+Phase 52 manual launcher sentinel — corrected same-session IV engine and workflow; execute frozen grid
