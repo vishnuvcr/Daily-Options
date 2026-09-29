@@ -2,10 +2,6 @@ name: Strategy - Alternating OTM Phase D Walk Forward
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - research/alternating_otm_phase_d_walkforward.py
-      - .github/workflows/alternating-otm-phase-d.yml
 
 permissions:
   contents: read
