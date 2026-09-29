@@ -523,3 +523,8 @@ No post-result change to expiry pair definition, sign boundary, IV inversion, ex
 ## Phase 54 — Same-Session 09:30 Matched-ATM IV Call-Put Spread × Opening Direction
 
 Frozen feature: same-strike 09:30 ATM CE IV minus ATM PE IV at the nearest strict-next expiry; terciles from the preceding 60 valid same-session observations. Cross with FOLLOW/FADE and 10:30/15:10 one-lot 200-point ATM debit-spread execution. Twelve true cells plus five permutation nulls. Phase 54 closed negative after authoritative run 36549550020: all 12 cells negative under Base and Stress; best LOW_SPREAD/FADE/15:10 was -₹49/week Base and -₹143 Stress. No WFA/OOS or tuning.
+
+
+## Phase 54 — Same-Session 09:30 ATM Put–Call IV Spread × Opening Direction
+
+Frozen feature: 09:30 ATM PE IV minus ATM CE IV for the nearest expiry strictly after the current date, classified LOW/MID/HIGH with the prior 60 valid same-session observations. Cross with FOLLOW/FADE at 10:30/15:10. Twelve true cells plus five permutation nulls. Phase 54 closed negative: authoritative run 36549663605; best HIGH_SPREAD/FADE/15:10 had -₹49.18/week Base and -₹142.70 Stress, despite positive gross P&L; no WFA/OOS.
