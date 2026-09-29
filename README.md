@@ -878,3 +878,16 @@ Phase D tested the **frozen** Phase-C first15_abs_ret >= 0.126795% mechanism acr
 - No Phase 47 state-boundary, exit, or threshold retuning is permitted.
 
 [Phase 47 result](https://github.com/vishnuvcr/Daily-Options/blob/phase-47-gap-range-normalization-v1/reports/phase47/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-47-gap-range-normalization-v1/docs/phase47_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-47-gap-range-normalization-v1/docs/phase47_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-47-gap-range-normalization-v1/docs/phase47_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-47-gap-range-normalization-v1)
+
+
+## 2026-09-29 — Phase 48 closed / negative discovery
+
+**Phase 48 — Prior-Session Return Direction × Opening-Gap Direction** is closed negative.
+
+- Authoritative workflow: **36538835468**; artifact **11019348113**.
+- Data gate: **98.86%** feature eligibility; **100%** prior-return coverage; **100%** expiry mapping; **0** prior-information violations.
+- Execution coverage: **98.58%–99.23%** across all 8 cells; Base and Stress accounting reconciled.
+- Best cell: **PRIOR_DOWN / FADE / 10:30** — **-₹336/week Base**, **-₹441/week Stress**, with <40% positive weeks.
+- **0/8** cells cleared the promotion gate; WFA/OOS is not authorized.
+
+[Phase 48 result](https://github.com/vishnuvcr/Daily-Options/blob/phase-48-prior-return-gap-direction-v1/reports/phase48/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-48-prior-return-gap-direction-v1/docs/phase48_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-48-prior-return-gap-direction-v1/docs/phase48_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-48-prior-return-gap-direction-v1)
