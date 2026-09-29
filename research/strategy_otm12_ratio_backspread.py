@@ -36,11 +36,12 @@ def cost(legs, lot, slip, entry_date, exit_date):
 def load_index(root):
     p=root/"index"/"NIFTY.parquet"
     con=duckdb.connect()
+    con.execute("SET TimeZone='Asia/Kolkata'")
     q=f"""SELECT CAST(timestamp AS TIMESTAMP) ts, CAST(trading_day AS DATE) trade_date,
     CAST(open AS DOUBLE) open_px, CAST(high AS DOUBLE) high_px, CAST(low AS DOUBLE) low_px,
     CAST(close AS DOUBLE) close_px FROM read_parquet('{p}',union_by_name=true)
     WHERE CAST(trading_day AS DATE) BETWEEN DATE '{START_DATE}' AND DATE '{END_DATE}'
-    AND CAST(timestamp AS TIME) BETWEEN TIME '09:15:00' AND TIME '15:29:00' ORDER BY ts"""
+    AND CAST(CAST(timestamp AS TIMESTAMP) AS TIME) BETWEEN TIME '09:15:00' AND TIME '15:29:00' ORDER BY ts"""
     x=con.execute(q).df(); con.close()
     if x.empty: raise RuntimeError("NIFTY index data missing in research window")
     x["ts"]=pd.to_datetime(x["ts"]); x["trade_date"]=pd.to_datetime(x["trade_date"]).dt.date
@@ -202,7 +203,7 @@ def run(data,out,slip):
     root=Path(data); out=Path(out); out.mkdir(parents=True,exist_ok=True)
     idx=load_index(root); files=expiry_files(root); sess=assign_expiry(sessions(idx),files)
     if len(sess)<1000: raise RuntimeError(f"Eligibility gate failed: {len(sess)} sessions")
-    con=duckdb.connect(); frames=[]; cov=[]
+    con=duckdb.connect(); con.execute("SET TimeZone='Asia/Kolkata'"); frames=[]; cov=[]
     for expiry,path in files:
         sub=sess[sess.expiry==expiry]; days=sub.trade_date.tolist()
         if not days: continue
