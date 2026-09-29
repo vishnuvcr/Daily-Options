@@ -32,7 +32,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install dependencies
-        run: pip install pandas numpy duckdb pyarrow scipy scikit-learn pytest huggingface_hub
+        run: pip install pandas numpy duckdb pyarrow scipy scikit-learn pytest huggingface_hub huggingface_hub
       - name: Unit tests
         run: PYTHONPATH=. pytest -q tests/test_strategy_otm12_ratio_backspread.py
       - name: Restore pinned-data cache
