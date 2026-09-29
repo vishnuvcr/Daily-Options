@@ -1,1 +1,1 @@
-Phase 55 manual launcher sentinel — verified Phase-55 refs; execute frozen term-structure grid
+Phase 55 manual launcher sentinel — clean engine rebuild verified; execute frozen front-vs-next-expiry ATM IV term structure grid
