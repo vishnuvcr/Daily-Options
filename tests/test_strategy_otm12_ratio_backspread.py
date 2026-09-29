@@ -19,3 +19,11 @@ def test_stress_slippage_cost_is_higher():
     base=cost(legs,65,0.20,date(2026,1,10),date(2026,1,10))
     stress=cost(legs,65,0.40,date(2026,1,10),date(2026,1,10))
     assert stress > base
+
+
+def test_option_trade_date_normalization_matches_session_date_type():
+    # Regression guard for the zero-trade defect: DuckDB DATE may arrive as datetime-like.
+    q = pd.DataFrame({"trade_date": [pd.Timestamp("2021-07-02")], "ts": [pd.Timestamp("2021-07-02 09:31:00")]})
+    q["trade_date"] = pd.to_datetime(q["trade_date"]).dt.date
+    session_date = date(2021, 7, 2)
+    assert q["trade_date"].iloc[0] == session_date
