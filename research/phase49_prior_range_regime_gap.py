@@ -119,11 +119,20 @@ def build_feature_panel(nifty: pd.DataFrame) -> pd.DataFrame:
         (panel["high_1510"].shift(1)-panel["low_1510"].shift(1))
         /panel["close_1510"].shift(1).replace(0,np.nan)
     )
-    # For signal date t, thresholds are based only on the 60 completed range
-    # observations strictly before the prior session (t-1).
-    prior_hist=panel["prior_range_pct"].shift(1)
-    panel["range_q33"]=prior_hist.rolling(LOOKBACK,min_periods=LOOKBACK).quantile(1/3)
-    panel["range_q67"]=prior_hist.rolling(LOOKBACK,min_periods=LOOKBACK).quantile(2/3)
+    # For signal date t, thresholds are based only on the last 60 VALID
+    # completed range observations strictly before the prior session (t-1).
+    vals=panel["prior_range_pct"].to_numpy(dtype=float)
+    valid_idx=np.flatnonzero(np.isfinite(vals))
+    q33=np.full(len(panel),np.nan,dtype=float)
+    q67=np.full(len(panel),np.nan,dtype=float)
+    for i in range(len(panel)):
+        pos=np.searchsorted(valid_idx,i,side="left")
+        if pos>=LOOKBACK:
+            hist=vals[valid_idx[pos-LOOKBACK:pos]]
+            q33[i]=float(np.quantile(hist,1/3))
+            q67[i]=float(np.quantile(hist,2/3))
+    panel["range_q33"]=q33
+    panel["range_q67"]=q67
     panel["feature_eligible"]=panel[[
         "open_0915","close_1510","opening_gap","prior_date",
         "prior_range_pct","range_q33","range_q67"
