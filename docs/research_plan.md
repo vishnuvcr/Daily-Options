@@ -429,3 +429,8 @@ Frozen regime: prior-session NIFTY range percentage classified LOW/MID/HIGH by 3
 ## Phase 50 — Opening Location Relative to Prior Range × Gap Direction
 
 Frozen states: INSIDE_RANGE, ABOVE_RANGE, BELOW_RANGE based on the current 09:15 open relative to the previous completed 15:10 high-low range. Cross with FOLLOW_GAP/FADE_GAP at 10:30 and 15:10 using the validated one-lot 200-point ATM debit spread, historical lots, exact expiry mapping and existing Base/Stress friction. Twelve true cells plus five state-permutation nulls. Phase 50 closed negative: authoritative run 36539948879; best cell INSIDE_RANGE/FADE/15:10 yielded ₹163/week Base and ₹116 Stress, but median and positive-week gates failed. No WFA/OOS.
+
+
+## Phase 51 — Prior-Session ATM IV Level Regime × Opening-Gap Direction
+
+Frozen feature: prior-session 15:10 ATM CE/PE implied-volatility average from the nearest expiry strictly after the prior session date; classify LOW/MID/HIGH by the last 60 valid prior-session ATM-IV observations. Cross with opening-gap FOLLOW/FADE at 10:30/15:10. Twelve true cells plus five permutation nulls. Phase 51 closed DATA-LIMITED because valid ATM-IV coverage was 94.01% and final feature eligibility 93.58%, below the 95% gate. No Base/Stress P&L, WFA or OOS accepted; no coverage relaxation authorized.
