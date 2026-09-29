@@ -52,15 +52,12 @@ def run(base_path,stress_path,out):
         df=pd.read_csv(Path(path)/"trades.csv",parse_dates=["trade_date"])
         r=evaluate(df); res[label]=r
         (out/f"holdout_filter_{label}.json").write_text(json.dumps(r,indent=2))
-    (out/"frozen_filter_definition.md").write_text(
-        "# Frozen Phase-D filter
+    (out/"frozen_filter_definition.md").write_text("""# Frozen Phase-D filter
 
-"
-        "Do not enter when prior-day full-session range > 1.314516% AND days to expiry <= 1.5 calendar days.
+Do not enter when prior-day full-session range > 1.314516% AND days to expiry <= 1.5 calendar days.
 
-"
-        "The thresholds were frozen from Phase-C discovery and were not changed using holdout data.\n"
-    )
+The thresholds were frozen from Phase-C discovery and were not changed using holdout data.
+""")
     (out/"phase_d_results.json").write_text(json.dumps(res,indent=2))
     md=["# Phase D — Frozen Holdout Filter Probe","","The candidate filter was fixed before reading holdout performance.",
         f"- prior-day range > {RANGE_CUTOFF*100:.6f}%",
