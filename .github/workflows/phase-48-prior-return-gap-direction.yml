@@ -1,4 +1,4 @@
-name: Phase 48 gap-range normalization
+name: Phase 48 prior-return gap direction
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: phase-47-prior-return-gap-direction-v1
+          ref: phase-48-prior-return-gap-direction-v1
           fetch-depth: 0
 
       - uses: actions/setup-python@v6
@@ -90,15 +90,15 @@ jobs:
           assert g["status"]=="PASS", g
           for f in ["base","stress"]:
               s=pd.read_csv(f"reports/phase48/{f}/true_cell_summary_{f}.csv")
-              assert len(s)==12,(f,len(s))
+              assert len(s)==8,(f,len(s))
               assert s["accounting_ok"].all(),f
               cov=pd.read_csv(f"reports/phase48/{f}/price_coverage.csv")
-              assert len(cov)==12,(f,len(cov))
+              assert len(cov)==8,(f,len(cov))
               assert cov["execution_coverage"].min() >= 0.95,(f,cov["execution_coverage"].min())
               t=pd.read_csv(f"reports/phase48/{f}/trades.csv")
               assert len(t)>0,(f,"zero true trades")
               n=pd.read_csv(f"reports/phase48/{f}/null_summary.csv")
-              assert len(n)==60,(f,len(n))
+              assert len(n)==40,(f,len(n))
           PY
 
       - name: Persist Phase 48 reports and cache manifest
@@ -110,9 +110,9 @@ jobs:
           mkdir -p reports/phase48
           git add -f reports/phase48
           if ! git diff --cached --quiet; then
-            git commit -m "Phase 48: persist opening volatility research outputs"
+            git commit -m "Phase 48: persist prior-return gap research outputs"
             for attempt in 1 2 3; do
-              if git push origin HEAD:phase-47-prior-return-gap-direction-v1; then exit 0; fi
+              if git push origin HEAD:phase-48-prior-return-gap-direction-v1; then exit 0; fi
               git fetch origin phase-47-prior-return-gap-direction-v1
               git rebase FETCH_HEAD
             done
