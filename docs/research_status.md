@@ -3,7 +3,7 @@
 Last updated: 2026-09-29
 
 ## Overall
-**Phase 43 — NIFTY weekday effect × opening-gap direction: PREREGISTERED / ENGINEERING BUILD**
+**Phase 47 — Opening-gap magnitude normalized by prior-day range: CLOSED NEGATIVE DISCOVERY**
 
 ## Completed frontier closures
 - Phase 34: DATA-LIMITED at 53.20% two-expiry prior-session surface coverage.
@@ -48,3 +48,9 @@ No Phase 41 P&L is accepted until unit tests, data gates, execution coverage, ac
 - Phase 44: **CLOSED DATA-LIMITED** — authoritative run 36471949846; LARGE_GAP cells had 94.44% execution coverage, below the frozen 95% gate; no P&L promotion accepted.
 - Phase 45: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36472742169; no 12-cell confirmation state cleared the promotion gate.
 - Phase 46: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36473334899; no 12-cell close-location state cleared the promotion gate.
+
+
+## 2026-09-29 latest frontier update
+- Phase 46: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36473334899; 0/12 true cells cleared the dual-friction promotion gate.
+- Phase 47: **CLOSED NEGATIVE DISCOVERY** — authoritative run **36538234322**; 1,219/1,228 feature-eligible sessions (99.267%), 0 prior-information violations, 98.56–100% execution coverage. Best cell MEDIUM_REL_GAP / FADE / 15:10 produced ₹714/week Base and ₹666/week Stress, below the ₹5,000/week gate. No WFA/OOS authorized.
+- The next family must be materially distinct; no Phase 47 threshold or state retuning is authorized.
