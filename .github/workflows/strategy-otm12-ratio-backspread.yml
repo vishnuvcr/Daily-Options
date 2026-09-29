@@ -1,10 +1,10 @@
-name: Strategy — OTM1 / 2x OTM2 Four-Leg Intraday Ratio Backspread
+name: Strategy — OTM1 / 2x OTM2 Reversed Four-Leg Ratio Spread
 
 on:
   workflow_dispatch:
   push:
     branches:
-      - strategy/otm1-2x-otm2-ratio-backspread-v1
+      - strategy/otm1-2x-otm2-reversed-ratio-v1
     paths:
       - research/strategy_otm12_ratio_backspread.py
       - tests/test_strategy_otm12_ratio_backspread.py
