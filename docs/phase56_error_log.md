@@ -17,3 +17,5 @@
 | E056-002 | 2026-09-29 | Data gate run 36550927372 | The event executed a pre-fix branch revision and raised KeyError for prior-session OHLC fields that are now persisted in the current branch | No P&L accepted | Current branch contains persisted prior OHLC columns; fresh launcher event will execute current head | CLOSED |
 
 | E056-002 | 2026-09-29 | Authoritative workflow 36551083186 | None after correction | None | Data gate, Base, Stress, validation, null controls, persistence and accounting passed; phase closed negative | CLOSED |
+
+| E056-004 | 2026-09-29 | Authoritative run 36551165273 | None | None | Data gate, Base, Stress, validation, persistence, null controls and accounting all passed; phase closed negative | CLOSED |
