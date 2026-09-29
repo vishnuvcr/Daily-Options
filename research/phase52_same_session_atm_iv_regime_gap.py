@@ -184,19 +184,18 @@ def attach_same_session_atm_iv(panel: pd.DataFrame, root: Path, expiries: dict) 
     con=duckdb.connect()
     con.execute("SET TimeZone='Asia/Kolkata'")
     rows=[]
-    # Prior session expiry is the nearest expiry strictly after that prior date.
     for expiry in keys:
-        work=x[(x["prior_date"].notna())].copy()
-        work["prior_expiry"]=[
-            keys[bisect.bisect_right(keys,d)] if bisect.bisect_right(keys,d) < len(keys) else None
-            for d in work["prior_date"]
+        work=x.copy()
+        work["exec_expiry"]=[
+            keys[bisect.bisect_left(keys,d)] if bisect.bisect_left(keys,d)<len(keys) else None
+            for d in work["date"]
         ]
-        g=work[work["prior_expiry"]==expiry].dropna(subset=["prior_date","close_1510"]).copy()
+        g=work[work["exec_expiry"]==expiry].dropna(subset=["date","atm","spot_0930"]).copy()
         if g.empty:
             continue
-        dates=sorted(set(g["prior_date"].tolist()))
+        dates=sorted(set(g["date"].tolist()))
         date_sql=",".join(f"DATE '{d}'" for d in dates)
-        strikes=sorted(set(round_strike(v) for v in g["close_1510"].tolist()))
+        strikes=sorted(set(float(v) for v in g["atm"].tolist()))
         strike_sql=",".join(str(v) for v in strikes)
         p=str(expiries[expiry]).replace("'","''")
         q=f"""
@@ -207,7 +206,7 @@ def attach_same_session_atm_iv(panel: pd.DataFrame, root: Path, expiries: dict) 
                  CAST(close AS DOUBLE) close_px
           FROM read_parquet('{p}')
           WHERE CAST(timestamp AS DATE) IN ({date_sql})
-            AND strftime(CAST(timestamp AS TIMESTAMP),'%H:%M:%S')='15:10:00'
+            AND strftime(CAST(timestamp AS TIMESTAMP),'%H:%M:%S')='09:30:00'
             AND strike IN ({strike_sql})
             AND UPPER(CAST(option_type AS VARCHAR)) IN ('CE','PE')
         """
@@ -221,19 +220,20 @@ def attach_same_session_atm_iv(panel: pd.DataFrame, root: Path, expiries: dict) 
     if not quotes.empty:
         for r in quotes.itertuples(index=False):
             qmap[(pd.Timestamp(r.date).date(),str(r.option_type).upper(),float(r.strike))]=float(r.close_px) if pd.notna(r.close_px) else np.nan
+
     for i,r in x.iterrows():
-        if pd.isna(r["prior_date"]) or pd.isna(r["close_1510"]):
+        if pd.isna(r["date"]) or pd.isna(r["atm"]) or pd.isna(r["spot_0930"]):
+            x.at[i,"iv_fail_reason"]="MISSING_0930_SPOT_OR_ATM"
             continue
-        d=pd.Timestamp(r["prior_date"]).date()
-        # nearest expiry strictly after prior session date
-        pos=bisect.bisect_right(keys,d)
+        d=pd.Timestamp(r["date"]).date()
+        pos=bisect.bisect_left(keys,d)
         if pos>=len(keys):
-            x.at[i,"iv_fail_reason"]="NO_STRICT_NEXT_EXPIRY"
+            x.at[i,"iv_fail_reason"]="NO_ON_OR_AFTER_EXPIRY"
             continue
         expiry=keys[pos]
-        spot=float(r["close_1510"])
-        strike=float(round_strike(spot))
-        t=max((pd.Timestamp(f"{expiry} 15:30:00")-pd.Timestamp(f"{d} 15:10:00")).total_seconds()/31536000.0,1e-8)
+        spot=float(r["spot_0930"])
+        strike=float(r["atm"])
+        t=max((pd.Timestamp(f"{expiry} 15:30:00")-pd.Timestamp(f"{d} 09:30:00")).total_seconds()/31536000.0,1e-8)
         ce=qmap.get((d,"CE",strike),np.nan)
         pe=qmap.get((d,"PE",strike),np.nan)
         if not np.isfinite(ce) or ce<=0 or not np.isfinite(pe) or pe<=0:
@@ -249,8 +249,7 @@ def attach_same_session_atm_iv(panel: pd.DataFrame, root: Path, expiries: dict) 
         x.at[i,"same_session_atm_iv"]=(ivce+ivpe)*50.0
         x.at[i,"iv_valid"]=True
         x.at[i,"iv_fail_reason"]="OK"
-    # Regime thresholds use the last 60 valid prior-session ATM-IV observations
-    # strictly before the prior session of the signal date.
+
     vals=x["same_session_atm_iv"].to_numpy(dtype=float)
     valid_idx=np.flatnonzero(np.isfinite(vals))
     q33=np.full(len(x),np.nan,dtype=float)
@@ -261,20 +260,19 @@ def attach_same_session_atm_iv(panel: pd.DataFrame, root: Path, expiries: dict) 
             hist=vals[valid_idx[pos-LOOKBACK:pos]]
             q33[i]=float(np.quantile(hist,1/3))
             q67[i]=float(np.quantile(hist,2/3))
-    x["range_q33"]=q33
-    x["range_q67"]=q67
-    x["feature_eligible"]=x["feature_eligible"] & x["iv_valid"] & x["range_q33"].notna() & x["range_q67"].notna()
+    x["q33"]=q33
+    x["q67"]=q67
+    x["feature_eligible"]=x["feature_eligible"] & x["iv_valid"] & x["q33"].notna() & x["q67"].notna()
     x["barrier_ok"]=x["barrier_ok"] & x["feature_eligible"]
     iv=x["same_session_atm_iv"]
     x["state"]=np.select(
-        [iv < x["range_q33"], iv < x["range_q67"]],
+        [iv < x["q33"], iv < x["q67"]],
         ["LOW_IV","MID_IV"],
         default="HIGH_IV",
     )
     x.loc[~x["feature_eligible"],"state"]="MID_IV"
     x["feature_date"]=x["date"].astype(str)
     return x
-
 
 def attach_expiry(panel: pd.DataFrame, expiries: dict) -> pd.DataFrame:
     keys = sorted(expiries)
@@ -471,12 +469,11 @@ def data_gate(panel: pd.DataFrame, expiries: dict) -> dict:
     eligible=int(post["feature_eligible"].sum())
     complete=int((post["feature_eligible"] & post["barrier_ok"]).sum())
     violations=int((panel["feature_eligible"] & ~panel["barrier_ok"]).sum())
-    iv_valid=int((post["iv_valid"]).sum())
+    iv_valid=int(post["iv_valid"].sum())
     iv_cov=iv_valid/post_warmup if post_warmup else 0.0
     feature_cov=eligible/post_warmup if post_warmup else 0.0
-    eligible_dates=post.loc[post["feature_eligible"],"date"]
     keys=sorted(expiries)
-    expiry_ok=int(sum(bisect.bisect_right(keys,d)<len(keys) for d in post.loc[post["feature_eligible"],"prior_date"]))
+    expiry_ok=int(sum(bisect.bisect_left(keys,d)<len(keys) for d in post.loc[post["feature_eligible"],"date"]))
     exp_cov=expiry_ok/eligible if eligible else 0.0
     status="PASS" if feature_cov>=COVERAGE_TARGET and iv_cov>=COVERAGE_TARGET and exp_cov>=COVERAGE_TARGET and violations==0 else "FAIL"
     fail_counts={str(k):int(v) for k,v in post.loc[~post["iv_valid"],"iv_fail_reason"].value_counts().head(12).to_dict().items()}
