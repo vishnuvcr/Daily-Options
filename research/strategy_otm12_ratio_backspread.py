@@ -133,6 +133,7 @@ def make_trades(sess,q,diag_rows=None,expiry=None):
         if not k:
             drow["stage"]="insufficient_otm_strikes"; diag_rows.append(drow) if diag_rows is not None else None; continue
         drow.update({"short_ce":k["short_ce"],"long_ce":k["long_ce"],"short_pe":k["short_pe"],"long_pe":k["long_pe"]})
+        # Reversed construction: BUY 1 OTM1, SELL 2 OTM2 on each side.
         specs=[("short_ce","CE",k["short_ce"],1,1),("long_ce","CE",k["long_ce"],-1,2),
                ("short_pe","PE",k["short_pe"],1,1),("long_pe","PE",k["long_pe"],-1,2)]
         exact=z[z.ts.dt.strftime("%H:%M:%S")==EXIT_TIME]
@@ -180,10 +181,10 @@ def make_trades(sess,q,diag_rows=None,expiry=None):
 def apply_costs(t,slip):
     cs=[]; nets=[]
     for r in t.itertuples(index=False):
-        legs=[{"entry":r.short_ce_entry,"exit":r.short_ce_exit,"qty":1,"sign":-1},
-              {"entry":r.long_ce_entry,"exit":r.long_ce_exit,"qty":2,"sign":1},
-              {"entry":r.short_pe_entry,"exit":r.short_pe_exit,"qty":1,"sign":-1},
-              {"entry":r.long_pe_entry,"exit":r.long_pe_exit,"qty":2,"sign":1}]
+        legs=[{"entry":r.short_ce_entry,"exit":r.short_ce_exit,"qty":1,"sign":1},
+              {"entry":r.long_ce_entry,"exit":r.long_ce_exit,"qty":2,"sign":-1},
+              {"entry":r.short_pe_entry,"exit":r.short_pe_exit,"qty":1,"sign":1},
+              {"entry":r.long_pe_entry,"exit":r.long_pe_exit,"qty":2,"sign":-1}]
         c=cost(legs,int(r.lot),slip,r.trade_date,r.trade_date); cs.append(c); nets.append(r.gross_pnl-c)
     z=t.copy(); z["total_cost"]=cs; z["net_pnl"]=nets; z=z.sort_values("trade_date").reset_index(drop=True)
     z["cum_net_pnl"]=z.net_pnl.cumsum(); z["peak_cum_net_pnl"]=z.cum_net_pnl.cummax(); z["drawdown"]=z.cum_net_pnl-z.peak_cum_net_pnl
