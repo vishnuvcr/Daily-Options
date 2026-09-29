@@ -11,3 +11,5 @@
 | E054-003 | 2026-09-29 | Data-gate run 36549490145 | Workflow invoked phase54_same_session_atm_skew_opening.py, which does not exist on the Phase-54 branch | No data/P&L accepted | Repointed gate/Base/Stress commands to phase54_same_session_atm_iv_spread_opening.py; frozen matched-ATM spread design unchanged | CLOSED |
 
 | E054-002 | 2026-09-29 | Gate run 36549490145 | Workflow called nonexistent research/phase54_same_session_atm_skew_opening.py; no data calculation ran | No P&L accepted | Repointed workflow to research/phase54_same_session_atm_iv_spread_opening.py and matching test path; research definition unchanged | CLOSED |
+
+| E054-003 | 2026-09-29 | Authoritative run 36549550020 | None | None | Data gate, Base, Stress, validation, null controls and accounting all passed | CLOSED |
