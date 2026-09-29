@@ -434,3 +434,8 @@ Frozen states: INSIDE_RANGE, ABOVE_RANGE, BELOW_RANGE based on the current 09:15
 ## Phase 51 — Prior-Session ATM IV Level Regime × Opening-Gap Direction
 
 Frozen feature: prior-session 15:10 ATM CE/PE implied-volatility average from the nearest expiry strictly after the prior session date; classify LOW/MID/HIGH by the last 60 valid prior-session ATM-IV observations. Cross with opening-gap FOLLOW/FADE at 10:30/15:10. Twelve true cells plus five permutation nulls. Phase 51 closed DATA-LIMITED because valid ATM-IV coverage was 94.01% and final feature eligibility 93.58%, below the 95% gate. No Base/Stress P&L, WFA or OOS accepted; no coverage relaxation authorized.
+
+
+## Phase 52 — Same-Session 09:30 ATM IV Level Regime × Opening Direction
+
+Frozen feature: same-session 09:30 ATM CE/PE IV average from the nearest expiry strictly after the current trading date, with LOW/MID/HIGH empirical terciles from the last 60 valid prior observations. Cross with opening-direction FOLLOW/FADE at 10:30/15:10. Twelve cells plus five permutation nulls. Phase 52 closed negative in authoritative workflow 36548301179; all 12 cells were negative under Base and Stress. Best cell MID_IV/FADE/15:10 was -₹100.61/week Base and -₹182.60 Stress. No WFA/OOS.
