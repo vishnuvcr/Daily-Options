@@ -65,3 +65,9 @@ No Phase 41 P&L is accepted until unit tests, data gates, execution coverage, ac
 - Phase 51: **CLOSED DATA-LIMITED** — authoritative run 36540501382; prior-session ATM IV coverage 94.01%, feature eligibility 93.58%, below the 95% gate; no P&L accepted.
 - Phase 52: **CLOSED NEGATIVE DISCOVERY** — authoritative run **36548301179**; 98.12% feature eligibility, 98.80% same-session ATM-IV coverage, 0 prior-information violations, 98.80–100% execution coverage. Best cell MID_IV/FADE/15:10 was -₹101/week Base and -₹183 Stress; all 12 cells failed promotion.
 - Next frontier: **Phase 53 — same-session 09:30 ATM-adjacent IV skew × opening direction**.
+
+
+## 2026-09-29 latest frontier update
+- Phase 51: **CLOSED DATA-LIMITED** — authoritative run 36540501382; prior-session ATM-IV coverage 94.01%, below the 95% gate.
+- Phase 52: **CLOSED NEGATIVE DISCOVERY** — authoritative run **36548301179**; 98.12% final feature eligibility, 98.80% same-session ATM-IV coverage, 0 prior-information violations, 98.80–100% execution coverage. Best cell MID_IV/FADE/15:10 = -₹100.61/week Base / -₹182.60 Stress. No WFA/OOS.
+- Current frontier: **Phase 53 — same-session 09:30 near-ATM IV skew × opening direction**.
