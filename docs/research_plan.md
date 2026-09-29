@@ -564,3 +564,8 @@ Frozen feature: average 09:30 adjacent OTM-wing IV (ATM−₹50 PE and ATM+₹50
 ## Phase 56 — Prior-Session Candle Conviction Regime × Opening-Gap Direction
 
 Frozen feature: prior-session body/range ratio = abs(prior 15:10 close − prior 09:15 open)/(prior high − prior low), classified LOW/MID/HIGH by the last 60 valid observations strictly before the current date. Cross current opening-gap FOLLOW/FADE at 10:30/15:10. Twelve true cells plus five permutation nulls. Authoritative run 36551083186 closed negative: best LOW_CONVICTION/FADE/15:10 = -₹125.86/week Base / -₹201.79 Stress. No WFA/OOS or retuning.
+
+
+## Phase 57 — 09:15–09:30 Opening-Range Volatility Regime × Opening-Gap Direction
+
+Frozen feature: opening-range high-low from 09:15–09:29 inclusive, normalized by prior completed 15:10 high-low; LOW/MID/HIGH terciles using the last 60 valid ratios strictly before each date. Cross current opening-gap FOLLOW/FADE at 10:30/15:10. Twelve true cells plus five permutation nulls. Authoritative run 36551911099 closed negative: best LOW_OPEN_RANGE/FADE/15:10 = -₹88.46/week Base and -₹172.36 Stress; no WFA/OOS.
