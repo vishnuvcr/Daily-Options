@@ -565,3 +565,7 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 
 | E0448 | 2026-09-29 | Phase 56 run 36550927372 | build_feature_panel referenced prior OHLC aliases before panel persistence; data gate raised KeyError | No P&L accepted | Persisted prior-session OHLC aliases before completeness/state calculation; rerun 36551083186 passed | CLOSED |
 | E0449 | 2026-09-29 | Phase 56 authoritative run 36551083186 | None | None | Data gate, Base, Stress, validation and accounting passed; phase closed negative | CLOSED |
+
+| E0450 | 2026-09-29 | Phase 57 first workflow 36551696339 | Checkout/persistence still referenced non-existent phase-56-opening-range-vol-gap-v1 | No numerical work accepted | Corrected workflow to phase-57-opening-range-vol-gap-v1 | CLOSED |
+| E0451 | 2026-09-29 | Phase 57 gate run 36551736504 | prior_range was used in completeness check but not persisted into panel | No P&L accepted | Persisted prior_range; rerun 36551911099 passed | CLOSED |
+| E0452 | 2026-09-29 | Phase 57 authoritative run 36551911099 | None | None | Data gate, Base, Stress, validation and accounting passed; phase closed negative | CLOSED |
