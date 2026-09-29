@@ -95,7 +95,7 @@ def query_quotes(con,path,days):
     CAST(o.strike AS DOUBLE) strike, UPPER(CAST(o.option_type AS VARCHAR)) option_type,
     CAST(o.open AS DOUBLE) open_px, CAST(o.close AS DOUBLE) close_px FROM read_parquet('{path}',union_by_name=true) o
     JOIN d ON CAST(o.trading_day AS DATE)=d.trade_date
-    WHERE CAST(CAST(o.timestamp AS TIMESTAMP) AS TIME) IN (TIME '{ENTRY_FILL}',TIME '{EXIT_TIME}',TIME '{EXIT_FALLBACK_TIME}') AND (o.open>0 OR o.close>0)"""
+    WHERE (o.open>0 OR o.close>0)"""
     x=con.execute(q).df()
     if x.empty: return x
     x["ts"]=pd.to_datetime(x["ts"])
