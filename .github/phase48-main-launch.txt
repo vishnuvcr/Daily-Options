@@ -1,1 +1,1 @@
-Phase 48 manual launcher sentinel
+Phase 48 manual launcher sentinel — corrected prior-return engine and workflow; run frozen grid
