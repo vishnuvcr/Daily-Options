@@ -122,44 +122,13 @@ def build_feature_panel(nifty: pd.DataFrame) -> pd.DataFrame:
     panel["prior_close"]=prior_close
     panel["prior_range"]=prior_range
     panel["opening_gap"]=(panel["open_0915"]/prior_close)-1.0
-
-    orbars=nifty[(nifty["time"]>="09:15:00") & (nifty["time"]<="09:29:00")].copy()
-    oragg=(orbars.groupby("date",as_index=False)
-           .agg(or_high=("high_px","max"),or_low=("low_px","min"),or_bar_count=("time","size")))
-    panel=panel.merge(oragg,on="date",how="left")
-    panel["volume_width"]=panel["or_high"]-panel["or_low"]
-    panel["opening_range_ratio"]=panel["opening_range_width"]/prior_range.replace(0,np.nan)
-
-    ratio=panel["opening_range_ratio"].to_numpy(dtype=float)
-    valid_idx=np.flatnonzero(np.isfinite(ratio))
-    q33=np.full(len(panel),np.nan,dtype=float)
-    q67=np.full(len(panel),np.nan,dtype=float)
-    for i in range(len(panel)):
-        pos=np.searchsorted(valid_idx,i,side="left")
-        if pos>=LOOKBACK:
-            hist=ratio[valid_idx[pos-LOOKBACK:pos]]
-            q33[i]=float(np.quantile(hist,1/3))
-            q67[i]=float(np.quantile(hist,2/3))
-    panel["opening_range_q33"]=q33
-    panel["opening_range_q67"]=q67
-
     panel["feature_eligible"]=panel[[
-        "open_0915","close_1510","opening_gap","prior_date",
-        "prior_high","prior_low","prior_close","prior_range",
-        "or_high","or_low","or_bar_count","opening_range_ratio",
-        "opening_range_q33","opening_range_q67"
-    ]].notna().all(axis=1) & (prior_range>0) & (panel["or_bar_count"]>=15)
+        "open_0915","close_1510","opening_gap","prior_date","prior_range"
+    ]].notna().all(axis=1) & (prior_range>0)
     panel["barrier_ok"]=panel["feature_eligible"] & (
         pd.to_datetime(panel["prior_date"]) < pd.to_datetime(panel["date"])
     )
     panel["direction"]=np.sign(panel["opening_gap"]).fillna(0).astype(int)
-    ratio=panel["opening_range_ratio"]
-    panel["state"]=np.select(
-        [ratio < panel["opening_range_q33"], ratio < panel["opening_range_q67"]],
-        ["LOW_VOLUME_IMBALANCE","MID_VOLUME_IMBALANCE"],
-        default="HIGH_VOLUME_IMBALANCE",
-    )
-    panel.loc[~panel["feature_eligible"],"state"]="MID_OPEN_RANGE"
     panel["feature_date"]=panel["date"].astype(str)
     return panel
 
