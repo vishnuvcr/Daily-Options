@@ -1,22 +1,21 @@
 # Phase 51 Status
 
-**State: PREREGISTERED / ENGINEERING BUILD**
+**State: CLOSED — DATA-LIMITED**
 
-Branch: phase-51-prior-atm-iv-regime-gap-v1
+Authoritative workflow: **36540501382**  
+Artifact: **11020206536**
 
-Frozen feature:
-- prior-session ATM CE/PE IV average
-- nearest expiry strictly after prior session date
-- last 60 valid prior-session ATM IV observations
-- LOW/MID/HIGH empirical terciles
+Data gate:
+- 1,168 post-warm-up sessions
+- 1,098 valid prior-session ATM IV observations = **94.01%**
+- 1,093 feature-eligible sessions = **93.58%**
+- 100% expiry mapping
+- 0 prior-information violations
+- required coverage = 95%
 
-Frozen execution:
-- 09:31 entry
-- 10:30 / 15:10 exits
-- one-lot 200-point ATM debit spread
-- nearest expiry on/after trade date
-- historical lots
-- Base/Stress ₹0.20/₹0.40 slippage
-- existing Paytm Money/NSE/statutory charges
+Failure reasons:
+- 33 missing ATM CE/PE quotes
+- 33 IV inversion failures
+- 4 other/empty failure records
 
-No result is accepted until unit tests, IV data gates, execution coverage, null controls and accounting all pass.
+No Base/Stress P&L was accepted. No WFA/OOS authorized. No coverage threshold relaxation is permitted.
