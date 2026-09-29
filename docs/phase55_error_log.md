@@ -11,3 +11,5 @@
 | E055-003 | 2026-09-29 | Workflow preflight | YAML still referenced Phase-54 branch and engine/test filenames after the first correction | No valid launch accepted | Repointed checkout, engine, tests and persistence push target to the Phase-55 branch/names | CLOSED |
 
 | E055-004 | 2026-09-29 | Authoritative run 36550327814 | First Phase-55 engine splice concatenated attach_current_atm_term_structure after __main__, causing SyntaxError before data gate | No P&L accepted | Rebuilt engine cleanly from validated Phase-54 source, preserving attach_expiry/run/main structure; term-structure feature only changed | CLOSED |
+
+| E055-005 | 2026-09-29 | Authoritative run 36550678482 | Front/back same-strike 09:30 ATM IV coverage was 73.13% (898/1,228), below frozen 95% gate; 330 sessions lacked front/back ATM IV | No P&L accepted | Closed Phase 55 DATA-LIMITED; do not lower coverage gate or alter term-structure definition | CLOSED |
