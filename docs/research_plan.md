@@ -554,3 +554,8 @@ FOLLOW_OPEN / FADE_OPEN; 09:31 option-open entry; 10:30/15:10 exits; one-lot 200
 
 ### Stop rule
 No post-result body-ratio threshold, state boundary, mapping, exit, expiry, spread width or cost retuning.
+
+
+## Phase 55 — Same-Session 09:30 IV Smile Curvature × Opening Direction
+
+Frozen feature: average 09:30 adjacent OTM-wing IV (ATM−₹50 PE and ATM+₹50 CE) minus average 09:30 matched ATM CE/PE IV, nearest strict-next expiry; terciles from the preceding 60 valid same-session observations. Cross with FOLLOW/FADE and 10:30/15:10. Twelve cells plus five permutation nulls. Phase 55 closed negative after authoritative run 36550200125: all 12 cells negative; best HIGH_CURVATURE/FADE/15:10 was -₹59.85/week Base and -₹141.33 Stress. No WFA/OOS or tuning.
