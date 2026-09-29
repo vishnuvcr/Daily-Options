@@ -1,22 +1,21 @@
 # Phase 47 Status
 
-**State: PREREGISTERED / ENGINEERING BUILD**
+**State: CLOSED — NEGATIVE DISCOVERY**
 
-Branch: phase-47-gap-range-normalization-v1
+Authoritative workflow: **36538234322**  
+Artifact: **11019930108**
 
-Objective: test opening-gap magnitude normalized by the prior session's high-low range against FOLLOW/FADE execution.
+Data integrity passed:
+- 99.267% feature eligibility
+- 100% prior-range validity
+- 100% expiry mapping
+- 0 prior-information violations
+- 98.56–100% execution coverage
 
-Frozen states:
-- SMALL_REL_GAP < 0.20
-- MEDIUM_REL_GAP 0.20–<0.40
-- LARGE_REL_GAP >= 0.40
+Best cell: **MEDIUM_REL_GAP / FADE / 15:10**
+- Base: **₹714/week mean**, ₹301 median, 62.5% positive weeks
+- Stress: **₹666/week mean**, ₹271 median, 62.5% positive weeks
 
-Frozen execution:
-- 09:31 option-open entry
-- 10:30 and 15:10 exits
-- one-lot 200-point ATM debit spread
-- historical lots
-- Base/Stress ₹0.20/₹0.40 slippage
-- existing Paytm Money/NSE/statutory charges
+No cell cleared the ₹5,000/week mean + median + 70% positive-week gate in both Base and Stress.
 
-No numerical result is accepted until the data gate, tests, execution coverage, null controls and accounting all pass.
+No WFA/OOS authorized. No post-result tuning authorized.
