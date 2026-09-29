@@ -7,7 +7,7 @@ import pandas as pd
 START="2021-07-01"
 END="2026-08-04"
 
-def main(root: str, out_file: str) -> None:
+def main(root: str, out_file: str) -> None:  # probe-only rerun trigger
     root=Path(root)
     idx=root/"index"/"NIFTY.parquet"
     option_files=sorted((root/"options"/"NIFTY").glob("*.parquet"))
