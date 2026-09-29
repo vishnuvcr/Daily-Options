@@ -4,37 +4,50 @@ As of: 2026-09-29
 
 | Phase | Status | Result |
 |---|---|---|
-| A implementation/data gate | CLOSED | Timestamp probe passed; option/session trade-date join fixed; regression coverage added. |
-| B baseline Base/Stress | CLOSED | Clean workflow 36532252218 PASS. 1,209 trades, 98.53% execution coverage. Base net P&L -₹717,921.87; Stress net P&L -₹874,857.87. |
-| C losing-trade/common-circumstance analysis | ACTIVE | Dedicated branch will quantify winner/loser feature differences and stable loser regimes. |
-| D frozen holdout filter probe | CLOSED | Phase D workflow 36533292973 SUCCESS. No tested frozen filter produced positive holdout expectancy in Base or Stress. |
-| E conclusion/manuscript | CLOSED | Final manuscript completed on `research/otm12-phase-e-manuscript`. |
+| A implementation/data gate | CLOSED | Timestamp semantics, trade-date join, leg completeness and cost plumbing validated. |
+| B baseline Base/Stress | CLOSED | Clean workflow 36532252218 PASS: 1,209 completed trades, 98.53% execution coverage. |
+| C losing-trade/common-circumstance analysis | CLOSED | Workflow 36533478456 PASS. High prior-day range + near-expiry identified as a repeatable loss-concentration regime. |
+| D frozen holdout filter probe | CLOSED | Workflow 36533719671 PASS. Frozen filter replicated on 2025+ holdout and improved negative P&L without making the retained strategy profitable. |
+| E conclusion/manuscript | CLOSED | Workflow 36534074291 PASS. Final manuscript, supplement, tables and figures validated. |
 
-## Clean baseline
-- Workflow: 36532252218
-- Commit: `2a2f4613484c8f600c76af889f0b3aa27cb8b889`
-- Eligible sessions: 1,227
-- Executed trades: 1,209
-- Execution coverage: 98.53%
-- Base: 312 wins / 897 losses; win rate 25.81%; gross P&L -₹272,009.75; costs ₹445,912.12; net P&L -₹717,921.87; profit factor 0.517; max drawdown -₹716,320.49.
-- Stress: 289 wins / 920 losses; win rate 23.90%; gross P&L -₹272,009.75; costs ₹602,848.12; net P&L -₹874,857.87; profit factor 0.454; max drawdown -₹873,136.49.
-- Median net trade: -₹915.50 Base / -₹1,032.73 Stress.
-- Mean winning trade: ₹2,459.89 Base / ₹2,521.14 Stress; mean losing trade: -₹1,655.97 Base / -₹1,742.90 Stress.
+## Clean baseline conclusion
 
-## Phase-C early evidence
-- A shallow loss classifier has no useful predictive power: discovery cross-validated ROC-AUC is approximately 0.51 Base and 0.38 Stress.
-- A separate discovery-only regression tree identifies a repeatable high-loss regime: prior-day range above ~1.3145% together with <=1.5 calendar days to expiry.
-- That regime is deliberately being treated as a candidate loser-avoidance rule only; holdout validation is required before any operational use.
+Base:
+- 1,209 trades; 312 wins / 897 losses
+- Win rate 25.81%
+- Gross P&L -₹272,009.75
+- Costs ₹445,912.12
+- Net P&L -₹717,921.87
+- Profit factor 0.517
+- Max drawdown -₹716,320.49
 
-## Integrity rules
-- No post-entry variable may be used as an entry filter.
-- No parameter is tuned on the holdout.
-- No earlier failed run is used as trading evidence.
-- Base and Stress both must agree before a result is treated as robust.
+Stress:
+- 1,209 trades; 289 wins / 920 losses
+- Win rate 23.90%
+- Gross P&L -₹272,009.75
+- Costs ₹602,848.12
+- Net P&L -₹874,857.87
+- Profit factor 0.454
+- Max drawdown -₹873,136.49
 
+## Main research finding
 
-## Final conclusion
-The exact fixed one-lot structure is not validated as a profitable strategy after costs. Clean Base net P&L was -₹717,921.87 and Stress net P&L was -₹874,857.87 across 1,209 trades. Profits occur when one wing receives a sufficiently large positive expansion in the 2x farther OTM longs; the pre-entry feature family did not predict that expansion robustly. The frozen holdout probe improved the loss magnitude but remained negative in both friction models. No further parameter optimization is authorized under this bounded research plan.
+The strongest repeatable loser regime is prior-day NIFTY range > 1.314516% together with days to expiry <= 1.5 calendar days.
+
+On the untouched 2025+ holdout this regime contained 24 of 348 trades (6.90%) and had mean net P&L about -₹2.83k Base / -₹3.00k Stress.
+
+Excluding those trades improved holdout net P&L by ₹67,879 Base and ₹71,911 Stress, but the retained strategy remained negative at -₹663.91/trade Base and -₹836.94/trade Stress.
+
+## Profit mechanism
+
+Profitable trades are primarily one-sided convex outcomes: in 100% of winners, at least one of the combined call-side or put-side contributions was positive. The complete win generally comes from a sufficiently large move through one wing rather than simultaneous movement on both sides.
+
+## Final interpretation
+
+This branch does not establish a profitable standalone trading strategy. It establishes a reproducible loss-concentration regime that can be used as a research clue for future, separately validated entry filters or strategy redesign.
 
 ## Final manuscript
-See branch: `research/otm12-phase-e-manuscript`.
+
+- Branch: research/otm12-phase-e-manuscript-v1
+- Final validation workflow: 36534074291
+
