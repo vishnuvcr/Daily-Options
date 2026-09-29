@@ -1,1 +1,1 @@
-Phase 52 manual launcher sentinel — syntax corrected; execute frozen same-session IV grid
+Phase 52 manual launcher sentinel — spot merge fixed; run frozen same-session IV grid
