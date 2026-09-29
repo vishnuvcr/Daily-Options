@@ -557,3 +557,6 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0446 | 2026-09-29 | Phase 54 authoritative run 36549663605 | None | None | Data gate, Base, Stress, validation and accounting passed; phase closed negative | CLOSED |
 
 | E0446 | 2026-09-29 | Phase 55 authoritative gate 36550269685 | Front/back ATM CE/PE term-structure completeness 72.77% < frozen 95% gate | No P&L accepted | Closed Phase 55 DATA-LIMITED; do not lower coverage threshold | CLOSED |
+
+| E0445 | 2026-09-29 | Phase 55 workflow retries | Inherited Phase-54 checkout/persistence references caused non-evidentiary checkout failure before numerical work | No P&L accepted from failed run 36550145722 | Corrected all branch references and reran authoritative workflow 36550200125 successfully | CLOSED |
+| E0446 | 2026-09-29 | Phase 55 authoritative run 36550200125 | None | None | Data gate, Base, Stress, validation, null controls, persistence and accounting all passed; phase closed negative | CLOSED |
