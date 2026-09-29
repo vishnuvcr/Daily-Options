@@ -58,26 +58,16 @@ No Phase 41 P&L is accepted until unit tests, data gates, execution coverage, ac
 
 
 
+
 ## 2026-09-29 latest frontier update
 - Phase 46: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36473334899.
 - Phase 47: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36538234322; best cell ₹714/week Base / ₹666 Stress.
-- Phase 48: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36538835468; all 8 cells negative in Base and Stress.
+- Phase 48: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36538835468; all 8 cells negative.
 - Phase 49: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36539451804; best cell ₹88/week Base / ₹9 Stress.
 - Phase 50: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36539948879; best cell ₹163/week Base / ₹116 Stress.
 - Phase 51: **CLOSED DATA-LIMITED** — authoritative run 36540501382; no P&L accepted.
 - Phase 52: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36548301179; best cell -₹101/week Base / -₹183 Stress.
 - Phase 53: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36548934744; best cell -₹198/week Base / -₹293 Stress.
-- Phase 54: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36549550020; 98.12% feature eligibility, 98.80% matched-ATM CE/PE IV coverage, 0 prior-information violations, 99.04–100% execution coverage. Best cell LOW_SPREAD/FADE/15:10 was -₹49/week Base / -₹143 Stress; all 12 cells failed promotion.
-- Next frontier: **Phase 55 — same-session 09:30 ATM volatility-surface curvature × opening direction**.
-
-
-## 2026-09-29 latest frontier update
-- Phase 53: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36548991737; best MID_SKEW/FADE/15:10 = -₹177.32/week Base / -₹252.72 Stress.
-- Phase 54: **CLOSED NEGATIVE DISCOVERY** — authoritative run **36549663605**; 98.12% final feature eligibility, 98.80% ATM IV-spread coverage, 0 prior-information violations, 99.04–100% execution coverage. Best HIGH_SPREAD/FADE/15:10 = -₹49.18/week Base / -₹142.70 Stress despite positive gross P&L. No WFA/OOS.
-- Current frontier: **Phase 55 — same-session 09:30 IV-smile curvature / wing richness × opening direction**.
-
-
-## 2026-09-29 Phase 55 closure
-- Phase 55: **CLOSED DATA-LIMITED** — authoritative gate run **36550269685**; complete front/back 09:30 ATM CE/PE IV coverage only **72.77%** of post-warm-up sessions versus the frozen 95% requirement; feature eligibility 72.52%, expiry mapping 100%, prior-information violations 0. No P&L accepted.
-- Phase 55 is not an economic negative; the data source is insufficient for the preregistered two-expiry test. Coverage thresholds will not be relaxed.
-- Next frontier: **Phase 56 — prior-session candle-conviction regime × opening-gap direction**, a high-coverage price-structure test that does not require simultaneous multi-expiry option quotes.
+- Phase 54: **CLOSED NEGATIVE DISCOVERY** — authoritative run 36549550020; best cell -₹49/week Base / -₹143 Stress.
+- Phase 55: **CLOSED NEGATIVE DISCOVERY** — authoritative run **36550200125**; 97.95% feature eligibility, 98.63% smile-curvature coverage, 0 prior-information violations, 99.26–100% execution coverage. Best HIGH_CURVATURE/FADE/15:10 was -₹60/week Base / -₹141 Stress; all 12 cells failed promotion.
+- Next frontier: **Phase 56 — same-session 09:30 ATM IV term-structure slope × opening direction**.
