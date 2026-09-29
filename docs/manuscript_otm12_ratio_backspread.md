@@ -1,6 +1,6 @@
 # Intraday NIFTY 1×2/1×2 Dual Ratio Backspread: Baseline Backtest and Losing-Trade Analysis
 
-**Version:** 1.0  
+**Version:** 1.0    
 **Date:** 29 September 2026  
 **Repository branch:** `research/otm12-phase-e-manuscript-v1`  
 **Authoritative clean baseline workflow:** 36532252218
