@@ -1,1 +1,1 @@
-Phase 52 manual launcher sentinel — corrected ATM/expiry signal null handling; rerun frozen discovery
+Phase 52 manual launcher sentinel — ATM preservation fix; rerun frozen grid
