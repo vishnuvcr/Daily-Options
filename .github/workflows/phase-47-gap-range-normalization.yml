@@ -60,7 +60,7 @@ jobs:
 
       - name: Run Phase 47 data gate
         run: |
-          PYTHONPATH=. python research/phase47_close_location_gap.py             --data data/cache/phase47_trademarkk             --out reports/phase47/gate             --slippage 0.20             --gate-only
+          PYTHONPATH=. python research/phase47_gap_range_normalization.py             --data data/cache/phase47_trademarkk             --out reports/phase47/gate             --slippage 0.20             --gate-only
 
       - name: Run Base discovery
         run: |
@@ -70,7 +70,7 @@ jobs:
           if g["status"]!="PASS":
               raise SystemExit("DATA_GATE_FAIL: Base discovery intentionally skipped")
           PY
-          PYTHONPATH=. python research/phase47_close_location_gap.py             --data data/cache/phase47_trademarkk             --out reports/phase47/base             --slippage 0.20
+          PYTHONPATH=. python research/phase47_gap_range_normalization.py             --data data/cache/phase47_trademarkk             --out reports/phase47/base             --slippage 0.20
 
       - name: Run Stress discovery
         run: |
@@ -80,7 +80,7 @@ jobs:
           if g["status"]!="PASS":
               raise SystemExit("DATA_GATE_FAIL: Stress discovery intentionally skipped")
           PY
-          PYTHONPATH=. python research/phase47_close_location_gap.py             --data data/cache/phase47_trademarkk             --out reports/phase47/stress             --slippage 0.40
+          PYTHONPATH=. python research/phase47_gap_range_normalization.py             --data data/cache/phase47_trademarkk             --out reports/phase47/stress             --slippage 0.40
 
       - name: Validate Phase 47 artifacts
         run: |
