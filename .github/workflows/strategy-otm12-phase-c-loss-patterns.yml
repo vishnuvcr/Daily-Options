@@ -1,0 +1,48 @@
+name: Strategy — OTM12 Phase C Loss-Pattern Analysis
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: Clean validated workflow run containing the Base artifact
+        required: true
+        default: "36532252218"
+  push:
+    branches:
+      - research/otm12-phase-c-loss-patterns
+    paths:
+      - research/strategy_otm12_phase_c_loss_patterns.py
+      - .github/workflows/strategy-otm12-phase-c-loss-patterns.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  phase_c:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/otm12-phase-c-loss-patterns
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pandas numpy scipy pyarrow
+      - name: Download clean Base artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: strategy-otm12-base
+          repository: vishnuvcr/Daily-Options
+          run-id: ${{ inputs.source_run_id || '36532252218' }}
+          github-token: ${{ github.token }}
+          path: phase_artifact
+      - name: Run Phase C
+        run: python research/strategy_otm12_phase_c_loss_patterns.py
+      - name: Upload Phase C results
+        uses: actions/upload-artifact@v4
+        with:
+          name: strategy-otm12-phase-c-results
+          path: reports/phase-c
