@@ -118,6 +118,10 @@ def build_feature_panel(nifty: pd.DataFrame) -> pd.DataFrame:
     prior_low=panel["low_1510"].shift(1)
     prior_close=panel["close_1510"].shift(1)
     prior_range=prior_high-prior_low
+    panel["prior_open"]=prior_open
+    panel["prior_high"]=prior_high
+    panel["prior_low"]=prior_low
+    panel["prior_close"]=prior_close
     panel["prior_body_points"]=(prior_close-prior_open).abs()
     panel["prior_body_ratio"]=panel["prior_body_points"]/prior_range.replace(0,np.nan)
     panel["prior_body_direction"]=np.sign(prior_close-prior_open).fillna(0).astype(int)
