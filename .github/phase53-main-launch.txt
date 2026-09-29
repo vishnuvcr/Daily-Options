@@ -1,1 +1,1 @@
-Phase 53 manual launcher sentinel — execute frozen same-session ATM IV skew grid
+Phase 53 manual launcher sentinel — corrected skew gate and workflow refs; run frozen ATM IV skew grid
