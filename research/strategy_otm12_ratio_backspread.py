@@ -180,10 +180,10 @@ def make_trades(sess,q,diag_rows=None,expiry=None):
 def apply_costs(t,slip):
     cs=[]; nets=[]
     for r in t.itertuples(index=False):
-        legs=[{"entry":r.short_ce_entry,"exit":r.short_ce_exit,"qty":1,"sign":1},
-              {"entry":r.long_ce_entry,"exit":r.long_ce_exit,"qty":2,"sign":-1},
-              {"entry":r.short_pe_entry,"exit":r.short_pe_exit,"qty":1,"sign":1},
-              {"entry":r.long_pe_entry,"exit":r.long_pe_exit,"qty":2,"sign":-1}]
+        legs=[{"entry":r.buy_ce_entry,"exit":r.buy_ce_exit,"qty":1,"sign":1},
+              {"entry":r.sell_ce_entry,"exit":r.sell_ce_exit,"qty":2,"sign":-1},
+              {"entry":r.buy_pe_entry,"exit":r.buy_pe_exit,"qty":1,"sign":1},
+              {"entry":r.sell_pe_entry,"exit":r.sell_pe_exit,"qty":2,"sign":-1}]
         c=cost(legs,int(r.lot),slip,r.trade_date,r.trade_date); cs.append(c); nets.append(r.gross_pnl-c)
     z=t.copy(); z["total_cost"]=cs; z["net_pnl"]=nets; z=z.sort_values("trade_date").reset_index(drop=True)
     z["cum_net_pnl"]=z.net_pnl.cumsum(); z["peak_cum_net_pnl"]=z.cum_net_pnl.cummax(); z["drawdown"]=z.cum_net_pnl-z.peak_cum_net_pnl
