@@ -1,23 +1,21 @@
 # Phase 55 Status
 
-**State: PREREGISTERED / ENGINEERING BUILD**
+**State: CLOSED — NEGATIVE DISCOVERY**
 
-Branch: phase-55-same-session-smile-curvature-opening-v1
+Authoritative workflow: **36550200125**  
+Artifact: **11023749886**
 
-Frozen feature:
-- 09:30 average of ATM−₹50 PE IV and ATM+₹50 CE IV
-- minus 09:30 average of ATM CE/PE IV
-- nearest strict-next expiry
-- last 60 valid prior-day same-session curvature observations
-- LOW/MID/HIGH empirical terciles
+Data integrity:
+- 97.95% feature eligibility
+- 98.63% same-session smile-curvature coverage
+- 100% feature-expiry mapping
+- 0 prior-information violations
+- 99.26–100% execution coverage
+- accounting reconciled
 
-Frozen execution:
-- 09:31 entry
-- 10:30 / 15:10 exits
-- one-lot 200-point ATM debit spread
-- nearest expiry on/after current date
-- historical lots
-- Base/Stress ₹0.20/₹0.40 slippage
-- existing Paytm Money/NSE/statutory charges
+Best cell: **HIGH_CURVATURE / FADE / 15:10**
+- Base: **-₹59.85/week mean**, -₹563.60 median, 42.08% positive weeks
+- Stress: **-₹141.33/week mean**, -₹603.58 median, 42.08% positive weeks
 
-No numerical result is accepted until tests, feature coverage, null controls, execution coverage and accounting pass.
+**0/12** cells met the promotion gate. No WFA/OOS authorized.
+No Phase-55 parameter retuning is permitted.
