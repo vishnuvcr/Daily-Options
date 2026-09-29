@@ -476,7 +476,8 @@ def data_gate(panel: pd.DataFrame, expiries: dict) -> dict:
     iv_cov=iv_valid/post_warmup if post_warmup else 0.0
     feature_cov=eligible/post_warmup if post_warmup else 0.0
     eligible_dates=post.loc[post["feature_eligible"],"date"]
-    expiry_ok=int(sum(bisect.bisect_right(sorted(expiries),d)>0 and bisect.bisect_right(sorted(expiries),d)<len(expiries)+1 for d in eligible_dates))
+    keys=sorted(expiries)
+    expiry_ok=int(sum(bisect.bisect_right(keys,d)<len(keys) for d in post.loc[post["feature_eligible"],"prior_date"]))
     exp_cov=expiry_ok/eligible if eligible else 0.0
     status="PASS" if feature_cov>=COVERAGE_TARGET and iv_cov>=COVERAGE_TARGET and exp_cov>=COVERAGE_TARGET and violations==0 else "FAIL"
     fail_counts={str(k):int(v) for k,v in post.loc[~post["iv_valid"],"iv_fail_reason"].value_counts().head(12).to_dict().items()}
