@@ -25,5 +25,9 @@
     0.3333333333333333,
     0.6666666666666666
   ],
-  "expiry_file_count": 267
+  "expiry_file_count": 267,
+  "friction": "stress",
+  "true_signal_count": 4636,
+  "executed_trade_count": 4575,
+  "promotion_pass_count": 0
 }
