@@ -562,3 +562,6 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0446 | 2026-09-29 | Phase 55 authoritative run 36550200125 | None | None | Data gate, Base, Stress, validation, null controls, persistence and accounting all passed; phase closed negative | CLOSED |
 
 | E0447 | 2026-09-29 | Phase 55 roadmap synchronization | A separate local Phase-55 curvature branch was started before re-reading the authoritative main research roadmap; the roadmap already defined Phase 55 as front-vs-next-expiry ATM IV term structure | No authoritative Phase-55 P&L or promotion decision was made from the curvature branch | Abandon the unplanned curvature branch for main research purposes; adopt the existing Phase-55 term-structure closure and advance to the preregistered Phase 56 family | CLOSED |
+
+| E0448 | 2026-09-29 | Phase 56 run 36550927372 | build_feature_panel referenced prior OHLC aliases before panel persistence; data gate raised KeyError | No P&L accepted | Persisted prior-session OHLC aliases before completeness/state calculation; rerun 36551083186 passed | CLOSED |
+| E0449 | 2026-09-29 | Phase 56 authoritative run 36551083186 | None | None | Data gate, Base, Stress, validation and accounting passed; phase closed negative | CLOSED |
