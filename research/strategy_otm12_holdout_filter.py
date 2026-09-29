@@ -30,7 +30,7 @@ def summarize(x):
         "mean_ci95":boot_mean_ci(x.net_pnl),
     }
 
-def evaluate(df):
+def evaluate(df):  # frozen holdout probe
     hold=df[df.trade_date>=HOLDOUT_START].copy()
     rule=(hold.prior_day_range_pct>RANGE_CUTOFF)&(hold.days_to_expiry<=DTE_CUTOFF)
     all_stats=summarize(hold)
