@@ -37,6 +37,7 @@ def load_index(root):
     p=root/"index"/"NIFTY.parquet"
     con=duckdb.connect()
     con.execute("SET TimeZone='Asia/Kolkata'")
+    con.execute("SET TimeZone='Asia/Kolkata'")
     q=f"""SELECT CAST(timestamp AS TIMESTAMP) ts, CAST(trading_day AS DATE) trade_date,
     CAST(open AS DOUBLE) open_px, CAST(high AS DOUBLE) high_px, CAST(low AS DOUBLE) low_px,
     CAST(close AS DOUBLE) close_px FROM read_parquet('{p}',union_by_name=true)
