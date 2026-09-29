@@ -1,0 +1,7 @@
+friction,sample,subset,trades,wins,losses,win_rate,net_pnl,mean_net_pnl,mean_ci95_low,mean_ci95_high
+Base,Holdout,All,348,96,252,0.275862,-282985.19,-813.18,-1217.58,-374.90
+Base,Holdout,Blocked by frozen filter,24,6,18,0.25,-67879.06,-2828.29,-4521.80,-1243.52
+Base,Holdout,Kept,324,90,234,0.277778,-215106.13,-663.91,-1082.35,-220.58
+Stress,Holdout,All,348,93,255,0.267241,-343081.19,-985.87,-1390.18,-547.97
+Stress,Holdout,Blocked by frozen filter,24,6,18,0.25,-71911.06,-2996.29,-4688.59,-1411.07
+Stress,Holdout,Kept,324,87,237,0.268519,-271170.13,-836.94,-1255.40,-393.58
