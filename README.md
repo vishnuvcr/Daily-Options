@@ -1083,3 +1083,17 @@ Phase D tested the **frozen** Phase-C first15_abs_ret >= 0.126795% mechanism acr
 - **No P&L, promotion, or WFA/OOS accepted.** Coverage was not relaxed.
 
 **Current research frontier: Phase 56 — Prior-Session Candle Conviction Regime × Opening-Gap Direction.**
+
+
+## 2026-09-29 — Phase 56 closed / negative discovery
+
+**Phase 56 — Prior-Session Candle Conviction Regime × Opening-Gap Direction** is closed negative.
+
+- Authoritative workflow: **36551083186**; artifact **11025430232**.
+- Data gate: **99.315%** post-warm-up feature eligibility, **100%** body-ratio validity, **100%** expiry mapping, **0** prior-information violations.
+- Execution coverage: **97.65%–99.10%** across all 12 cells; Base/Stress accounting reconciled.
+- Best cell: **LOW_CONVICTION / FADE / 15:10** — **-₹125.86/week Base**, **-₹201.79/week Stress**, with 43.18% / 40.45% positive weeks.
+- Its raw gross P&L was positive, but friction dominated.
+- **0/12** cells cleared the complete promotion gate; WFA/OOS is not authorized.
+
+[Phase 56 result](https://github.com/vishnuvcr/Daily-Options/blob/phase-56-candle-conviction-gap-v1/reports/phase56/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-56-candle-conviction-gap-v1/docs/phase56_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-56-candle-conviction-gap-v1/docs/phase56_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-56-candle-conviction-gap-v1)
