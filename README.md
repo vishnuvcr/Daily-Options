@@ -811,3 +811,17 @@ The independently scoped Master Candle 09:35 strategy side-analysis has complete
 - **Status:** MC1 closed / negative discovery; MC2 execution-rule robustness is active. No trading strategy has been promoted from this side-analysis.
 
 [MC1 results](https://github.com/vishnuvcr/MC-OPTIONS-INDEPENDENT-BACKTEST-MC1/blob/side-analysis/master-candle-935/BASELINE_RESULTS.md) · [MC2 results](https://github.com/vishnuvcr/MC-OPTIONS-INDEPENDENT-BACKTEST-MC1/blob/side-analysis/master-candle-935-mc2/MC2_RESULTS.md) · [MC2 plan](https://github.com/vishnuvcr/MC-OPTIONS-INDEPENDENT-BACKTEST-MC1/blob/side-analysis/master-candle-935-mc2/research/side_analyses/master_candle_935/PLAN.md)
+
+
+## 2026-09-29 — OTM1 / 2xOTM2 Four-Leg Intraday Ratio Backspread side-analysis
+
+This separate strategy analysis is **CLOSED / NEGATIVE after costs**.
+
+- Clean baseline run **36532252218**: 1,227 eligible sessions; 1,209 executed trades; 98.53% execution coverage.
+- Base (₹0.20 slippage): gross **-₹272,009.75**, costs **₹445,912.12**, net **-₹717,921.87**, profit factor **0.517**.
+- Stress (₹0.40 slippage): gross **-₹272,009.75**, costs **₹602,848.12**, net **-₹874,857.87**, profit factor **0.454**.
+- Phase C found no robust pre-entry loser classifier; the shallow loss tree was approximately chance-level (Base CV AUC ≈ 0.506).
+- Phase D tested only frozen discovery-derived exclusions for expiry-day and very large prior-day range. The combined rule reduced losses but remained negative in the untouched 2025+ holdout under both friction models.
+- **Conclusion:** the fixed structure was not validated as a profitable standalone intraday strategy. Profits occurred mainly when one wing's 2x farther OTM longs experienced a sufficiently large expansion to overwhelm the opposite wing and costs.
+
+[Final manuscript](docs/strategy_otm12_ratio_backspread_manuscript.md) · [strategy status](docs/strategy_otm12_ratio_backspread_status.md) · [error log](docs/error_log_strategy_otm12_ratio_backspread.md) · [Phase C](https://github.com/vishnuvcr/Daily-Options/tree/research/otm12-phase-c-loss-patterns) · [Phase D](https://github.com/vishnuvcr/Daily-Options/tree/research/otm12-phase-d-holdout-filter) · [Phase E](https://github.com/vishnuvcr/Daily-Options/tree/research/otm12-phase-e-manuscript)
