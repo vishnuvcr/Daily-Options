@@ -209,7 +209,7 @@ def feature_analysis(t,out):
     for f in feats:
         x=d[f].dropna()
         if len(x)<50: continue
-        cuts=x.quantile([0,.2,.4,.6,.8,1]).to_numpy(); cuts[0]=-np.inf; cuts[-1]=np.inf
+        cuts=np.array(x.quantile([0,.2,.4,.6,.8,1]).to_numpy(),dtype=float,copy=True); cuts[0]=-np.inf; cuts[-1]=np.inf
         for label,df,store in [("discovery",d,dr),("holdout",h,hr)]:
             q=df[[f,"net_pnl"]].dropna().copy()
             if q.empty: continue
