@@ -1,0 +1,87 @@
+name: Strategy — Alternating OTM1 / 2x OTM2 Four-Leg Intraday Ratio Spread
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - strategy/alternating-otm-buy-sell-v1
+    paths:
+      - research/strategy_otm12_ratio_backspread.py
+      - tests/test_strategy_otm12_ratio_backspread.py
+      - docs/strategy_otm12_ratio_backspread_plan.md
+      - .github/workflows/strategy-alternating-otm12-ratio-backspread.yml
+
+permissions:
+  contents: read
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        friction: [base, stress]
+    env:
+      DATA_ROOT: data/cache/phase24_trademarkk
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: strategy/alternating-otm-buy-sell-v1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pandas numpy duckdb pyarrow scipy scikit-learn pytest huggingface_hub huggingface_hub
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_strategy_otm12_ratio_backspread.py
+      - name: Restore pinned-data cache
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase24_trademarkk
+          key: phase24-trademarkk-51ca58c-v2
+      - name: Acquire pinned dataset on cache miss
+        run: |
+          set -euo pipefail
+          mkdir -p "$DATA_ROOT"
+          if [ ! -f "$DATA_ROOT/index/NIFTY.parquet" ]; then
+            for attempt in 1 2 3 4; do
+              python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="thetrademarkk/india-index-options-1m",repo_type="dataset",revision="51ca58c",local_dir="data/cache/phase24_trademarkk",allow_patterns=["index/NIFTY.parquet","options/NIFTY/*.parquet"])' && break
+              if [ "$attempt" -eq 4 ]; then exit 1; fi
+              sleep $((attempt*15))
+            done
+          fi
+          test -f "$DATA_ROOT/index/NIFTY.parquet"
+          test -d "$DATA_ROOT/options/NIFTY"
+      - name: Validate cache coverage
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import pandas as pd
+          root=Path("data/cache/phase24_trademarkk")
+          idx=pd.read_parquet(root/"index/NIFTY.parquet",columns=["trading_day"])
+          sessions=set(pd.to_datetime(idx.trading_day).dt.date)
+          sessions={d for d in sessions if pd.Timestamp("2021-07-01").date()<=d<=pd.Timestamp("2026-08-04").date()}
+          expiries=set()
+          for p in (root/"options"/"NIFTY").glob("*.parquet"):
+              try: expiries.add(pd.Timestamp(p.stem).date())
+              except Exception: pass
+          eligible=sum(any(e>=d for e in expiries) for d in sessions)
+          print({"sessions":len(sessions),"expiry_files":len(expiries),"eligible_sessions":eligible})
+          if eligible<1000 or len(expiries)<100:
+              raise SystemExit("cache coverage gate failed")
+          PY
+      - name: Run friction ${{ matrix.friction }}
+        env:
+          SLIP: ${{ matrix.friction == 'base' && '0.20' || '0.40' }}
+        run: |
+          PYTHONPATH=. python research/strategy_otm12_ratio_backspread.py \
+            --data "$DATA_ROOT" \
+            --out "reports/otm12-${{ matrix.friction }}" \
+            --slippage "$SLIP"
+      - name: Upload strategy artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: strategy-alternating-otm12-${{ matrix.friction }}
+          path: reports/otm12-${{ matrix.friction }}
