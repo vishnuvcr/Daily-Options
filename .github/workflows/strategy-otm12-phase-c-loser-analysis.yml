@@ -1,0 +1,55 @@
+name: Strategy — OTM12 Phase C Loser Analysis
+
+on:
+  workflow_dispatch:
+    inputs:
+      baseline_run_id:
+        description: "Clean Phase-B workflow run ID"
+        required: true
+        default: "36532252218"
+  push:
+    branches:
+      - research/otm12-phase-c-loser-analysis
+    paths:
+      - research/strategy_otm12_loser_analysis.py
+      - .github/workflows/strategy-otm12-phase-c-loser-analysis.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/otm12-phase-c-loser-analysis
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pandas numpy scipy scikit-learn tabulate
+      - name: Download clean Base artifact
+        run: |
+          rm -rf data/phase-c
+          mkdir -p data/phase-c/base data/phase-c/stress
+          gh run download ${{ github.event.inputs.baseline_run_id || '36532252218' }} --name strategy-otm12-base --dir data/phase-c/base
+      - name: Download clean Stress artifact
+        run: |
+          gh run download ${{ github.event.inputs.baseline_run_id || '36532252218' }} --name strategy-otm12-stress --dir data/phase-c/stress
+      - name: Run Phase C analysis
+        run: |
+          PYTHONPATH=. python research/strategy_otm12_loser_analysis.py \
+            --base data/phase-c/base \
+            --stress data/phase-c/stress \
+            --out reports/otm12-phase-c
+      - name: Upload Phase C report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: strategy-otm12-phase-c-loser-analysis
+          path: reports/otm12-phase-c
