@@ -983,3 +983,16 @@ Phase D tested the **frozen** Phase-C first15_abs_ret >= 0.126795% mechanism acr
 - **0/12** cells cleared the full dual-friction gate; no WFA/OOS authorized.
 
 [Phase 53 result](https://github.com/vishnuvcr/Daily-Options/blob/phase-53-same-session-atm-skew-opening-v1/reports/phase53/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-53-same-session-atm-skew-opening-v1/docs/phase53_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-53-same-session-atm-skew-opening-v1/docs/phase53_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-53-same-session-atm-skew-opening-v1/docs/phase53_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-53-same-session-atm-skew-opening-v1)
+
+
+## 2026-09-29 — Phase 53 closed / negative discovery
+
+**Phase 53 — Same-Session 09:30 Near-ATM IV Skew × Opening Direction** is closed negative.
+
+- Authoritative workflow: **36548991737**; artifact **11024002184**.
+- Data gate: **97.95%** final feature eligibility, **98.63%** same-session skew coverage, **100%** feature-expiry mapping, **0** prior-information violations.
+- Execution coverage: **99.26%–100%** across all 12 cells; Base and Stress accounting reconciled.
+- Best cell: **MID_SKEW / FADE / 15:10** — **-₹177.32/week Base**, **-₹252.72/week Stress**, with negative medians.
+- **0/12** cells cleared the promotion gate; WFA/OOS is not authorized.
+
+[Phase 53 result](https://github.com/vishnuvcr/Daily-Options/blob/phase-53-near-atm-iv-skew-opening-v1/reports/phase53/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-53-near-atm-iv-skew-opening-v1/docs/phase53_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-53-near-atm-iv-skew-opening-v1/docs/phase53_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-53-near-atm-iv-skew-opening-v1)
