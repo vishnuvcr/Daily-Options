@@ -114,14 +114,23 @@ def px(df,side,strike):
     x=df[(df.option_type==side)&np.isclose(df.strike,strike)]
     return float(x.open_px.iloc[0]) if not x.empty else np.nan
 
-def make_trades(sess,q):
+def make_trades(sess,q,diag_rows=None,expiry=None):
     out=[]
     for r in sess.itertuples(index=False):
+        drow={"trade_date":str(r.trade_date),"expiry":str(expiry) if expiry is not None else str(r.expiry),"stage":"start",
+              "quote_rows":0,"entry_rows":0,"entry_ce_strikes":0,"entry_pe_strikes":0}
         z=q[q.trade_date==r.trade_date]
+        drow["quote_rows"]=int(len(z))
         en=z[z.ts.dt.strftime("%H:%M:%S")==ENTRY_FILL]
-        if en.empty: continue
+        drow["entry_rows"]=int(len(en))
+        drow["entry_ce_strikes"]=int(en.loc[en.option_type=="CE","strike"].nunique())
+        drow["entry_pe_strikes"]=int(en.loc[en.option_type=="PE","strike"].nunique())
+        if en.empty:
+            drow["stage"]="no_entry_quote"; diag_rows.append(drow) if diag_rows is not None else None; continue
         k=pick_otm(en,r.entry_spot)
-        if not k: continue
+        if not k:
+            drow["stage"]="insufficient_otm_strikes"; diag_rows.append(drow) if diag_rows is not None else None; continue
+        drow.update({"short_ce":k["short_ce"],"long_ce":k["long_ce"],"short_pe":k["short_pe"],"long_pe":k["long_pe"]})
         specs=[("short_ce","CE",k["short_ce"],-1,1),("long_ce","CE",k["long_ce"],1,2),
                ("short_pe","PE",k["short_pe"],-1,1),("long_pe","PE",k["long_pe"],1,2)]
         exact=z[z.ts.dt.strftime("%H:%M:%S")==EXIT_TIME]
@@ -129,19 +138,22 @@ def make_trades(sess,q):
         legs=[]; ok=True; exit_mark_time=None
         for name,side,strike,sign,qty in specs:
             a=px(en,side,strike)
-            if not np.isfinite(a): ok=False; break
+            if not np.isfinite(a):
+                drow["stage"]=f"missing_entry_{name}"; ok=False; break
             x=exact[(exact.option_type==side)&np.isclose(exact.strike,strike)]
             if not x.empty and pd.notna(x.open_px.iloc[0]) and x.open_px.iloc[0]>0:
                 b=float(x.open_px.iloc[0]); bt=EXIT_TIME
             else:
                 x=fallback[(fallback.option_type==side)&np.isclose(fallback.strike,strike)]
                 if x.empty or pd.isna(x.close_px.iloc[0]) or x.close_px.iloc[0]<=0:
-                    ok=False; break
+                    drow["stage"]=f"missing_exit_{name}"; ok=False; break
                 b=float(x.close_px.iloc[0]); bt=EXIT_FALLBACK_TIME
             if exit_mark_time is None: exit_mark_time=bt
-            elif bt != exit_mark_time: ok=False; break
+            elif bt != exit_mark_time:
+                drow["stage"]="mixed_exit_mark_times"; ok=False; break
             legs.append((name,strike,sign,qty,a,b))
-        if not ok: continue
+        if not ok:
+            diag_rows.append(drow) if diag_rows is not None else None; continue
         lot=lot_size(pd.Timestamp(r.expiry).date())
         gross=sum(sign*(b-a)*qty*lot for _,_,sign,qty,a,b in legs)
         short_sum=sum(a*qty for _,_,sgn,qty,a,_ in legs if sgn<0)
@@ -157,6 +169,10 @@ def make_trades(sess,q):
         for name,strike,sign,qty,a,b in legs:
             row[f"{name}_strike"]=strike; row[f"{name}_entry"]=a; row[f"{name}_exit"]=b
         out.append(row)
+        if diag_rows is not None:
+            drow["stage"]="complete_trade"
+            drow["exit_mark_time"]=exit_mark_time
+            diag_rows.append(drow)
     return pd.DataFrame(out)
 
 def apply_costs(t,slip):
@@ -221,15 +237,22 @@ def run(data,out,slip):
     root=Path(data); out=Path(out); out.mkdir(parents=True,exist_ok=True)
     idx=load_index(root); files=expiry_files(root); sess=assign_expiry(sessions(idx),files)
     if len(sess)<1000: raise RuntimeError(f"Eligibility gate failed: {len(sess)} sessions")
-    con=duckdb.connect(); con.execute("SET TimeZone='Asia/Kolkata'"); frames=[]; cov=[]
+    con=duckdb.connect(); con.execute("SET TimeZone='Asia/Kolkata'"); frames=[]; cov=[]; diag_rows=[]
     for expiry,path in files:
         sub=sess[sess.expiry==expiry]; days=sub.trade_date.tolist()
         if not days: continue
         q=query_quotes(con,path,days); cov.append({"expiry":str(expiry),"sessions":len(days),"quote_rows":int(len(q))})
-        t=make_trades(sub,q)
+        t=make_trades(sub,q,diag_rows,expiry)
         if not t.empty: frames.append(t)
     con.close()
-    if not frames: raise RuntimeError("No complete four-leg trades")
+    diag_df=pd.DataFrame(diag_rows)
+    if not diag_df.empty:
+        diag_df.to_csv(out/"selection_diagnostics.csv",index=False)
+        (out/"selection_diagnostics_summary.json").write_text(json.dumps(diag_df.stage.value_counts().to_dict(),indent=2))
+    (out/"coverage.json").write_text(json.dumps(cov,indent=2))
+    if not frames:
+        stage_counts=diag_df.stage.value_counts().to_dict() if not diag_df.empty else {}
+        raise RuntimeError("No complete four-leg trades; stage_counts="+json.dumps(stage_counts,sort_keys=True))
     trades=apply_costs(pd.concat(frames,ignore_index=True),slip)
     trades.to_csv(out/"trades.csv",index=False)
     s=summary(trades); s.update({"slippage":slip,"eligible_sessions":len(sess),"executed_trades":len(trades),
