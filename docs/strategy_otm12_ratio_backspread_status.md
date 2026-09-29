@@ -1,53 +1,51 @@
-# Status — OTM1 / 2xOTM2 Four-Leg Intraday Ratio Backspread
+# Reversed OTM1 / 2x OTM2 Four-Leg Ratio — Status
 
-As of: 2026-09-29
+## Completed baseline comparison
 
-| Phase | Status | Result |
-|---|---|---|
-| A implementation/data gate | CLOSED | Timestamp semantics, trade-date join, leg completeness and cost plumbing validated. |
-| B baseline Base/Stress | CLOSED | Clean workflow 36532252218 PASS: 1,209 completed trades, 98.53% execution coverage. |
-| C losing-trade/common-circumstance analysis | CLOSED | Workflow 36533478456 PASS. High prior-day range + near-expiry identified as a repeatable loss-concentration regime. |
-| D frozen holdout filter probe | CLOSED | Workflow 36533719671 PASS. Frozen filter replicated on 2025+ holdout and improved negative P&L without making the retained strategy profitable. |
-| E conclusion/manuscript | CLOSED | Workflow 36534074291 PASS. Final manuscript, supplement, tables and figures validated. |
+Construction tested:
+- BUY 1 OTM1 PUT
+- SELL 2 OTM2 PUT
+- BUY 1 OTM1 CALL
+- SELL 2 OTM2 CALL
+- Same 09:30 reference, 09:31 execution, nearest on/after expiry, 15:15 exit, one lot and historical lot sizes as the original study.
 
-## Clean baseline conclusion
+Authoritative workflow: 36534525761
 
-Base:
-- 1,209 trades; 312 wins / 897 losses
-- Win rate 25.81%
-- Gross P&L -₹272,009.75
-- Costs ₹445,912.12
-- Net P&L -₹717,921.87
-- Profit factor 0.517
-- Max drawdown -₹716,320.49
+| Metric | Reversed Base | Reversed Stress |
+|---|---:|---:|
+| Trades | 1,209 | 1,209 |
+| Wins | 709 | 661 |
+| Losses | 500 | 548 |
+| Win rate | **58.64%** | **54.67%** |
+| Gross P&L | ₹272,009.75 | ₹272,009.75 |
+| Costs | ₹446,177.47 | ₹603,113.47 |
+| Net P&L | **-₹174,167.72** | **-₹331,103.72** |
+| Mean net/trade | -₹144.06 | -₹273.87 |
+| Median net/trade | ₹227.52 | ₹107.52 |
+| Profit factor | 0.836 | 0.706 |
+| Max drawdown | -₹187,691.21 | -₹336,394.72 |
 
-Stress:
-- 1,209 trades; 289 wins / 920 losses
-- Win rate 23.90%
-- Gross P&L -₹272,009.75
-- Costs ₹602,848.12
-- Net P&L -₹874,857.87
-- Profit factor 0.454
-- Max drawdown -₹873,136.49
+## Comparison with original orientation
 
-## Main research finding
+Original Base/Stress win rates were 25.81% / 23.90%. Reversing the legs increases them to 58.64% / 54.67%.
 
-The strongest repeatable loser regime is prior-day NIFTY range > 1.314516% together with days to expiry <= 1.5 calendar days.
+The gross P&L flips from -₹272,009.75 to +₹272,009.75 because the reversed structure is the opposite payoff orientation of the original four-leg structure. Costs therefore become decisive: the reversed structure remains negative after realistic friction.
 
-On the untouched 2025+ holdout this regime contained 24 of 348 trades (6.90%) and had mean net P&L about -₹2.83k Base / -₹3.00k Stress.
+## Additional observation
 
-Excluding those trades improved holdout net P&L by ₹67,879 Base and ₹71,911 Stress, but the retained strategy remained negative at -₹663.91/trade Base and -₹836.94/trade Stress.
+Expiry-day trades are particularly strong for the reversed construction:
+- 253 expiry-day trades
+- 67.19% Base win rate
+- +₹59,074.74 Base net P&L
+- +₹233.50 mean Base net/trade
 
-## Profit mechanism
+Non-expiry days remain negative:
+- 956 trades
+- 56.38% Base win rate
+- -₹233,242.46 Base net P&L
 
-Profitable trades are primarily one-sided convex outcomes: in 100% of winners, at least one of the combined call-side or put-side contributions was positive. The complete win generally comes from a sufficiently large move through one wing rather than simultaneous movement on both sides.
+This is a descriptive finding only. It has not been optimized or holdout-validated and must not yet be treated as a trading filter.
 
-## Final interpretation
+## Interpretation
 
-This branch does not establish a profitable standalone trading strategy. It establishes a reproducible loss-concentration regime that can be used as a research clue for future, separately validated entry filters or strategy redesign.
-
-## Final manuscript
-
-- Branch: research/otm12-phase-e-manuscript-v1
-- Final validation workflow: 36534074291
-
+Reversing the orientation clearly raises the probability of a positive trade, but the payoff asymmetry becomes unfavorable after costs: winners are smaller on average than losers. The next bounded research question should therefore be whether the reversed construction can be made positive by a pre-entry regime filter, particularly around expiry-day/volatility conditions, using a fresh chronological discovery/holdout split.
