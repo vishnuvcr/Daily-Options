@@ -1,0 +1,128 @@
+name: Phase 55 same-session smile curvature opening
+
+on:
+  push:
+    paths:
+      - ".github/phase55-main-launch.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase55-same-session-smile-curvature-opening
+  cancel-in-progress: false
+
+jobs:
+  phase55:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-54-same-session-smile-curvature-opening-v1
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install pinned runtime
+        run: |
+          python -m pip install --disable-pip-version-check             pandas==2.3.2 numpy==2.1.3 duckdb==1.3.2 pyarrow==19.0.1             pytest==8.4.2 huggingface_hub==0.35.3 requests==2.32.5
+
+      - name: Unit tests
+        run: PYTHONPATH=. pytest -q tests/test_phase55_same_session_atm_iv_spread_opening.py
+
+      - name: Restore pinned NIFTY cache
+        uses: actions/cache@v4
+        with:
+          path: data/cache/phase55_trademarkk
+          key: phase55-trademarkk-51ca58c-v1
+          restore-keys: |
+            phase55-trademarkk-51ca58c-
+            phase53-trademarkk-51ca58c-
+            phase46-trademarkk-51ca58c-
+            phase30-trademarkk-51ca58c-
+
+      - name: Acquire or reuse exact-expiry NIFTY source
+        run: |
+          set -euo pipefail
+          mkdir -p data/cache/phase55_trademarkk
+          if [ ! -s data/cache/phase55_trademarkk/index/NIFTY.parquet ] ||              [ $(find data/cache/phase55_trademarkk/options/NIFTY -maxdepth 1 -name '*.parquet' 2>/dev/null | wc -l) -lt 200 ]; then
+            for attempt in 1 2 3 4; do
+              python -c 'from huggingface_hub import snapshot_download; snapshot_download(repo_id="thetrademarkk/india-index-options-1m",repo_type="dataset",revision="51ca58c",local_dir="data/cache/phase55_trademarkk",allow_patterns=["index/NIFTY.parquet","options/NIFTY/*.parquet"])' && break
+              if [ "$attempt" -eq 4 ]; then exit 1; fi
+              sleep $((attempt*15))
+            done
+          fi
+          test -s data/cache/phase55_trademarkk/index/NIFTY.parquet
+          test $(find data/cache/phase55_trademarkk/options/NIFTY -maxdepth 1 -name '*.parquet' | wc -l) -ge 200
+
+      - name: Run Phase 55 data gate
+        run: |
+          PYTHONPATH=. python research/phase55_same_session_atm_iv_spread_opening.py             --data data/cache/phase55_trademarkk             --out reports/phase55/gate             --slippage 0.20             --gate-only
+
+      - name: Run Base discovery
+        run: |
+          python - <<'PY'
+          import json
+          g=json.load(open("reports/phase55/gate/data_gate.json"))
+          if g["status"]!="PASS":
+              raise SystemExit("DATA_GATE_FAIL: Base discovery intentionally skipped")
+          PY
+          PYTHONPATH=. python research/phase55_same_session_atm_iv_spread_opening.py             --data data/cache/phase55_trademarkk             --out reports/phase55/base             --slippage 0.20
+
+      - name: Run Stress discovery
+        run: |
+          python - <<'PY'
+          import json
+          g=json.load(open("reports/phase55/gate/data_gate.json"))
+          if g["status"]!="PASS":
+              raise SystemExit("DATA_GATE_FAIL: Stress discovery intentionally skipped")
+          PY
+          PYTHONPATH=. python research/phase55_same_session_atm_iv_spread_opening.py             --data data/cache/phase55_trademarkk             --out reports/phase55/stress             --slippage 0.40
+
+      - name: Validate Phase 55 artifacts
+        run: |
+          python - <<'PY'
+          import json, pandas as pd
+          g=json.load(open("reports/phase55/gate/data_gate.json"))
+          assert g["status"]=="PASS", g
+          for f in ["base","stress"]:
+              s=pd.read_csv(f"reports/phase55/{f}/true_cell_summary_{f}.csv")
+              assert len(s)==12,(f,len(s))
+              assert s["accounting_ok"].all(),f
+              cov=pd.read_csv(f"reports/phase55/{f}/price_coverage.csv")
+              assert len(cov)==12,(f,len(cov))
+              assert cov["execution_coverage"].min() >= 0.95,(f,cov["execution_coverage"].min())
+              t=pd.read_csv(f"reports/phase55/{f}/trades.csv")
+              assert len(t)>0,(f,"zero true trades")
+              n=pd.read_csv(f"reports/phase55/{f}/null_summary.csv")
+              assert len(n)==60,(f,len(n))
+          PY
+
+      - name: Persist Phase 55 reports and cache manifest
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir -p reports/phase55
+          git add -f reports/phase55
+          if ! git diff --cached --quiet; then
+            git commit -m "Phase 55: persist smile curvature research outputs"
+            for attempt in 1 2 3; do
+              if git push origin HEAD:phase-54-same-session-smile-curvature-opening-v1; then exit 0; fi
+              git fetch origin phase-54-same-session-smile-curvature-opening-v1
+              git rebase FETCH_HEAD
+            done
+            exit 1
+          fi
+
+      - name: Upload Phase 55 artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase55-same-session-smile-curvature-opening
+          path: reports/phase55
