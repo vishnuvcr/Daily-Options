@@ -1,1 +1,1 @@
-Phase 55 manual launcher sentinel — corrected workflow; run frozen curvature grid
+Phase 55 manual launcher sentinel — corrected branch refs verified; rerun frozen curvature grid
