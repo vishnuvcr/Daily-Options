@@ -160,11 +160,11 @@ def build_feature_panel(nifty: pd.DataFrame) -> pd.DataFrame:
     panel["current_atm_skew"]=np.nan
     panel["iv_ce"]=np.nan
     panel["iv_pe"]=np.nan
-    panel["iv_valid"]=False
-    panel["iv_fail_reason"]=""
-    panel["range_q33"]=np.nan
-    panel["range_q67"]=np.nan
-    panel["state"]="MID_IV"
+    panel["skew_valid"]=False
+    panel["skew_fail_reason"]=""
+    panel["skew_q33"]=np.nan
+    panel["skew_q67"]=np.nan
+    panel["state"]="MID_SKEW"
     return panel
 
 def expiry_map(root: Path):
@@ -477,7 +477,7 @@ def data_gate(panel: pd.DataFrame, expiries: dict) -> dict:
     raw=len(panel)
     post=panel.iloc[LOOKBACK:] if len(panel)>LOOKBACK else panel.iloc[0:0]
     post_warmup=len(post)
-    iv_valid=int(post["iv_valid"].sum())
+    iv_valid=int(post["skew_valid"].sum())
     eligible=int(post["feature_eligible"].sum())
     complete=int((post["feature_eligible"] & post["barrier_ok"]).sum())
     violations=int((post["feature_eligible"] & ~post["barrier_ok"]).sum())
@@ -487,7 +487,7 @@ def data_gate(panel: pd.DataFrame, expiries: dict) -> dict:
     expiry_ok=int(sum(bisect.bisect_right(keys,d)<len(keys) for d in post.loc[post["feature_eligible"],"date"]))
     exp_cov=expiry_ok/eligible if eligible else 0.0
     status="PASS" if feature_cov>=COVERAGE_TARGET and iv_cov>=COVERAGE_TARGET and exp_cov>=COVERAGE_TARGET and violations==0 else "FAIL"
-    fail_counts={str(k):int(v) for k,v in post.loc[~post["iv_valid"],"iv_fail_reason"].value_counts().head(12).to_dict().items()}
+    fail_counts={str(k):int(v) for k,v in post.loc[~post["skew_valid"],"skew_fail_reason"].value_counts().head(12).to_dict().items()}
     return {
         "status":status,
         "raw_sessions":raw,
