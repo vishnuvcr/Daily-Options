@@ -414,3 +414,8 @@ Range-normalized gap sizing is supported as a volatility-normalization idea in p
 
 ### Phase boundary
 No post-result threshold, state, exit or mapping tuning is permitted. Phase 47 is now closed negative after authoritative run 36538234322.
+
+
+## Phase 48 — Prior-Session Return Direction × Opening-Gap Direction
+
+Frozen interaction: PRIOR_UP/PRIOR_DOWN from the immediately preceding 15:10-to-15:10 NIFTY return, crossed with current opening-gap direction. Test CONTINUE/FADE at 10:30/15:10 using the one-lot 200-point ATM debit spread, historical lots, exact expiry mapping and existing Base/Stress friction. Eight true cells plus five state-permutation nulls per cell. Phase 48 closed negative: authoritative run 36538835468, all 8 true cells negative under both frictions. No threshold or mapping retuning and no WFA/OOS.
