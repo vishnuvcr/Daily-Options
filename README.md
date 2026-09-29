@@ -1056,3 +1056,16 @@ Phase D tested the **frozen** Phase-C first15_abs_ret >= 0.126795% mechanism acr
 ## Current frontier — Phase 56
 
 **Prior-Session Candle Conviction Regime × Opening-Gap Direction**. The next test returns to high-coverage underlying price structure without requiring simultaneous multi-expiry option quotes.
+
+
+## 2026-09-29 — Phase 55 closed / negative discovery
+
+**Phase 55 — Same-Session 09:30 IV Smile Curvature × Opening Direction** is closed negative.
+
+- Authoritative workflow: **36550200125**; artifact **11023749886**.
+- Data gate: **97.95%** feature eligibility, **98.63%** smile-curvature coverage, **100%** feature-expiry mapping, **0** prior-information violations.
+- Execution coverage: **99.26%–100%** across all 12 cells; Base and Stress accounting reconciled.
+- Best cell: **HIGH_CURVATURE / FADE / 15:10** — **-₹59.85/week Base**, **-₹141.33/week Stress**, with 42.08% positive weeks in both.
+- **0/12** cells cleared the full dual-friction gate; no WFA/OOS authorized.
+
+[Phase 55 result](https://github.com/vishnuvcr/Daily-Options/blob/phase-55-same-session-smile-curvature-opening-v1/reports/phase55/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-55-same-session-smile-curvature-opening-v1/docs/phase55_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-55-same-session-smile-curvature-opening-v1/docs/phase55_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-55-same-session-smile-curvature-opening-v1/docs/phase55_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-55-same-session-smile-curvature-opening-v1)
