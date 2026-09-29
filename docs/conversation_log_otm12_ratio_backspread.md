@@ -23,3 +23,7 @@ This log records externally relevant research decisions and status, not hidden c
 
 ## Baseline closure
 Clean workflow 36532252218 passed both Base and Stress after the trade_date join and quantile-reporting fixes. Baseline result is now evidentiary and Phase C loser analysis has started. Preliminary discovery evidence points to high prior-day range plus near-expiry entry as a repeatable loser regime; this requires untouched holdout validation.
+
+
+## Final conclusion
+Phase E completed. The clean four-leg baseline is negative after realistic costs in both Base and Stress. Phase C and Phase D identify a reproducible loss-concentration regime (prior-day range > 1.314516% plus <=1.5 days to expiry) that improves holdout P&L when excluded but does not make the retained strategy profitable. The final manuscript and reproducibility supplement are stored on the Phase-E branch.
