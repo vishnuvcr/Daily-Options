@@ -335,14 +335,14 @@ def data_gate(panel: pd.DataFrame, expiries: dict) -> dict:
     eligible=int(post["feature_eligible"].sum())
     complete=int((post["feature_eligible"] & post["barrier_ok"]).sum())
     violations=int((post["feature_eligible"] & ~post["barrier_ok"]).sum())
-    range_valid=int((post["feature_eligible"] & (post["prior_range"]>0)).sum())
+    prior_return_valid=int((post["feature_eligible"] & post["prior_return"].notna()).sum())
     eligible_dates=post.loc[post["feature_eligible"],"date"]
     expiry_ok=int(sum(bisect.bisect_left(sorted(expiries),d)<len(expiries) for d in eligible_dates))
     eligibility_rate=eligible/post_warmup if post_warmup else 0.0
     cov=complete/eligible if eligible else 0.0
-    range_cov=range_valid/eligible if eligible else 0.0
+    prior_return_cov=prior_return_valid/eligible if eligible else 0.0
     exp_cov=expiry_ok/eligible if eligible else 0.0
-    status="PASS" if eligibility_rate>=COVERAGE_TARGET and cov>=COVERAGE_TARGET and range_cov>=COVERAGE_TARGET and exp_cov>=COVERAGE_TARGET and violations==0 else "FAIL"
+    status="PASS" if eligibility_rate>=COVERAGE_TARGET and cov>=COVERAGE_TARGET and prior_return_cov>=COVERAGE_TARGET and exp_cov>=COVERAGE_TARGET and violations==0 else "FAIL"
     return {
         "status":status,
         "raw_sessions":raw,
@@ -351,8 +351,8 @@ def data_gate(panel: pd.DataFrame, expiries: dict) -> dict:
         "post_warmup_eligibility_rate":eligibility_rate,
         "complete_feature_sessions":complete,
         "feature_coverage":cov,
-        "prior_range_valid_sessions":range_valid,
-        "prior_range_valid_coverage":range_cov,
+        "prior_return_valid_sessions":prior_return_valid,
+        "prior_return_valid_coverage":prior_return_cov,
         "expiry_mapping_coverage":exp_cov,
         "prior_information_violations":violations,
         "lookback_sessions":LOOKBACK,
@@ -431,7 +431,7 @@ def run(data: Path, out: Path, slippage: float, gate_only: bool = False):
     cov.to_csv(out / "price_coverage.csv", index=False)
 
     if not summary.empty:
-        assert len(summary) == 12
+        assert len(summary) == 8
         assert (summary["execution_coverage"] >= 0).all() and (summary["execution_coverage"] <= 1).all()
         assert summary["accounting_ok"].all()
 
