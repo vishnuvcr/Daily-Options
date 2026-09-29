@@ -522,3 +522,7 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0429 | 2026-09-29 | Phase 46 first workflow run 36473005218 | Copied workflow referenced `test_phase46_gap_failure_confirmation.py` instead of `test_phase46_close_location_gap.py` | No data/P&L ran | Correct workflow path and record reusable filename rule | FIXED — rerun required |
 
 | E0430 | 2026-09-29 | Phase 46 gate run 36473126244 | Copied workflow referenced `phase46_gap_failure_confirmation.py` instead of `phase46_close_location_gap.py` | No data/P&L ran | Correct workflow engine path; design unchanged | FIXED — rerun required |
+
+| E0431 | 2026-09-29 | Phase 47 first workflow 36538081710 | Checkout inherited stale branch reference phase-46-gap-range-normalization-v1; no numerical work ran | No P&L | Corrected checkout/push target to phase-47-gap-range-normalization-v1 and logged in Phase 47 error file | CLOSED |
+| E0432 | 2026-09-29 | Phase 47 gate run 36538113555 | Stale workflow revision retained phase47_close_location_gap.py; data gate failed before calculation | No P&L | Repointed workflow to phase47_gap_range_normalization.py and test_phase47_gap_range_normalization.py | CLOSED |
+| E0433 | 2026-09-29 | Phase 47 authoritative run 36538234322 | None | None | Data gate, Base, Stress, artifact validation and accounting all passed | CLOSED |
