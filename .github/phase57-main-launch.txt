@@ -1,1 +1,1 @@
-Phase 57 manual launcher sentinel — corrected workflow refs; run frozen opening-range regime grid
+Phase 57 manual launcher sentinel — corrected all branch refs; rerun frozen opening-range grid
