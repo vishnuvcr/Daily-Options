@@ -101,11 +101,12 @@ def trees(df: pd.DataFrame, out: Path) -> dict:
     (out/"loss_tree.txt").write_text(export_text(clf,feature_names=FEATURES))
     reg=DecisionTreeRegressor(max_depth=3,min_samples_leaf=50,random_state=1)
     reg.fit(X,z.net_pnl)
-    d["leaf"]=reg.apply(X)
+    z["leaf"]=reg.apply(X)
     h=df[df.trade_date>=HOLDOUT_START].copy()
-    h["leaf"]=reg.apply(h[FEATURES].fillna(d[FEATURES].median(numeric_only=True)))
-    dstats=d.groupby("leaf").agg(trades=("net_pnl","size"),mean_pnl=("net_pnl","mean"),win_rate=("net_pnl",lambda s:float((s>0).mean())),total_pnl=("net_pnl","sum")).reset_index()
-    hstats=h.groupby("leaf").agg(holdout_trades=("net_pnl","size"),holdout_mean_pnl=("net_pnl","mean"),holdout_win_rate=("net_pnl",lambda s:float((s>0).mean())),holdout_total_pnl=("net_pnl","sum")).reset_index()
+    h_complete=h.dropna(subset=FEATURES).copy()
+    h_complete["leaf"]=reg.apply(h_complete[FEATURES])
+    dstats=z.groupby("leaf").agg(trades=("net_pnl","size"),mean_pnl=("net_pnl","mean"),win_rate=("net_pnl",lambda s:float((s>0).mean())),total_pnl=("net_pnl","sum")).reset_index()
+    hstats=h_complete.groupby("leaf").agg(holdout_trades=("net_pnl","size"),holdout_mean_pnl=("net_pnl","mean"),holdout_win_rate=("net_pnl",lambda s:float((s>0).mean())),holdout_total_pnl=("net_pnl","sum")).reset_index()
     dstats.merge(hstats,on="leaf",how="left").to_csv(out/"regression_tree_leaf_stats.csv",index=False)
     (out/"loss_tree_cv.json").write_text(json.dumps({
         "auc_mean":float(auc.mean()),"auc_std":float(auc.std()),
