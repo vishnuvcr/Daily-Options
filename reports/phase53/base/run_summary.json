@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "raw_sessions": 1228,
+  "post_warmup_sessions": 1168,
+  "feature_eligible_sessions": 1146,
+  "post_warmup_feature_eligibility_rate": 0.9811643835616438,
+  "current_0930_atm_skew_valid_sessions": 1154,
+  "current_0930_atm_skew_coverage": 0.988013698630137,
+  "feature_expiry_mapping_coverage": 1.0,
+  "prior_information_violations": 0,
+  "lookback_valid_observations": 60,
+  "study_start": "2021-07-01",
+  "study_end": "2026-08-31",
+  "required_coverage": 0.95,
+  "skew_states": [
+    "LOW_SKEW",
+    "MID_SKEW",
+    "HIGH_SKEW"
+  ],
+  "quantile_boundaries": [
+    0.3333333333333333,
+    0.6666666666666666
+  ],
+  "expiry_file_count": 267,
+  "skew_failure_reasons": {
+    "MISSING_ATM_CE_OR_PE": 14
+  },
+  "friction": "base",
+  "true_signal_count": 4584,
+  "executed_trade_count": 4571,
+  "promotion_pass_count": 0
+}
