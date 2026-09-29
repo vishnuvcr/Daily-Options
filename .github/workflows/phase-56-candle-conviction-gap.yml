@@ -1,4 +1,4 @@
-name: Phase 56 opening location range gap
+name: Phase 56 candle conviction gap
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: phase-50-candle-conviction-gap-v1
+          ref: phase-56-candle-conviction-gap-v1
           fetch-depth: 0
 
       - uses: actions/setup-python@v6
@@ -32,7 +32,7 @@ jobs:
           python -m pip install --disable-pip-version-check             pandas==2.3.2 numpy==2.1.3 duckdb==1.3.2 pyarrow==19.0.1             pytest==8.4.2 huggingface_hub==0.35.3 requests==2.32.5
 
       - name: Unit tests
-        run: PYTHONPATH=. pytest -q tests/test_phase56_opening_location_range_gap.py
+        run: PYTHONPATH=. pytest -q tests/test_phase56_candle_conviction_gap.py
 
       - name: Restore pinned NIFTY cache
         uses: actions/cache@v4
@@ -60,7 +60,7 @@ jobs:
 
       - name: Run Phase 56 data gate
         run: |
-          PYTHONPATH=. python research/phase56_opening_location_range_gap.py             --data data/cache/phase56_trademarkk             --out reports/phase56/gate             --slippage 0.20             --gate-only
+          PYTHONPATH=. python research/phase56_candle_conviction_gap.py             --data data/cache/phase56_trademarkk             --out reports/phase56/gate             --slippage 0.20             --gate-only
 
       - name: Run Base discovery
         run: |
@@ -70,7 +70,7 @@ jobs:
           if g["status"]!="PASS":
               raise SystemExit("DATA_GATE_FAIL: Base discovery intentionally skipped")
           PY
-          PYTHONPATH=. python research/phase56_opening_location_range_gap.py             --data data/cache/phase56_trademarkk             --out reports/phase56/base             --slippage 0.20
+          PYTHONPATH=. python research/phase56_candle_conviction_gap.py             --data data/cache/phase56_trademarkk             --out reports/phase56/base             --slippage 0.20
 
       - name: Run Stress discovery
         run: |
@@ -80,7 +80,7 @@ jobs:
           if g["status"]!="PASS":
               raise SystemExit("DATA_GATE_FAIL: Stress discovery intentionally skipped")
           PY
-          PYTHONPATH=. python research/phase56_opening_location_range_gap.py             --data data/cache/phase56_trademarkk             --out reports/phase56/stress             --slippage 0.40
+          PYTHONPATH=. python research/phase56_candle_conviction_gap.py             --data data/cache/phase56_trademarkk             --out reports/phase56/stress             --slippage 0.40
 
       - name: Validate Phase 56 artifacts
         run: |
@@ -112,8 +112,8 @@ jobs:
           if ! git diff --cached --quiet; then
             git commit -m "Phase 56: persist candle-conviction research outputs"
             for attempt in 1 2 3; do
-              if git push origin HEAD:phase-50-candle-conviction-gap-v1; then exit 0; fi
-              git fetch origin phase-50-candle-conviction-gap-v1
+              if git push origin HEAD:phase-56-candle-conviction-gap-v1; then exit 0; fi
+              git fetch origin phase-56-candle-conviction-gap-v1
               git rebase FETCH_HEAD
             done
             exit 1
