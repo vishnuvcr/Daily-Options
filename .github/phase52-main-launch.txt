@@ -1,1 +1,1 @@
-Phase 52 manual launcher sentinel — ATM preservation fix; rerun frozen grid
+Phase 52 manual launcher sentinel — current head 7186; retry authoritative grid
