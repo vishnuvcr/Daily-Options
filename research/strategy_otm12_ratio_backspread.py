@@ -133,8 +133,8 @@ def make_trades(sess,q,diag_rows=None,expiry=None):
         if not k:
             drow["stage"]="insufficient_otm_strikes"; diag_rows.append(drow) if diag_rows is not None else None; continue
         drow.update({"short_ce":k["short_ce"],"long_ce":k["long_ce"],"short_pe":k["short_pe"],"long_pe":k["long_pe"]})
-        specs=[("short_ce","CE",k["short_ce"],-1,1),("long_ce","CE",k["long_ce"],1,2),
-               ("short_pe","PE",k["short_pe"],-1,1),("long_pe","PE",k["long_pe"],1,2)]
+        specs=[("short_ce","CE",k["short_ce"],1,1),("long_ce","CE",k["long_ce"],-1,2),
+               ("short_pe","PE",k["short_pe"],1,1),("long_pe","PE",k["long_pe"],-1,2)]
         exact=z[z.ts.dt.strftime("%H:%M:%S")==EXIT_TIME]
         fallback=z[z.ts.dt.strftime("%H:%M:%S")==EXIT_FALLBACK_TIME]
         legs=[]; ok=True; exit_mark_time=None
