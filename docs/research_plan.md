@@ -419,3 +419,8 @@ No post-result threshold, state, exit or mapping tuning is permitted. Phase 47 i
 ## Phase 48 — Prior-Session Return Direction × Opening-Gap Direction
 
 Frozen interaction: PRIOR_UP/PRIOR_DOWN from the immediately preceding 15:10-to-15:10 NIFTY return, crossed with current opening-gap direction. Test CONTINUE/FADE at 10:30/15:10 using the one-lot 200-point ATM debit spread, historical lots, exact expiry mapping and existing Base/Stress friction. Eight true cells plus five state-permutation nulls per cell. Phase 48 closed negative: authoritative run 36538835468, all 8 true cells negative under both frictions. No threshold or mapping retuning and no WFA/OOS.
+
+
+## Phase 49 — Prior-Session Range Regime × Opening-Gap Direction
+
+Frozen regime: prior-session NIFTY range percentage classified LOW/MID/HIGH by 33.333rd and 66.667th empirical percentiles of the last 60 valid completed range observations strictly before the prior session. Cross with opening-gap FOLLOW/FADE at 10:30/15:10. Twelve true cells plus five permutation nulls. Phase 49 closed negative: authoritative run 36539451804; best cell ₹88/week Base and ₹9/week Stress with negative medians; no WFA/OOS.
