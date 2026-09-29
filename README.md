@@ -850,3 +850,17 @@ Phase D completed a chronological walk-forward test of the frozen Phase C first1
 - The Phase D workflow has been restored to manual-dispatch-only after the controlled execution.
 
 [Alternating Phase D result](https://github.com/vishnuvcr/Daily-Options/blob/research/alternating-otm-phase-d-walkforward-v1/reports/alternating_otm_phase_d_result.md) · [Phase D status](https://github.com/vishnuvcr/Daily-Options/blob/research/alternating-otm-phase-d-walkforward-v1/docs/alternating_otm_phase_d_status.md) · [Phase D plan](https://github.com/vishnuvcr/Daily-Options/blob/research/alternating-otm-phase-d-walkforward-v1/docs/alternating_otm_phase_d_plan.md)
+
+
+## 2026-09-29 — Alternating OTM Phase D closed
+
+Phase D tested the **frozen** Phase-C first15_abs_ret >= 0.126795% mechanism across chronological 2023–2026 test periods without retuning the threshold.
+
+- Authoritative workflow: **36537486155**.
+- Base: filtered net P&L improved in **4/4** periods; pooled baseline **-₹114,260** -> filtered **+₹3,585**.
+- Stress: filtered net P&L improved in **4/4** periods; pooled baseline **-₹226,796** -> filtered **-₹59,319**.
+- The mechanism is therefore a reproducible **loss-reduction mechanism**, but not yet a consistently profitable strategy.
+- Win rate fell in some years even while economics improved, reinforcing that win rate is not the promotion criterion.
+- **Status: closed without promotion.** No further first-15-minute threshold tuning is authorized on the existing data.
+
+[Phase D result](https://github.com/vishnuvcr/Daily-Options/blob/research/alternating-otm-phase-d-walkforward-v1/reports/alternating_otm_phase_d_result.md) · [Phase D status](https://github.com/vishnuvcr/Daily-Options/blob/research/alternating-otm-phase-d-walkforward-v1/docs/alternating_otm_phase_d_status.md) · [Phase D branch](https://github.com/vishnuvcr/Daily-Options/tree/research/alternating-otm-phase-d-walkforward-v1)
