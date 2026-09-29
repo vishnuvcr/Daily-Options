@@ -1,22 +1,20 @@
 # Phase 54 Status
 
-**State: PREREGISTERED / ENGINEERING BUILD**
+**State: CLOSED — NEGATIVE DISCOVERY**
 
-Branch: phase-54-matched-atm-iv-call-put-opening-v1
+Authoritative workflow: **36549521888**  
+Artifact: **11023594728**
 
-Frozen feature:
-- matched same-strike ATM PE IV minus CE IV at 09:30
-- nearest expiry strictly after current date
-- prior 60 valid same-session spread observations
-- LOW/MID/HIGH terciles
+Data integrity:
+- 98.12% feature eligibility
+- 98.80% matched ATM CE/PE IV coverage
+- 100% feature-expiry mapping
+- 0 prior-information violations
+- 99.04–100% execution coverage
+- accounting reconciled
 
-Frozen execution:
-- 09:31 entry
-- 10:30 / 15:10 exits
-- one-lot 200-point ATM debit spread
-- nearest expiry on/after date
-- historical lots
-- Base/Stress ₹0.20/₹0.40 slippage
-- existing Paytm Money/NSE/statutory costs
+Best cell: **HIGH_SPREAD / FADE / 15:10**
+- Base: **-₹49/week mean**, -₹507 median, 44.3% positive weeks
+- Stress: **-₹143/week mean**, -₹547 median, 43.7% positive weeks
 
-No numerical result is accepted until unit tests, feature gates, null controls, execution coverage and accounting all pass.
+All 12 cells failed the complete dual-friction promotion gate. No WFA/OOS authorized.
