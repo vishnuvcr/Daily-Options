@@ -1,1 +1,1 @@
-Phase 52 manual launcher sentinel — current head 7186; retry authoritative grid
+Phase 52 manual launcher sentinel — verified corrected ATM preservation; rerun frozen current 09:30 ATM IV grid
