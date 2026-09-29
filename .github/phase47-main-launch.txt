@@ -1,1 +1,1 @@
-Phase 47 manual launcher sentinel — execute frozen gap-range normalization grid
+Phase 47 manual launcher sentinel — corrected workflow reference; rerun frozen grid
