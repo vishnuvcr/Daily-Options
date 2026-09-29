@@ -821,3 +821,18 @@ The strongest repeatable loser regime was **prior-day NIFTY range >1.314516% tog
 
 [Strategy status](https://github.com/vishnuvcr/Daily-Options/blob/strategy/otm1-2x-otm2-ratio-backspread-v1/docs/strategy_otm12_ratio_backspread_status.md) · [Phase C](https://github.com/vishnuvcr/Daily-Options/tree/research/otm12-phase-c-loser-analysis) · [Phase D](https://github.com/vishnuvcr/Daily-Options/tree/research/otm12-phase-d-holdout-filter-v1) · [Final manuscript](https://github.com/vishnuvcr/Daily-Options/blob/research/otm12-phase-e-manuscript-v1/docs/manuscript_otm12_ratio_backspread.md) · [Supplement](https://github.com/vishnuvcr/Daily-Options/blob/research/otm12-phase-e-manuscript-v1/docs/manuscript_otm12_supplement.md) · [Phase E workflow](https://github.com/vishnuvcr/Daily-Options/blob/research/otm12-phase-e-manuscript-v1/.github/workflows/strategy-otm12-phase-e-manuscript.yml)
 
+
+
+## 2026-09-29 — Alternating OTM Buy/Sell Phase C closed
+
+The separate alternating BUY-1-OTM1 / SELL-2-OTM2 four-leg side-analysis has completed its frozen Phase C tail-loss filter test.
+
+- Authoritative Phase C workflow: **36536840710**
+- Selected rule from 2021–2024 discovery only: first 15-minute absolute NIFTY return >= **0.1268%** (45th discovery percentile).
+- Untouched 2025+ holdout Base: **63.16% win rate, +₹34,446 net P&L, PF 1.133** versus 60.06% and -₹24,907 unfiltered.
+- Untouched 2025+ holdout Stress: **60.29% win rate, -₹1,518 net P&L, PF 0.994** versus 57.47% and -₹85,003 unfiltered.
+- 2026 holdout performance remained negative under both frictions.
+- **Status: closed without promotion.** The higher win rate is reproducible, but the discovery-selected filter does not clear the friction-robust profitability requirement.
+- The 2025+ holdout is now considered consumed for this experiment; the adjacent 40th-percentile rule cannot be selected retrospectively from the same holdout.
+
+[Alternating strategy Phase C result](https://github.com/vishnuvcr/Daily-Options/blob/research/alternating-otm-phase-c-tail-filter-v1/reports/alternating_otm_phase_c_result.md) · [Phase C plan](https://github.com/vishnuvcr/Daily-Options/blob/research/alternating-otm-phase-c-tail-filter-v1/docs/alternating_otm_phase_c_plan.md) · [Phase C status](https://github.com/vishnuvcr/Daily-Options/blob/research/alternating-otm-phase-c-tail-filter-v1/docs/alternating_otm_phase_c_status.md) · [Phase C branch](https://github.com/vishnuvcr/Daily-Options/tree/research/alternating-otm-phase-c-tail-filter-v1)
