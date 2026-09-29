@@ -1,0 +1,29 @@
+{
+  "status": "FAIL",
+  "raw_sessions": 1228,
+  "post_warmup_sessions": 1168,
+  "feature_eligible_sessions": 971,
+  "post_warmup_eligibility_rate": 0.8313356164383562,
+  "complete_feature_sessions": 971,
+  "feature_coverage": 1.0,
+  "prior_range_valid_sessions": 971,
+  "prior_range_valid_coverage": 1.0,
+  "range_regime_valid_sessions": 971,
+  "range_regime_valid_coverage": 1.0,
+  "expiry_mapping_coverage": 1.0,
+  "prior_information_violations": 0,
+  "lookback_sessions": 60,
+  "study_start": "2021-07-01",
+  "study_end": "2026-08-31",
+  "required_coverage": 0.95,
+  "range_regime_states": [
+    "LOW_RANGE",
+    "MID_RANGE",
+    "HIGH_RANGE"
+  ],
+  "quantile_boundaries": [
+    0.3333333333333333,
+    0.6666666666666666
+  ],
+  "expiry_file_count": 267
+}
