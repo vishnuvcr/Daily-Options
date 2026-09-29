@@ -555,3 +555,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 
 | E0445 | 2026-09-29 | Phase 54 first workflow 36549626495 | Checkout used stale phase-52-atm-iv-spread-opening-v1 ref; no numerical work ran | No P&L accepted | Corrected workflow to phase-54-atm-iv-spread-opening-v1 and reran authoritative workflow 36549663605 | CLOSED |
 | E0446 | 2026-09-29 | Phase 54 authoritative run 36549663605 | None | None | Data gate, Base, Stress, validation and accounting passed; phase closed negative | CLOSED |
+
+| E0446 | 2026-09-29 | Phase 55 authoritative gate 36550269685 | Front/back ATM CE/PE term-structure completeness 72.77% < frozen 95% gate | No P&L accepted | Closed Phase 55 DATA-LIMITED; do not lower coverage threshold | CLOSED |
