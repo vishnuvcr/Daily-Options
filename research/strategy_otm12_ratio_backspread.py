@@ -98,6 +98,8 @@ def query_quotes(con,path,days):
     WHERE (o.open>0 OR o.close>0)"""
     x=con.execute(q).df()
     if x.empty: return x
+    # Normalize to Python date so option rows join exactly with session.trade_date.
+    x["trade_date"]=pd.to_datetime(x["trade_date"]).dt.date
     x["ts"]=pd.to_datetime(x["ts"])
     x["hhmm"]=x["ts"].dt.strftime("%H:%M:%S")
     return x[x["hhmm"].isin([ENTRY_FILL, EXIT_TIME, EXIT_FALLBACK_TIME])].copy()
