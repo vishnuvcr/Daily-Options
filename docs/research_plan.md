@@ -559,3 +559,8 @@ No post-result body-ratio threshold, state boundary, mapping, exit, expiry, spre
 ## Phase 55 — Same-Session 09:30 IV Smile Curvature × Opening Direction
 
 Frozen feature: average 09:30 adjacent OTM-wing IV (ATM−₹50 PE and ATM+₹50 CE) minus average 09:30 matched ATM CE/PE IV, nearest strict-next expiry; terciles from the preceding 60 valid same-session observations. Cross with FOLLOW/FADE and 10:30/15:10. Twelve cells plus five permutation nulls. Phase 55 closed negative after authoritative run 36550200125: all 12 cells negative; best HIGH_CURVATURE/FADE/15:10 was -₹59.85/week Base and -₹141.33 Stress. No WFA/OOS or tuning.
+
+
+## Phase 56 — Prior-Session Candle Conviction Regime × Opening-Gap Direction
+
+Frozen feature: prior-session body/range ratio = abs(prior 15:10 close − prior 09:15 open)/(prior high − prior low), classified LOW/MID/HIGH by the last 60 valid observations strictly before the current date. Cross current opening-gap FOLLOW/FADE at 10:30/15:10. Twelve true cells plus five permutation nulls. Authoritative run 36551083186 closed negative: best LOW_CONVICTION/FADE/15:10 = -₹125.86/week Base / -₹201.79 Stress. No WFA/OOS or retuning.
