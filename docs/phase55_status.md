@@ -1,22 +1,17 @@
 # Phase 55 Status
 
-**State: PREREGISTERED / ENGINEERING BUILD**
+**State: CLOSED — DATA-LIMITED**
 
-Branch: phase-55-front-next-expiry-atm-iv-term-structure-v1
+Authoritative workflow: **36550678482**  
+Gate artifact: **11023669935**
 
-Frozen feature:
-- 09:30 front-expiry ATM IV versus next-expiry ATM IV
-- TERM_SLOPE = back IV minus front IV
-- STEEP_TERM >= 0; INVERTED_TERM < 0
-- no post-result threshold selection
+Coverage:
+- 898 / 1,228 current-session front/back ATM-IV observations = **73.13%**
+- 894 / 1,228 final feature-eligible sessions = **72.80%**
+- 100% expiry mapping
+- 0 prior-information violations
+- 330 sessions failed due to missing front/back ATM IV
 
-Frozen execution:
-- 09:31 entry
-- 10:30 / 15:10 exits
-- one-lot 200-point ATM debit spread
-- nearest expiry on/after current date
-- historical lots
-- Base/Stress ₹0.20/₹0.40 slippage
-- existing Paytm Money/NSE/statutory charges
+The frozen **95% coverage gate failed**. No Base/Stress P&L was accepted and no WFA/OOS is authorized.
 
-No numerical result is accepted until unit tests, feature gates, execution coverage, null controls and accounting all pass.
+No Phase-55 parameter or gate relaxation is permitted.
