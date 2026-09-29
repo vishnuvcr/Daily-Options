@@ -27,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: strategy/otm1-2x-otm2-ratio-backspread-v1
+          ref: strategy/otm1-2x-otm2-reversed-ratio-v1
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
