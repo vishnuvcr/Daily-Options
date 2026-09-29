@@ -7,3 +7,5 @@
 | E056-001 | 2026-09-29 | Pre-execution workflow review | Copied Phase-50 workflow retained stale checkout/script/push references | Could execute wrong branch or fail before numerical work | Corrected checkout, engine, test and push targets to Phase 56; frozen research design unchanged | CLOSED |
 
 | E056-001 | 2026-09-29 | Pre-launch workflow review | Copied Phase-50 checkout/test/engine/push references remained in Phase-56 workflow | Would prevent valid Phase-56 execution | Repointed all references to phase-56-candle-conviction-gap-v1 and phase56_candle_conviction_gap.py | CLOSED |
+
+| E056-002 | 2026-09-29 | Gate run 36550927372 | Derived prior_open/high/low/close variables were not persisted as panel columns before feature_eligible selection; KeyError stopped the gate | No P&L accepted | Persisted prior OHLC aliases in the feature panel; frozen body-ratio definition unchanged | CLOSED |
