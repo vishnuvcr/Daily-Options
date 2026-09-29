@@ -1,1 +1,1 @@
-Phase 47 manual launcher sentinel — corrected script/test filenames; run frozen grid
+Phase 47 manual launcher sentinel — verified current workflow revision; execute frozen grid
