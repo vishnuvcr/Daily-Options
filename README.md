@@ -1097,3 +1097,17 @@ Phase D tested the **frozen** Phase-C first15_abs_ret >= 0.126795% mechanism acr
 - **0/12** cells cleared the complete promotion gate; WFA/OOS is not authorized.
 
 [Phase 56 result](https://github.com/vishnuvcr/Daily-Options/blob/phase-56-candle-conviction-gap-v1/reports/phase56/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-56-candle-conviction-gap-v1/docs/phase56_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-56-candle-conviction-gap-v1/docs/phase56_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-56-candle-conviction-gap-v1)
+
+
+## 2026-09-29 — Phase 57 closed / negative discovery
+
+**Phase 57 — 09:15–09:30 Opening-Range Volatility Regime × Opening-Gap Direction** is closed negative.
+
+- Authoritative workflow: **36551911099**; artifact **11025372329**.
+- Data gate: **99.229%** feature eligibility, **100%** prior-range and opening-range coverage, **100%** regime/expiry mapping, **0** prior-information violations.
+- Execution coverage: **97.82%–99.72%** across all 12 cells; Base/Stress accounting reconciled.
+- Best cell: **LOW_OPEN_RANGE / FADE / 15:10** — **-₹88.46/week Base**, **-₹172.36/week Stress**, with 41.67% / 41.18% positive weeks.
+- Raw gross P&L was positive in the best cell, but realistic friction dominated.
+- **0/12** cells cleared the promotion gate; WFA/OOS is not authorized.
+
+[Phase 57 result](https://github.com/vishnuvcr/Daily-Options/blob/phase-57-opening-range-vol-gap-v1/reports/phase57/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-57-opening-range-vol-gap-v1/docs/phase57_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-57-opening-range-vol-gap-v1/docs/phase57_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-57-opening-range-vol-gap-v1)
