@@ -120,6 +120,7 @@ def build_feature_panel(nifty: pd.DataFrame) -> pd.DataFrame:
     panel["prior_high"]=prior_high
     panel["prior_low"]=prior_low
     panel["prior_close"]=prior_close
+    panel["prior_range"]=prior_range
     panel["opening_gap"]=(panel["open_0915"]/prior_close)-1.0
 
     orbars=nifty[(nifty["time"]>="09:15:00") & (nifty["time"]<="09:29:00")].copy()
