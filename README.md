@@ -957,3 +957,16 @@ Phase D tested the **frozen** Phase-C first15_abs_ret >= 0.126795% mechanism acr
 - **0/12** cells cleared the full dual-friction gate; no WFA/OOS authorized.
 
 [Phase 52 result](https://github.com/vishnuvcr/Daily-Options/blob/phase-52-current-atm-iv-regime-opening-v1/reports/phase52/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-52-current-atm-iv-regime-opening-v1/docs/phase52_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-52-current-atm-iv-regime-opening-v1/docs/phase52_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-52-current-atm-iv-regime-opening-v1)
+
+
+## 2026-09-29 — Phase 52 closed / negative discovery
+
+**Phase 52 — Same-Session 09:30 ATM IV Level Regime × Opening Direction** is closed negative.
+
+- Authoritative workflow: **36548301179**; artifact **11023562027**.
+- Data gate: **98.12%** final feature eligibility, **98.80%** same-session ATM-IV coverage, **100%** feature-expiry mapping, **0** prior-information violations.
+- Execution coverage: **98.80%–100%** across all 12 cells; accounting reconciled in Base and Stress.
+- Best cell: **MID_IV / FADE / 15:10** — **-₹100.61/week Base**, **-₹182.60/week Stress**, median negative in both.
+- **0/12** cells cleared the full promotion gate; WFA/OOS is not authorized.
+
+[Phase 52 result](https://github.com/vishnuvcr/Daily-Options/blob/phase-52-current-atm-iv-regime-opening-v1/reports/phase52/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-52-current-atm-iv-regime-opening-v1/docs/phase52_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-52-current-atm-iv-regime-opening-v1/docs/phase52_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-52-current-atm-iv-regime-opening-v1)
