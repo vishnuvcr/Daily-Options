@@ -864,3 +864,17 @@ Phase D tested the **frozen** Phase-C first15_abs_ret >= 0.126795% mechanism acr
 - **Status: closed without promotion.** No further first-15-minute threshold tuning is authorized on the existing data.
 
 [Phase D result](https://github.com/vishnuvcr/Daily-Options/blob/research/alternating-otm-phase-d-walkforward-v1/reports/alternating_otm_phase_d_result.md) · [Phase D status](https://github.com/vishnuvcr/Daily-Options/blob/research/alternating-otm-phase-d-walkforward-v1/docs/alternating_otm_phase_d_status.md) · [Phase D branch](https://github.com/vishnuvcr/Daily-Options/tree/research/alternating-otm-phase-d-walkforward-v1)
+
+
+## 2026-09-29 — Phase 47 closed / negative discovery
+
+**Phase 47 — Opening-Gap Magnitude Normalized by Prior-Day Range × Gap Direction** is closed as negative discovery.
+
+- Authoritative workflow: **36538234322**; artifact **11019930108**.
+- Data gate: **99.267%** feature eligibility, **100%** prior-range validity, **100%** expiry mapping, **0** prior-information violations.
+- Execution coverage: **98.56%–100%** across all 12 true cells; accounting reconciled in Base and Stress.
+- Best frozen cell: **MEDIUM_REL_GAP / FADE / 15:10** — **₹714/week Base** and **₹666/week Stress**, with 62.5% positive weeks. This is far below the ₹5,000/week promotion gate.
+- **0/12** cells cleared the complete dual-friction promotion gate; WFA/OOS is not authorized.
+- No Phase 47 state-boundary, exit, or threshold retuning is permitted.
+
+[Phase 47 result](https://github.com/vishnuvcr/Daily-Options/blob/phase-47-gap-range-normalization-v1/reports/phase47/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-47-gap-range-normalization-v1/docs/phase47_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-47-gap-range-normalization-v1/docs/phase47_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-47-gap-range-normalization-v1/docs/phase47_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-47-gap-range-normalization-v1)
