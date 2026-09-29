@@ -1,22 +1,20 @@
 # Phase 56 Status
 
-**State: PREREGISTERED / ENGINEERING BUILD**
+**State: CLOSED — NEGATIVE DISCOVERY**
 
-Branch: phase-56-candle-conviction-gap-v1
+Authoritative workflow: **36551083186**  
+Artifact: **11025430232**
 
-Frozen feature:
-- prior-session candle body / prior high-low range
-- 60 valid strictly prior observations
-- LOW/MID/HIGH conviction terciles
-- prior candle direction stored descriptively only
+Data integrity:
+- 99.315% feature eligibility
+- 100% prior-body-ratio validity
+- 100% expiry mapping
+- 0 prior-information violations
+- 98.47–99.10% execution coverage
+- accounting reconciled
 
-Frozen execution:
-- 09:31 entry
-- 10:30 / 15:10 exits
-- one-lot 200-point ATM debit spread
-- nearest expiry on/after trade date
-- historical lots
-- Base/Stress ₹0.20/₹0.40 slippage
-- existing Paytm Money/NSE/statutory charges
+Best cell: **LOW_CONVICTION / FADE / 15:10**
+- Base: **-₹125.86/week mean**, -₹495.34 median, 43.18% positive weeks
+- Stress: **-₹201.79/week mean**, -₹546.51 median, 40.45% positive weeks
 
-No numerical result is accepted until unit tests, data gates, null controls, execution coverage and accounting all pass.
+All 12 cells failed the complete dual-friction promotion gate. No WFA/OOS authorized.
