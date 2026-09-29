@@ -917,3 +917,17 @@ Phase D tested the **frozen** Phase-C first15_abs_ret >= 0.126795% mechanism acr
 - **0/12** cells cleared the full promotion gate; WFA/OOS is not authorized.
 
 [Phase 50 result](https://github.com/vishnuvcr/Daily-Options/blob/phase-50-opening-location-range-gap-v1/reports/phase50/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-50-opening-location-range-gap-v1/docs/phase50_plan.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-50-opening-location-range-gap-v1/docs/phase50_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-50-opening-location-range-gap-v1)
+
+
+## 2026-09-29 — Phase 51 closed / data-limited
+
+**Phase 51 — Prior-Session ATM IV Level Regime × Opening-Gap Direction** is closed **DATA-LIMITED**.
+
+- Authoritative workflow: **36540501382**; artifact **11020206536**.
+- 1,168 post-warm-up sessions were assessed.
+- Valid prior-session ATM IV coverage was **94.01%**; final feature eligibility was **93.58%**, below the frozen 95% gate.
+- Expiry mapping was 100% and prior-information violations were 0.
+- Missing ATM CE/PE quotes accounted for 33 failures; IV inversion failures accounted for 33.
+- **No P&L, promotion result or WFA/OOS is accepted.** The 95% gate was not relaxed after seeing the coverage outcome.
+
+[Phase 51 result](https://github.com/vishnuvcr/Daily-Options/blob/phase-51-prior-atm-iv-regime-gap-v1/reports/phase51/final_result.md) · [plan](https://github.com/vishnuvcr/Daily-Options/blob/phase-51-prior-atm-iv-regime-gap-v1/docs/phase51_plan.md) · [literature review](https://github.com/vishnuvcr/Daily-Options/blob/phase-51-prior-atm-iv-regime-gap-v1/docs/phase51_literature_review.md) · [status](https://github.com/vishnuvcr/Daily-Options/blob/phase-51-prior-atm-iv-regime-gap-v1/docs/phase51_status.md) · [branch](https://github.com/vishnuvcr/Daily-Options/tree/phase-51-prior-atm-iv-regime-gap-v1)
