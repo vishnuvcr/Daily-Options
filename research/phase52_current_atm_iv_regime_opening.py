@@ -280,11 +280,15 @@ def attach_current_atm_iv(panel: pd.DataFrame, root: Path, expiries: dict) -> pd
 def attach_expiry(panel: pd.DataFrame, expiries: dict) -> pd.DataFrame:
     keys = sorted(expiries)
     x = panel.copy()
-    x["expiry"] = [keys[bisect.bisect_left(keys, d)] if bisect.bisect_left(keys, d) < len(keys) else None for d in x["date"]]
-    x["atm"] = np.nan
-    # The option structure uses 09:30 NIFTY close as the established ATM reference.
-    x["atm_0930"] = np.nan
-    # Merge authoritative 09:30 close from the underlying.
+    x["expiry"] = [
+        keys[bisect.bisect_left(keys, d)] if bisect.bisect_left(keys, d) < len(keys) else None
+        for d in x["date"]
+    ]
+    # Preserve the already-computed 09:30 ATM strike; do not overwrite it.
+    if "atm" not in x.columns:
+        x["atm"] = np.nan
+    if "atm_0930" not in x.columns:
+        x["atm_0930"] = x["atm"]
     return x
 
 
