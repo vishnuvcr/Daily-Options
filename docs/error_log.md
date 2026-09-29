@@ -533,3 +533,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0436 | 2026-09-29 | Phase 50 first workflow 36539830156 | Checkout retained stale Phase-48 branch reference | No numerical work accepted | Corrected checkout target to phase-50-opening-location-range-gap-v1; frozen design unchanged | CLOSED |
 | E0437 | 2026-09-29 | Phase 50 workflow preflight | Base/Stress commands retained stale Phase-48 engine path | No numerical work accepted | Repointed both commands to phase50_opening_location_range_gap.py | CLOSED |
 | E0438 | 2026-09-29 | Phase 50 authoritative run 36539948879 | None | None | Data gate, Base, Stress, validation and accounting passed; phase closed negative | CLOSED |
+
+| E0439 | 2026-09-29 | Phase 51 authoritative gate 36540501382 | Prior-session ATM IV coverage 94.01% and final feature eligibility 93.58% missed the frozen 95% threshold | No Base/Stress P&L accepted | Closed Phase 51 DATA-LIMITED; gate unchanged | CLOSED |
