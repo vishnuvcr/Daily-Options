@@ -542,3 +542,5 @@ E0446 closed Phase 33 as DATA-LIMITED. The issue was feature observability, not 
 | E0440 | 2026-09-29 | Phase 52 runs 36540878666 / 36540906389 | Signal construction attempted int(NaN) for a row with missing ATM strike | No P&L accepted | Require non-null ATM and expiry before signal expansion; no economic change | CLOSED |
 | E0441 | 2026-09-29 | Phase 52 run 36540906389 | attach_expiry overwrote a valid computed ATM with NaN | No P&L accepted | Preserve the computed ATM through expiry attachment; no economic change | CLOSED |
 | E0442 | 2026-09-29 | Phase 52 authoritative run 36548301179 | None | None | Data gate, Base, Stress, validation and accounting all passed; phase closed negative | CLOSED |
+
+| E0442 | 2026-09-29 | Phase 53 authoritative run 36548934744 | None | None | Data gate, Base, Stress, execution coverage, null controls, artifact validation and accounting all passed; phase closed negative | CLOSED |
