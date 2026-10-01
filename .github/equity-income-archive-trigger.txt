@@ -32,3 +32,5 @@ PR-triggered archive execution retry 2026-09-25b.
 Retry 2026-09-25l: proxy-first transcript acquisition, four workers, cancel stale archive run.
 
 Retry 2026-09-25m: structured youtubegpt JSON fallback for 130 unresolved videos.
+
+Retry 2026-09-25n: idempotence and stale error-manifest cleanup after complete archive.
