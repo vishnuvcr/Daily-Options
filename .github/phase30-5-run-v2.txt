@@ -1,0 +1,1 @@
+Phase 30.5 NIFTY spot validated cache persistence v2
